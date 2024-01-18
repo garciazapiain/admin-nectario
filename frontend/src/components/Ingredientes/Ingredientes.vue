@@ -4,7 +4,7 @@
     <table>
       <thead>
         <tr>
-          <th>Código ingrediente</th>
+          <th>Código del ingrediente</th>
           <th>Nombre</th>
           <th>Unidad</th>
           <th>Precio</th>
