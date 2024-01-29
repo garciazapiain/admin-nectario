@@ -8,19 +8,22 @@ const handleClickPlatillo = (idPlatillo) => {
 
 <template>
   <div>
+    <input v-model="searchTerm" placeholder="Search" />
     <table>
       <thead>
         <tr>
           <th>Nombre</th>
+          <th>Cantidad vendida/semana</th>
         </tr>
       </thead>
       <tbody>
         <tr
           @click="handleClickPlatillo(platillo.id_platillo)"
-          v-for="(platillo, index) in platillos"
+          v-for="(platillo, index) in filteredPlatillos"
           :key="index"
         >
           <td>{{ platillo.nombre }}</td>
+          <td>{{ platillo.unidades_vendidas }}</td>
         </tr>
       </tbody>
     </table>
@@ -37,9 +40,10 @@ export default {
   data() {
     return {
       platillos: [],
-      nuevoPlatillo:{
+      nuevoPlatillo: {
         nombre: "",
-      }
+      },
+      searchTerm: "",
     };
   },
   methods: {
@@ -56,6 +60,18 @@ export default {
       }
       this.platillos.push(this.nuevoPlatillo);
       this.nuevoPlatillo = {};
+    },
+  },
+  computed: {
+    filteredPlatillos() {
+      // Add this computed property
+      if (!this.searchTerm) {
+        return this.platillos;
+      }
+      const term = this.searchTerm.toLowerCase();
+      return this.platillos.filter((platillo) =>
+        platillo.nombre.toLowerCase().includes(term)
+      );
     },
   },
   async mounted() {

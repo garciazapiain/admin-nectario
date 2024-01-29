@@ -1,6 +1,19 @@
 <template>
   <div>
+    <p>
+      Total $ Comprado:
+      {{
+        new Intl.NumberFormat("es-MX", {
+          style: "currency",
+          currency: "MXN",
+        }).format(totalCompradoSemana)
+      }}
+    </p>
     <input v-model="searchTerm" placeholder="Search" />
+    <select v-model="proveedor">
+      <option value="">All</option>
+      <option value="FRUTEX">FRUTEX</option>
+    </select>
     <table>
       <thead>
         <tr>
@@ -8,10 +21,10 @@
           <th>Nombre</th>
           <th>Unidad</th>
           <th>Precio</th>
-          <th>Total usado / semana</th>
-          <th>Total $ Comprado / semana</th>
-          <th>Total usado / año</th>
-          <th>Total $ Comprado / año</th>
+          <th>Total usado</th>
+          <th>Total $ Comprado</th>
+          <!-- <th>Total usado / año</th>
+          <th>Total $ Comprado / año</th> -->
         </tr>
       </thead>
       <tbody>
@@ -24,7 +37,9 @@
           <td>{{ ingrediente.nombre }}</td>
           <td>{{ ingrediente.unidad }}</td>
           <td>${{ ingrediente.precio }}</td>
-          <td>{{ ingrediente.total_usado }}</td>
+          <td>
+            {{ Math.round(ingrediente.total_usado) + " " + ingrediente.unidad }}
+          </td>
           <td>
             ${{
               new Intl.NumberFormat().format(
@@ -32,14 +47,20 @@
               )
             }}
           </td>
-          <td>{{ (ingrediente.total_usado * 52).toFixed(2) }}</td>
-          <td>
+          <!-- <td>
+            {{
+              Math.round(ingrediente.total_usado * 52) +
+              " " +
+              ingrediente.unidad
+            }}
+          </td> -->
+          <!-- <td>
             ${{
               new Intl.NumberFormat().format(
                 (ingrediente.total_usado * ingrediente.precio * 52).toFixed(2)
               )
             }}
-          </td>
+          </td> -->
         </tr>
       </tbody>
     </table>
@@ -72,16 +93,30 @@ export default {
         precio: "",
       },
       searchTerm: "",
+      proveedor: "",
     };
   },
   computed: {
     filteredIngredients() {
-      if (!this.searchTerm) {
-        return this.ingredientes;
+      let ingredients = this.ingredientes;
+      if (this.searchTerm) {
+        const term = this.searchTerm.toLowerCase();
+        ingredients = ingredients.filter((ingrediente) =>
+          ingrediente.nombre.toLowerCase().includes(term)
+        );
       }
-      const term = this.searchTerm.toLowerCase();
-      return this.ingredientes.filter((ingrediente) =>
-        ingrediente.nombre.toLowerCase().includes(term)
+      if (this.proveedor) {
+        ingredients = ingredients.filter(
+          (ingrediente) => ingrediente.proveedor === this.proveedor
+        );
+      }
+      return ingredients;
+    },
+    totalCompradoSemana() {
+      return this.filteredIngredients.reduce(
+        (total, ingrediente) =>
+          total + ingrediente.total_usado * ingrediente.precio,
+        0
       );
     },
   },
