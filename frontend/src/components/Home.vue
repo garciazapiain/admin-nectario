@@ -15,6 +15,15 @@ const handleClickSubplatillo = () => {
 const handleClickIngrediente = () => {
   router.push("/ingredientes");
 };
+
+const handleClickInventario = () => {
+  router.push("/inventarios");
+};
+
+const handleClickCompra = () => {
+  router.push("/compra");
+};
+
 </script>
 
 <template>
@@ -22,6 +31,8 @@ const handleClickIngrediente = () => {
     <h1 @click="handleClickPlatillo">Platillos</h1>
     <h1 @click="handleClickSubplatillo">Subplatillos</h1>
     <h1 @click="handleClickIngrediente">Ingredientes</h1>
+    <h1 @click="handleClickInventario">Inventarios</h1>
+    <h1 @click="handleClickCompra">Compra</h1>
   </div>
 </template>
   

@@ -293,4 +293,55 @@ app.get('/api/ingrediente/:id', async (req, res) => {
   }
 });
 
+app.post('/api/ingredientes', async (req, res) => {
+  const { nombre, unidad, precio } = req.body;
+  const client = await pool.connect();
+  try {
+    const result = await client.query('INSERT INTO ingredientes (nombre, unidad, precio) VALUES ($1, $2, $3) RETURNING *', [nombre, unidad, precio]);
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while inserting data into the database' });
+  } finally {
+    client.release();
+  }
+});
+
+app.post('/api/submissions', async (req, res) => {
+  const { store, timestamp, ingredients } = req.body;
+  const client = await pool.connect();
+  try {
+    // Convert ingredients to JSON string
+    const compra = JSON.stringify(ingredients);
+
+    // Insert into submissions table
+    const result = await client.query('INSERT INTO submissions (store, timestamp, compra) VALUES ($1, $2, $3) RETURNING *', [store, timestamp, compra]);
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while inserting data into the database' });
+  } finally {
+    client.release();
+  }
+});
+
+app.get('/api/submissions', async (req, res) => {
+  const client = await pool.connect();
+  try {
+    // Query the submissions table
+    const result = await client.query('SELECT * FROM submissions');
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while retrieving data from the database' });
+  } finally {
+    client.release();
+  }
+});
+
+
+
+
 app.listen(3000, () => console.log('Server listening on port 3000'));
