@@ -1,4 +1,6 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const cors = require('cors');
 const { Pool } = require('pg');
 
@@ -12,6 +14,42 @@ const pool = new Pool({
   database: 'juangarciazapiain',
   user: 'juangarciazapiain',
   password: '123',
+});
+
+let users = []; // This should be replaced with a real database
+
+app.post('/register', async (req, res) => {
+  const hashedPassword = await bcrypt.hash(req.body.password, 10);
+  const client = await pool.connect();
+  try {
+    await client.query('INSERT INTO users (name, password) VALUES ($1, $2)', [req.body.name, hashedPassword]);
+    res.status(201).send();
+  } catch (err) {
+    res.status(500).send(err);
+  } finally {
+    client.release();
+  }
+});
+
+app.post('/login', async (req, res) => {
+  const client = await pool.connect();
+  try {
+    const result = await client.query('SELECT * FROM users WHERE name = $1', [req.body.name]);
+    const user = result.rows[0];
+    if (user == null) {
+      return res.status(400).send('Cannot find user');
+    }
+    if (await bcrypt.compare(req.body.password, user.password)) {
+      const accessToken = jwt.sign({ name: user.name }, process.env.ACCESS_TOKEN_SECRET);
+      res.json({ accessToken: accessToken });
+    } else {
+      res.send('Not Allowed');
+    }
+  } catch (err) {
+    res.status(500).send(err);
+  } finally {
+    client.release();
+  }
 });
 
 app.get('/api/platillos', async (req, res) => {
