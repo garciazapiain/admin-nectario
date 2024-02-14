@@ -8,6 +8,7 @@ const { Pool } = require('pg');
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'frontend/public')));
 
 const pool = new Pool({
   host: 'localhost',
@@ -16,8 +17,6 @@ const pool = new Pool({
   user: 'juangarciazapiain',
   password: '123',
 });
-
-let users = []; // This should be replaced with a real database
 
 app.post('/api/register', async (req, res) => {
   const client = await pool.connect();
