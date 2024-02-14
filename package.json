@@ -1,14 +1,14 @@
 {
-    "name": "admin-nectario",
-    "version": "1.0.0",
-    "description": "",
-    "main": "server.js",
-    "scripts": {
-      "start": "node server.js",
-      "heroku-postbuild": "cd frontend && npm install && npm run build",
-      "preinstall": "npm config set production false"
-    },
-    "dependencies": {
-      "express": "^4.17.1"
-    }
+  "name": "admin-nectario",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "heroku-postbuild": "npm install --prefix frontend && npm run build --prefix frontend",
+    "preinstall": "npm config set production false"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
   }
+}
