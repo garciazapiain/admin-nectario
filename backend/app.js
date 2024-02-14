@@ -12,10 +12,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
-// });
-
 const pool = new Pool({
   host: 'localhost',
   port: 5432,
@@ -418,6 +414,9 @@ app.get('/api/proveedores', async (req, res) => {
 
 
 
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
+// });
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
