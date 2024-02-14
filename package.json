@@ -5,7 +5,8 @@
     "main": "server.js",
     "scripts": {
       "start": "node server.js",
-      "heroku-postbuild": "cd frontend && npm install && npm run build"
+      "heroku-postbuild": "cd frontend && npm install && npm run build",
+      "preinstall": "npm config set production false"
     },
     "dependencies": {
       "express": "^4.17.1"
