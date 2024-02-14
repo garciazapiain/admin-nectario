@@ -194,6 +194,8 @@ app.get('/api/ingredientes', async (req, res) => {
     unidad, 
     precio,
     proveedor, 
+    proveedor_id,
+    producto_clave,
     SUM(cantidad_platillo) AS cantidad_platillo,
     SUM(cantidad_subplatillo) AS cantidad_subplatillo,
     SUM(rendimiento_subplatillo) AS rendimiento_subplatillo,
@@ -209,6 +211,8 @@ app.get('/api/ingredientes', async (req, res) => {
           i.unidad, 
           i.precio, 
           i.proveedor,
+          i.proveedor_id,
+          i.producto_clave,
           COALESCE(SUM(pi.cantidad), 0) AS cantidad_platillo,
           0 AS cantidad_subplatillo,
           0 AS rendimiento_subplatillo,
@@ -219,7 +223,7 @@ app.get('/api/ingredientes', async (req, res) => {
       FROM ingredientes i
       LEFT JOIN platillos_ingredientes pi ON i.id_ingrediente = pi.id_ingrediente
       LEFT JOIN platillos p ON pi.id_platillo = p.id_platillo
-      GROUP BY i.nombre, i.id_ingrediente, i.unidad, i.precio, i.proveedor
+      GROUP BY i.nombre, i.id_ingrediente, i.unidad, i.precio, i.proveedor, i.proveedor_id, i.producto_clave
   )
   UNION
   (
@@ -228,7 +232,9 @@ app.get('/api/ingredientes', async (req, res) => {
           i.id_ingrediente, 
           i.unidad, 
           i.precio, 
-          i.proveedor,  -- Changed this line
+          i.proveedor,
+          i.proveedor_id,
+          i.producto_clave,
           0 AS cantidad_platillo,
           COALESCE(SUM(psi.cantidad), 0) AS cantidad_subplatillo,
           COALESCE(SUM(sp.rendimiento), 0) AS rendimiento_subplatillo,
@@ -241,10 +247,10 @@ app.get('/api/ingredientes', async (req, res) => {
       LEFT JOIN subplatillos sp ON spi.id_subplatillo = sp.id_subplatillo
       LEFT JOIN platillos_subplatillos psi ON sp.id_subplatillo = psi.id_subplatillo
       LEFT JOIN platillos p ON psi.id_platillo = p.id_platillo
-      GROUP BY i.nombre, i.id_ingrediente, i.unidad, i.precio, i.proveedor
+      GROUP BY i.nombre, i.id_ingrediente, i.unidad, i.precio, i.proveedor, i.proveedor_id, i.producto_clave
   )
   ) AS subquery
-  GROUP BY nombre, id_ingrediente, unidad, precio, proveedor
+  GROUP BY nombre, id_ingrediente, unidad, precio, proveedor, proveedor_id, producto_clave
   `);
     res.json(result.rows)
   } catch (error) {
@@ -340,6 +346,22 @@ app.get('/api/submissions', async (req, res) => {
     client.release();
   }
 });
+
+app.get('/api/proveedores', async (req, res) => {
+  const client = await pool.connect();
+  try {
+    // Query the submissions table
+    const result = await client.query('SELECT * FROM proveedores');
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while retrieving data from the database' });
+  } finally {
+    client.release();
+  }
+});
+
 
 
 

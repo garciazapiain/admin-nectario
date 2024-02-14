@@ -21,4 +21,8 @@ const handleClickBosques = () => {
 </template>
 
 <style scoped>
+button {
+  margin: 10px;
+  width: 150px;
+}
 </style>

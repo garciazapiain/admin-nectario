@@ -77,7 +77,7 @@ export default {
       for (const subPlatillo of selectedSubPlatillos) {
         const id_subplatillo = subPlatillo.id_subplatillo;
         const cantidad = subPlatillo.cantidad;
-        console.log(id_platillo, id_subplatillo, cantidad)
+        // console.log(id_platillo, id_subplatillo, cantidad)
         // Skip this subPlatillo if cantidad is null or undefined
         if (cantidad == null || cantidad === 0) {
           this.mensajeError = "Cantidad no puede ser 0";

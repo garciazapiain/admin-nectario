@@ -1,6 +1,12 @@
 <template>
   <div>
-    <h1>Bosques</h1>
+    <h1>Inventario {{ store }}</h1>
+    <div class="update-info">
+      <p class="update-text">
+        Última actualización:
+        <span class="timestamp">{{ lastUpdate() }}</span>
+      </p>
+    </div>
     <!-- ... -->
     <table>
       <thead>
@@ -11,7 +17,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(ingrediente, index) in filteredIngredients" :key="index">
+        <tr
+          v-for="(ingrediente, index) in filteredIngredients"
+          :key="index"
+          :class="{ 'highlight-row': ingrediente.producto_clave }"
+        >
           <td>{{ ingrediente.nombre }}</td>
           <td>{{ ingrediente.unidad }}</td>
           <td>
@@ -32,6 +42,8 @@
 
 <script setup>
 import { useRouter } from "vue-router";
+import moment from "moment-timezone";
+import "moment/locale/es";
 const router = useRouter();
 const handleClickIngrediente = (idIngrediente) => {
   router.push(`/ingrediente/${idIngrediente}`);
@@ -40,14 +52,15 @@ const handleClickIngrediente = (idIngrediente) => {
 
 <script>
 export default {
-  name: "Ingredientes",
+  name: "TomaInventario",
+  props: ["store"],
   data() {
     return {
       ingredientes: [],
       searchTerm: "",
       proveedor: "",
-      store: "bosques",
       submitData: [], // new state for data to be submitted
+      submissions: [], // Add this line
     };
   },
   computed: {
@@ -64,6 +77,10 @@ export default {
           (ingrediente) => ingrediente.proveedor === this.proveedor
         );
       }
+      // Exclude ingredients with proveedor_id === 1
+      ingredients = ingredients.filter(
+        (ingrediente) => ingrediente.proveedor_id !== 1
+      );
       return ingredients;
     },
   },
@@ -100,11 +117,21 @@ export default {
     },
     submitForm() {
       const date = new Date();
-      const timestamp = date.toISOString(); // Convert date to ISO string (YYYY-MM-DDTHH:mm:ss.sssZ)
+      const year = date.getUTCFullYear();
+      const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Months are 0-based in JavaScript
+      const day = String(date.getUTCDate()).padStart(2, "0");
+      const hours = String(date.getUTCHours()).padStart(2, "0");
+      const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+
+      const timestamp = `${year}-${month}-${day}T${hours}:${minutes}:00.000Z`; // YYYY-MM-DDTHH:mm:ss.sssZ
+      const dateInTimeZone = moment(timestamp)
+        .tz("America/Mexico_City")
+        .locale("es");
+      const formattedDate = dateInTimeZone.format("MMMM D YYYY, HH:mm");
 
       const dataToSubmit = {
         store: this.store,
-        timestamp, // Add timestamp to dataToSubmit
+        timestamp: formattedDate, // Add timestamp to dataToSubmit
         ingredients: this.submitData,
       };
 
@@ -122,6 +149,21 @@ export default {
           console.error("Error:", error);
         });
     },
+    lastUpdate() {
+      const storeSubmissions = this.submissions.filter(
+        (submission) => submission.store === this.store
+      );
+      if (storeSubmissions.length > 0) {
+        const lastSubmission = storeSubmissions.reduce((latest, current) =>
+          new Date(latest.timestamp) > new Date(current.timestamp)
+            ? latest
+            : current
+        );
+        return new Date(lastSubmission.timestamp).toLocaleString();
+      } else {
+        return "N/A";
+      }
+    },
   },
   async mounted() {
     const response = await fetch("http://localhost:3000/api/ingredientes");
@@ -129,14 +171,63 @@ export default {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     this.ingredientes = await response.json();
+
+    const responseSubmissions = await fetch(
+      "http://localhost:3000/api/submissions"
+    );
+    if (!responseSubmissions.ok) {
+      throw new Error(`HTTP error! status: ${responseSubmissions.status}`);
+    }
+    this.submissions = await responseSubmissions.json();
+
+    const storeSubmissions = this.submissions.filter(
+      (submission) => submission.store === this.store
+    );
+    let latestSubmission = null;
+    if (storeSubmissions.length > 0) {
+      latestSubmission = storeSubmissions.reduce((latest, current) =>
+        new Date(latest.timestamp) > new Date(current.timestamp)
+          ? latest
+          : current
+      );
+    }
+
     this.ingredientes.forEach((ingrediente) => {
-      ingrediente.cantidad_inventario = 0; // Initialize cantidad for each ingredient
+      if (latestSubmission && latestSubmission.compra) {
+        const ingredientData = latestSubmission.compra.find(
+          (i) => i.id_ingrediente === ingrediente.id_ingrediente
+        );
+        ingrediente.cantidad_inventario = ingredientData
+          ? ingredientData.cantidad_inventario
+          : 0;
+      } else {
+        ingrediente.cantidad_inventario = 0; // Initialize cantidad for each ingredient
+      }
       this.updateSubmitData(ingrediente); // Initialize submitData
     });
-    this.ingredientes.sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+    this.ingredientes.sort((a, b) => {
+      // Sort by producto_clave first (true values come first)
+      if (a.producto_clave !== b.producto_clave) {
+        return b.producto_clave - a.producto_clave;
+      }
+      // If producto_clave is the same, sort alphabetically
+      return a.nombre.localeCompare(b.nombre);
+    });
   },
 };
 </script>
 
 <style scoped>
+.highlight-row {
+  background-color: rgb(97, 133, 145);
+  font-weight: bold;
+  color: black;
+}
+button {
+  margin: 5px;
+}
+input {
+  width: 50px;
+}
 </style>

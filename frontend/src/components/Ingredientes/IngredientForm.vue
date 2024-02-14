@@ -75,7 +75,7 @@ export default {
       );
 
       for (const ingrediente of selectedIngredients) {
-        console.log(ingrediente);
+        // console.log(ingrediente);
         const id_ingrediente = ingrediente.id_ingrediente;
         const cantidad = ingrediente.cantidad;
 

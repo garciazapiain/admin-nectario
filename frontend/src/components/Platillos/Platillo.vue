@@ -107,7 +107,7 @@ export default {
     totalCost() {
       let total = 0;
       this.aggregatedIngredients.forEach((ingrediente) => {
-        console.log(total);
+        // console.log(total);
         total += ingrediente.precio * ingrediente.cantidad;
       });
       return total;

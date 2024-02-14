@@ -96,7 +96,7 @@ export default {
           proveedor: ingrediente.proveedor,
         });
       }
-      console.log(this.submitData); // Log submitData every time it gets updated
+      // console.log(this.submitData); // Log submitData every time it gets updated
     },
     submitForm() {
       const date = new Date();
