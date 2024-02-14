@@ -5,7 +5,7 @@
     "main": "server.js",
     "scripts": {
       "start": "node server.js",
-      "heroku-postbuild": "cd client && npm install && npm run dev"
+      "heroku-postbuild": "cd frontend && npm install && npm run dev"
     },
     "dependencies": {
       "express": "^4.17.1"
