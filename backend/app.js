@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -18,12 +19,12 @@ const pool = new Pool({
 
 let users = []; // This should be replaced with a real database
 
-app.post('/register', async (req, res) => {
-  const hashedPassword = await bcrypt.hash(req.body.password, 10);
+app.post('/api/register', async (req, res) => {
   const client = await pool.connect();
   try {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
     await client.query('INSERT INTO users (name, password) VALUES ($1, $2)', [req.body.name, hashedPassword]);
-    res.status(201).send();
+    res.status(201).send('User registered');
   } catch (err) {
     res.status(500).send(err);
   } finally {
@@ -31,22 +32,32 @@ app.post('/register', async (req, res) => {
   }
 });
 
-app.post('/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
   const client = await pool.connect();
   try {
-    const result = await client.query('SELECT * FROM users WHERE name = $1', [req.body.name]);
+    const { name, password } = req.body;
+    if (!name || !password) {
+      return res.status(400).json({ error: 'Username and password are required.' });
+    }
+
+    const result = await client.query('SELECT * FROM users WHERE name = $1', [name]);
     const user = result.rows[0];
-    if (user == null) {
-      return res.status(400).send('Cannot find user');
+
+    if (!user) {
+      return res.status(400).json({ error: 'User not found.' });
     }
-    if (await bcrypt.compare(req.body.password, user.password)) {
-      const accessToken = jwt.sign({ name: user.name }, process.env.ACCESS_TOKEN_SECRET);
-      res.json({ accessToken: accessToken });
-    } else {
-      res.send('Not Allowed');
+
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatch) {
+      return res.status(403).json({ error: 'Invalid password.' });
     }
+
+    const accessToken = jwt.sign({ name: user.name, isAdmin: user.isAdmin }, process.env.ACCESS_TOKEN_SECRET);
+    res.json({ accessToken, isAdmin: user.isAdmin });
+
   } catch (err) {
-    res.status(500).send(err);
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error.' });
   } finally {
     client.release();
   }

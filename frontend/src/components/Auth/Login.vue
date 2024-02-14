@@ -1,0 +1,66 @@
+<template>
+  <div>
+    <h2>Login</h2>
+    <form @submit.prevent="submitForm">
+      <input type="text" v-model="username" placeholder="Username" required />
+      <input
+        type="password"
+        v-model="password"
+        placeholder="Password"
+        required
+      />
+      <button type="submit">Login</button>
+    </form>
+    <p v-if="errorMessage">{{ errorMessage }}</p>
+  </div>
+</template>
+
+<script>
+import { useRouter } from "vue-router";
+
+export default {
+  data() {
+    return {
+      username: "",
+      password: "",
+      errorMessage: "",
+    };
+  },
+  setup() {
+    const router = useRouter();
+    return { router };
+  },
+  methods: {
+    async submitForm() {
+      try {
+        const response = await fetch("http://localhost:3000/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: this.username,
+            password: this.password,
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.accessToken) {
+            console.log(data)
+            localStorage.setItem("jwt", data.accessToken);
+            localStorage.setItem('isAdmin', data.isAdmin);
+            this.router.push("/"); // Redirect to home page
+          } else {
+            this.errorMessage = "Login failed";
+          }
+        } else {
+          this.errorMessage = "An error occurred";
+        }
+      } catch (error) {
+        this.errorMessage = "An error occurred";
+      }
+    },
+  },
+};
+</script>

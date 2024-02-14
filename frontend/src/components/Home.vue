@@ -1,8 +1,11 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
+
+console.log(isAdmin);
 
 const handleClickPlatillo = () => {
   router.push("/platillos");
@@ -24,15 +27,20 @@ const handleClickCompra = () => {
   router.push("/compra");
 };
 
+onMounted(() => {
+  if (!localStorage.getItem("jwt")) {
+    router.push("/login");
+  }
+});
 </script>
 
 <template>
   <div>
-    <h1 @click="handleClickPlatillo">Platillos</h1>
-    <h1 @click="handleClickSubplatillo">Subplatillos</h1>
-    <h1 @click="handleClickIngrediente">Ingredientes</h1>
     <h1 @click="handleClickInventario">Inventarios</h1>
     <h1 @click="handleClickCompra">Compra</h1>
+    <h1 v-if="isAdmin" @click="handleClickPlatillo">Platillos</h1>
+    <h1 v-if="isAdmin" @click="handleClickSubplatillo">Subplatillos</h1>
+    <h1 v-if="isAdmin" @click="handleClickIngrediente">Ingredientes</h1>
   </div>
 </template>
   
