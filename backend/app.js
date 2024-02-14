@@ -3,13 +3,19 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
+const path = require('path'); // Add this line
 const { Pool } = require('pg');
 
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'frontend/public')));
+app.use(express.static(path.join(__dirname, 'frontend/dist'))); // Change 'public' to 'dist'
+
+// Add this route handler
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend/dist', 'index.html'));
+});
 
 const pool = new Pool({
   host: 'localhost',
