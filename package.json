@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node backend/app.js",
+    "dev": "nodemon backend/app.js",
     "heroku-postbuild": "cd frontend && npm install && npm run build"
   },
   "dependencies": {
