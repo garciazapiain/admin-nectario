@@ -284,8 +284,8 @@ input {
 }
 
 button {
-  width: 50px; /* Increase width */
-  height: 50px; /* Increase height */
+  width: 100px; /* Increase width */
+  height: 80px; /* Increase height */
   font-size: 20px; /* Increase font size */
   margin: 5px;
   display: flex; /* Add this line */
@@ -294,6 +294,7 @@ button {
 }
 .button-row {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   margin-bottom: 10px;
 }
