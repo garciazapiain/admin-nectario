@@ -37,7 +37,7 @@ export default {
           ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
           : "http://localhost:3000/api";
       try {
-        const response = await fetch(`${API_URL}/api/register`, {
+        const response = await fetch(`${API_URL}/register`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
