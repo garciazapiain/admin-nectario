@@ -10,6 +10,11 @@
         <span class="timestamp">{{ lastUpdate() }}</span>
       </p>
     </div>
+    <input
+      v-model="searchTerm"
+      placeholder="Buscar ingrediente..."
+      class="search-bar"
+    />
     <!-- ... -->
     <table>
       <thead>
@@ -28,14 +33,18 @@
           <td>{{ ingrediente.nombre }}</td>
           <td>{{ ingrediente.unidad }}</td>
           <td>
-            <input
-              type="number"
-              v-model.number="ingrediente.cantidad_inventario"
-              min="0"
-              @change="updateSubmitData(ingrediente)"
-            />
-            <button @click="increaseQuantity(ingrediente)">+</button>
-            <button @click="decreaseQuantity(ingrediente)">-</button>
+            <div class="input-row">
+              <input
+                type="number"
+                v-model.number="ingrediente.cantidad_inventario"
+                min="0"
+                @change="updateSubmitData(ingrediente)"
+              />
+            </div>
+            <div class="button-row">
+              <button @click="decreaseQuantity(ingrediente)">-</button>
+              <button @click="increaseQuantity(ingrediente)">+</button>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -250,6 +259,11 @@ export default {
 </script>
 
 <style scoped>
+.search-bar {
+  width: 50%;
+  padding: 10px;
+  font-size: 16px;
+}
 .highlight-row {
   background-color: rgb(97, 133, 145);
   font-weight: bold;
@@ -260,6 +274,12 @@ button {
 }
 input {
   width: 50px;
+}
+.input-row,
+.button-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
 }
 .sticky-submit-wrapper {
   position: sticky;
