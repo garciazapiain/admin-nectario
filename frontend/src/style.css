@@ -28,6 +28,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  touch-action: manipulation;
 }
 
 h1 {
@@ -114,3 +115,4 @@ th {
   background-color: #4caf50;
   color: white;
 }
+
