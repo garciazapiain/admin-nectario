@@ -69,11 +69,7 @@ export default {
   },
   methods: {
     getInventory(store, ingredientId) {
-      // console.log("Store:", store);
-      // console.log("Today's Submissions:", this.todaysSubmissions);
-      const submission = this.todaysSubmissions.find(
-        (sub) => sub.store === store
-      );
+      const submission = this.lastSubmission(store);
 
       if (!submission) {
         return "N/A";
@@ -82,19 +78,23 @@ export default {
       const ingredient = submission.compra.find(
         (ing) => ing.id_ingrediente === ingredientId
       );
-      // if (!ingredient) {
-      //   console.log(
-      //     `No ingredient found for id: ${ingredientId} in store: ${store}`
-      //   );
-      //   return "N/A";
-      // }
 
-      // console.log(
-      //   `Found ingredient: ${JSON.stringify(
-      //     ingredient
-      //   )} for id: ${ingredientId} in store: ${store}`
-      // );
-      return ingredient.cantidad_inventario;
+      return ingredient ? ingredient.cantidad_inventario : "N/A";
+    },
+    lastSubmission(store) {
+      const storeSubmissions = this.submissions.filter(
+        (submission) => submission.store === store
+      );
+
+      if (storeSubmissions.length > 0) {
+        return storeSubmissions.reduce((latest, current) =>
+          new Date(latest.timestamp) > new Date(current.timestamp)
+            ? latest
+            : current
+        );
+      } else {
+        return null;
+      }
     },
     getProveedorName(id) {
       const proveedor = this.proveedores.find(
@@ -106,35 +106,21 @@ export default {
       const storeSubmissions = this.submissions.filter(
         (submission) => submission.store === store
       );
+      // console.log("storeSubmissions:", storeSubmissions);
       if (storeSubmissions.length > 0) {
         const lastSubmission = storeSubmissions.reduce((latest, current) =>
           new Date(latest.timestamp) > new Date(current.timestamp)
             ? latest
             : current
         );
-        return new Date(lastSubmission.timestamp).toLocaleString();
+        // console.log("lastSubmission:", lastSubmission);
+        const lastUpdate = new Date(lastSubmission.timestamp).toLocaleString();
+        // console.log("lastUpdate:", lastUpdate);
+        return lastUpdate;
       } else {
         return "N/A";
       }
     },
-  },
-  async mounted() {
-    const response = await fetch("http://localhost:3000/api/ingredientes");
-    // ... handle the response
-
-    const submissionsResponse = await fetch(
-      "http://localhost:3000/api/submissions"
-    );
-    // ... handle the response
-
-    const proveedoresResponse = await fetch(
-      "http://localhost:3000/api/proveedores"
-    );
-    if (proveedoresResponse.ok) {
-      this.proveedores = await proveedoresResponse.json();
-    } else {
-      console.error("HTTP error:", proveedoresResponse.status);
-    }
   },
   computed: {
     todaysSubmissions() {
@@ -144,9 +130,7 @@ export default {
       return this.submissions.filter((submission) => {
         const submissionDate = new Date(submission.timestamp);
         const submissionDateString = submissionDate.toISOString().split("T")[0];
-
         // console.log(submissionDateString, todayString); // Log the dates (for debugging purposes
-
         return submissionDateString === todayString;
       });
     },
@@ -171,6 +155,19 @@ export default {
       }
 
       return ingredients;
+    },
+  },
+  watch: {
+    todaysSubmissions: {
+      handler(newVal, oldVal) {
+        // Call getInventory for each submission and each ingredient
+        newVal.forEach((submission) => {
+          this.ingredients.forEach((ingredient) => {
+            this.getInventory(submission.store, ingredient.id);
+          });
+        });
+      },
+      deep: true,
     },
   },
   async mounted() {

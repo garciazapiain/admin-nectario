@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div v-if="submitMessage" :class="submitMessage.type">
+      {{ submitMessage.text }}
+    </div>
     <h1>Inventario {{ store }}</h1>
     <div class="update-info">
       <p class="update-text">
@@ -29,6 +32,7 @@
               type="number"
               v-model.number="ingrediente.cantidad_inventario"
               min="0"
+              @change="updateSubmitData(ingrediente)"
             />
             <button @click="increaseQuantity(ingrediente)">+</button>
             <button @click="decreaseQuantity(ingrediente)">-</button>
@@ -36,7 +40,9 @@
         </tr>
       </tbody>
     </table>
-    <button @click="submitForm">Submit</button>
+    <div class="sticky-submit-wrapper">
+      <button @click="submitForm">Actualizar</button>
+    </div>
   </div>
 </template>
 
@@ -61,6 +67,9 @@ export default {
       proveedor: "",
       submitData: [], // new state for data to be submitted
       submissions: [], // Add this line
+      isScrollingDown: false,
+      lastScrollPosition: 0,
+      submitMessage: null,
     };
   },
   computed: {
@@ -85,16 +94,6 @@ export default {
     },
   },
   methods: {
-    increaseQuantity(ingrediente) {
-      ingrediente.cantidad_inventario++;
-      this.updateSubmitData(ingrediente);
-    },
-    decreaseQuantity(ingrediente) {
-      if (ingrediente.cantidad_inventario > 0) {
-        ingrediente.cantidad_inventario--;
-        this.updateSubmitData(ingrediente);
-      }
-    },
     updateSubmitData(ingrediente) {
       const index = this.submitData.findIndex(
         (i) => i.nombre === ingrediente.nombre
@@ -144,9 +143,26 @@ export default {
         body: JSON.stringify(dataToSubmit),
       })
         .then((response) => response.json())
-        .then((data) => console.log(data))
+        .then((data) => {
+          console.log(data);
+          this.submitMessage = {
+            type: "success-message",
+            text: "Actualización exitosa",
+          };
+          // Make successMessage disappear after 5 seconds
+          setTimeout(() => {
+            this.submitMessage = null;
+          }, 5000);
+        })
         .catch((error) => {
           console.error("Error:", error);
+          this.submitMessage = {
+            type: "error-message",
+            text: "Error al actualizar",
+          };
+          setTimeout(() => {
+            this.submitMessage = null;
+          }, 5000);
         });
     },
     lastUpdate() {
@@ -229,5 +245,30 @@ button {
 }
 input {
   width: 50px;
+}
+.sticky-submit-wrapper {
+  position: sticky;
+  bottom: 0;
+  right: 0;
+  background-color: darkgray;
+  width: 100%;
+}
+.success-message {
+  position: fixed;
+  top: 50px;
+  right: 10px;
+  background-color: #dff0d8;
+  color: #3c763d;
+  padding: 10px;
+  border-radius: 5px;
+}
+.error-message {
+  position: fixed;
+  top: 50px;
+  right: 10px;
+  background-color: #f2dede;
+  color: #a94442;
+  padding: 10px;
+  border-radius: 5px;
 }
 </style>

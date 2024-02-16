@@ -15,7 +15,7 @@ app.use(express.static(path.join(__dirname, '../frontend/dist')));
 const pool = new Pool({
   host: 'localhost',
   port: 5432,
-  database: 'juangarciazapiain',
+  database: 'inventarios',
   user: 'juangarciazapiain',
   password: '123',
 });
