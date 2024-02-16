@@ -195,9 +195,12 @@ export default {
       console.error("HTTP error:", submissionsResponse.status);
     }
 
-    const proveedoresResponse = await fetch(
-      "http://localhost:3000/api/proveedores"
-    );
+    const API_URL =
+      process.env.NODE_ENV === "production"
+        ? "https://https://admin-nectario-7e327f081e09.herokuapp.com/api"
+        : "http://localhost:3000/api";
+
+    const proveedoresResponse = await fetch(`${API_URL}/proveedores`);
     if (proveedoresResponse.ok) {
       let proveedores = await proveedoresResponse.json();
       // Filter out the provider with id 1
