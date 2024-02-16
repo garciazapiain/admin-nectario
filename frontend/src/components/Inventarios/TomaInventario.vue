@@ -43,10 +43,20 @@
             </div>
             <div class="button-row">
               <div class="button-container">
-                <button @click="decreaseQuantity(ingrediente)">-</button>
+                <button
+                  class="button-increase-decrease"
+                  @click="decreaseQuantity(ingrediente)"
+                >
+                  -
+                </button>
               </div>
               <div class="button-container">
-                <button @click="increaseQuantity(ingrediente)">+</button>
+                <button
+                  class="button-increase-decrease"
+                  @click="increaseQuantity(ingrediente)"
+                >
+                  +
+                </button>
               </div>
             </div>
           </td>
@@ -54,7 +64,7 @@
       </tbody>
     </table>
     <div class="sticky-submit-wrapper">
-      <button @click="submitForm">Actualizar</button>
+      <button class="button-actualizar" @click="submitForm">Actualizar</button>
     </div>
   </div>
 </template>
@@ -283,7 +293,14 @@ input {
   margin: 10px;
 }
 
-button {
+.button-actualizar {
+  width: fit-content; /* Increase width */
+  height: fit-content; /* Increase height */
+  font-size: 20px; /* Increase font size */
+  margin: 5px;
+}
+
+.button-increase-decrease {
   width: 50px; /* Increase width */
   height: 50px; /* Increase height */
   font-size: 20px; /* Increase font size */
@@ -300,9 +317,12 @@ button {
 .sticky-submit-wrapper {
   position: sticky;
   bottom: 0;
-  right: 0;
-  background-color: darkgray;
+  height: 80px;
   width: 100%;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  background-color: darkgray;
 }
 .success-message {
   position: fixed;
