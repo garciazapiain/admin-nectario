@@ -197,7 +197,7 @@ export default {
 
     const API_URL =
       process.env.NODE_ENV === "production"
-        ? "https://https://admin-nectario-7e327f081e09.herokuapp.com/api"
+        ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
         : "http://localhost:3000/api";
 
     const proveedoresResponse = await fetch(`${API_URL}/proveedores`);
