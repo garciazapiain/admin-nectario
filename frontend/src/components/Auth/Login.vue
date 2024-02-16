@@ -32,8 +32,12 @@ export default {
   },
   methods: {
     async submitForm() {
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
       try {
-        const response = await fetch("http://localhost:3000/api/login", {
+        const response = await fetch(`${API_URL}/api/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -47,9 +51,9 @@ export default {
         if (response.ok) {
           const data = await response.json();
           if (data.accessToken) {
-            console.log(data)
+            console.log(data);
             localStorage.setItem("jwt", data.accessToken);
-            localStorage.setItem('isAdmin', data.isAdmin);
+            localStorage.setItem("isAdmin", data.isAdmin);
             this.router.push("/"); // Redirect to home page
           } else {
             this.errorMessage = "Login failed";

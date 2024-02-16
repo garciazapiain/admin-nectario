@@ -133,9 +133,12 @@ export default {
         timestamp: formattedDate, // Add timestamp to dataToSubmit
         ingredients: this.submitData,
       };
-
       // Send a POST request to the server
-      fetch("http://localhost:3000/api/submissions", {
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
+      fetch(`${API_URL}/submissions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -182,15 +185,17 @@ export default {
     },
   },
   async mounted() {
-    const response = await fetch("http://localhost:3000/api/ingredientes");
+    const API_URL =
+      process.env.NODE_ENV === "production"
+        ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+        : "http://localhost:3000/api";
+    const response = await fetch(`${API_URL}/ingredientes`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     this.ingredientes = await response.json();
 
-    const responseSubmissions = await fetch(
-      "http://localhost:3000/api/submissions"
-    );
+    const responseSubmissions = await fetch(`${API_URL}/submissions`);
     if (!responseSubmissions.ok) {
       throw new Error(`HTTP error! status: ${responseSubmissions.status}`);
     }

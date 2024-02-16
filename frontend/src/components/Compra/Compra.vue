@@ -171,7 +171,11 @@ export default {
     },
   },
   async mounted() {
-    const response = await fetch("http://localhost:3000/api/ingredientes");
+    const API_URL =
+      process.env.NODE_ENV === "production"
+        ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+        : "http://localhost:3000/api";
+    const response = await fetch(`${API_URL}/ingredientes`);
     if (response.ok) {
       this.ingredients = await response.json();
       this.ingredients.sort((a, b) => {
@@ -186,19 +190,12 @@ export default {
       console.error("HTTP error:", response.status);
     }
 
-    const submissionsResponse = await fetch(
-      "http://localhost:3000/api/submissions"
-    );
+    const submissionsResponse = await fetch(`${API_URL}/submissions`);
     if (submissionsResponse.ok) {
       this.submissions = await submissionsResponse.json();
     } else {
       console.error("HTTP error:", submissionsResponse.status);
     }
-
-    const API_URL =
-      process.env.NODE_ENV === "production"
-        ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-        : "http://localhost:3000/api";
 
     const proveedoresResponse = await fetch(`${API_URL}/proveedores`);
     if (proveedoresResponse.ok) {

@@ -32,8 +32,12 @@ export default {
   },
   methods: {
     async submitForm() {
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
       try {
-        const response = await fetch("http://localhost:3000/api/register", {
+        const response = await fetch(`${API_URL}/api/register`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
