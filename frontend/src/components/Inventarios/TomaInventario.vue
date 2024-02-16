@@ -42,8 +42,12 @@
               />
             </div>
             <div class="button-row">
-              <button @click="decreaseQuantity(ingrediente)">-</button>
-              <button @click="increaseQuantity(ingrediente)">+</button>
+              <div class="button-container">
+                <button @click="decreaseQuantity(ingrediente)">-</button>
+              </div>
+              <div class="button-container">
+                <button @click="increaseQuantity(ingrediente)">+</button>
+              </div>
             </div>
           </td>
         </tr>
@@ -269,13 +273,25 @@ export default {
   font-weight: bold;
   color: black;
 }
-button {
-  margin: 5px;
-}
 input {
-  width: 50px;
+  width: 70%;
+  height: 2.5rem;
+  text-align: center;
+  font-size: 1.5rem;
 }
-.input-row,
+.button-container {
+  margin: 10px;
+}
+
+button {
+  width: 50px; /* Increase width */
+  height: 50px; /* Increase height */
+  font-size: 20px; /* Increase font size */
+  margin: 5px;
+  display: flex; /* Add this line */
+  justify-content: center; /* Add this line */
+  align-items: center; /* Add this line */
+}
 .button-row {
   display: flex;
   justify-content: center;
