@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>
+    <!-- <p>
       Total $ Comprado:
       {{
         new Intl.NumberFormat("es-MX", {
@@ -8,7 +8,8 @@
           currency: "MXN",
         }).format(totalCompradoSemana)
       }}
-    </p>
+    </p> -->
+    <h1>Ingredientes</h1>
     <input v-model="searchTerm" placeholder="Search" />
     <select v-model="proveedor">
       <option value="">All</option>
@@ -21,8 +22,8 @@
           <th>Nombre</th>
           <th>Unidad</th>
           <th>Precio</th>
-          <th>Total usado</th>
-          <th>Total $ Comprado</th>
+          <!-- <th>Total usado</th>
+          <th>Total $ Comprado</th> -->
           <!-- <th>Total usado / año</th>
           <th>Total $ Comprado / año</th> -->
         </tr>
@@ -37,7 +38,7 @@
           <td>{{ ingrediente.nombre }}</td>
           <td>{{ ingrediente.unidad }}</td>
           <td>${{ ingrediente.precio }}</td>
-          <td>
+          <!-- <td>
             {{ Math.round(ingrediente.total_usado) + " " + ingrediente.unidad }}
           </td>
           <td>
@@ -46,7 +47,7 @@
                 (ingrediente.total_usado * ingrediente.precio).toFixed(2)
               )
             }}
-          </td>
+          </td> -->
           <!-- <td>
             {{
               Math.round(ingrediente.total_usado * 52) +

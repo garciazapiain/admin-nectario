@@ -8,6 +8,7 @@ const handleClickPlatillo = (idPlatillo) => {
 
 <template>
   <div>
+    <h1>Platillos</h1>
     <input v-model="searchTerm" placeholder="Search" />
     <table>
       <thead>

@@ -8,6 +8,7 @@ const handleClickSubPlatillo = (idSubplatillo) => {
 
 <template>
   <div>
+    <h1>Subplatillos</h1>
     <table>
       <thead>
         <tr>
