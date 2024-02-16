@@ -12,12 +12,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const pool = new Pool({
-  host: 'localhost',
-  port: 5432,
-  database: 'inventarios',
-  user: 'juangarciazapiain',
-  password: '123',
+  connectionString: isProduction ? process.env.DATABASE_URL : 'postgresql://juangarciazapiain:123@localhost:5432/inventarios',
+  ssl: isProduction ? { rejectUnauthorized: false } : false,
 });
 
 app.post('/api/register', async (req, res) => {
