@@ -94,6 +94,16 @@ export default {
     },
   },
   methods: {
+    increaseQuantity(ingrediente) {
+      ingrediente.cantidad_inventario++;
+      this.updateSubmitData(ingrediente);
+    },
+    decreaseQuantity(ingrediente) {
+      if (ingrediente.cantidad_inventario > 0) {
+        ingrediente.cantidad_inventario--;
+        this.updateSubmitData(ingrediente);
+      }
+    },
     updateSubmitData(ingrediente) {
       const index = this.submitData.findIndex(
         (i) => i.nombre === ingrediente.nombre
