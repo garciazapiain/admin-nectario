@@ -15,7 +15,7 @@ const handleLogout = () => {
 
 <template>
   <div>
-    <div>
+    <div class="buttonsTop">
       <button class="main-page-button" @click="goToMainPage">
         Página principal
       </button>
@@ -35,13 +35,17 @@ const handleLogout = () => {
 </template>
 
 <style scoped>
+.buttonsTop {
+  display: flex;
+  justify-content: space-between;
+}
 .main-page-button {
-  position: fixed;
+  position: static;
   top: 10px;
   left: 15px;
 }
 .logout-button {
-  position: fixed;
+  position: static;
   top: 10px;
   right: 15px;
 }
