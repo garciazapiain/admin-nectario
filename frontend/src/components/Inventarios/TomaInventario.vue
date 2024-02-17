@@ -118,12 +118,12 @@ export default {
   },
   methods: {
     increaseQuantity(ingrediente) {
-      ingrediente.cantidad_inventario++;
+      ingrediente.cantidad_inventario += 0.5;
       this.updateSubmitData(ingrediente);
     },
     decreaseQuantity(ingrediente) {
       if (ingrediente.cantidad_inventario > 0) {
-        ingrediente.cantidad_inventario--;
+        ingrediente.cantidad_inventario -= 0.5;
         this.updateSubmitData(ingrediente);
       }
     },
