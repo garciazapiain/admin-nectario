@@ -15,7 +15,7 @@
       <div>
         <h2>Filtros:</h2>
         <label for="proveedor">Proveedor:</label>
-        <select id="proveedor" v-model="selectedProveedor">
+        <select class="filterProveedor" id="proveedor" v-model="selectedProveedor">
           <option value="">Todos</option>
           <option
             v-for="proveedor in proveedores"
@@ -26,7 +26,11 @@
           </option>
         </select>
       </div>
-      <input v-model="searchTerm" placeholder="Buscar insumo" />
+      <input
+        class="search-bar"
+        v-model="searchTerm"
+        placeholder="Buscar insumo"
+      />
     </div>
     <table>
       <thead>
@@ -210,6 +214,16 @@ export default {
 </script>
 
 <style scoped>
+.filterProveedor {
+  margin-left: 10px;
+  height: 2rem;
+  font-size: 1rem;
+}
+.search-bar {
+  width: 50%;
+  padding: 10px;
+  font-size: 16px;
+}
 .highlight-row {
   background-color: rgb(97, 133, 145);
   font-weight: bold;
