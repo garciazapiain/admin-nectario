@@ -35,27 +35,36 @@
           <td>
             <div class="input-row">
               <input
-                type="number"
                 v-model.number="ingrediente.cantidad_inventario"
                 min="0"
                 @change="updateSubmitData(ingrediente)"
               />
             </div>
-            <div class="button-row">
-              <div class="button-container">
-                <button
-                  class="button-increase-decrease"
-                  @click="decreaseQuantity(ingrediente)"
-                >
-                  -
-                </button>
+            <div class="button-row-parent">
+              <div class="button-row">
+                <div class="button-container">
+                  <button
+                    class="button-increase-decrease"
+                    @click="decreaseQuantity(ingrediente)"
+                  >
+                    -
+                  </button>
+                </div>
+                <div class="button-container">
+                  <button
+                    class="button-increase-decrease"
+                    @click="increaseQuantity(ingrediente)"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
-              <div class="button-container">
+              <div class="">
                 <button
-                  class="button-increase-decrease"
-                  @click="increaseQuantity(ingrediente)"
+                  class="button-suficiente"
+                  @click="setSufficient(ingrediente)"
                 >
-                  +
+                  NO URGE
                 </button>
               </div>
             </div>
@@ -118,14 +127,20 @@ export default {
   },
   methods: {
     increaseQuantity(ingrediente) {
-      ingrediente.cantidad_inventario += 0.5;
+      if (ingrediente.cantidad_inventario === "Suficiente") {
+        ingrediente.cantidad_inventario = 0.5;
+      } else {
+        ingrediente.cantidad_inventario += 0.5;
+      }
       this.updateSubmitData(ingrediente);
     },
     decreaseQuantity(ingrediente) {
-      if (ingrediente.cantidad_inventario > 0) {
+      if (ingrediente.cantidad_inventario === "Suficiente") {
+        ingrediente.cantidad_inventario = 0;
+      } else if (ingrediente.cantidad_inventario > 0) {
         ingrediente.cantidad_inventario -= 0.5;
-        this.updateSubmitData(ingrediente);
       }
+      this.updateSubmitData(ingrediente);
     },
     updateSubmitData(ingrediente) {
       const index = this.submitData.findIndex(
@@ -216,6 +231,10 @@ export default {
         return "N/A";
       }
     },
+    setSufficient(ingrediente) {
+      ingrediente.cantidad_inventario = "Suficiente";
+      this.updateSubmitData(ingrediente);
+    },
   },
   async mounted() {
     const API_URL =
@@ -290,7 +309,19 @@ input {
   font-size: 1.5rem;
 }
 .button-container {
+  width: 100%;
+  height: 2.5rem;
   margin: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.button-suficiente {
+  width: 100%;
+  height: 50px;
+  font-size: 20px;
+  margin: 5px;
+  border: #a94442 solid 3px;
 }
 
 .button-actualizar {
@@ -308,6 +339,10 @@ input {
   display: flex; /* Add this line */
   justify-content: center; /* Add this line */
   align-items: center; /* Add this line */
+}
+.button-row-parent {
+  display: flex;
+  flex-direction: column;
 }
 .button-row {
   display: flex;

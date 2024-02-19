@@ -15,15 +15,24 @@
       <div>
         <h2>Filtros:</h2>
         <label for="proveedor">Proveedor:</label>
-        <select class="filterProveedor" id="proveedor" v-model="selectedProveedor">
+        <select
+          class="filterProveedor"
+          id="proveedor"
+          v-model="selectedProveedor"
+        >
           <option value="">Todos</option>
           <option
-            v-for="proveedor in proveedores"
+            v-for="proveedor in sortedProveedores"
             :value="proveedor.id"
             :key="proveedor.id"
           >
             {{ proveedor.nombre }}
           </option>
+        </select>
+        <label for="insumos">Insumos:</label>
+        <select class="filterInsumos" id="insumos" v-model="selectedInsumos">
+          <option value="Necesario">Necesario</option>
+          <option value="Todos">Todos</option>
         </select>
       </div>
       <input
@@ -69,6 +78,7 @@ export default {
       proveedores: [],
       selectedProveedor: "",
       searchTerm: "",
+      selectedInsumos: "Necesario",
     };
   },
   methods: {
@@ -158,7 +168,36 @@ export default {
         );
       }
 
+      if (this.selectedInsumos === "Necesario") {
+        ingredients = ingredients.filter((ingredient) => {
+          const moralInventory = this.getInventory(
+            "moral",
+            ingredient.id_ingrediente
+          );
+          const bosquesInventory = this.getInventory(
+            "bosques",
+            ingredient.id_ingrediente
+          );
+          return moralInventory !== "Suficiente" || bosquesInventory !== "Suficiente";
+        });
+      }
+
       return ingredients;
+    },
+    sortedProveedores() {
+      const order = ["HEB", "COSTCO", "SAMS", "WALMART"];
+      return this.proveedores.sort((a, b) => {
+        if (order.includes(a.nombre) && order.includes(b.nombre)) {
+          return order.indexOf(a.nombre) - order.indexOf(b.nombre);
+        }
+        if (order.includes(a.nombre)) {
+          return -1;
+        }
+        if (order.includes(b.nombre)) {
+          return 1;
+        }
+        return a.nombre.localeCompare(b.nombre);
+      });
     },
   },
   watch: {

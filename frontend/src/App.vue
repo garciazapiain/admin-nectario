@@ -16,19 +16,23 @@ const handleLogout = () => {
 <template>
   <div>
     <div class="buttonsTop">
-      <button class="main-page-button" @click="goToMainPage">
-        Página principal
-      </button>
-      <button
-        class="logout-button"
-        v-if="
-          router.currentRoute.value.path !== '/login' &&
-          router.currentRoute.value.path !== '/register'
-        "
-        @click="handleLogout"
-      >
-        Salir
-      </button>
+      <div class="buttonWrapper">
+        <button class="main-page-button" @click="goToMainPage" v-show="router.currentRoute.value.path !== '/'">
+          Página principal
+        </button>
+      </div>
+      <div class="buttonWrapper">
+        <button
+          class="logout-button"
+          v-if="
+            router.currentRoute.value.path !== '/login' &&
+            router.currentRoute.value.path !== '/register'
+          "
+          @click="handleLogout"
+        >
+          Salir
+        </button>
+      </div>
     </div>
     <router-view />
   </div>
@@ -38,6 +42,11 @@ const handleLogout = () => {
 .buttonsTop {
   display: flex;
   justify-content: space-between;
+}
+.buttonWrapper {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
 }
 .main-page-button {
   position: static;
