@@ -14,26 +14,33 @@
     <div>
       <div>
         <h2>Filtros:</h2>
-        <label for="proveedor">Proveedor:</label>
-        <select
-          class="filterProveedor"
-          id="proveedor"
-          v-model="selectedProveedor"
-        >
-          <option value="">Todos</option>
-          <option
-            v-for="proveedor in sortedProveedores"
-            :value="proveedor.id"
-            :key="proveedor.id"
+        <div className="filtros-container">
+          <label for="proveedor">Proveedor:</label>
+          <select class="filterBar" id="proveedor" v-model="selectedProveedor">
+            <option value="">Todos</option>
+            <option
+              v-for="proveedor in sortedProveedores"
+              :value="proveedor.id"
+              :key="proveedor.id"
+            >
+              {{ proveedor.nombre }}
+            </option>
+          </select>
+          <label for="insumos">Tipo Insumos:</label>
+          <select
+            class="filterBar"
+            id="insumos-tipo"
+            v-model="selectedInsumosTipo"
           >
-            {{ proveedor.nombre }}
-          </option>
-        </select>
-        <label for="insumos">Insumos:</label>
-        <select class="filterInsumos" id="insumos" v-model="selectedInsumos">
-          <option value="Necesario">Necesario</option>
-          <option value="Todos">Todos</option>
-        </select>
+            <option value="Producto clave">Producto clave</option>
+            <option value="Todos">Todos</option>
+          </select>
+          <label for="insumos">Estatus Insumos:</label>
+          <select class="filterBar" id="insumos" v-model="selectedInsumos">
+            <option value="Necesario">Necesario</option>
+            <option value="Todos">Todos</option>
+          </select>
+        </div>
       </div>
       <input
         class="search-bar"
@@ -79,6 +86,7 @@ export default {
       selectedProveedor: "",
       searchTerm: "",
       selectedInsumos: "Necesario",
+      selectedInsumosTipo: "Producto clave",
     };
   },
   methods: {
@@ -178,7 +186,15 @@ export default {
             "bosques",
             ingredient.id_ingrediente
           );
-          return moralInventory !== "Suficiente" || bosquesInventory !== "Suficiente";
+          return (
+            moralInventory !== "Suficiente" || bosquesInventory !== "Suficiente"
+          );
+        });
+      }
+
+      if (this.selectedInsumosTipo === "Producto clave") {
+        ingredients = ingredients.filter((ingredient) => {
+          return ingredient.producto_clave;
         });
       }
 
@@ -253,10 +269,11 @@ export default {
 </script>
 
 <style scoped>
-.filterProveedor {
+.filterBar {
   margin-left: 10px;
   height: 2rem;
   font-size: 1rem;
+  width: 50%;
 }
 .search-bar {
   width: 50%;
@@ -267,5 +284,12 @@ export default {
   background-color: rgb(97, 133, 145);
   font-weight: bold;
   color: black;
+}
+.filtros-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  widows: 100%;
 }
 </style>
