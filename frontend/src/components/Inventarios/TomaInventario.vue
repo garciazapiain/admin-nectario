@@ -10,6 +10,14 @@
         <span class="timestamp">{{ lastUpdate() }}</span>
       </p>
     </div>
+    <div class="filtros-container">
+      <h2>Filtros:</h2>
+      <label for="insumos">Tipo Insumos:</label>
+      <select class="filterBar" id="insumos" v-model="selectedInsumosTipo">
+        <option value="Producto clave">Producto clave</option>
+        <option value="Todos">Todos</option>
+      </select>
+    </div>
     <input
       v-model="searchTerm"
       placeholder="Buscar ingrediente..."
@@ -102,6 +110,7 @@ export default {
       isScrollingDown: false,
       lastScrollPosition: 0,
       submitMessage: null,
+      selectedInsumosTipo: "Producto clave",
     };
   },
   computed: {
@@ -122,6 +131,12 @@ export default {
       ingredients = ingredients.filter(
         (ingrediente) => ingrediente.proveedor_id !== 1
       );
+      // Filter ingredients based on selectedInsumos
+      if (this.selectedInsumosTipo === "Producto clave") {
+        ingredients = ingredients.filter((ingredient) => {
+          return ingredient.producto_clave;
+        });
+      }
       return ingredients;
     },
   },
@@ -292,10 +307,22 @@ export default {
 </script>
 
 <style scoped>
+.filtros-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 .search-bar {
   width: 50%;
   padding: 10px;
   font-size: 16px;
+}
+.filterBar {
+  margin-left: 10px;
+  height: 2rem;
+  font-size: 1rem;
+  width: 50%;
 }
 .highlight-row {
   background-color: rgb(97, 133, 145);
