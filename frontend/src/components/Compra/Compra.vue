@@ -37,7 +37,7 @@
           </select>
           <label for="insumos">Estatus Insumos:</label>
           <select class="filterBar" id="insumos" v-model="selectedInsumos">
-            <option value="Necesario">Necesario</option>
+            <option value="Urgente">Urgente</option>
             <option value="Todos">Todos</option>
           </select>
         </div>
@@ -85,7 +85,7 @@ export default {
       proveedores: [],
       selectedProveedor: "",
       searchTerm: "",
-      selectedInsumos: "Necesario",
+      selectedInsumos: "Urgente",
       selectedInsumosTipo: "Producto clave",
     };
   },
@@ -176,7 +176,7 @@ export default {
         );
       }
 
-      if (this.selectedInsumos === "Necesario") {
+      if (this.selectedInsumos === "Urgente") {
         ingredients = ingredients.filter((ingredient) => {
           const moralInventory = this.getInventory(
             "moral",
