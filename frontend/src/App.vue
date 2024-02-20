@@ -30,7 +30,7 @@ const handleLogout = () => {
           "
           @click="handleLogout"
         >
-          Salir
+          Logout
         </button>
       </div>
     </div>
