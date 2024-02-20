@@ -110,7 +110,7 @@ export default {
       isScrollingDown: false,
       lastScrollPosition: 0,
       submitMessage: null,
-      selectedInsumosTipo: "Producto clave",
+      selectedInsumosTipo: "Todos",
     };
   },
   computed: {

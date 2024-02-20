@@ -86,7 +86,7 @@ export default {
       selectedProveedor: "",
       searchTerm: "",
       selectedInsumos: "Urgente",
-      selectedInsumosTipo: "Producto clave",
+      selectedInsumosTipo: "Todos",
     };
   },
   methods: {
