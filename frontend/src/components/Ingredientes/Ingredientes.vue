@@ -9,7 +9,7 @@
         }).format(totalCompradoSemana)
       }}
     </p> -->
-    <h1>Ingredientes</h1>
+    <h1>Insumos</h1>
     <input v-model="searchTerm" placeholder="Search" />
     <select v-model="proveedor">
       <option value="">All</option>

@@ -81,6 +81,7 @@
       </tbody>
     </table>
     <div class="sticky-submit-wrapper">
+      <button class="button-resetear" @click="confirmReset">Resetear</button>
       <button class="button-actualizar" @click="submitForm">Actualizar</button>
     </div>
   </div>
@@ -176,6 +177,25 @@ export default {
         });
       }
       // console.log(this.submitData); // Log submitData every time it gets updated
+    },
+    confirmReset() {
+      if (window.confirm("Are you sure you want to reset?")) {
+        this.resetForm()
+        // Perform the reset action here
+      }
+    },
+    resetForm() {
+      // Reset all cantidad_inventario values to "Suficiente"
+      this.submitData.forEach((item) => {
+        item.cantidad_inventario = "Suficiente";
+        this.updateSubmitData(item);
+      });
+
+      // Call submitForm method
+      this.submitForm();
+      setTimeout(() => {
+        location.reload();
+      }, 2000);
     },
     submitForm() {
       const date = new Date();
@@ -349,6 +369,16 @@ input {
   font-size: 20px;
   margin: 5px;
   border: #a94442 solid 3px;
+}
+
+.button-resetear {
+  width: fit-content; /* Increase width */
+  height: fit-content; /* Increase height */
+  font-size: 20px; /* Increase font size */
+  margin: 5px;
+  background-color: red;
+  border: white solid 1px;
+  color: white;
 }
 
 .button-actualizar {
