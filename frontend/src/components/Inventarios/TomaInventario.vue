@@ -179,8 +179,11 @@ export default {
       // console.log(this.submitData); // Log submitData every time it gets updated
     },
     confirmReset() {
-      if (window.confirm("Are you sure you want to reset?")) {
-        this.resetForm()
+      if (
+        window.confirm(
+          'Seguro que quieres resetear, todos los valores de inventario se estableceran como "Suficiente"?'
+        )
+      ) {
         // Perform the reset action here
       }
     },
