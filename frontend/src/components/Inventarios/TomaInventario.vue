@@ -181,7 +181,7 @@ export default {
     confirmReset() {
       if (
         window.confirm(
-          'Seguro que quieres resetear, todos los valores de inventario se estableceran como "Suficiente"?'
+          '¿Seguro que quieres resetear? Todos los valores del inventario se estableceran como "Suficiente"?'
         )
       ) {
         // Perform the reset action here
