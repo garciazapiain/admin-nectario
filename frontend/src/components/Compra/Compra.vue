@@ -201,8 +201,23 @@ export default {
       return ingredients;
     },
     sortedProveedores() {
+      // Create a Set of unique proveedor_id values from the ingredientes in all submissions
+      const proveedorIds = new Set();
+      this.filteredIngredients.forEach((ingredient) => {
+        proveedorIds.add(ingredient.proveedor_id);
+      });
+
+      // Filter the proveedores based on whether their id is in the Set
+      const filteredProveedores = this.proveedores.filter((proveedor) => {
+        const isMatch = proveedorIds.has(proveedor.id);
+        // if (!isMatch) {
+        //   console.log("No match for proveedor id:", proveedor.id);
+        // }
+        return isMatch;
+      });
+
       const order = ["HEB", "COSTCO", "SAMS", "WALMART"];
-      return this.proveedores.sort((a, b) => {
+      return filteredProveedores.sort((a, b) => {
         if (order.includes(a.nombre) && order.includes(b.nombre)) {
           return order.indexOf(a.nombre) - order.indexOf(b.nombre);
         }

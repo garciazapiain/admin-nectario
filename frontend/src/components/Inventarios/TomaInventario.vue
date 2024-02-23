@@ -186,6 +186,7 @@ export default {
         )
       ) {
         // Perform the reset action here
+        this.resetForm()
       }
     },
     resetForm() {
