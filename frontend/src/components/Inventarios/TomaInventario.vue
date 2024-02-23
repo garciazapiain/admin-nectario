@@ -130,7 +130,8 @@ export default {
       }
       // Exclude ingredients with proveedor_id === 1
       ingredients = ingredients.filter(
-        (ingrediente) => ingrediente.proveedor_id !== 1
+        (ingrediente) =>
+          ingrediente.proveedor_id !== 1 && ingrediente.proveedor_id !== 31
       );
       // Filter ingredients based on selectedInsumos
       if (this.selectedInsumosTipo === "Lista Peligro") {
