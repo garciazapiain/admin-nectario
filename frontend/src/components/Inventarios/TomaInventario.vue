@@ -14,7 +14,7 @@
       <h2>Filtros:</h2>
       <label for="insumos">Tipo Insumos:</label>
       <select class="filterBar" id="insumos" v-model="selectedInsumosTipo">
-        <option value="Producto clave">Producto clave</option>
+        <option value="Lista Peligro">Lista peligro</option>
         <option value="Todos">Todos</option>
       </select>
     </div>
@@ -133,7 +133,7 @@ export default {
         (ingrediente) => ingrediente.proveedor_id !== 1
       );
       // Filter ingredients based on selectedInsumos
-      if (this.selectedInsumosTipo === "Producto clave") {
+      if (this.selectedInsumosTipo === "Lista Peligro") {
         ingredients = ingredients.filter((ingredient) => {
           return ingredient.producto_clave;
         });

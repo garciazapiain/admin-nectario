@@ -32,7 +32,7 @@
             id="insumos-tipo"
             v-model="selectedInsumosTipo"
           >
-            <option value="Producto clave">Producto clave</option>
+            <option value="Lista Peligro">Lista Peligro</option>
             <option value="Todos">Todos</option>
           </select>
           <label for="insumos">Estatus Insumos:</label>
@@ -192,7 +192,7 @@ export default {
         });
       }
 
-      if (this.selectedInsumosTipo === "Producto clave") {
+      if (this.selectedInsumosTipo === "Lista Peligro") {
         ingredients = ingredients.filter((ingredient) => {
           return ingredient.producto_clave;
         });
