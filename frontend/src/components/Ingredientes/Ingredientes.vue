@@ -165,7 +165,14 @@ export default {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       this.ingredientes.push(this.nuevoIngrediente);
-      this.nuevoIngrediente = { nombre: "", unidad: "", precio: "", proveedor:"", proveedor_id:"" };
+      this.nuevoIngrediente = {
+        nombre: "",
+        unidad: "",
+        precio: "",
+        proveedor: "",
+        proveedor_id: "",
+      };
+      location.reload();
     },
   },
   async mounted() {
