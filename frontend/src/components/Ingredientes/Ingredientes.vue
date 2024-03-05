@@ -70,7 +70,7 @@
       <input v-model="nuevoIngrediente.unidad" placeholder="Unidad" required />
       <input v-model="nuevoIngrediente.precio" placeholder="Precio" required />
       <select
-        v-model="nuevoIngrediente.proveedorId"
+        v-model="nuevoIngrediente.proveedor_id"
         @change="setProveedorNombre"
         required
       >
@@ -79,6 +79,7 @@
           v-for="proveedor in proveedores"
           :key="proveedor.id"
           :value="proveedor.id"
+          required
         >
           {{ proveedor.nombre }}
         </option>
@@ -144,9 +145,11 @@ export default {
       const selectedProveedor = this.proveedores.find(
         (proveedor) => proveedor.id === selectedProveedorId
       );
-      this.nuevoIngrediente.proveedorNombre = selectedProveedor
+      console.log(selectedProveedor)
+      this.nuevoIngrediente.proveedor = selectedProveedor
         ? selectedProveedor.nombre
         : "";
+      console.log(this.nuevoIngrediente)
     },
     async agregarIngrediente() {
       const API_URL =
