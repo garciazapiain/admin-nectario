@@ -333,20 +333,6 @@ app.get('/api/ingredientes/demanda', async (req, res) => {
   }
 });
 
-app.post('/api/ingredientes', async (req, res) => {
-  const { nombre, unidad, precio } = req.body;
-  const client = await pool.connect();
-  try {
-    const result = await client.query('INSERT INTO ingredientes (nombre, unidad, precio) VALUES ($1, $2, $3) RETURNING *', [nombre, unidad, precio]);
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'An error occurred while inserting data into the database' });
-  } finally {
-    client.release();
-  }
-});
-
 app.get('/api/ingrediente/:id', async (req, res) => {
   const { id } = req.params;
   const client = await pool.connect();
@@ -372,10 +358,11 @@ app.get('/api/ingrediente/:id', async (req, res) => {
 });
 
 app.post('/api/ingredientes', async (req, res) => {
-  const { nombre, unidad, precio } = req.body;
+  const { nombre, unidad, precio, proveedor, proveedor_id } = req.body;
+  console.log(proveedor, proveedor_id)
   const client = await pool.connect();
   try {
-    const result = await client.query('INSERT INTO ingredientes (nombre, unidad, precio) VALUES ($1, $2, $3) RETURNING *', [nombre, unidad, precio]);
+    const result = await client.query('INSERT INTO ingredientes (nombre, unidad, precio, proveedor, proveedor_id) VALUES ($1, $2, $3, $4, $5) RETURNING *', [nombre, unidad, precio, proveedor, proveedor_id]);
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
