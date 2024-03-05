@@ -1,3 +1,4 @@
+// This component is to add ingredients in platillos/subplatillos component
 <template>
   <div>
     <h2>AGREGAR INGREDIENTES</h2>

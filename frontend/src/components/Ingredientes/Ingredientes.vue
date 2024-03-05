@@ -69,6 +69,20 @@
       <input v-model="nuevoIngrediente.nombre" placeholder="Nombre" required />
       <input v-model="nuevoIngrediente.unidad" placeholder="Unidad" required />
       <input v-model="nuevoIngrediente.precio" placeholder="Precio" required />
+      <select
+        v-model="nuevoIngrediente.proveedorId"
+        @change="setProveedorNombre"
+        required
+      >
+        <option disabled value="">Selecciona un proveedor</option>
+        <option
+          v-for="proveedor in proveedores"
+          :key="proveedor.id"
+          :value="proveedor.id"
+        >
+          {{ proveedor.nombre }}
+        </option>
+      </select>
       <button type="submit">Agregar Ingrediente</button>
     </form>
   </div>
@@ -92,9 +106,12 @@ export default {
         nombre: "",
         unidad: "",
         precio: "",
+        proveedor: "",
+        proveedor_id: "",
       },
       searchTerm: "",
       proveedor: "",
+      proveedores: [],
     };
   },
   computed: {
@@ -122,6 +139,15 @@ export default {
     },
   },
   methods: {
+    setProveedorNombre(event) {
+      const selectedProveedorId = Number(event.target.value);
+      const selectedProveedor = this.proveedores.find(
+        (proveedor) => proveedor.id === selectedProveedorId
+      );
+      this.nuevoIngrediente.proveedorNombre = selectedProveedor
+        ? selectedProveedor.nombre
+        : "";
+    },
     async agregarIngrediente() {
       const API_URL =
         process.env.NODE_ENV === "production"
@@ -154,6 +180,11 @@ export default {
     this.ingredientes.sort(
       (a, b) => b.total_usado * b.precio - a.total_usado * a.precio
     );
+    const responseProveedores = await fetch(`${API_URL}/proveedores`);
+    if (!responseProveedores.ok) {
+      throw new Error(`HTTP error! status: ${responseProveedores.status}`);
+    }
+    this.proveedores = await responseProveedores.json();
   },
 };
 </script>
