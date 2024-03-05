@@ -371,6 +371,21 @@ app.post('/api/ingredientes', async (req, res) => {
   }
 });
 
+app.put('/api/ingredientes/:id', async (req, res) => {
+  const { nombre, unidad, precio, proveedor, proveedor_id } = req.body;
+  const { id } = req.params; // Changed from id_ingrediente to id
+  const client = await pool.connect();
+  try {
+    const result = await client.query('UPDATE ingredientes SET nombre = $1, unidad = $2, precio = $3, proveedor = $4, proveedor_id = $5 WHERE id_ingrediente = $6 RETURNING *', [nombre, unidad, precio, proveedor, proveedor_id, id]); // Added id to the array
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while updating data in the database' });
+  } finally {
+    client.release();
+  }
+});
+
 app.post('/api/submissions', async (req, res) => {
   const { store, timestamp, ingredients } = req.body;
   const client = await pool.connect();
