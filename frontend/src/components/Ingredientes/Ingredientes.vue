@@ -145,11 +145,9 @@ export default {
       const selectedProveedor = this.proveedores.find(
         (proveedor) => proveedor.id === selectedProveedorId
       );
-      console.log(selectedProveedor)
       this.nuevoIngrediente.proveedor = selectedProveedor
         ? selectedProveedor.nombre
         : "";
-      console.log(this.nuevoIngrediente)
     },
     async agregarIngrediente() {
       const API_URL =

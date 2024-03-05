@@ -359,7 +359,6 @@ app.get('/api/ingrediente/:id', async (req, res) => {
 
 app.post('/api/ingredientes', async (req, res) => {
   const { nombre, unidad, precio, proveedor, proveedor_id } = req.body;
-  console.log(proveedor, proveedor_id)
   const client = await pool.connect();
   try {
     const result = await client.query('INSERT INTO ingredientes (nombre, unidad, precio, proveedor, proveedor_id) VALUES ($1, $2, $3, $4, $5) RETURNING *', [nombre, unidad, precio, proveedor, proveedor_id]);
