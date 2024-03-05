@@ -67,14 +67,19 @@
     </table>
     <form @submit.prevent="agregarIngrediente">
       <input v-model="nuevoIngrediente.nombre" placeholder="Nombre" required />
-      <input v-model="nuevoIngrediente.unidad" placeholder="Unidad" required />
+      <select v-model="nuevoIngrediente.unidad" required>
+        <option disabled value="">Unidad</option>
+        <option v-for="unidad in unidades" :key="unidad" :value="unidad">
+          {{ unidad }}
+        </option>
+      </select>
       <input v-model="nuevoIngrediente.precio" placeholder="Precio" required />
       <select
         v-model="nuevoIngrediente.proveedor_id"
         @change="setProveedorNombre"
         required
       >
-        <option disabled value="">Selecciona un proveedor</option>
+        <option disabled value="">Proveedor</option>
         <option
           v-for="proveedor in proveedores"
           :key="proveedor.id"
@@ -180,6 +185,15 @@ export default {
       process.env.NODE_ENV === "production"
         ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
         : "http://localhost:3000/api";
+    try {
+      const response = await fetch(`${API_URL}/unidades`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      this.unidades = await response.json();
+    } catch (error) {
+      console.error("Error:", error);
+    }
     const response = await fetch(`${API_URL}/ingredientes/demanda`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

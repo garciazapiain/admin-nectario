@@ -435,7 +435,28 @@ app.get('/api/proveedores', async (req, res) => {
   }
 });
 
+app.get('/api/unidades', async (req, res) => {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(`
+      SELECT conname, pg_get_constraintdef(pg_constraint.oid)
+      FROM pg_constraint
+      INNER JOIN pg_class ON conrelid=pg_class.oid
+      WHERE pg_class.relname='ingredientes' AND conname='ingredientes_unidad_check'
+    `);
 
+    const constraintDef = result.rows[0].pg_get_constraintdef;
+    const unitsMatch = constraintDef.match(/ARRAY\[(.*)\]/);
+    const units = unitsMatch ? unitsMatch[1].replace(/'::text/g, '').replace(/'/g, '').split(', ') : [];
+
+    res.json(units);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while retrieving data from the database' });
+  } finally {
+    client.release();
+  }
+});
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));

@@ -2,7 +2,6 @@
 import { useRouter } from "vue-router";
 const router = useRouter();
 const handleClick = (platillo) => {
-  // console.log(platillo)
   if (platillo.type === "Platillo") {
     router.push(`/platillo/${platillo.id_platillo}`);
   } else {
@@ -35,7 +34,16 @@ const handleClick = (platillo) => {
         </div>
         <div class="form-group">
           <label for="unidad">Unidad:</label>
-          <input id="unidad" v-model="ingredienteEditado.unidad" />
+          <select id="unidad" v-model="ingredienteEditado.unidad">
+            <option disabled value="">Selecciona una unidad</option>
+            <option
+              v-for="(unidad, index) in unidades"
+              :key="index"
+              :value="unidad"
+            >
+              {{ unidad }}
+            </option>
+          </select>
         </div>
         <div class="form-group">
           <label for="precio">Precio:</label>
@@ -93,6 +101,7 @@ export default {
       ingredienteEditado: {},
       showModal: false,
       proveedores: [],
+      unidades: [],
     };
   },
   methods: {
@@ -142,6 +151,11 @@ export default {
       throw new Error(`HTTP error! status: ${responseProveedores.status}`);
     }
     this.proveedores = await responseProveedores.json();
+    const responseUnidades = await fetch(`${API_URL}/unidades`);
+    if (!responseUnidades.ok) {
+      throw new Error(`HTTP error! status: ${responseUnidades.status}`);
+    }
+    this.unidades = await responseUnidades.json();
   },
 };
 </script>
