@@ -38,9 +38,9 @@ onMounted(() => {
   <div>
     <h1 @click="handleClickInventario">Inventarios</h1>
     <h1 @click="handleClickCompra">Compra</h1>
-    <!-- <h1 v-if="isAdmin" @click="handleClickPlatillo">Platillos</h1>
+    <h1 v-if="isAdmin" @click="handleClickPlatillo">Platillos</h1>
     <h1 v-if="isAdmin" @click="handleClickSubplatillo">Subplatillos</h1>
-    <h1 v-if="isAdmin" @click="handleClickIngrediente">Ingredientes</h1> -->
+    <h1 v-if="isAdmin" @click="handleClickIngrediente">Ingredientes</h1>
   </div>
 </template>
   

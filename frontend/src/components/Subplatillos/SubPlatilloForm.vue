@@ -68,6 +68,10 @@ export default {
   },
   methods: {
     async addSubPlatillo() {
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
       const id_platillo = this.$route.params.id;
 
       const selectedSubPlatillos = this.subPlatillos.filter(
@@ -90,7 +94,7 @@ export default {
 
         try {
           const response = await fetch(
-            `http://localhost:3000/api/platillos/${id_platillo}/subplatillos`,
+            `${API_URL}/platillos/${id_platillo}/subplatillos`,
             {
               method: "POST",
               headers: {

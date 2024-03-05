@@ -41,10 +41,14 @@ export default {
   async mounted() {
     // Get the ID from the router
     const id = this.$route.params.id;
+      const API_URL =
+      process.env.NODE_ENV === "production"
+        ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+        : "http://localhost:3000/api";
 
     try {
       // Make API call to fetch the platillo data
-      const response = await fetch(`http://localhost:3000/api/ingrediente/${id}`);
+      const response = await fetch(`${API_URL}/ingrediente/${id}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

@@ -32,7 +32,11 @@ const handleClickSubPlatillo = (idSubplatillo) => {
     <form @submit.prevent="agregarSubPlatillo">
       <input v-model="nuevoSubPlatillo.nombre" placeholder="Nombre" required />
       <input v-model="nuevoSubPlatillo.unidad" placeholder="Unidad" required />
-      <input v-model="nuevoSubPlatillo.rendimiento" placeholder="Rendimiento" required />
+      <input
+        v-model="nuevoSubPlatillo.rendimiento"
+        placeholder="Rendimiento"
+        required
+      />
       <button type="submit">Agregar Subplatillo</button>
     </form>
   </div>
@@ -53,8 +57,14 @@ export default {
   },
   methods: {
     async agregarSubPlatillo() {
-      this.nuevoSubPlatillo.rendimiento = parseFloat(this.nuevoSubPlatillo.rendimiento);
-      const response = await fetch("http://localhost:3000/api/subplatillos", {
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
+      this.nuevoSubPlatillo.rendimiento = parseFloat(
+        this.nuevoSubPlatillo.rendimiento
+      );
+      const response = await fetch(`${API_URL}/subplatillos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,11 +75,15 @@ export default {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       this.subplatillos.push(this.nuevoSubPlatillo);
-      this.nuevoSubPlatillo = { nombre: "", unidad:"", rendimiento:"" };
+      this.nuevoSubPlatillo = { nombre: "", unidad: "", rendimiento: "" };
     },
   },
   async mounted() {
-    const response = await fetch("http://localhost:3000/api/subplatillos");
+    const API_URL =
+      process.env.NODE_ENV === "production"
+        ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+        : "http://localhost:3000/api";
+    const response = await fetch(`${API_URL}/subplatillos`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

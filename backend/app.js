@@ -256,82 +256,82 @@ app.get('/api/ingredientes', async (req, res) => {
   }
 });
 
-// app.get('/api/ingredientes', async (req, res) => {
-//   const client = await pool.connect();
-//   try {
-//     const result = await client.query(`
-//     SELECT 
-//     nombre, 
-//     id_ingrediente, 
-//     unidad, 
-//     precio,
-//     proveedor, 
-//     proveedor_id,
-//     producto_clave,
-//     SUM(cantidad_platillo) AS cantidad_platillo,
-//     SUM(cantidad_subplatillo) AS cantidad_subplatillo,
-//     SUM(rendimiento_subplatillo) AS rendimiento_subplatillo,
-//     SUM(unidades_vendidas_platillo) AS unidades_vendidas_platillo,
-//     SUM(total_platillo) AS total_platillo,
-//     SUM(total_subplatillo) AS total_subplatillo,
-//     SUM(total_usado) AS total_usado
-//     FROM (
-//       (
-//       SELECT 
-//           i.nombre AS nombre, 
-//           i.id_ingrediente, 
-//           i.unidad, 
-//           i.precio, 
-//           i.proveedor,
-//           i.proveedor_id,
-//           i.producto_clave,
-//           COALESCE(SUM(pi.cantidad), 0) AS cantidad_platillo,
-//           0 AS cantidad_subplatillo,
-//           0 AS rendimiento_subplatillo,
-//           COALESCE(SUM(p.unidades_vendidas), 0) AS unidades_vendidas_platillo,
-//           COALESCE(SUM(pi.cantidad * p.unidades_vendidas), 0) AS total_platillo,
-//           0 AS total_subplatillo,
-//           COALESCE(SUM(pi.cantidad * p.unidades_vendidas), 0) AS total_usado
-//       FROM ingredientes i
-//       LEFT JOIN platillos_ingredientes pi ON i.id_ingrediente = pi.id_ingrediente
-//       LEFT JOIN platillos p ON pi.id_platillo = p.id_platillo
-//       GROUP BY i.nombre, i.id_ingrediente, i.unidad, i.precio, i.proveedor, i.proveedor_id, i.producto_clave
-//   )
-//   UNION
-//   (
-//       SELECT 
-//           i.nombre AS nombre, 
-//           i.id_ingrediente, 
-//           i.unidad, 
-//           i.precio, 
-//           i.proveedor,
-//           i.proveedor_id,
-//           i.producto_clave,
-//           0 AS cantidad_platillo,
-//           COALESCE(SUM(psi.cantidad), 0) AS cantidad_subplatillo,
-//           COALESCE(SUM(sp.rendimiento), 0) AS rendimiento_subplatillo,
-//           COALESCE(SUM(p.unidades_vendidas), 0) AS unidades_vendidas_platillo,
-//           0 AS total_platillo,
-//           COALESCE(SUM(spi.cantidad * psi.cantidad / sp.rendimiento * p.unidades_vendidas), 0) AS total_subplatillo,
-//           COALESCE(SUM(spi.cantidad * psi.cantidad / sp.rendimiento * p.unidades_vendidas), 0) AS total_usado
-//       FROM ingredientes i
-//       LEFT JOIN subplatillos_ingredientes spi ON i.id_ingrediente = spi.id_ingrediente
-//       LEFT JOIN subplatillos sp ON spi.id_subplatillo = sp.id_subplatillo
-//       LEFT JOIN platillos_subplatillos psi ON sp.id_subplatillo = psi.id_subplatillo
-//       LEFT JOIN platillos p ON psi.id_platillo = p.id_platillo
-//       GROUP BY i.nombre, i.id_ingrediente, i.unidad, i.precio, i.proveedor, i.proveedor_id, i.producto_clave
-//   )
-//   ) AS subquery
-//   GROUP BY nombre, id_ingrediente, unidad, precio, proveedor, proveedor_id, producto_clave
-//   `);
-//     res.json(result.rows)
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   } finally {
-//     client.release();
-//   }
-// });
+app.get('/api/ingredientes/demanda', async (req, res) => {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(`
+    SELECT 
+    nombre, 
+    id_ingrediente, 
+    unidad, 
+    precio,
+    proveedor, 
+    proveedor_id,
+    producto_clave,
+    SUM(cantidad_platillo) AS cantidad_platillo,
+    SUM(cantidad_subplatillo) AS cantidad_subplatillo,
+    SUM(rendimiento_subplatillo) AS rendimiento_subplatillo,
+    SUM(unidades_vendidas_platillo) AS unidades_vendidas_platillo,
+    SUM(total_platillo) AS total_platillo,
+    SUM(total_subplatillo) AS total_subplatillo,
+    SUM(total_usado) AS total_usado
+    FROM (
+      (
+      SELECT 
+          i.nombre AS nombre, 
+          i.id_ingrediente, 
+          i.unidad, 
+          i.precio, 
+          i.proveedor,
+          i.proveedor_id,
+          i.producto_clave,
+          COALESCE(SUM(pi.cantidad), 0) AS cantidad_platillo,
+          0 AS cantidad_subplatillo,
+          0 AS rendimiento_subplatillo,
+          COALESCE(SUM(p.unidades_vendidas), 0) AS unidades_vendidas_platillo,
+          COALESCE(SUM(pi.cantidad * p.unidades_vendidas), 0) AS total_platillo,
+          0 AS total_subplatillo,
+          COALESCE(SUM(pi.cantidad * p.unidades_vendidas), 0) AS total_usado
+      FROM ingredientes i
+      LEFT JOIN platillos_ingredientes pi ON i.id_ingrediente = pi.id_ingrediente
+      LEFT JOIN platillos p ON pi.id_platillo = p.id_platillo
+      GROUP BY i.nombre, i.id_ingrediente, i.unidad, i.precio, i.proveedor, i.proveedor_id, i.producto_clave
+  )
+  UNION
+  (
+      SELECT 
+          i.nombre AS nombre, 
+          i.id_ingrediente, 
+          i.unidad, 
+          i.precio, 
+          i.proveedor,
+          i.proveedor_id,
+          i.producto_clave,
+          0 AS cantidad_platillo,
+          COALESCE(SUM(psi.cantidad), 0) AS cantidad_subplatillo,
+          COALESCE(SUM(sp.rendimiento), 0) AS rendimiento_subplatillo,
+          COALESCE(SUM(p.unidades_vendidas), 0) AS unidades_vendidas_platillo,
+          0 AS total_platillo,
+          COALESCE(SUM(spi.cantidad * psi.cantidad / sp.rendimiento * p.unidades_vendidas), 0) AS total_subplatillo,
+          COALESCE(SUM(spi.cantidad * psi.cantidad / sp.rendimiento * p.unidades_vendidas), 0) AS total_usado
+      FROM ingredientes i
+      LEFT JOIN subplatillos_ingredientes spi ON i.id_ingrediente = spi.id_ingrediente
+      LEFT JOIN subplatillos sp ON spi.id_subplatillo = sp.id_subplatillo
+      LEFT JOIN platillos_subplatillos psi ON sp.id_subplatillo = psi.id_subplatillo
+      LEFT JOIN platillos p ON psi.id_platillo = p.id_platillo
+      GROUP BY i.nombre, i.id_ingrediente, i.unidad, i.precio, i.proveedor, i.proveedor_id, i.producto_clave
+  )
+  ) AS subquery
+  GROUP BY nombre, id_ingrediente, unidad, precio, proveedor, proveedor_id, producto_clave
+  `);
+    res.json(result.rows)
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    client.release();
+  }
+});
 
 app.post('/api/ingredientes', async (req, res) => {
   const { nombre, unidad, precio } = req.body;

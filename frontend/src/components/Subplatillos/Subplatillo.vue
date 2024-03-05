@@ -1,4 +1,8 @@
 <script setup>
+const API_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+    : "http://localhost:3000/api";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const handleClickIngrediente = (idIngrediente) => {
@@ -39,7 +43,7 @@ const handleClickIngrediente = (idIngrediente) => {
       </tbody>
     </table>
     <p>COSTO TOTAL: ${{ totalCost.toFixed(2) }} / {{ subplatillo.unidad }}</p>
-    <p>RENDIMIENTO: {{ subplatillo.rendimiento}} {{ subplatillo.unidad }}</p>
+    <p>RENDIMIENTO: {{ subplatillo.rendimiento }} {{ subplatillo.unidad }}</p>
     <p>
       COSTO / {{ subplatillo.unidad }}: ${{
         (totalCost / subplatillo.rendimiento).toFixed(2)
@@ -48,7 +52,7 @@ const handleClickIngrediente = (idIngrediente) => {
     <IngredientForm
       :ingredientes="ingredientes"
       :existingIngredientIds="existingIngredientIds"
-      :postUrl="`http://localhost:3000/api/subplatillos/${$route.params.id}/ingredientes`"
+      :postUrl="`${API_URL}/subplatillos/${$route.params.id}/ingredientes`"
       @ingredientAdded="fetchData"
     />
   </div>
@@ -88,11 +92,13 @@ export default {
   },
   methods: {
     async fetchData() {
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
       const id = this.$route.params.id;
       try {
-        const response = await fetch(
-          `http://localhost:3000/api/subplatillo/${id}`
-        );
+        const response = await fetch(`${API_URL}/subplatillo/${id}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -103,8 +109,12 @@ export default {
       }
     },
     async fetchIngredientes() {
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
       try {
-        const response = await fetch(`http://localhost:3000/api/ingredientes`);
+        const response = await fetch(`${API_URL}/ingredientes`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

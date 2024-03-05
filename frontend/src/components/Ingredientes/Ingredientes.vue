@@ -22,10 +22,10 @@
           <th>Nombre</th>
           <th>Unidad</th>
           <th>Precio</th>
-          <!-- <th>Total usado</th>
-          <th>Total $ Comprado</th> -->
-          <!-- <th>Total usado / año</th>
-          <th>Total $ Comprado / año</th> -->
+          <th>Total usado</th>
+          <th>Total $ Comprado</th>
+          <!-- <th>Total usado / año</th> -->
+          <!-- <th>Total $ Comprado / año</th> -->
         </tr>
       </thead>
       <tbody>
@@ -38,7 +38,7 @@
           <td>{{ ingrediente.nombre }}</td>
           <td>{{ ingrediente.unidad }}</td>
           <td>${{ ingrediente.precio }}</td>
-          <!-- <td>
+          <td>
             {{ Math.round(ingrediente.total_usado) + " " + ingrediente.unidad }}
           </td>
           <td>
@@ -47,15 +47,15 @@
                 (ingrediente.total_usado * ingrediente.precio).toFixed(2)
               )
             }}
-          </td> -->
+          </td>
           <!-- <td>
             {{
               Math.round(ingrediente.total_usado * 52) +
               " " +
               ingrediente.unidad
             }}
-          </td> -->
-          <!-- <td>
+          </td>
+          <td>
             ${{
               new Intl.NumberFormat().format(
                 (ingrediente.total_usado * ingrediente.precio * 52).toFixed(2)
@@ -123,7 +123,11 @@ export default {
   },
   methods: {
     async agregarIngrediente() {
-      const response = await fetch("http://localhost:3000/api/ingredientes", {
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
+      const response = await fetch(`${API_URL}/ingredientes/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -138,7 +142,11 @@ export default {
     },
   },
   async mounted() {
-    const response = await fetch("http://localhost:3000/api/ingredientes");
+    const API_URL =
+      process.env.NODE_ENV === "production"
+        ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+        : "http://localhost:3000/api";
+    const response = await fetch(`${API_URL}/ingredientes/demanda`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

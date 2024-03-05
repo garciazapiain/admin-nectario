@@ -1,55 +1,8 @@
 <script>
-</script>
-<template>
-  <div>
-    <h1>{{ platillo.nombre }}</h1>
-    <p>Unidades vendidas:{{ platillo.unidades_vendidas }}</p>
-    <div>
-      <input
-        type="checkbox"
-        id="includeSubplatillos"
-        v-model="includeSubplatillos"
-      />
-      <label for="includeSubplatillos">INCLUIR SUBPLATILLOS</label>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th>INGREDIENTE</th>
-          <th>UNIDAD</th>
-          <th>CANTIDAD</th>
-          <th>$/CANTIDAD</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(ingrediente, index) in aggregatedIngredients" :key="index">
-          <td @click="handleClickIngrediente(ingrediente.id_ingrediente)">
-            {{ ingrediente.nombre }}
-          </td>
-          <td>{{ ingrediente.unidad }}</td>
-          <td>
-            {{ ingrediente.cantidad.toFixed(3) }}
-          </td>
-          <td>${{ (ingrediente.precio * ingrediente.cantidad).toFixed(2) }}</td>
-        </tr>
-      </tbody>
-      <p>COSTO TOTAL: $ {{ totalCost.toFixed(2) }}</p>
-    </table>
-    <IngredientForm
-      :ingredientes="ingredientes"
-      :existingIngredientIds="existingIngredientIds"
-      :postUrl="`http://localhost:3000/api/platillos/${$route.params.id}/ingredientes`"
-      @ingredientAdded="fetchData"
-    />
-    <SubPlatilloForm
-      :subPlatillos="subPlatillos"
-      :existingSubPlatilloIds="existingSubPlatilloIds"
-      @subPlatilloAdded="fetchData"
-    />
-  </div>
-</template>
-
-<script>
+const API_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+    : "http://localhost:3000/api";
 import IngredientForm from "../Ingredientes/IngredientForm.vue";
 import SubPlatilloForm from "../Subplatillos/SubPlatilloForm.vue";
 export default {
@@ -63,6 +16,7 @@ export default {
       mensajeError: "",
       ingredienteAgregadoExitosamente: "",
       searchTerm: "",
+      API_URL: API_URL
     };
   },
   components: {
@@ -128,7 +82,7 @@ export default {
       const id = this.$route.params.id;
       try {
         const response = await fetch(
-          `http://localhost:3000/api/platillo/${id}?includeSubplatillos=${this.includeSubplatillos}`
+          `${API_URL}/platillo/${id}?includeSubplatillos=${this.includeSubplatillos}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -141,7 +95,7 @@ export default {
     },
     async fetchIngredientes() {
       try {
-        const response = await fetch(`http://localhost:3000/api/ingredientes`);
+        const response = await fetch(`${API_URL}/ingredientes/demanda`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -153,7 +107,7 @@ export default {
     },
     async fetchSubPlatillos() {
       try {
-        const response = await fetch(`http://localhost:3000/api/subplatillos`);
+        const response = await fetch(`${API_URL}/subplatillos`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -175,6 +129,55 @@ export default {
   },
 };
 </script>
+<template>
+  <div>
+    <h1>{{ platillo.nombre }}</h1>
+    <p>Unidades vendidas:{{ platillo.unidades_vendidas }}</p>
+    <div>
+      <input
+        type="checkbox"
+        id="includeSubplatillos"
+        v-model="includeSubplatillos"
+      />
+      <label for="includeSubplatillos">INCLUIR SUBPLATILLOS</label>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>INGREDIENTE</th>
+          <th>UNIDAD</th>
+          <th>CANTIDAD</th>
+          <th>$/CANTIDAD</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(ingrediente, index) in aggregatedIngredients" :key="index">
+          <td @click="handleClickIngrediente(ingrediente.id_ingrediente)">
+            {{ ingrediente.nombre }}
+          </td>
+          <td>{{ ingrediente.unidad }}</td>
+          <td>
+            {{ ingrediente.cantidad.toFixed(3) }}
+          </td>
+          <td>${{ (ingrediente.precio * ingrediente.cantidad).toFixed(2) }}</td>
+        </tr>
+      </tbody>
+      <p>COSTO TOTAL: $ {{ totalCost.toFixed(2) }}</p>
+    </table>
+    <IngredientForm
+      :ingredientes="ingredientes"
+      :existingIngredientIds="existingIngredientIds"
+      :postUrl="`${API_URL}/platillos/${$route.params.id}/ingredientes`"
+      @ingredientAdded="fetchData"
+    />
+    <SubPlatilloForm
+      :subPlatillos="subPlatillos"
+      :existingSubPlatilloIds="existingSubPlatilloIds"
+      @subPlatilloAdded="fetchData"
+    />
+  </div>
+</template>
+
 
 <style scoped>
 h2,

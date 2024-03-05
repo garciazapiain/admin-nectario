@@ -1,4 +1,8 @@
 <script setup>
+const API_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+    : "http://localhost:3000/api";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const handleClickPlatillo = (idPlatillo) => {
@@ -49,7 +53,11 @@ export default {
   },
   methods: {
     async agregarPlatillo() {
-      const response = await fetch("http://localhost:3000/api/platillos", {
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
+      const response = await fetch(`${API_URL}/platillos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -76,8 +84,12 @@ export default {
     },
   },
   async mounted() {
+    const API_URL =
+      process.env.NODE_ENV === "production"
+        ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+        : "http://localhost:3000/api";
     try {
-      const response = await fetch("http://localhost:3000/api/platillos");
+      const response = await fetch(`${API_URL}/platillos`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

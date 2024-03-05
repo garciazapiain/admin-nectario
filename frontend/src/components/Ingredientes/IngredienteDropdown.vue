@@ -1,11 +1,16 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch } from "vue";
 
 const ingredientes = ref([]);
 const selected = ref(null);
 
+const API_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+    : "http://localhost:3000/api";
+
 onMounted(async () => {
-  const response = await fetch("http://localhost:3000/api/ingredientes");
+  const response = await fetch(`${API_URL}/ingredientes/demanda`);
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
@@ -13,7 +18,7 @@ onMounted(async () => {
 });
 
 watch(selected, (newVal) => {
-  emit('update:modelValue', newVal);
+  emit("update:modelValue", newVal);
 });
 </script>
 
