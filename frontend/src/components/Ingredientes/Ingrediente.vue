@@ -21,7 +21,11 @@ const handleClick = (platillo) => {
         </div>
         <div class="form-group">
           <label for="proveedor">Proveedor:</label>
-          <select id="proveedor" v-model="ingredienteEditado.proveedor">
+          <select
+            id="proveedor"
+            v-model="ingredienteEditado.proveedor"
+            @change="updateProveedor"
+          >
             <option disabled value="">Selecciona un proveedor</option>
             <option
               v-for="proveedor in proveedores"
@@ -104,7 +108,24 @@ export default {
       unidades: [],
     };
   },
+  computed: {
+    proveedorNombre() {
+      const proveedor = this.proveedores.find(
+        (p) => p.id === this.ingredienteEditado.proveedor
+      );
+      return proveedor ? proveedor.nombre : "";
+    },
+  },
   methods: {
+    updateProveedor(event) {
+      const selectedProveedor = this.proveedores.find(
+        (proveedor) => proveedor.nombre === event.target.value
+      );
+      if (selectedProveedor) {
+        this.ingredienteEditado.proveedor = selectedProveedor.nombre;
+        this.ingredienteEditado.proveedor_id = selectedProveedor.id;
+      }
+    },
     async editIngrediente() {
       const id = this.$route.params.id;
       const API_URL =
@@ -156,6 +177,7 @@ export default {
       throw new Error(`HTTP error! status: ${responseUnidades.status}`);
     }
     this.unidades = await responseUnidades.json();
+    console.log(this.proveedores);
   },
 };
 </script>
