@@ -105,7 +105,13 @@ export default {
       searchTerm: "",
       selectedInsumos: "Urgente",
       selectedInsumosTipo: "Todos",
-      listaEstatus: ["No Comprado", "Comprado", "Transferir", "Pausar compra"],
+      listaEstatus: [
+        "No Comprado",
+        "Comprado",
+        "Transferir",
+        "Pausar compra",
+        "Suficiente producto",
+      ],
     };
   },
   methods: {
@@ -195,6 +201,7 @@ export default {
           return { backgroundColor: "yellow", color: "black" };
         case "Pausar compra":
         case "Comprado":
+        case "Suficiente producto":
           return { backgroundColor: "green", color: "white" };
         default:
           return {};
@@ -314,6 +321,7 @@ export default {
         "Transferir",
         "Pausar compra",
         "Comprado",
+        "Suficiente producto",
       ];
       this.ingredients.sort((a, b) => {
         // Sort by estatus first
