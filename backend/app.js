@@ -244,7 +244,8 @@ app.get('/api/ingredientes', async (req, res) => {
         precio,
         proveedor, 
         proveedor_id,
-        producto_clave
+        producto_clave,
+        estatus
       FROM ingredientes
     `);
     res.json(result.rows)
@@ -366,6 +367,81 @@ app.post('/api/ingredientes', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'An error occurred while inserting data into the database' });
+  } finally {
+    client.release();
+  }
+});
+
+app.put('/api/ingredientes/individual/estatusupdate', async (req, res) => {
+  const { ingredientId, newStatus } = req.body;
+  const client = await pool.connect();
+  try {
+    // Start a transaction
+    await client.query('BEGIN');
+
+    // Update the ingredient
+    await client.query('UPDATE ingredientes SET estatus = $1 WHERE id_ingrediente = $2', [newStatus, ingredientId]);
+
+    // Commit the transaction
+    await client.query('COMMIT');
+
+    res.json({ message: 'Successfully updated ingredient status' });
+  } catch (err) {
+    // If an error occurred, rollback the transaction
+    await client.query('ROLLBACK');
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while updating data in the database' });
+  } finally {
+    client.release();
+  }
+});
+
+app.put('/api/ingredientes/estatusupdate', async (req, res) => {
+  const { ingredientIds } = req.body;
+  const newStatus = "No Comprado";
+  const client = await pool.connect();
+  try {
+    // Start a transaction
+    await client.query('BEGIN');
+
+    // Update each ingredient
+    for (const id of ingredientIds) {
+      await client.query('UPDATE ingredientes SET estatus = $1 WHERE id_ingrediente = $2', [newStatus, id]);
+    }
+
+    // Commit the transaction
+    await client.query('COMMIT');
+
+    res.json({ message: 'Successfully updated ingredient status' });
+  } catch (err) {
+    // If an error occurred, rollback the transaction
+    await client.query('ROLLBACK');
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while updating data in the database' });
+  } finally {
+    client.release();
+  }
+});
+
+app.put('/api/ingredientes/resetestatus', async (req, res) => {
+  const newStatus = "Suficiente producto";
+  const client = await pool.connect();
+  try {
+    // Start a transaction
+    await client.query('BEGIN');
+
+    // Update all ingredients
+    await client.query('UPDATE ingredientes SET estatus = $1', [newStatus]);
+
+    // Commit the transaction
+    await client.query('COMMIT');
+
+    res.json({ message: 'Successfully reset ingredient status' });
+  } catch (err) {
+    // If an error occurred, rollback the transaction
+    await client.query('ROLLBACK');
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while updating data in the database' });
   } finally {
     client.release();
   }

@@ -177,7 +177,6 @@ export default {
       throw new Error(`HTTP error! status: ${responseUnidades.status}`);
     }
     this.unidades = await responseUnidades.json();
-    console.log(this.proveedores);
   },
 };
 </script>

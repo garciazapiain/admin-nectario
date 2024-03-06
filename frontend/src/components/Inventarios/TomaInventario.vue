@@ -3,6 +3,7 @@
     <div v-if="submitMessage" :class="submitMessage.type">
       {{ submitMessage.text }}
     </div>
+    <button @click="verifyChangeIngredientCount">Check</button>
     <h1>Inventario {{ store }}</h1>
     <div class="update-info">
       <p class="update-text">
@@ -104,6 +105,7 @@ export default {
   data() {
     return {
       ingredientes: [],
+      originalIngredientes: [],
       searchTerm: "",
       proveedor: "",
       submitData: [], // new state for data to be submitted
@@ -143,6 +145,28 @@ export default {
     },
   },
   methods: {
+    verifyChangeIngredientCount() {
+      const originalIngredientesArray = Object.values(
+        this.originalIngredientes
+      );
+      const ingredientesArray = Object.values(this.ingredientes);
+
+      this.changedIngredients = ingredientesArray
+        .filter((ingrediente) => {
+          const originalIngrediente = originalIngredientesArray.find(
+            (original) => original.id_ingrediente === ingrediente.id_ingrediente
+          );
+          const isChanged =
+            originalIngrediente &&
+            ingrediente.cantidad_inventario !==
+              originalIngrediente.cantidad_inventario;
+          return isChanged;
+        })
+        .map((ingrediente) => ingrediente.id_ingrediente);
+      if (this.changedIngredients.length > 0) {
+        this.updateIngredientStatus();
+      }
+    },
     increaseQuantity(ingrediente) {
       if (ingrediente.cantidad_inventario === "Suficiente") {
         ingrediente.cantidad_inventario = 0.5;
@@ -186,7 +210,7 @@ export default {
         )
       ) {
         // Perform the reset action here
-        this.resetForm()
+        this.resetForm();
       }
     },
     resetForm() {
@@ -196,11 +220,26 @@ export default {
         this.updateSubmitData(item);
       });
 
-      // Call submitForm method
-      this.submitForm();
-      setTimeout(() => {
-        location.reload();
-      }, 2000);
+      // Define the API URL
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
+
+      // Reset all ingredient statuses
+      fetch(`${API_URL}/ingredientes/resetestatus`, {
+        method: "PUT",
+      })
+        .then(() => {
+          // Call submitForm method
+          this.submitForm();
+          setTimeout(() => {
+            location.reload();
+          }, 2000);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
     submitForm() {
       const date = new Date();
@@ -235,7 +274,6 @@ export default {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           this.submitMessage = {
             type: "success-message",
             text: "Actualización exitosa",
@@ -255,6 +293,7 @@ export default {
             this.submitMessage = null;
           }, 5000);
         });
+        this.verifyChangeIngredientCount()
     },
     lastUpdate() {
       const storeSubmissions = this.submissions.filter(
@@ -275,6 +314,28 @@ export default {
       ingrediente.cantidad_inventario = "Suficiente";
       this.updateSubmitData(ingrediente);
     },
+    async updateIngredientStatus() {
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
+      const response = await fetch(`${API_URL}/ingredientes/estatusupdate`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ingredientIds: this.changedIngredients,
+          newStatus: "No comprado",
+        }),
+      });
+
+      if (!response.ok) {
+        console.error("Failed to update ingredient status", response);
+      } else {
+        console.log("Successfully updated ingredient status");
+      }
+    },
   },
   async mounted() {
     const API_URL =
@@ -285,8 +346,9 @@ export default {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    this.ingredientes = await response.json();
 
+    const data = await response.json();
+    this.ingredientes = data;
     const responseSubmissions = await fetch(`${API_URL}/submissions`);
     if (!responseSubmissions.ok) {
       throw new Error(`HTTP error! status: ${responseSubmissions.status}`);
@@ -327,6 +389,7 @@ export default {
       // If producto_clave is the same, sort alphabetically
       return a.nombre.localeCompare(b.nombre);
     });
+    this.originalIngredientes = JSON.parse(JSON.stringify(this.ingredientes));
   },
 };
 </script>

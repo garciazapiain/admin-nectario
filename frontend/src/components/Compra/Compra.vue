@@ -56,6 +56,7 @@
           <th>Moral</th>
           <th>Bosques</th>
           <th>Proveedor</th>
+          <th>Estatus</th>
         </tr>
       </thead>
       <tbody>
@@ -69,6 +70,23 @@
           <td>{{ getInventory("moral", ingredient.id_ingrediente) }}</td>
           <td>{{ getInventory("bosques", ingredient.id_ingrediente) }}</td>
           <td>{{ getProveedorName(ingredient.proveedor_id) }}</td>
+          <td>
+            <select
+              v-model="ingredient.estatus"
+              @change="
+                actualizarEstatus(ingredient.id_ingrediente, ingredient.estatus)
+              "
+              :style="estatusColor(ingredient.estatus)"
+            >
+              <option
+                v-for="estatus in listaEstatus"
+                :key="estatus"
+                :value="estatus"
+              >
+                {{ estatus }}
+              </option>
+            </select>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -87,9 +105,21 @@ export default {
       searchTerm: "",
       selectedInsumos: "Urgente",
       selectedInsumosTipo: "Todos",
+      listaEstatus: ["No Comprado", "Comprado", "Transferir", "Pausar compra"],
     };
   },
   methods: {
+    actualizarEstatus(ingredientId, newStatus) {
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
+      fetch(`${API_URL}/ingredientes/individual/estatusupdate`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ingredientId, newStatus }),
+      });
+    },
     getInventory(store, ingredientId) {
       const submission = this.lastSubmission(store);
 
@@ -141,6 +171,33 @@ export default {
         return lastUpdate;
       } else {
         return "N/A";
+      }
+    },
+    getIngredientStatus(ingredientId) {
+      // const submission = this.lastSubmission(store);
+      // if (!submission) {
+      //   return "N/A";
+      // }
+      // console.log(submission);
+      // if (
+      //   this.filteredIngredients.some(
+      //     (ingredient) => ingredient.id_ingrediente === ingredientId
+      //   )
+      // ) {
+      //   console.log(ingredientId)
+      // }
+    },
+    estatusColor(estatus) {
+      switch (estatus) {
+        case "No Comprado":
+          return { backgroundColor: "lightcoral", color: "white" };
+        case "Transferir":
+          return { backgroundColor: "yellow", color: "black" };
+        case "Pausar compra":
+        case "Comprado":
+          return { backgroundColor: "green", color: "white" };
+        default:
+          return {};
       }
     },
   },
@@ -252,8 +309,20 @@ export default {
     const response = await fetch(`${API_URL}/ingredientes`);
     if (response.ok) {
       this.ingredients = await response.json();
+      const estatusOrder = [
+        "No Comprado",
+        "Transferir",
+        "Pausar compra",
+        "Comprado",
+      ];
       this.ingredients.sort((a, b) => {
-        // Sort by producto_clave first (true values come first)
+        // Sort by estatus first
+        const estatusA = estatusOrder.indexOf(a.estatus);
+        const estatusB = estatusOrder.indexOf(b.estatus);
+        if (estatusA !== estatusB) {
+          return estatusA - estatusB;
+        }
+        // If estatus is the same, sort by producto_clave (true values come first)
         if (a.producto_clave !== b.producto_clave) {
           return b.producto_clave - a.producto_clave;
         }

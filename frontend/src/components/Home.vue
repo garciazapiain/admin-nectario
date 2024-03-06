@@ -5,8 +5,6 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 
-console.log(isAdmin);
-
 const handleClickPlatillo = () => {
   router.push("/platillos");
 };
