@@ -1,22 +1,31 @@
 <template>
   <div>
-    <h1>Pronostico Demanda Insumos</h1>
-    <h2>Total Precio: {{ total_precio.toFixed(2) }}</h2>
+    <h1>Pronóstico Demanda Insumos</h1>
+    <h2>Total Precio Insumos: {{ total_precio.toFixed(2) }}</h2>
     <div class="guardaryhistorial">
       <div>
-        <input v-model="nombre" type="text" placeholder="Nombre" />
-        <button @click="guardar" :disabled="isGuardarDisabled">Guardar</button>
-        <button class="resetButton" v-if="pronosticodemandaSelected.dataplatillos" @click="reset">
-          Reset
+        <div v-if="isHistorialInactivo">
+          <input v-model="nombre" type="text" placeholder="Nombre" />
+          <button @click="guardar" :disabled="isGuardarDisabled">
+            Guardar
+          </button>
+        </div>
+        <button
+          class="resetButton"
+          v-if="pronosticodemandaSelected.dataplatillos"
+          @click="reset"
+        >
+          Agregar nuevo pronostico
         </button>
       </div>
       <div class="historialDropdown">
+        <h2>Historial de pronósticos</h2>
         <select
           v-if="pronosticodemandaData.length"
           @change="seleccionHistorial($event)"
           :key="pronosticodemandaData.length"
         >
-          <option disabled selected>Historial</option>
+          <option disabled selected>Seleccionar de historial</option>
           <option
             v-for="item in pronosticodemandaData"
             :key="item.id"
@@ -126,6 +135,9 @@ export default {
         Object.keys(this.toSaveMergedIngredients).length === 0 ||
         Object.keys(this.toSaveCantidadPlatillos).length === 0
       );
+    },
+    isHistorialInactivo() {
+      return !this.pronosticodemandaSelected.dataplatillos;
     },
   },
   methods: {
@@ -330,11 +342,11 @@ export default {
   width: 100%;
 }
 .historialDropdown select {
-  width: 10rem;
+  width: 40%;
   height: 2rem;
   font-size: 1rem;
 }
 .resetButton {
-  margin-left: .5rem;
+  margin-left: 0.5rem;
 }
 </style>
