@@ -576,6 +576,42 @@ app.get('/api/unidades', async (req, res) => {
   }
 });
 
+app.get('/api/pronosticodemanda', async (req, res) => {
+  const client = await pool.connect();
+  try {
+    // Select all rows from pronosticodemanda table
+    const result = await client.query('SELECT * FROM pronosticodemanda');
+
+    // Send the result rows as the response
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while fetching data from the database' });
+  } finally {
+    client.release();
+  }
+});
+
+app.post('/api/guardarpronosticodemanda', async (req, res) => {
+  const { dataplatillos, dataingredientes, nombre } = req.body;
+  const client = await pool.connect();
+  try {
+    // Convert dataplatillos and dataingredientes to JSON string
+    const platillos = JSON.stringify(dataplatillos);
+    const ingredientes = JSON.stringify(dataingredientes);
+
+    // Insert into pronosticodemanda table
+    const result = await client.query('INSERT INTO pronosticodemanda (nombre, dataplatillos, dataingredientes) VALUES ($1, $2, $3) RETURNING *', [nombre, platillos, ingredientes]);
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while inserting data into the database' });
+  } finally {
+    client.release();
+  }
+});
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
 });

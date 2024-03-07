@@ -2,6 +2,31 @@
   <div>
     <h1>Pronostico Demanda Insumos</h1>
     <h2>Total Precio: {{ total_precio.toFixed(2) }}</h2>
+    <div class="guardaryhistorial">
+      <div>
+        <input v-model="nombre" type="text" placeholder="Nombre" />
+        <button @click="guardar" :disabled="isGuardarDisabled">Guardar</button>
+        <button class="resetButton" v-if="pronosticodemandaSelected.dataplatillos" @click="reset">
+          Reset
+        </button>
+      </div>
+      <div class="historialDropdown">
+        <select
+          v-if="pronosticodemandaData.length"
+          @change="seleccionHistorial($event)"
+          :key="pronosticodemandaData.length"
+        >
+          <option disabled selected>Historial</option>
+          <option
+            v-for="item in pronosticodemandaData"
+            :key="item.id"
+            :value="item.id"
+          >
+            {{ item.nombre }}
+          </option>
+        </select>
+      </div>
+    </div>
     <div class="container">
       <div class="half">
         <h2>Platillos</h2>
@@ -13,7 +38,7 @@
                 <th>Cantidad</th>
               </tr>
             </thead>
-            <tbody>
+            <template v-if="!pronosticodemandaSelected.dataplatillos">
               <tr v-for="platillo in platillos" :key="platillo.id">
                 <td>{{ platillo.nombre }}</td>
                 <td>
@@ -24,7 +49,21 @@
                   />
                 </td>
               </tr>
-            </tbody>
+            </template>
+            <template v-else>
+              <tr v-for="platillo in filteredPlatillos" :key="platillo.id">
+                <td>{{ platillo.nombre }}</td>
+                <td>
+                  <span>
+                    {{
+                      platillosSeleccionados.find(
+                        (p) => p.id === platillo.id_platillo
+                      )?.cantidad || 0
+                    }}
+                  </span>
+                </td>
+              </tr>
+            </template>
           </table>
         </div>
       </div>
@@ -63,9 +102,69 @@ export default {
       ingredientes: [],
       platillosSeleccionados: [],
       total_precio: 0,
+      toSaveMergedIngredients: {}, // new data property
+      toSaveCantidadPlatillos: {}, // new data property
+      nombre: null, // new data property,
+      pronosticodemandaData: [],
+      pronosticodemandaSelected: [],
     };
   },
+  computed: {
+    filteredPlatillos() {
+      console.log(this.platillos, this.pronosticodemandaSelected.dataplatillos);
+      return this.platillos.filter((platillo) =>
+        this.pronosticodemandaSelected.dataplatillos.find(
+          (p) => p.id === platillo.id_platillo
+        )
+      );
+    },
+    isGuardarDisabled() {
+      return (
+        !this.pronosticodemandaSelected.dataplatillos ||
+        !this.nombre ||
+        this.nombre.trim() === "" ||
+        Object.keys(this.toSaveMergedIngredients).length === 0 ||
+        Object.keys(this.toSaveCantidadPlatillos).length === 0
+      );
+    },
+  },
   methods: {
+    async fetchPronosticoDemanda() {
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
+      try {
+        const response = await fetch(`${API_URL}/pronosticodemanda`);
+        const data = await response.json();
+        this.pronosticodemandaData = data;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    guardar() {
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
+      fetch(`${API_URL}/guardarpronosticodemanda`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nombre: this.nombre,
+          dataplatillos: this.toSaveCantidadPlatillos,
+          dataingredientes: this.toSaveMergedIngredients,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => console.log(data))
+        .catch((error) => console.error("Error:", error));
+    },
+    reset() {
+      location.reload();
+    },
     async fetchIngredients(platilloId) {
       const API_URL =
         process.env.NODE_ENV === "production"
@@ -105,6 +204,8 @@ export default {
           }
         }
       }
+      this.toSaveCantidadPlatillos = this.platillosSeleccionados; // Save the new value
+      this.toSaveMergedIngredients = merged;
       return Object.values(merged);
     },
     calculateTotalPrecio() {
@@ -119,6 +220,14 @@ export default {
       );
       this.total_precio = totalPrecioPlatillos;
     },
+    seleccionHistorial(event) {
+      const id = event.target.value;
+      const item = this.pronosticodemandaData.find((item) => item.id == id);
+      this.pronosticodemandaSelected = item;
+      console.log(this.pronosticodemandaSelected.dataplatillos);
+      this.platillosSeleccionados =
+        this.pronosticodemandaSelected.dataplatillos;
+    },
   },
   watch: {
     platillos: {
@@ -128,7 +237,6 @@ export default {
           .map((platillo) => ({
             id: platillo.id_platillo,
             cantidad: platillo.cantidad,
-            precio: platillo.precio,
           }));
         this.calculateTotalPrecio();
       },
@@ -146,8 +254,20 @@ export default {
       );
       this.ingredientes = this.mergeIngredients(ingredientsList, newVal);
     },
+    // pronosticodemandaSelected: {
+    //   handler(newVal) {
+    //     if (newVal) {
+    //       console.log("hello");
+    //       this.platillos = newVal.dataplatillos;
+    //       this.ingredientes = newVal.dataingredientes;
+    //       console.log(this.platillos, this.ingredientes)
+    //     }
+    //   },
+    //   deep: true,
+    // },
   },
   async mounted() {
+    this.fetchPronosticoDemanda();
     const API_URL =
       process.env.NODE_ENV === "production"
         ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
@@ -201,5 +321,20 @@ export default {
 .scrollable-platillos {
   max-height: 500px; /* adjust this value as per your needs */
   overflow-y: auto;
+}
+.guardaryhistorial {
+  display: flex;
+  flex-direction: column;
+}
+.historialDropdown {
+  width: 100%;
+}
+.historialDropdown select {
+  width: 10rem;
+  height: 2rem;
+  font-size: 1rem;
+}
+.resetButton {
+  margin-left: .5rem;
 }
 </style>
