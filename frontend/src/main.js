@@ -13,6 +13,7 @@ import Ingrediente from './components/Ingredientes/Ingrediente.vue';
 import Inventarios from './components/Inventarios/Home.vue';
 import TomaInventario from './components/Inventarios/TomaInventario.vue';
 import Compra from './components/Compra/Compra.vue';
+import PronosticoDemandaInsumos from './components/PronosticoDemandaInsumos/PronosticoDemandaInsumos.vue';
 import './style.css'
 
 const routes = [
@@ -27,7 +28,8 @@ const routes = [
     { path: '/ingrediente/:id', component: Ingrediente },
     { path: '/inventarios', component: Inventarios },
     { path: '/inventarios/:store', component: TomaInventario, props: true},
-    { path: '/compra', component: Compra }
+    { path: '/compra', component: Compra },
+    { path: '/pronosticodemandainsumos', component: PronosticoDemandaInsumos }
   ];
   
   const router = createRouter({

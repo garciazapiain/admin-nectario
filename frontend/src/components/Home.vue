@@ -25,6 +25,10 @@ const handleClickCompra = () => {
   router.push("/compra");
 };
 
+const handleClickPronosticoDemandaInsumos = () => {
+  router.push("/pronosticodemandainsumos");
+};
+
 onMounted(() => {
   if (!localStorage.getItem("jwt")) {
     router.push("/login");
@@ -39,6 +43,7 @@ onMounted(() => {
     <h1 v-if="isAdmin" @click="handleClickPlatillo">Platillos</h1>
     <h1 v-if="isAdmin" @click="handleClickSubplatillo">Subplatillos</h1>
     <h1 v-if="isAdmin" @click="handleClickIngrediente">Insumos</h1>
+    <h1 v-if="isAdmin" @click="handleClickPronosticoDemandaInsumos">Pronostico Demanda Insumos</h1>
   </div>
 </template>
   
