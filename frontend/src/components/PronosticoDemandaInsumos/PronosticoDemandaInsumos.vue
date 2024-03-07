@@ -120,7 +120,7 @@ export default {
     },
     isGuardarDisabled() {
       return (
-        !this.pronosticodemandaSelected.dataplatillos ||
+        this.pronosticodemandaSelected.dataplatillos ||
         !this.nombre ||
         this.nombre.trim() === "" ||
         Object.keys(this.toSaveMergedIngredients).length === 0 ||
