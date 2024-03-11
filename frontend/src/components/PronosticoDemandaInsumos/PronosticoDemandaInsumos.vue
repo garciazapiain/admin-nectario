@@ -91,9 +91,21 @@
             <tr v-for="ingrediente in ingredientes" :key="ingrediente.id">
               <td>{{ ingrediente.nombre }}</td>
               <td>{{ ingrediente.unidad }}</td>
-              <td>{{ ingrediente.cantidad.toFixed(3) }}</td>
               <td>
-                {{ (ingrediente.cantidad * ingrediente.precio).toFixed(2) }}
+                {{
+                  typeof ingrediente.cantidad === "number" &&
+                  ingrediente.cantidad > 0
+                    ? ingrediente.cantidad.toFixed(3)
+                    : 0
+                }}
+              </td>
+              <td>
+                {{
+                  typeof ingrediente.cantidad === "number" &&
+                  ingrediente.cantidad > 0
+                    ? (ingrediente.cantidad * ingrediente.precio).toFixed(2)
+                    : 0
+                }}
               </td>
             </tr>
           </tbody>
