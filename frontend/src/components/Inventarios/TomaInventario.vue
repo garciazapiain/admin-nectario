@@ -3,7 +3,7 @@
     <div v-if="submitMessage" :class="submitMessage.type">
       {{ submitMessage.text }}
     </div>
-    <button @click="verifyChangeIngredientCount">Check</button>
+    <!-- <button @click="verifyChangeIngredientCount">Check</button> -->
     <h1>Inventario {{ store }}</h1>
     <div class="update-info">
       <p class="update-text">
