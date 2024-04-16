@@ -53,6 +53,14 @@ const handleClick = (platillo) => {
           <label for="precio">Precio:</label>
           <input id="precio" v-model="ingredienteEditado.precio" />
         </div>
+        <div class="form-group">
+          <label for="store_route_order">Orden ruta de tienda:</label>
+          <input
+            id="store_route_order"
+            type="number"
+            v-model.number="ingredienteEditado.store_route_order"
+          />
+        </div>
         <div class="form-actions">
           <button type="submit">Guardar</button>
           <button @click="showModal = false">Cancelar</button>
@@ -72,6 +80,10 @@ const handleClick = (platillo) => {
         <tr>
           <td><strong>Precio:</strong></td>
           <td>{{ ingrediente.precio }}</td>
+        </tr>
+        <tr>
+          <td><strong>Orden ruta de tienda:</strong></td>
+          <td>{{ ingrediente.store_route_order }}</td>
         </tr>
       </tbody>
     </table>

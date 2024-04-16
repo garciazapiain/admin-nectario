@@ -245,7 +245,8 @@ app.get('/api/ingredientes', async (req, res) => {
         proveedor, 
         proveedor_id,
         producto_clave,
-        estatus
+        estatus,
+        store_route_order
       FROM ingredientes
     `);
     res.json(result.rows)
@@ -404,7 +405,7 @@ app.post('/api/ingredientes', async (req, res) => {
   const { nombre, unidad, precio, proveedor, proveedor_id } = req.body;
   const client = await pool.connect();
   try {
-    const result = await client.query('INSERT INTO ingredientes (nombre, unidad, precio, proveedor, proveedor_id) VALUES ($1, $2, $3, $4, $5) RETURNING *', [nombre, unidad, precio, proveedor, proveedor_id]);
+    const result = await client.query('INSERT INTO ingredientes (nombre, unidad, precio, proveedor, proveedor_id, store_route_order) VALUES ($1, $2, $3, $4, $5) RETURNING *', [nombre, unidad, precio, proveedor, proveedor_id]);
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
@@ -490,11 +491,11 @@ app.put('/api/ingredientes/resetestatus', async (req, res) => {
 });
 
 app.put('/api/ingredientes/:id', async (req, res) => {
-  const { nombre, unidad, precio, proveedor, proveedor_id } = req.body;
+  const { nombre, unidad, precio, proveedor, proveedor_id, store_route_order } = req.body;
   const { id } = req.params; // Changed from id_ingrediente to id
   const client = await pool.connect();
   try {
-    const result = await client.query('UPDATE ingredientes SET nombre = $1, unidad = $2, precio = $3, proveedor = $4, proveedor_id = $5 WHERE id_ingrediente = $6 RETURNING *', [nombre, unidad, precio, proveedor, proveedor_id, id]); // Added id to the array
+    const result = await client.query('UPDATE ingredientes SET nombre = $1, unidad = $2, precio = $3, proveedor = $4, proveedor_id = $5, store_route_order = $7 WHERE id_ingrediente = $6 RETURNING *', [nombre, unidad, precio, proveedor, proveedor_id, id, store_route_order]); // Added id to the array
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);

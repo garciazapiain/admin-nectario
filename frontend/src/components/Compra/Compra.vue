@@ -35,11 +35,20 @@
             <option value="Lista Peligro">Lista Peligro</option>
             <option value="Todos">Todos</option>
           </select>
-          <label for="insumos">Estatus Insumos:</label>
+          <!-- <label for="insumos">Estatus Insumos:</label>
           <select class="filterBar" id="insumos" v-model="selectedInsumos">
             <option value="Urgente">Urgente</option>
             <option value="Todos">Todos</option>
-          </select>
+          </select> -->
+          <div className="orderRouteCheckbox">
+            <input
+              type="checkbox"
+              id="sort"
+              v-model="orderRouteCheckbox"
+              :disabled="selectedProveedor === ''"
+            />
+            <label for="sort">Sort by store</label>
+          </div>
         </div>
       </div>
       <input
@@ -65,10 +74,14 @@
           :key="index"
           :class="{ 'highlight-row': ingredient.producto_clave }"
         >
-          <td>{{ ingredient.nombre }}</td>
-          <td>{{ ingredient.unidad }}</td>
-          <td>{{ getInventory("moral", ingredient.id_ingrediente) }}</td>
-          <td>{{ getInventory("bosques", ingredient.id_ingrediente) }}</td>
+          <td style="font-size: 20px">{{ ingredient.nombre }}</td>
+          <td style="font-size: 20px">{{ ingredient.unidad }}</td>
+          <td style="font-size: 20px">
+            {{ getInventory("moral", ingredient.id_ingrediente) }}
+          </td>
+          <td style="font-size: 20px">
+            {{ getInventory("bosques", ingredient.id_ingrediente) }}
+          </td>
           <td>{{ getProveedorName(ingredient.proveedor_id) }}</td>
           <td>
             <select
@@ -105,6 +118,7 @@ export default {
       searchTerm: "",
       selectedInsumos: "Urgente",
       selectedInsumosTipo: "Todos",
+      orderRouteCheckbox: false,
       listaEstatus: [
         "No Comprado",
         "Comprado",
@@ -262,6 +276,14 @@ export default {
         });
       }
 
+      console.log(this.orderRouteCheckbox)
+
+      if (this.orderRouteCheckbox) {
+        ingredients.sort((a, b) => a.store_route_order - b.store_route_order);
+      }
+
+      console.log(ingredients)
+
       return ingredients;
     },
     sortedProveedores() {
@@ -334,6 +356,7 @@ export default {
         if (a.producto_clave !== b.producto_clave) {
           return b.producto_clave - a.producto_clave;
         }
+        // here
         // If producto_clave is the same, sort alphabetically
         return a.nombre.localeCompare(b.nombre);
       });
@@ -383,5 +406,9 @@ export default {
   justify-content: center;
   align-items: center;
   widows: 100%;
+}
+.orderRouteCheckbox {
+  display: flex;
+  flex-direction: row;
 }
 </style>
