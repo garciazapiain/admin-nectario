@@ -74,7 +74,23 @@
                   class="button-suficiente"
                   @click="setSufficient(ingrediente)"
                 >
-                  NO URGE
+                  Suficiente
+                </button>
+              </div>
+              <div class="">
+                <button
+                  class="button-casiNoHay"
+                  @click="setCasiNoHay(ingrediente)"
+                >
+                  Casi no hay
+                </button>
+              </div>
+              <div class="">
+                <button
+                  class="button-agotado"
+                  @click="setAgotado(ingrediente)"
+                >
+                  Agotado
                 </button>
               </div>
             </div>
@@ -316,6 +332,14 @@ export default {
       ingrediente.cantidad_inventario = "Suficiente";
       this.updateSubmitData(ingrediente);
     },
+    setCasiNoHay(ingrediente) {
+      ingrediente.cantidad_inventario = "Casi no hay";
+      this.updateSubmitData(ingrediente);
+    },
+    setAgotado(ingrediente) {
+      ingrediente.cantidad_inventario = 0;
+      this.updateSubmitData(ingrediente);
+    },
     async updateIngredientStatus() {
       const API_URL =
         process.env.NODE_ENV === "production"
@@ -442,7 +466,23 @@ input {
   height: 50px;
   font-size: 20px;
   margin: 5px;
-  border: #a94442 solid 3px;
+  border: #2cb92c solid 3px;
+}
+
+.button-casiNoHay {
+  width: 100%;
+  height: 50px;
+  font-size: 20px;
+  margin: 5px;
+  border: #d5cb09 solid 3px;
+}
+
+.button-agotado {
+  width: 100%;
+  height: 50px;
+  font-size: 20px;
+  margin: 5px;
+  border: #d20f0f solid 3px;
 }
 
 .button-resetear {

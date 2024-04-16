@@ -17,7 +17,14 @@ const handleLogout = () => {
   <div>
     <div class="buttonsTop">
       <div class="buttonWrapper">
-        <button class="main-page-button" @click="goToMainPage" v-show="router.currentRoute.value.path !== '/'">
+        <button
+          class="main-page-button"
+          @click="goToMainPage"
+          v-show="
+            router.currentRoute.value.path !== '/' &&
+            router.currentRoute.value.path !== '/login'
+          "
+        >
           Página principal
         </button>
       </div>
@@ -30,7 +37,7 @@ const handleLogout = () => {
           "
           @click="handleLogout"
         >
-          Logout
+          Salir
         </button>
       </div>
     </div>

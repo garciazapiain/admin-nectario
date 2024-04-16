@@ -1,7 +1,21 @@
 <template>
   <div>
-    <h2>Login</h2>
-    <form @submit.prevent="submitForm">
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        height: 300px;
+        width:300px
+        align-items: center;
+      "
+    >
+      <img src="../../assets/logo.png" alt="Logo" />
+    </div>
+    <h2>Admin Nectario</h2>
+    <form
+      @submit.prevent="submitForm"
+      style="display: flex; flex-direction: column"
+    >
       <input type="text" v-model="username" placeholder="Username" required />
       <input
         type="password"
@@ -9,7 +23,7 @@
         placeholder="Password"
         required
       />
-      <button type="submit">Login</button>
+      <button type="submit">Iniciar sesión</button>
     </form>
     <p v-if="errorMessage">{{ errorMessage }}</p>
   </div>
@@ -55,13 +69,13 @@ export default {
             localStorage.setItem("isAdmin", data.isAdmin);
             this.router.push("/"); // Redirect to home page
           } else {
-            this.errorMessage = "Login failed";
+            this.errorMessage = "Login falló";
           }
         } else {
-          this.errorMessage = "An error occurred";
+          this.errorMessage = "Occurió un error";
         }
       } catch (error) {
-        this.errorMessage = "An error occurred";
+        this.errorMessage = "Occurió un error";
       }
     },
   },
