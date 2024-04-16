@@ -25,6 +25,7 @@
       class="search-bar"
     />
     <!-- ... -->
+    <div class="table-container">
     <table>
       <thead>
         <tr>
@@ -81,6 +82,7 @@
         </tr>
       </tbody>
     </table>
+    </div>
     <div class="sticky-submit-wrapper">
       <button class="button-resetear" @click="confirmReset">Resetear</button>
       <button class="button-actualizar" @click="submitForm">Actualizar</button>
@@ -429,6 +431,10 @@ input {
   margin: 10px;
   display: flex;
   justify-content: center;
+}
+
+.table-container {
+  overflow: auto;
 }
 
 .button-suficiente {
