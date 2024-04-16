@@ -40,8 +40,8 @@
           :key="index"
           :class="{ 'highlight-row': ingrediente.producto_clave }"
         >
-          <td>{{ ingrediente.nombre }}</td>
-          <td>{{ ingrediente.unidad }}</td>
+          <td style="font-size: 20px;">{{ ingrediente.nombre }}</td>
+          <td style="font-size: 20px;">{{ ingrediente.unidad }}</td>
           <td>
             <div class="input-row">
               <input
