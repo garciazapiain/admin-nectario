@@ -491,11 +491,11 @@ app.put('/api/ingredientes/resetestatus', async (req, res) => {
 });
 
 app.put('/api/ingredientes/:id', async (req, res) => {
-  const { nombre, unidad, precio, proveedor, proveedor_id, store_route_order } = req.body;
+  const { nombre, unidad, precio, proveedor, proveedor_id, store_route_order, producto_clave } = req.body;
   const { id } = req.params; // Changed from id_ingrediente to id
   const client = await pool.connect();
   try {
-    const result = await client.query('UPDATE ingredientes SET nombre = $1, unidad = $2, precio = $3, proveedor = $4, proveedor_id = $5, store_route_order = $7 WHERE id_ingrediente = $6 RETURNING *', [nombre, unidad, precio, proveedor, proveedor_id, id, store_route_order]); // Added id to the array
+    const result = await client.query('UPDATE ingredientes SET nombre = $1, unidad = $2, precio = $3, proveedor = $4, proveedor_id = $5, store_route_order = $7, producto_clave = $8 WHERE id_ingrediente = $6 RETURNING *', [nombre, unidad, precio, proveedor, proveedor_id, id, store_route_order, producto_clave]); // Added id to the array
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
