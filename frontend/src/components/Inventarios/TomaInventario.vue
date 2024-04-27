@@ -18,6 +18,17 @@
         <option value="Lista Peligro">Lista peligro</option>
         <option value="Todos">Todos</option>
       </select>
+      <label for="proveedores">Proveedores:</label>
+      <select class="filterBar" id="proveedores" v-model="selectedProveedor">
+        <option disabled value="">Selecciona un proveedor</option>
+        <option
+          v-for="proveedor in proveedores"
+          :key="proveedor.id"
+          :value="proveedor.nombre"
+        >
+          {{ proveedor.nombre }}
+        </option>
+      </select>
     </div>
     <input
       v-model="searchTerm"
@@ -26,78 +37,78 @@
     />
     <!-- ... -->
     <div class="table-container">
-    <table>
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Unidad</th>
-          <th>Cantidad</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="(ingrediente, index) in filteredIngredients"
-          :key="index"
-          :class="{ 'highlight-row': ingrediente.producto_clave }"
-        >
-          <td style="font-size: 20px;">{{ ingrediente.nombre }}</td>
-          <td style="font-size: 20px;">{{ ingrediente.unidad }}</td>
-          <td>
-            <div class="input-row">
-              <input
-                v-model.number="ingrediente.cantidad_inventario"
-                min="0"
-                @change="updateSubmitData(ingrediente)"
-              />
-            </div>
-            <div class="button-row-parent">
-              <div class="button-row">
-                <div class="button-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Unidad</th>
+            <th>Cantidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(ingrediente, index) in filteredIngredients"
+            :key="index"
+            :class="{ 'highlight-row': ingrediente.producto_clave }"
+          >
+            <td style="font-size: 20px">{{ ingrediente.nombre }}</td>
+            <td style="font-size: 20px">{{ ingrediente.unidad }}</td>
+            <td>
+              <div class="input-row">
+                <input
+                  v-model.number="ingrediente.cantidad_inventario"
+                  min="0"
+                  @change="updateSubmitData(ingrediente)"
+                />
+              </div>
+              <div class="button-row-parent">
+                <div class="button-row">
+                  <div class="button-container">
+                    <button
+                      class="button-increase-decrease"
+                      @click="decreaseQuantity(ingrediente)"
+                    >
+                      -
+                    </button>
+                  </div>
+                  <div class="button-container">
+                    <button
+                      class="button-increase-decrease"
+                      @click="increaseQuantity(ingrediente)"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <div class="">
                   <button
-                    class="button-increase-decrease"
-                    @click="decreaseQuantity(ingrediente)"
+                    class="button-suficiente"
+                    @click="setSufficient(ingrediente)"
                   >
-                    -
+                    Suficiente
                   </button>
                 </div>
-                <div class="button-container">
+                <div class="">
                   <button
-                    class="button-increase-decrease"
-                    @click="increaseQuantity(ingrediente)"
+                    class="button-casiNoHay"
+                    @click="setCasiNoHay(ingrediente)"
                   >
-                    +
+                    Casi no hay
+                  </button>
+                </div>
+                <div class="">
+                  <button
+                    class="button-agotado"
+                    @click="setAgotado(ingrediente)"
+                  >
+                    Agotado
                   </button>
                 </div>
               </div>
-              <div class="">
-                <button
-                  class="button-suficiente"
-                  @click="setSufficient(ingrediente)"
-                >
-                  Suficiente
-                </button>
-              </div>
-              <div class="">
-                <button
-                  class="button-casiNoHay"
-                  @click="setCasiNoHay(ingrediente)"
-                >
-                  Casi no hay
-                </button>
-              </div>
-              <div class="">
-                <button
-                  class="button-agotado"
-                  @click="setAgotado(ingrediente)"
-                >
-                  Agotado
-                </button>
-              </div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
     <div class="sticky-submit-wrapper">
       <button class="button-resetear" @click="confirmReset">Resetear</button>
@@ -126,12 +137,14 @@ export default {
       originalIngredientes: [],
       searchTerm: "",
       proveedor: "",
+      proveedores: [], // For the select dropdown
       submitData: [], // new state for data to be submitted
       submissions: [], // Add this line
       isScrollingDown: false,
       lastScrollPosition: 0,
       submitMessage: null,
       selectedInsumosTipo: "Todos",
+      selectedProveedor: "",
     };
   },
   computed: {
@@ -158,6 +171,12 @@ export default {
         ingredients = ingredients.filter((ingredient) => {
           return ingredient.producto_clave;
         });
+      }
+      // Filter ingredients based on selectedProveedor
+      if (this.selectedProveedor) {
+        ingredients = ingredients.filter(
+          (ingrediente) => ingrediente.proveedor === this.selectedProveedor
+        );
       }
       return ingredients;
     },
@@ -186,7 +205,7 @@ export default {
       }
     },
     increaseQuantity(ingrediente) {
-      if (ingrediente.cantidad_inventario === "Suficiente") {
+      if (typeof ingrediente.cantidad_inventario === "string") {
         ingrediente.cantidad_inventario = 0.5;
       } else {
         ingrediente.cantidad_inventario += 0.5;
@@ -194,7 +213,7 @@ export default {
       this.updateSubmitData(ingrediente);
     },
     decreaseQuantity(ingrediente) {
-      if (ingrediente.cantidad_inventario === "Suficiente") {
+      if (typeof ingrediente.cantidad_inventario === "string") {
         ingrediente.cantidad_inventario = 0;
       } else if (ingrediente.cantidad_inventario > 0) {
         ingrediente.cantidad_inventario -= 0.5;
@@ -311,7 +330,7 @@ export default {
             this.submitMessage = null;
           }, 5000);
         });
-        this.verifyChangeIngredientCount()
+      this.verifyChangeIngredientCount();
     },
     lastUpdate() {
       const storeSubmissions = this.submissions.filter(
@@ -416,6 +435,14 @@ export default {
       return a.nombre.localeCompare(b.nombre);
     });
     this.originalIngredientes = JSON.parse(JSON.stringify(this.ingredientes));
+    const proveedoresResponse = await fetch(`${API_URL}/proveedores`);
+    if (proveedoresResponse.ok) {
+      let proveedores = await proveedoresResponse.json();
+      // Filter out the provider with id 1
+      this.proveedores = proveedores.filter((proveedor) => proveedor.id !== 1);
+    } else {
+      console.error("HTTP error:", proveedoresResponse.status);
+    }
   },
 };
 </script>
