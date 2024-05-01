@@ -16,7 +16,7 @@ const handleClickBosques = () => {
   <div>
     <h1>Inventarios</h1>
     <button @click="handleClickMoral">Moral</button>
-    <button @click="handleClickBosques">Bosques</button>
+    <button @click="handleClickBosques">Campestre</button>
   </div>
 </template>
 

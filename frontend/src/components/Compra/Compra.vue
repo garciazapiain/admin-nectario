@@ -7,7 +7,7 @@
         <span class="timestamp">{{ lastUpdate("moral") }}</span>
       </p>
       <p class="update-text">
-        Última actualización Bosques:
+        Última actualización Campestre:
         <span class="timestamp">{{ lastUpdate("bosques") }}</span>
       </p>
     </div>
@@ -63,7 +63,7 @@
           <th>Nombre</th>
           <th>Unidad</th>
           <th>Moral</th>
-          <th>Bosques</th>
+          <th>Campestre</th>
           <th>Proveedor</th>
           <th>Estatus</th>
         </tr>

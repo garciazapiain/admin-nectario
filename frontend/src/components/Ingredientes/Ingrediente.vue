@@ -72,21 +72,21 @@ const handleClick = (platillo) => {
           </select>
         </div>
         <div class="form-group">
+          <label for="store_route_order">Campestre Demanda Semanal:</label>
+          <input
+            id="bosques_demanda_semanal"
+            type="number"
+            step="0.01"
+            v-model.number="ingredienteEditado.bosques_demanda_semanal"
+          />
+        </div>
+        <div class="form-group">
           <label for="store_route_order">Moral Demanda Semanal:</label>
           <input
             id="moral_demanda_semanal"
             type="number"
             step="0.01"
             v-model.number="ingredienteEditado.moral_demanda_semanal"
-          />
-        </div>
-        <div class="form-group">
-          <label for="store_route_order">Bosques Demanda Semanal:</label>
-          <input
-            id="bosques_demanda_semanal"
-            type="number"
-            step="0.01"
-            v-model.number="ingredienteEditado.bosques_demanda_semanal"
           />
         </div>
         <div class="form-actions">
@@ -118,12 +118,12 @@ const handleClick = (platillo) => {
           <td>{{ ingrediente.producto_clave ? "Si" : "No" }}</td>
         </tr>
         <tr>
-          <td><strong>Moral Demanda Semanal:</strong></td>
-          <td>{{ ingrediente.moral_demanda_semanal }}</td>
+          <td><strong>Campestre Demanda Semanal:</strong></td>
+          <td>{{ ingrediente.bosques_demanda_semanal }}</td>
         </tr>
         <tr>
-          <td><strong>Bosques Demanda Semanal:</strong></td>
-          <td>{{ ingrediente.bosques_demanda_semanal }}</td>
+          <td><strong>Moral Demanda Semanal:</strong></td>
+          <td>{{ ingrediente.moral_demanda_semanal }}</td>
         </tr>
       </tbody>
     </table>
