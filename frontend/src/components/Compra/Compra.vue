@@ -59,7 +59,10 @@
             />
           </div>
         </div>
-        <div class="flex-row">Presupuesto Suministro: <p class="large-text"> ${{ totalPresupuestoSuministro }}</p></div>
+        <div class="flex-row">
+          Presupuesto Suministro:
+          <p class="large-text">${{ totalPresupuestoSuministro }}</p>
+        </div>
       </div>
       <input
         class="search-bar"
@@ -141,7 +144,8 @@ export default {
       listaEstatus: [
         "No Comprado",
         "Comprado",
-        "Transferir",
+        "Transferir Campestre a Moral",
+        "Transferir Moral a Campestre",
         "Pausar compra",
         "Suficiente producto",
       ],
@@ -242,7 +246,8 @@ export default {
       switch (estatus) {
         case "No Comprado":
           return { backgroundColor: "lightcoral", color: "white" };
-        case "Transferir":
+        case "Transferir Moral a Campestre":
+        case "Transferir Campestre a Moral":
           return { backgroundColor: "yellow", color: "black" };
         case "Pausar compra":
         case "Comprado":
@@ -358,14 +363,15 @@ export default {
               moralDemand = 0;
               bosquesDemand = 0;
             } else {
-              moralDemand = Number(this.calculateInventoryDemand("moral", ingredient));
-              bosquesDemand = Number(this.calculateInventoryDemand(
-                "bosques",
-                ingredient
-              ));
+              moralDemand = Number(
+                this.calculateInventoryDemand("moral", ingredient)
+              );
+              bosquesDemand = Number(
+                this.calculateInventoryDemand("bosques", ingredient)
+              );
             }
           }
-          return total + ((moralDemand + bosquesDemand)*ingredient.precio);
+          return total + (moralDemand + bosquesDemand) * ingredient.precio;
         }, 0)
         .toFixed(1);
     },
@@ -393,7 +399,8 @@ export default {
       this.ingredients = await response.json();
       const estatusOrder = [
         "No Comprado",
-        "Transferir",
+        "Transferir Campestre a Moral",
+        "Transferir Moral a Campestre",
         "Pausar compra",
         "Comprado",
         "Suficiente producto",
