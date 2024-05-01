@@ -3,7 +3,7 @@
     <h1>Compra</h1>
     <div class="update-info">
       <p class="update-text">
-        Última actualización Moral:
+        Última actualización:
         <span class="timestamp">{{ lastUpdate("moral") }}</span>
       </p>
       <p class="update-text">
@@ -47,9 +47,19 @@
               v-model="orderRouteCheckbox"
               :disabled="selectedProveedor === ''"
             />
-            <label for="sort">Sort by store</label>
+            <label for="sort">Ruta de tienda</label>
+          </div>
+          <div className="duracionDiasSuministro">
+            <label for="duracion">Duracion dias de suministro:</label>
+            <input
+              type="number"
+              id="duracion"
+              v-model="duracionDiasSuministro"
+              min="1"
+            />
           </div>
         </div>
+        <div class="flex-row">Presupuesto Suministro: <p class="large-text"> ${{ totalPresupuestoSuministro }}</p></div>
       </div>
       <input
         class="search-bar"
@@ -62,10 +72,12 @@
         <tr>
           <th>Nombre</th>
           <th>Unidad</th>
-          <th>Moral</th>
-          <th>Campestre</th>
-          <th>Proveedor</th>
+          <th>Exi. Moral</th>
+          <th>Exi. Campestre</th>
+          <!-- <th>Proveedor</th> -->
           <th>Estatus</th>
+          <th>Surtir Moral</th>
+          <th>Surtir Campestre</th>
         </tr>
       </thead>
       <tbody>
@@ -82,7 +94,7 @@
           <td style="font-size: 20px">
             {{ getInventory("bosques", ingredient.id_ingrediente) }}
           </td>
-          <td>{{ getProveedorName(ingredient.proveedor_id) }}</td>
+          <!-- <td>{{ getProveedorName(ingredient.proveedor_id) }}</td> -->
           <td>
             <select
               v-model="ingredient.estatus"
@@ -99,6 +111,12 @@
                 {{ estatus }}
               </option>
             </select>
+          </td>
+          <td style="font-size: 20px">
+            {{ calculateInventoryDemand("moral", ingredient) }}
+          </td>
+          <td style="font-size: 20px">
+            {{ calculateInventoryDemand("bosques", ingredient) }}
           </td>
         </tr>
       </tbody>
@@ -119,6 +137,7 @@ export default {
       selectedInsumos: "Urgente",
       selectedInsumosTipo: "Todos",
       orderRouteCheckbox: false,
+      duracionDiasSuministro: 3,
       listaEstatus: [
         "No Comprado",
         "Comprado",
@@ -152,6 +171,18 @@ export default {
       );
 
       return ingredient ? ingredient.cantidad_inventario : "N/A";
+    },
+    calculateInventoryDemand(type, ingredient) {
+      let demand =
+        (ingredient[`${type}_demanda_semanal`] * this.duracionDiasSuministro) /
+        7;
+      let inventory =
+        typeof this.getInventory(type, ingredient.id_ingrediente) === "string"
+          ? this.getInventory(type, ingredient.id_ingrediente) === "Suficiente"
+            ? 0
+            : demand
+          : demand - this.getInventory(type, ingredient.id_ingrediente);
+      return Math.max(0, inventory).toFixed(1);
     },
     lastSubmission(store) {
       const storeSubmissions = this.submissions.filter(
@@ -276,13 +307,13 @@ export default {
         });
       }
 
-      console.log(this.orderRouteCheckbox)
+      console.log(this.orderRouteCheckbox);
 
       if (this.orderRouteCheckbox) {
         ingredients.sort((a, b) => a.store_route_order - b.store_route_order);
       }
 
-      console.log(ingredients)
+      console.log(ingredients);
 
       return ingredients;
     },
@@ -315,6 +346,28 @@ export default {
         }
         return a.nombre.localeCompare(b.nombre);
       });
+    },
+    totalPresupuestoSuministro() {
+      return this.filteredIngredients
+        .reduce((total, ingredient) => {
+          let moralDemand = 0;
+          let bosquesDemand = 0;
+
+          if (ingredient.cantidad !== "Suficiente") {
+            if (typeof ingredient.cantidad === "string") {
+              moralDemand = 0;
+              bosquesDemand = 0;
+            } else {
+              moralDemand = Number(this.calculateInventoryDemand("moral", ingredient));
+              bosquesDemand = Number(this.calculateInventoryDemand(
+                "bosques",
+                ingredient
+              ));
+            }
+          }
+          return total + ((moralDemand + bosquesDemand)*ingredient.precio);
+        }, 0)
+        .toFixed(1);
     },
   },
   watch: {
@@ -410,5 +463,8 @@ export default {
 .orderRouteCheckbox {
   display: flex;
   flex-direction: row;
+}
+.large-text {
+  font-size: 2em; /* Adjust as needed */
 }
 </style>

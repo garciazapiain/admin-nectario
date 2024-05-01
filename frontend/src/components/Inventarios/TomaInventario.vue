@@ -236,6 +236,8 @@ export default {
           unidad: ingrediente.unidad,
           cantidad_inventario: ingrediente.cantidad_inventario,
           proveedor: ingrediente.proveedor,
+          moral_demanda_semanal: ingrediente.moral_demanda_semanal,
+          bosques_demanda_semanal: ingrediente.bosques_demanda_semanal,
         });
       }
       // console.log(this.submitData); // Log submitData every time it gets updated

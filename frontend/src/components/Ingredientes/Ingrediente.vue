@@ -107,7 +107,7 @@ const handleClick = (platillo) => {
         </tr>
         <tr>
           <td><strong>Precio:</strong></td>
-          <td>{{ ingrediente.precio }}</td>
+          <td>${{ ingrediente.precio }}</td>
         </tr>
         <tr>
           <td><strong>Orden ruta de tienda:</strong></td>

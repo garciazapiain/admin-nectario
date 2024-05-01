@@ -237,17 +237,7 @@ app.get('/api/ingredientes', async (req, res) => {
   const client = await pool.connect();
   try {
     const result = await client.query(`
-      SELECT 
-        nombre, 
-        id_ingrediente, 
-        unidad, 
-        precio,
-        proveedor, 
-        proveedor_id,
-        producto_clave,
-        estatus,
-        store_route_order
-      FROM ingredientes
+      SELECT * FROM ingredientes
     `);
     res.json(result.rows)
   } catch (error) {
