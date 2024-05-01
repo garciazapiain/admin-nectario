@@ -35,11 +35,11 @@
             <option value="Lista Peligro">Lista Peligro</option>
             <option value="Todos">Todos</option>
           </select>
-          <!-- <label for="insumos">Estatus Insumos:</label>
+          <label for="insumos">Estatus Insumos:</label>
           <select class="filterBar" id="insumos" v-model="selectedInsumos">
             <option value="Urgente">Urgente</option>
             <option value="Todos">Todos</option>
-          </select> -->
+          </select>
           <div className="orderRouteCheckbox">
             <input
               type="checkbox"
