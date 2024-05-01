@@ -76,6 +76,7 @@ const handleClick = (platillo) => {
           <input
             id="moral_demanda_semanal"
             type="number"
+            step="0.01"
             v-model.number="ingredienteEditado.moral_demanda_semanal"
           />
         </div>
@@ -84,6 +85,7 @@ const handleClick = (platillo) => {
           <input
             id="bosques_demanda_semanal"
             type="number"
+            step="0.01"
             v-model.number="ingredienteEditado.bosques_demanda_semanal"
           />
         </div>
