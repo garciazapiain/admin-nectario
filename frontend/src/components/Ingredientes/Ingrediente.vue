@@ -63,10 +63,29 @@ const handleClick = (platillo) => {
         </div>
         <div class="form-group">
           <label for="lista_peligro">Lista peligro</label>
-          <select id="lista_peligro" v-model="ingredienteEditado.producto_clave">
+          <select
+            id="lista_peligro"
+            v-model="ingredienteEditado.producto_clave"
+          >
             <option value="true">Si</option>
             <option value="false">No</option>
           </select>
+        </div>
+        <div class="form-group">
+          <label for="store_route_order">Moral Demanda Semanal:</label>
+          <input
+            id="moral_demanda_semanal"
+            type="number"
+            v-model.number="ingredienteEditado.moral_demanda_semanal"
+          />
+        </div>
+        <div class="form-group">
+          <label for="store_route_order">Bosques Demanda Semanal:</label>
+          <input
+            id="bosques_demanda_semanal"
+            type="number"
+            v-model.number="ingredienteEditado.bosques_demanda_semanal"
+          />
         </div>
         <div class="form-actions">
           <button type="submit">Guardar</button>
@@ -95,6 +114,14 @@ const handleClick = (platillo) => {
         <tr>
           <td><strong>Lista Peligro:</strong></td>
           <td>{{ ingrediente.producto_clave ? "Si" : "No" }}</td>
+        </tr>
+        <tr>
+          <td><strong>Moral Demanda Semanal:</strong></td>
+          <td>{{ ingrediente.moral_demanda_semanal }}</td>
+        </tr>
+        <tr>
+          <td><strong>Bosques Demanda Semanal:</strong></td>
+          <td>{{ ingrediente.bosques_demanda_semanal }}</td>
         </tr>
       </tbody>
     </table>
