@@ -60,7 +60,7 @@
           </div>
         </div>
         <div class="flex-row">
-          Presupuesto Suministro:
+          Presupuesto Estimado Suministro:
           <p class="large-text">${{ totalPresupuestoSuministro }}</p>
         </div>
       </div>
@@ -77,7 +77,7 @@
           <th>Unidad</th>
           <th>Exi. Moral</th>
           <th>Exi. Campestre</th>
-          <!-- <th>Proveedor</th> -->
+          <th>Proveedor</th>
           <th>Estatus</th>
           <th>Surtir Moral</th>
           <th>Surtir Campestre</th>
@@ -97,7 +97,18 @@
           <td style="font-size: 20px">
             {{ getInventory("bosques", ingredient.id_ingrediente) }}
           </td>
-          <!-- <td>{{ getProveedorName(ingredient.proveedor_id) }}</td> -->
+          <td>
+            <!-- {{ getProveedorName(ingredient.proveedor_id) }} -->
+            <select class="small-text" v-model="ingredient.proveedor_id">
+              <option
+                v-for="proveedor in proveedores"
+                :value="proveedor.id"
+                :key="proveedor.id"
+              >
+                {{ proveedor.nombre }}
+              </option>
+            </select>
+          </td>
           <td>
             <select
               v-model="ingredient.estatus"
@@ -256,6 +267,9 @@ export default {
         default:
           return {};
       }
+    },
+    cambiarProveedor() {
+      console.log("cambiar proveedor");
     },
   },
   computed: {
@@ -473,5 +487,13 @@ export default {
 }
 .large-text {
   font-size: 2em; /* Adjust as needed */
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.small-text {
+  font-size: 0.8em; /* Adjust as needed */
 }
 </style>

@@ -88,14 +88,14 @@
                     Suficiente
                   </button>
                 </div>
-                <div class="">
+                <!-- <div class="">
                   <button
                     class="button-casiNoHay"
                     @click="setCasiNoHay(ingrediente)"
                   >
                     Casi no hay
                   </button>
-                </div>
+                </div> -->
                 <div class="">
                   <button
                     class="button-agotado"
@@ -145,7 +145,13 @@ export default {
       submitMessage: null,
       selectedInsumosTipo: "Todos",
       selectedProveedor: "",
+      sucural: "",
     };
+  },
+  created() {
+    let pathArray = window.location.pathname.split("/");
+    this.sucursal =
+      pathArray[pathArray.length - 1] === "moral" ? "moral" : "bosques";
   },
   computed: {
     filteredIngredients() {
@@ -350,7 +356,19 @@ export default {
       }
     },
     setSufficient(ingrediente) {
-      ingrediente.cantidad_inventario = "Suficiente";
+      if (this.sucursal === "moral") {
+        if (ingrediente.moral_demanda_semanal !== null) {
+          ingrediente.cantidad_inventario = (ingrediente.moral_demanda_semanal * 2 / 7).toFixed(1);
+        } else {
+          ingrediente.cantidad_inventario = "Suficiente";
+        }
+      } else {
+        if (ingrediente.bosques_demanda_semanal !== null) {
+          ingrediente.cantidad_inventario = (ingrediente.bosques_demanda_semanal * 2 / 7).toFixed(1);
+        } else {
+          ingrediente.cantidad_inventario = "Suficiente";
+        }
+      }
       this.updateSubmitData(ingrediente);
     },
     setCasiNoHay(ingrediente) {
@@ -496,6 +514,8 @@ input {
   font-size: 20px;
   margin: 5px;
   border: #2cb92c solid 3px;
+  background-color: #242424;
+  color: white;
 }
 
 .button-casiNoHay {
@@ -504,6 +524,8 @@ input {
   font-size: 20px;
   margin: 5px;
   border: #d5cb09 solid 3px;
+  background-color: #242424;
+  color: white;
 }
 
 .button-agotado {
@@ -512,6 +534,8 @@ input {
   font-size: 20px;
   margin: 5px;
   border: #d20f0f solid 3px;
+  background-color: #242424;
+  color: white;
 }
 
 .button-resetear {
@@ -529,6 +553,9 @@ input {
   height: fit-content; /* Increase height */
   font-size: 20px; /* Increase font size */
   margin: 5px;
+  background-color: rgb(8, 73, 8);
+  color: white;
+  border: white solid 1px;
 }
 
 .button-increase-decrease {
@@ -539,6 +566,8 @@ input {
   display: flex; /* Add this line */
   justify-content: center; /* Add this line */
   align-items: center; /* Add this line */
+  background-color: #242424;
+  color: white;
 }
 .button-row-parent {
   display: flex;
