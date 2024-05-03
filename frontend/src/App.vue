@@ -45,15 +45,38 @@ const handleLogout = () => {
   </div>
 </template>
 
+<script>
+export default {
+  computed: {
+    isMainPageButtonVisible() {
+      return (
+        this.router.currentRoute.value.path !== "/" &&
+        this.router.currentRoute.value.path !== "/login"
+      );
+    },
+    isLogoutButtonVisible() {
+      return (
+        this.router.currentRoute.value.path !== "/login" &&
+        this.router.currentRoute.value.path !== "/register"
+      );
+    },
+  },
+  // other options...
+};
+</script>
+
 <style scoped>
 .buttonsTop {
   display: flex;
   justify-content: space-between;
 }
 .buttonWrapper {
-  flex-grow: 1;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+}
+
+.buttonWrapper.justify-end {
+  justify-content: flex-end;
 }
 .main-page-button {
   position: static;

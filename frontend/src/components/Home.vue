@@ -37,15 +37,32 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
-    <h1 @click="handleClickInventario">Inventarios</h1>
-    <h1 @click="handleClickCompra">Compra</h1>
-    <h1 v-if="isAdmin" @click="handleClickPlatillo">Platillos</h1>
-    <h1 v-if="isAdmin" @click="handleClickSubplatillo">Subplatillos</h1>
-    <h1 v-if="isAdmin" @click="handleClickIngrediente">Insumos</h1>
-    <h1 v-if="isAdmin" @click="handleClickPronosticoDemandaInsumos">Pronóstico Demanda Insumos</h1>
+  <div class="button-container">
+    <button @click="handleClickInventario">Inventarios</button>
+    <button @click="handleClickCompra">Compra</button>
+    <button v-if="isAdmin" @click="handleClickPlatillo">Platillos</button>
+    <button v-if="isAdmin" @click="handleClickSubplatillo">Subplatillos</button>
+    <button v-if="isAdmin" @click="handleClickIngrediente">Insumos</button>
+    <button v-if="isAdmin" @click="handleClickPronosticoDemandaInsumos">
+      Pronóstico Demanda Insumos
+    </button>
   </div>
 </template>
-  
+
 <style scoped>
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.button-container button {
+  flex: 1 0 25%; /* This will make each button take up 25% of the container's width, allowing for 4 items per row */
+  box-sizing: border-box;
+  margin: 10px;
+  padding: 10px;
+  height: 10rem;
+  font-size: 2rem;
+  border: 1px solid #ccc;
+  text-align: center;
+}
 </style>
