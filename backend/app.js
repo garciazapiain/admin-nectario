@@ -603,6 +603,67 @@ app.post('/api/guardarpronosticodemanda', async (req, res) => {
   }
 });
 
+app.post('/api/purchase_orders', async (req, res) => {
+  const { articulosComprados, totalImporte, fecha } = req.body;
+
+  // Start a transaction
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // Insert the purchase order
+    const orderResult = await client.query(
+      'INSERT INTO purchase_orders (fecha, totalImporte) VALUES ($1, $2) RETURNING id',
+      [fecha, totalImporte]
+    );
+    const orderId = orderResult.rows[0].id;
+
+    // Insert the purchased items
+    for (const item of articulosComprados) {
+      await client.query(
+        'INSERT INTO purchase_history_items (purchase_order_id, id_ingrediente, quantity, price_per_item, total_price) VALUES ($1, $2, $3, $4, $5)',
+        [orderId, item.id_ingrediente, item.quantity, item.price, item.totalPrice]
+      );
+    }
+
+    await client.query('COMMIT');
+    res.json({ message: 'Purchase order created successfully' });
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Database error' });
+  } finally {
+    client.release();
+  }
+});
+
+app.get('/api/historial_insumos', async (req, res) => {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(`
+      SELECT 
+        ingredientes.nombre, 
+        SUM(purchase_history_items.quantity) AS total_quantity, 
+        SUM(purchase_history_items.total_price) AS total_price
+      FROM 
+        ingredientes 
+      JOIN 
+        purchase_history_items 
+      ON 
+        ingredientes.id_ingrediente = purchase_history_items.id_ingrediente
+      GROUP BY 
+        ingredientes.nombre;
+    `);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while fetching data from the database' });
+  } finally {
+    client.release();
+  }
+});
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
 });

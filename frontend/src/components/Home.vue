@@ -29,6 +29,10 @@ const handleClickPronosticoDemandaInsumos = () => {
   router.push("/pronosticodemandainsumos");
 };
 
+const handleClickHistorialCompra = () => {
+  router.push("/historialcompra");
+};
+
 onMounted(() => {
   if (!localStorage.getItem("jwt")) {
     router.push("/login");
@@ -46,6 +50,9 @@ onMounted(() => {
     <button v-if="isAdmin" @click="handleClickPronosticoDemandaInsumos">
       Pronóstico Demanda Insumos
     </button>
+    <button v-if="isAdmin" @click="handleClickHistorialCompra">
+      Historial de Compras
+    </button>
   </div>
 </template>
 
@@ -56,7 +63,7 @@ onMounted(() => {
 }
 
 .button-container button {
-  flex: 1 0 25%; /* This will make each button take up 25% of the container's width, allowing for 4 items per row */
+  flex: 1 0 20%; /* This will make each button take up 25% of the container's width, allowing for 4 items per row */
   box-sizing: border-box;
   margin: 10px;
   padding: 10px;
