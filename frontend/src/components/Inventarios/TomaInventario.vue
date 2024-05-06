@@ -143,7 +143,7 @@ export default {
       isScrollingDown: false,
       lastScrollPosition: 0,
       submitMessage: null,
-      selectedInsumosTipo: "Todos",
+      selectedInsumosTipo: "Lista Peligro",
       selectedProveedor: "",
       sucural: "",
     };
