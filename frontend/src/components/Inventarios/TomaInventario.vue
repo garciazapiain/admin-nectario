@@ -358,13 +358,19 @@ export default {
     setSufficient(ingrediente) {
       if (this.sucursal === "moral") {
         if (ingrediente.moral_demanda_semanal !== null) {
-          ingrediente.cantidad_inventario = (ingrediente.moral_demanda_semanal * 2 / 7).toFixed(1);
+          ingrediente.cantidad_inventario = (
+            (ingrediente.moral_demanda_semanal * 2) /
+            7
+          ).toFixed(1);
         } else {
           ingrediente.cantidad_inventario = "Suficiente";
         }
       } else {
         if (ingrediente.bosques_demanda_semanal !== null) {
-          ingrediente.cantidad_inventario = (ingrediente.bosques_demanda_semanal * 2 / 7).toFixed(1);
+          ingrediente.cantidad_inventario = (
+            (ingrediente.bosques_demanda_semanal * 2) /
+            7
+          ).toFixed(1);
         } else {
           ingrediente.cantidad_inventario = "Suficiente";
         }
@@ -451,7 +457,7 @@ export default {
       if (a.producto_clave !== b.producto_clave) {
         return b.producto_clave - a.producto_clave;
       }
-      // If producto_clave is the same, sort alphabetically
+      // If producto_clave is the same, sort alphabetically by nombre
       return a.nombre.localeCompare(b.nombre);
     });
     this.originalIngredientes = JSON.parse(JSON.stringify(this.ingredientes));
