@@ -48,15 +48,15 @@ onMounted(() => {
   <div class="button-container">
     <button @click="handleClickInventario">Toma Inventario</button>
     <button @click="handleClickExistencias">Resumen Existencias</button>
-    <button v-if="isAdmin" @click="handleClickCompra">Compra</button>
+    <button v-if="isAdmin" @click="handleClickCompra">Compra del dia</button>
     <!-- <button v-if="isAdmin" @click="handleClickPlatillo">Platillos</button>
     <button v-if="isAdmin" @click="handleClickSubplatillo">Subplatillos</button> -->
-    <button v-if="isAdmin" @click="handleClickIngrediente">Insumos</button>
+    <button v-if="isAdmin" @click="handleClickIngrediente">Insumos Info</button>
     <!-- <button v-if="isAdmin" @click="handleClickPronosticoDemandaInsumos">
       Pronóstico Demanda Insumos
     </button> -->
     <button v-if="isAdmin" @click="handleClickHistorialCompra">
-      Historial de Compras
+      Historial Compras
     </button>
   </div>
 </template>
