@@ -122,7 +122,7 @@ import { useRouter } from "vue-router";
 import moment from "moment-timezone";
 import "moment/locale/es";
 const router = useRouter();
-const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
+// const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 const handleClickIngrediente = (idIngrediente) => {
   router.push(`/ingrediente/${idIngrediente}`);
 };
