@@ -21,6 +21,10 @@ const handleClickInventario = () => {
   router.push("/inventarios");
 };
 
+const handleClickExistencias = () => {
+  router.push("/existenciasresumen");
+};
+
 const handleClickCompra = () => {
   router.push("/compra");
 };
@@ -43,6 +47,7 @@ onMounted(() => {
 <template>
   <div class="button-container">
     <button @click="handleClickInventario">Inventarios</button>
+    <button @click="handleClickExistencias">Resumen Existencias</button>
     <button v-if="isAdmin" @click="handleClickCompra">Compra</button>
     <button v-if="isAdmin" @click="handleClickPlatillo">Platillos</button>
     <button v-if="isAdmin" @click="handleClickSubplatillo">Subplatillos</button>

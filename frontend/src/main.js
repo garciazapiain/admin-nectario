@@ -12,6 +12,7 @@ import Ingredientes from './components/Ingredientes/Ingredientes.vue';
 import Ingrediente from './components/Ingredientes/Ingrediente.vue';
 import Inventarios from './components/Inventarios/Home.vue';
 import TomaInventario from './components/Inventarios/TomaInventario.vue';
+import ResumenExistencias from './components/Existencias/ResumenExistencias.vue';
 import Compra from './components/Compra/Compra.vue';
 import PronosticoDemandaInsumos from './components/PronosticoDemandaInsumos/PronosticoDemandaInsumos.vue';
 import HistorialCompra from './components/HistorialCompra/HistorialCompra.vue';
@@ -32,6 +33,7 @@ const routes = [
     { path: '/ingrediente/:id', component: Ingrediente },
     { path: '/inventarios', component: Inventarios },
     { path: '/inventarios/:store', component: TomaInventario, props: true},
+    { path: '/existenciasresumen', component: ResumenExistencias},
     { path: '/compra', component: Compra },
     { path: '/pronosticodemandainsumos', component: PronosticoDemandaInsumos },
     { path: '/historialcompra', component: HistorialCompra   },
