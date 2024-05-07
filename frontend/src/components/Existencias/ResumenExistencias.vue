@@ -110,5 +110,8 @@ export default {
 </script>
 
 <style scoped>
+td {
+  color: white;
+}
 /* Add any custom styles here */
 </style>
