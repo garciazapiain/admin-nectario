@@ -1,7 +1,32 @@
 <template>
   <div>
     <h1>Historial de Compra</h1>
-    <input type="file" @change="handleFileUpload" accept=".xml" />
+    <!-- <button @click="scrollToInput">Scroll to Input File Section</button> -->
+    <table v-if="purchaseOrders.length">
+      <tr>
+        <th># Ticket</th>
+        <th>Fecha</th>
+        <th>Proveedor</th>
+        <th>Total Importe</th>
+      </tr>
+      <tr v-for="order in purchaseOrders" :key="order.id">
+        <td>
+          <router-link :to="`${$route.path}/compra/${order.id}`">{{
+            order.folio
+          }}</router-link>
+        </td>
+        <td>{{ order.fecha }}</td>
+        <td>{{ order.emisor }}</td>
+        <td>$ {{ order.totalimporte }}</td>
+      </tr>
+    </table>
+    <h2>Subir Nueva Factura en formato XML</h2>
+    <input
+      type="file"
+      @change="handleFileUpload"
+      accept=".xml"
+      ref="fileInput"
+    />
     <table v-if="articles.length">
       <p v-if="fecha">Fecha: {{ fecha }}</p>
       <p v-if="folio">Folio: {{ folio }}</p>
@@ -121,9 +146,13 @@ export default {
     deleteRow(index) {
       this.articles.splice(index, 1);
     },
+    scrollToInput() {
+      this.$refs.fileInput.scrollIntoView({ behavior: "smooth" });
+    },
   },
   name: "HistorialCompra",
   setup() {
+    const purchaseOrders = ref([]);
     const articles = ref([]);
     const totalImporte = computed(() => {
       return articles.value.reduce(
@@ -168,6 +197,16 @@ export default {
         : "http://localhost:3000/api";
 
     onMounted(async () => {
+      try {
+        const response = await fetch(`${API_URL}/purchase_orders`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        purchaseOrders.value = data;
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
       try {
         const response = await fetch(`${API_URL}/ingredientes`);
         if (!response.ok) {
@@ -231,6 +270,7 @@ export default {
     };
 
     return {
+      purchaseOrders,
       articles,
       handleFileUpload,
       totalImporte,

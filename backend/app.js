@@ -603,6 +603,22 @@ app.post('/api/guardarpronosticodemanda', async (req, res) => {
   }
 });
 
+app.get('/api/purchase_orders', async (req, res) => {
+  const client = await pool.connect();
+  try {
+    // Select all rows from purchase_orders table
+    const result = await client.query('SELECT * FROM purchase_orders');
+
+    // Send the result rows as the response
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while fetching data from the database' });
+  } finally {
+    client.release();
+  }
+});
+
 app.post('/api/purchase_orders', async (req, res) => {
   const { articulosComprados, totalImporte, fecha, folio, emisor } = req.body;
 
@@ -692,6 +708,42 @@ app.get('/api/historial_insumos/insumo/:id', async (req, res) => {
     `, [id]);
 
     res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while fetching data from the database' });
+  } finally {
+    client.release();
+  }
+});
+
+app.get('/api/historialcompra/compra/:id', async (req, res) => {
+  const client = await pool.connect();
+  try {
+    const id = req.params.id;
+    const purchaseOrderResult = await client.query(`
+      SELECT * FROM purchase_orders WHERE id = $1
+    `, [id]);
+
+    const itemsResult = await client.query(`
+      SELECT 
+        purchase_history_items.*,
+        ingredientes.nombre
+      FROM 
+        purchase_history_items 
+      JOIN 
+        ingredientes 
+      ON 
+        purchase_history_items.id_ingrediente = ingredientes.id_ingrediente
+      WHERE 
+        purchase_history_items.purchase_order_id = $1
+    `, [id]);
+
+    const response = {
+      ...purchaseOrderResult.rows[0],
+      items: itemsResult.rows
+    };
+
+    res.json(response);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'An error occurred while fetching data from the database' });
