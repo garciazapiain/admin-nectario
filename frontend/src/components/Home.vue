@@ -42,7 +42,7 @@ onMounted(() => {
 
 <template>
   <div class="button-container">
-    <button @click="handleClickInventario">Inventarios</button>
+    <button v-if="isAdmin" @click="handleClickInventario">Inventarios</button>
     <button @click="handleClickCompra">Compra</button>
     <button v-if="isAdmin" @click="handleClickPlatillo">Platillos</button>
     <button v-if="isAdmin" @click="handleClickSubplatillo">Subplatillos</button>
