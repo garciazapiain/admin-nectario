@@ -4,7 +4,7 @@
       {{ submitMessage.text }}
     </div>
     <!-- <button @click="verifyChangeIngredientCount">Check</button> -->
-    <h1>Inventario {{ store }}</h1>
+    <h1>Toma Inventario - {{ store }}</h1>
     <div class="update-info">
       <p class="update-text">
         Última actualización:
