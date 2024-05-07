@@ -111,7 +111,7 @@
       </table>
     </div>
     <div class="sticky-submit-wrapper">
-      <button v-if="isAdmin" class="button-resetear" @click="confirmReset">Resetear</button>
+      <button class="button-resetear" @click="confirmReset">Resetear</button>
       <button class="button-actualizar" @click="submitForm">Actualizar</button>
     </div>
   </div>
