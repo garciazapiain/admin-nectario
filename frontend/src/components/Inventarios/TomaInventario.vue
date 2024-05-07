@@ -124,7 +124,6 @@ import "moment/locale/es";
 import { ref } from 'vue';
 const router = useRouter();
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
-console.log(isAdmin.value)
 const handleClickIngrediente = (idIngrediente) => {
   router.push(`/ingrediente/${idIngrediente}`);
 };
