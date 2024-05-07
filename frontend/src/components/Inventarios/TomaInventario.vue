@@ -80,14 +80,14 @@
                     </button>
                   </div>
                 </div>
-                <div class="">
+                <!-- <div class="">
                   <button
                     class="button-suficiente"
                     @click="setSufficient(ingrediente)"
                   >
                     Suficiente
                   </button>
-                </div>
+                </div> -->
                 <!-- <div class="">
                   <button
                     class="button-casiNoHay"
@@ -111,7 +111,7 @@
       </table>
     </div>
     <div class="sticky-submit-wrapper">
-      <button class="button-resetear" @click="confirmReset">Resetear</button>
+      <button v-if="isAdmin" class="button-resetear" @click="confirmReset">Resetear</button>
       <button class="button-actualizar" @click="submitForm">Actualizar</button>
     </div>
   </div>
@@ -122,6 +122,7 @@ import { useRouter } from "vue-router";
 import moment from "moment-timezone";
 import "moment/locale/es";
 const router = useRouter();
+const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 const handleClickIngrediente = (idIngrediente) => {
   router.push(`/ingrediente/${idIngrediente}`);
 };
