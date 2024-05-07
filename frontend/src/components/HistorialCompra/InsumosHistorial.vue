@@ -1,11 +1,28 @@
 <template>
   <div>
     <h1>Historial de Insumos</h1>
-    <div v-for="ingredient in ingredients" :key="ingredient.nombre">
-      <h2>{{ ingredient.nombre }}</h2>
-      <p>Quantity: {{ ingredient.total_quantity }}</p>
-      <p>Total Price: {{ ingredient.total_price }}</p>
-    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Insumo</th>
+          <th>Cantidad</th>
+          <th>Precio total</th>
+          <th>Precio promedio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="ingredient in ingredients" :key="ingredient.nombre">
+          <td>
+            <router-link :to="`${$route.path}/${ingredient.id_ingrediente}`">{{
+              ingredient.nombre
+            }}</router-link>
+          </td>
+          <td>{{ ingredient.total_quantity }}</td>
+          <td>{{ ingredient.total_price }}</td>
+          <td>{{ ingredient.total_price / ingredient.total_quantity }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 

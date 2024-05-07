@@ -4,15 +4,17 @@
     <input type="file" @change="handleFileUpload" accept=".xml" />
     <table v-if="articles.length">
       <p v-if="fecha">Fecha: {{ fecha }}</p>
+      <p v-if="folio">Folio: {{ folio }}</p>
+      <p v-if="emisor">Emisor: {{ emisor }}</p>
       <tr>
-        <th>Insumo relacionado</th>
+        <th>Insumo a relacionar</th>
         <th>Insumo en factura</th>
-        <th>Quantity</th>
-        <th>Price per Item</th>
-        <th>Total Price</th>
+        <th>Cantidad</th>
+        <th>Precio por insumo</th>
+        <th>Importe total</th>
         <th>Borrar</th>
       </tr>
-      <tr v-for="article in articles" :key="article.name">
+      <tr v-for="(article, index) in articles" :key="article.name">
         <td>
           <input
             type="text"
@@ -42,11 +44,11 @@
       </tr>
     </table>
 
-    <p v-if="totalImporte">Total Importe: $ {{ totalImporte }}</p>
+    <p v-if="totalImporte">Total Importe: $ {{ totalImporte.toFixed(2) }}</p>
     <button v-if="articles.length" @click="handleSubmit">Submit</button>
     <p class="error-message">{{ errorMessageSubmit }}</p>
     <router-link to="/historialcompra/insumos">
-      <button>Go to Ingredient View</button>
+      <button>Vista por Insumo</button>
     </router-link>
   </div>
 </template>
@@ -87,6 +89,8 @@ export default {
         articulosComprados,
         totalImporte: this.totalImporte,
         fecha: this.fecha,
+        folio: this.folio,
+        emisor: this.emisor,
       };
 
       try {
@@ -130,6 +134,8 @@ export default {
     const ingredients = ref([]);
     const errorMessageSubmit = ref(null);
     const fecha = ref(null);
+    const folio = ref(null);
+    const emisor = ref(null);
 
     const searchIngredient = (article) => {
       // Only search if the search is allowed
@@ -189,9 +195,12 @@ export default {
             fecha.value = xmlDoc
               .getElementsByTagName("cfdi:Comprobante")[0]
               .getAttribute("Fecha");
-
-            console.log("Fecha after XML parsing:", fecha.value); // New console log
-
+            folio.value = xmlDoc
+              .getElementsByTagName("cfdi:Comprobante")[0]
+              .getAttribute("Folio");
+            emisor.value = xmlDoc
+              .getElementsByTagName("cfdi:Emisor")[0]
+              .getAttribute("Nombre");
             articles.value = Array.from(xmlArticles).map((article) => {
               const name = article.getAttribute("Descripcion");
               const quantity = parseInt(article.getAttribute("Cantidad"));
@@ -230,6 +239,8 @@ export default {
       selectIngredient,
       errorMessageSubmit,
       fecha,
+      folio,
+      emisor,
     };
   },
 };

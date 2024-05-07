@@ -604,7 +604,7 @@ app.post('/api/guardarpronosticodemanda', async (req, res) => {
 });
 
 app.post('/api/purchase_orders', async (req, res) => {
-  const { articulosComprados, totalImporte, fecha } = req.body;
+  const { articulosComprados, totalImporte, fecha, folio, emisor } = req.body;
 
   // Start a transaction
   const client = await pool.connect();
@@ -613,8 +613,8 @@ app.post('/api/purchase_orders', async (req, res) => {
 
     // Insert the purchase order
     const orderResult = await client.query(
-      'INSERT INTO purchase_orders (fecha, totalImporte) VALUES ($1, $2) RETURNING id',
-      [fecha, totalImporte]
+      'INSERT INTO purchase_orders (fecha, totalImporte, folio, emisor) VALUES ($1, $2, $3, $4) RETURNING id',
+      [fecha, totalImporte, folio, emisor]
     );
     const orderId = orderResult.rows[0].id;
 
@@ -643,6 +643,7 @@ app.get('/api/historial_insumos', async (req, res) => {
     const result = await client.query(`
       SELECT 
         ingredientes.nombre, 
+        ingredientes.id_ingrediente,
         SUM(purchase_history_items.quantity) AS total_quantity, 
         SUM(purchase_history_items.total_price) AS total_price
       FROM 
@@ -652,8 +653,43 @@ app.get('/api/historial_insumos', async (req, res) => {
       ON 
         ingredientes.id_ingrediente = purchase_history_items.id_ingrediente
       GROUP BY 
-        ingredientes.nombre;
+        ingredientes.nombre,
+        ingredientes.id_ingrediente;
     `);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while fetching data from the database' });
+  } finally {
+    client.release();
+  }
+});
+
+app.get('/api/historial_insumos/insumo/:id', async (req, res) => {
+  const client = await pool.connect();
+  try {
+    const id = req.params.id;
+    const result = await client.query(`
+      SELECT 
+        purchase_history_items.*,
+        ingredientes.nombre,
+        purchase_orders.fecha,
+        purchase_orders.emisor,
+        purchase_orders.folio
+      FROM 
+        purchase_history_items 
+      JOIN 
+        ingredientes 
+      ON 
+        purchase_history_items.id_ingrediente = ingredientes.id_ingrediente
+      JOIN 
+        purchase_orders 
+      ON 
+        purchase_history_items.purchase_order_id = purchase_orders.id 
+      WHERE 
+        purchase_history_items.id_ingrediente = $1
+    `, [id]);
 
     res.json(result.rows);
   } catch (err) {

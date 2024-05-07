@@ -16,6 +16,7 @@ import Compra from './components/Compra/Compra.vue';
 import PronosticoDemandaInsumos from './components/PronosticoDemandaInsumos/PronosticoDemandaInsumos.vue';
 import HistorialCompra from './components/HistorialCompra/HistorialCompra.vue';
 import InsumosHistorial from './components/HistorialCompra/InsumosHistorial.vue';
+import InsumoAnalisis from './components/HistorialCompra/InsumoAnalisis.vue';
 import './style.css'
 
 const routes = [
@@ -33,7 +34,8 @@ const routes = [
     { path: '/compra', component: Compra },
     { path: '/pronosticodemandainsumos', component: PronosticoDemandaInsumos },
     { path: '/historialcompra', component: HistorialCompra   },
-    { path: '/historialcompra/insumos', component: InsumosHistorial   }
+    { path: '/historialcompra/insumos', component: InsumosHistorial   },
+    { path: '/historialcompra/insumos/:id', component: InsumoAnalisis   }
   ];
   
   const router = createRouter({

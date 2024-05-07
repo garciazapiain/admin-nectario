@@ -1,26 +1,30 @@
 <template>
   <div>
-    <h1>Insumo Analisis</h1>
-    <p>ID: {{ id }}</p>
+    <!-- // Add a title with the ingredient name -->
+    <h1 v-if="history[0]">{{ history[0].nombre }} - Historial</h1>
     <table v-if="history.length">
       <thead>
         <tr>
-          <th>Purchase Order ID</th>
-          <th>Quantity</th>
-          <th>Price Per Item</th>
-          <th>Total Price</th>
+          <th>Número ticket</th>
+          <th>Fecha</th>
+          <th>Proveedor</th>
+          <th>Cantidad</th>
+          <th>Precio por insumo</th>
+          <th>Importe Total</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="item in history" :key="item.id">
-          <td>{{ item.purchase_order_id }}</td>
+          <td>{{ item.folio }}</td>
+          <td>{{ item.fecha }}</td>
+          <td>{{ item.emisor }}</td>
           <td>{{ item.quantity }}</td>
-          <td>{{ item.price_per_item }}</td>
-          <td>{{ item.total_price }}</td>
+          <td>${{ item.price_per_item }}</td>
+          <td>${{ item.total_price }}</td>
         </tr>
       </tbody>
     </table>
-    <p v-else>No history found for this ingredient.</p>
+    <p v-else>No se encontro historia para este ingrediente.</p>
   </div>
 </template>
 
@@ -43,7 +47,9 @@ export default {
 
     // Make the API call
     try {
-      const response = await fetch(`${API_URL}/historial_insumos/insumo/${this.id}`);
+      const response = await fetch(
+        `${API_URL}/historial_insumos/insumo/${this.id}`
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
