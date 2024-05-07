@@ -1,6 +1,8 @@
 <template>
   <div>
     <h1>Resumen Existencias Lista Peligro</h1>
+    <p>Ultima actualización Moral: {{ lastUpdatedMoral }}</p>
+    <p>Ultima actualización Campestre: {{ lastUpdatedCampestre }}</p>
     <table>
       <thead>
         <tr>
@@ -59,6 +61,20 @@ export default {
     } else {
       console.error("HTTP error:", response.status);
     }
+  },
+  computed: {
+    lastUpdatedMoral() {
+      const lastSubmission = this.lastSubmission("moral");
+      return lastSubmission
+        ? new Date(lastSubmission.timestamp).toLocaleString()
+        : "N/A";
+    },
+    lastUpdatedCampestre() {
+      const lastSubmission = this.lastSubmission("bosques");
+      return lastSubmission
+        ? new Date(lastSubmission.timestamp).toLocaleString()
+        : "N/A";
+    },
   },
   methods: {
     getInventory(storeName, ingredientId) {
