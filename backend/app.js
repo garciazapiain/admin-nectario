@@ -727,7 +727,7 @@ app.get('/api/historialcompra/compra/:id', async (req, res) => {
     const itemsResult = await client.query(`
       SELECT 
         purchase_history_items.*,
-        ingredientes.nombre
+        ingredientes.nombre, ingredientes.unidad
       FROM 
         purchase_history_items 
       JOIN 

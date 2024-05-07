@@ -7,18 +7,20 @@
     <table>
       <thead>
         <tr>
-          <th>Nombre</th>
-          <th>Quantity</th>
-          <th>Price per item</th>
-          <th>Total price</th>
+          <th>Insumo</th>
+          <th>Unidad</th>
+          <th>Cantidad Comprada</th>
+          <th>Precio promedio / unidad</th>
+          <th>Total importe</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="item in order.items" :key="item.id">
           <td>{{ item.nombre }}</td>
+          <td>{{ item.unidad }}</td>
           <td>{{ item.quantity }}</td>
-          <td>{{ item.price_per_item }}</td>
-          <td>{{ item.total_price }}</td>
+          <td>${{ item.total_price / item.quantity }}</td>
+          <td>${{ item.total_price }}</td>
         </tr>
       </tbody>
     </table>

@@ -33,6 +33,7 @@
       <p v-if="emisor">Emisor: {{ emisor }}</p>
       <tr>
         <th>Insumo a relacionar</th>
+        <th>Unidad insumo</th>
         <th>Insumo en factura</th>
         <th>Cantidad</th>
         <th>Precio por insumo</th>
@@ -58,9 +59,13 @@
             </ul>
           </div>
         </td>
+        <td>{{ article.selectedUnidad }}</td>
+        <!-- New table data cell -->
         <!-- Add this new table data with an input field -->
         <td>{{ article.name }}</td>
-        <td>{{ article.quantity }}</td>
+        <td>
+          <input type="number" v-model="article.quantity" />
+        </td>
         <td>$ {{ article.price }}</td>
         <td>$ {{ article.totalPrice }}</td>
         <td>
@@ -106,6 +111,7 @@ export default {
         price: article.price,
         totalPrice: article.totalPrice,
         selectedIngredient: article.selectedIngredient,
+        unidad: article.selectedUnidad,
         // Include ingrediente_id if it's a property of article
         id_ingrediente: article.selectedIngredientId,
       }));
@@ -187,8 +193,10 @@ export default {
       // Store the selected ingredient
       article.selectedIngredient = ingredient.nombre;
       article.selectedIngredientId = ingredient.id_ingrediente;
+      article.selectedUnidad = ingredient.unidad;
       // Disallow further search
       article.allowSearch = false;
+      console.log(article);
     };
 
     const API_URL =
@@ -216,6 +224,7 @@ export default {
         ingredients.value = data.map((ingredient) => ({
           id_ingrediente: ingredient.id_ingrediente,
           nombre: ingredient.nombre,
+          unidad: ingredient.unidad,
         }));
       } catch (error) {
         console.error("Fetch error:", error);

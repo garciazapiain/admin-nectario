@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- // Add a title with the ingredient name -->
-    <h1 v-if="history[0]">{{ history[0].nombre }} - Historial</h1>
+    <h1 v-if="history[0]">{{ history[0].nombre }} - HISTORIAL</h1>
     <table v-if="history.length">
       <thead>
         <tr>
@@ -9,7 +9,7 @@
           <th>Fecha</th>
           <th>Proveedor</th>
           <th>Cantidad</th>
-          <th>Precio por insumo</th>
+          <th>Precio promedio por insumo</th>
           <th>Importe Total</th>
         </tr>
       </thead>
@@ -19,7 +19,7 @@
           <td>{{ item.fecha }}</td>
           <td>{{ item.emisor }}</td>
           <td>{{ item.quantity }}</td>
-          <td>${{ item.price_per_item }}</td>
+          <td>${{ (item.total_price / item.quantity).toFixed(2)}}</td>
           <td>${{ item.total_price }}</td>
         </tr>
       </tbody>
