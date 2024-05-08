@@ -19,7 +19,7 @@
           <td>{{ item.nombre }}</td>
           <td>{{ item.unidad }}</td>
           <td>{{ item.quantity }}</td>
-          <td>${{ item.total_price / item.quantity }}</td>
+          <td>${{ (item.total_price / item.quantity).toFixed(2) }}</td>
           <td>${{ item.total_price }}</td>
         </tr>
       </tbody>

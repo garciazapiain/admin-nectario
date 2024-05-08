@@ -70,7 +70,7 @@
         <td>
           <input type="number" v-model="article.quantity" />
         </td>
-        <td>$ {{ article.price }}</td>
+        <td>$ {{ article.price.toFixed(2) }}</td>
         <td>$ {{ article.totalPrice }}</td>
         <td>
           <button @click="deleteRow(index)">X</button>
