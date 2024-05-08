@@ -71,7 +71,7 @@
           <input type="number" v-model="article.quantity" />
         </td>
         <td>$ {{ article.price }}</td>
-        <td>$ {{ article.totalPrice }}</td>
+        <td>$ {{ article.total }}</td>
         <td>
           <button @click="deleteRow(index)">X</button>
         </td>
@@ -186,12 +186,7 @@ export default {
   setup() {
     const purchaseOrders = ref([]);
     const articles = ref([]);
-    const totalImporte = computed(() => {
-      return articles.value.reduce(
-        (total, article) => total + Number(article.totalPrice),
-        0
-      );
-    });
+    const totalImporte = ref(null);
     const ingredients = ref([]);
     const errorMessageSubmit = ref(null);
     const fecha = ref(null);
@@ -266,6 +261,11 @@ export default {
             const parser = new DOMParser();
             const xmlDoc = parser.parseFromString(e.target.result, "text/xml");
             const xmlArticles = xmlDoc.getElementsByTagName("cfdi:Concepto");
+            totalImporte.value = parseFloat(
+              xmlDoc
+                .getElementsByTagName("cfdi:Comprobante")[0]
+                .getAttribute("Total")
+            );
             fecha.value = xmlDoc
               .getElementsByTagName("cfdi:Comprobante")[0]
               .getAttribute("Fecha");
@@ -283,7 +283,6 @@ export default {
                 name,
                 quantity,
                 price,
-                totalPrice: (quantity * price).toFixed(2),
                 filteredIngredients: [],
                 allowSearch: true,
               };
