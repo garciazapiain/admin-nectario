@@ -71,7 +71,7 @@
           <input type="number" v-model="article.quantity" />
         </td>
         <td>$ {{ article.price }}</td>
-        <td>$ {{ article.total }}</td>
+        <td>$ {{ article.totalPrice }}</td>
         <td>
           <button @click="deleteRow(index)">X</button>
         </td>
@@ -283,6 +283,7 @@ export default {
                 name,
                 quantity,
                 price,
+                totalPrice: (quantity * price).toFixed(2),
                 filteredIngredients: [],
                 allowSearch: true,
               };
