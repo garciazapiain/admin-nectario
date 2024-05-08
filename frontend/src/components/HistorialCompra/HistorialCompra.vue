@@ -8,6 +8,7 @@
         <th>Fecha</th>
         <th>Proveedor</th>
         <th>Total Importe</th>
+        <th>Borrar</th>
       </tr>
       <tr v-for="order in purchaseOrders" :key="order.id">
         <td>
@@ -18,6 +19,9 @@
         <td>{{ order.fecha }}</td>
         <td>{{ order.emisor }}</td>
         <td>$ {{ order.totalimporte }}</td>
+        <td>
+          <button @click="deleteOrder(order.id)">Borrar</button>
+        </td>
       </tr>
     </table>
     <h2>Subir Nueva Factura en formato XML</h2>
@@ -88,6 +92,27 @@ import { ref, onMounted, computed } from "vue";
 
 export default {
   methods: {
+    async deleteOrder(orderId) {
+      console.log("Delete", orderId);
+      try {
+        const API_URL =
+          process.env.NODE_ENV === "production"
+            ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+            : "http://localhost:3000/api";
+        const response = await fetch(`${API_URL}/purchase_orders/${orderId}`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        location.reload()
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    },
     async handleSubmit() {
       // Check if selectedIngredient is present for each article
       const allIngredientsSelected = this.articles.every(

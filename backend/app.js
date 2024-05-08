@@ -619,6 +619,38 @@ app.get('/api/purchase_orders', async (req, res) => {
   }
 });
 
+app.delete('/api/purchase_orders/:id', async (req, res) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+
+    // Delete the related rows from the purchase_history_items table
+    await client.query('DELETE FROM purchase_history_items WHERE purchase_order_id = $1', [req.params.id]);
+
+    // Delete the row with the provided id from the purchase_orders table
+    const result = await client.query('DELETE FROM purchase_orders WHERE id = $1', [req.params.id]);
+
+    // Commit the transaction
+    await client.query('COMMIT');
+
+    // If no rows were deleted, send a 404 response
+    if (result.rowCount === 0) {
+      res.status(404).json({ error: 'Order not found' });
+    } else {
+      // Otherwise, send a 200 response
+      res.status(200).json({ message: 'Order deleted successfully' });
+    }
+  } catch (err) {
+    // If an error occurred, rollback the transaction
+    await client.query('ROLLBACK');
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while deleting data from the database' });
+  } finally {
+    client.release();
+  }
+});
+
 app.post('/api/purchase_orders', async (req, res) => {
   const { articulosComprados, totalImporte, fecha, folio, emisor } = req.body;
 
