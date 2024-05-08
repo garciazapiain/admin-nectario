@@ -167,6 +167,7 @@ export default {
         }
 
         const responseData = await response.json();
+        location.reload()
         console.log(responseData);
       } catch (error) {
         console.error("Fetch error:", error);
