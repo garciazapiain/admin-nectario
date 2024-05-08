@@ -3,7 +3,7 @@
     <h1>Compra</h1>
     <div class="update-info">
       <p class="update-text">
-        Última actualización:
+        Última actualización Moral:
         <span class="timestamp">{{ lastUpdate("moral") }}</span>
       </p>
       <p class="update-text">
@@ -453,6 +453,16 @@ export default {
     } else {
       console.error("HTTP error:", proveedoresResponse.status);
     }
+    // Get unique stores
+    const stores = [
+      ...new Set(this.submissions.map((submission) => submission.store)),
+    ];
+
+    // Log the latest submission for each store
+    stores.forEach((store) => {
+      const latestSubmission = this.lastSubmission(store);
+      console.log(`Latest submission for store ${store}:`, latestSubmission);
+    });
   },
 };
 </script>
