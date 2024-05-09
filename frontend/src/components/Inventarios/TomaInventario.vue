@@ -11,7 +11,7 @@
         <span class="timestamp">{{ lastUpdate() }}</span>
       </p>
     </div>
-    <!-- <div class="filtros-container">
+    <div class="filtros-container">
       <h2>Filtros:</h2>
       <label for="insumos">Tipo Insumos:</label>
       <select class="filterBar" id="insumos" v-model="selectedInsumosTipo">
@@ -29,7 +29,7 @@
           {{ proveedor.nombre }}
         </option>
       </select>
-    </div> -->
+    </div>
     <input
       v-model="searchTerm"
       placeholder="Buscar ingrediente..."
