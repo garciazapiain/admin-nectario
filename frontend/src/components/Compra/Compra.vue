@@ -91,9 +91,9 @@
         >
           <td style="font-size: 20px">
             {{ ingredient.nombre }}
-            <i class="info-icon" @click="logIngredientName(ingredient.nombre)"
+            <!-- <i class="info-icon" @click="logIngredientName(ingredient.nombre)"
               >i</i
-            >
+            > -->
           </td>
           <td style="font-size: 20px">{{ ingredient.unidad }}</td>
           <td style="font-size: 20px">
