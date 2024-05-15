@@ -89,7 +89,12 @@
           :key="index"
           :class="{ 'highlight-row': ingredient.producto_clave }"
         >
-          <td style="font-size: 20px">{{ ingredient.nombre }}</td>
+          <td style="font-size: 20px">
+            {{ ingredient.nombre }}
+            <i class="info-icon" @click="logIngredientName(ingredient.nombre)"
+              >i</i
+            >
+          </td>
           <td style="font-size: 20px">{{ ingredient.unidad }}</td>
           <td style="font-size: 20px">
             {{ getInventory("moral", ingredient.id_ingrediente) }}
@@ -238,6 +243,9 @@ export default {
       } else {
         return "N/A";
       }
+    },
+    logIngredientName(name) {
+      console.log("Hey", name);
     },
     getIngredientStatus(ingredientId) {
       // const submission = this.lastSubmission(store);
@@ -505,5 +513,12 @@ export default {
 
 .small-text {
   font-size: 0.8em; /* Adjust as needed */
+}
+
+.info-icon {
+  background: white;
+  border-radius: 50%;
+  width: 2rem;
+  padding: 5px;
 }
 </style>

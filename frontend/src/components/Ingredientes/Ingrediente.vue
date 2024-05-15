@@ -119,11 +119,43 @@ const handleClick = (platillo) => {
         </tr>
         <tr>
           <td><strong>Campestre Demanda Semanal:</strong></td>
-          <td>{{ ingrediente.bosques_demanda_semanal }}</td>
+          <td>{{ ingrediente.bosques_demanda_semanal }} {{ingrediente.unidad}}</td>
+        </tr>
+        <tr>
+          <td>
+            <strong
+              >Campestre Demanda
+              <input type="number" v-model="inputDaysBosques" /> dias:</strong
+            >
+          </td>
+          <td>
+            {{
+              calculateDemandDays(
+                ingrediente.bosques_demanda_semanal,
+                "bosques"
+              ).toFixed(1)
+            }} {{ingrediente.unidad}}
+          </td>
         </tr>
         <tr>
           <td><strong>Moral Demanda Semanal:</strong></td>
-          <td>{{ ingrediente.moral_demanda_semanal }}</td>
+          <td>{{ ingrediente.moral_demanda_semanal }} {{ingrediente.unidad}}</td>
+        </tr>
+        <tr>
+          <td>
+            <strong
+              >Moral Demanda
+              <input type="number" v-model="inputDaysMoral" /> dias:</strong
+            >
+          </td>
+          <td>
+            {{
+              calculateDemandDays(
+                ingrediente.moral_demanda_semanal,
+                "moral"
+              ).toFixed(1)
+            }} {{ingrediente.unidad}}
+          </td>
         </tr>
       </tbody>
     </table>
@@ -158,6 +190,8 @@ export default {
       showModal: false,
       proveedores: [],
       unidades: [],
+      inputDaysBosques: 1,
+      inputDaysMoral: 1,
     };
   },
   computed: {
@@ -169,6 +203,12 @@ export default {
     },
   },
   methods: {
+    calculateDemandDays(weeklyDemand, store) {
+      return (
+        (weeklyDemand / 7) *
+        (store === "moral" ? this.inputDaysMoral : this.inputDaysBosques)
+      );
+    },
     updateProveedor(event) {
       const selectedProveedor = this.proveedores.find(
         (proveedor) => proveedor.nombre === event.target.value
