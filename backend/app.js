@@ -481,11 +481,11 @@ app.put('/api/ingredientes/resetestatus', async (req, res) => {
 });
 
 app.put('/api/ingredientes/:id', async (req, res) => {
-  const { nombre, unidad, precio, proveedor, proveedor_id, store_route_order, producto_clave, moral_demanda_semanal, bosques_demanda_semanal } = req.body;
+  const { nombre, unidad, precio, proveedor, proveedor_id, store_route_order, producto_clave, moral_demanda_semanal, bosques_demanda_semanal, orden_inventario } = req.body;
   const { id } = req.params; // Changed from id_ingrediente to id
   const client = await pool.connect();
   try {
-    const result = await client.query('UPDATE ingredientes SET nombre = $1, unidad = $2, precio = $3, proveedor = $4, proveedor_id = $5, store_route_order = $7, producto_clave = $8, moral_demanda_semanal = $9, bosques_demanda_semanal = $10 WHERE id_ingrediente = $6 RETURNING *', [nombre, unidad, precio, proveedor, proveedor_id, id, store_route_order, producto_clave, moral_demanda_semanal, bosques_demanda_semanal]); // Added id to the array
+    const result = await client.query('UPDATE ingredientes SET nombre = $1, unidad = $2, precio = $3, proveedor = $4, proveedor_id = $5, store_route_order = $7, producto_clave = $8, moral_demanda_semanal = $9, bosques_demanda_semanal = $10, orden_inventario=$11 WHERE id_ingrediente = $6 RETURNING *', [nombre, unidad, precio, proveedor, proveedor_id, id, store_route_order, producto_clave, moral_demanda_semanal, bosques_demanda_semanal, orden_inventario]); // Added id to the array
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);

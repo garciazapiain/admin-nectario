@@ -20,7 +20,7 @@
       </select>
       <label for="proveedores">Proveedores:</label>
       <select class="filterBar" id="proveedores" v-model="selectedProveedor">
-        <option disabled value="">Selecciona un proveedor</option>
+        <option value="">Todos</option>
         <option
           v-for="proveedor in proveedores"
           :key="proveedor.id"

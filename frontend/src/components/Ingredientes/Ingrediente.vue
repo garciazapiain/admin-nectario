@@ -72,6 +72,15 @@ const handleClick = (platillo) => {
           </select>
         </div>
         <div class="form-group">
+          <label for="orden_inventario">Orden toma de Inventario:</label>
+          <input
+            id="orden_inventario"
+            type="number"
+            step="1"
+            v-model.number="ingredienteEditado.orden_inventario"
+          />
+        </div>
+        <div class="form-group">
           <label for="store_route_order">Campestre Demanda Semanal:</label>
           <input
             id="bosques_demanda_semanal"
@@ -118,8 +127,14 @@ const handleClick = (platillo) => {
           <td>{{ ingrediente.producto_clave ? "Si" : "No" }}</td>
         </tr>
         <tr>
+          <td><strong>Orden toma de Inventario:</strong></td>
+          <td>{{ ingrediente.orden_inventario}}</td>
+        </tr>
+        <tr>
           <td><strong>Campestre Demanda Semanal:</strong></td>
-          <td>{{ ingrediente.bosques_demanda_semanal }} {{ingrediente.unidad}}</td>
+          <td>
+            {{ ingrediente.bosques_demanda_semanal }} {{ ingrediente.unidad }}
+          </td>
         </tr>
         <tr>
           <td>
@@ -134,12 +149,15 @@ const handleClick = (platillo) => {
                 ingrediente.bosques_demanda_semanal,
                 "bosques"
               ).toFixed(1)
-            }} {{ingrediente.unidad}}
+            }}
+            {{ ingrediente.unidad }}
           </td>
         </tr>
         <tr>
           <td><strong>Moral Demanda Semanal:</strong></td>
-          <td>{{ ingrediente.moral_demanda_semanal }} {{ingrediente.unidad}}</td>
+          <td>
+            {{ ingrediente.moral_demanda_semanal }} {{ ingrediente.unidad }}
+          </td>
         </tr>
         <tr>
           <td>
@@ -154,7 +172,8 @@ const handleClick = (platillo) => {
                 ingrediente.moral_demanda_semanal,
                 "moral"
               ).toFixed(1)
-            }} {{ingrediente.unidad}}
+            }}
+            {{ ingrediente.unidad }}
           </td>
         </tr>
       </tbody>
