@@ -49,7 +49,6 @@
           <tr
             v-for="(ingrediente, index) in filteredIngredients"
             :key="index"
-            :class="{ 'highlight-row': ingrediente.producto_clave }"
           >
             <td style="font-size: 20px">{{ ingrediente.nombre }}</td>
             <td style="font-size: 20px">{{ ingrediente.unidad }}</td>
@@ -111,7 +110,9 @@
       </table>
     </div>
     <div class="sticky-submit-wrapper">
-      <button v-if="isAdmin" class="button-resetear" @click="confirmReset">Resetear</button>
+      <button v-if="isAdmin" class="button-resetear" @click="confirmReset">
+        Resetear
+      </button>
       <button class="button-actualizar" @click="submitForm">Actualizar</button>
     </div>
   </div>
@@ -121,7 +122,7 @@
 import { useRouter } from "vue-router";
 import moment from "moment-timezone";
 import "moment/locale/es";
-import { ref } from 'vue';
+import { ref } from "vue";
 const router = useRouter();
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 const handleClickIngrediente = (idIngrediente) => {
@@ -186,6 +187,21 @@ export default {
           (ingrediente) => ingrediente.proveedor === this.selectedProveedor
         );
       }
+      ingredients.sort((a, b) => {
+        if (this.selectedInsumosTipo === "Lista Peligro") {
+          // Sort by producto_clave first (true values come first)
+          if (a.producto_clave !== b.producto_clave) {
+            return b.producto_clave - a.producto_clave;
+          }
+          // If producto_clave is the same, sort alphabetically by nombre
+          return a.nombre.localeCompare(b.nombre);
+        } else {
+          // Sort by orden_inventario, nulls last
+          if (a.orden_inventario === null) return 1;
+          if (b.orden_inventario === null) return -1;
+          return a.orden_inventario - b.orden_inventario;
+        }
+      });
       return ingredients;
     },
   },
@@ -454,14 +470,6 @@ export default {
       this.updateSubmitData(ingrediente); // Initialize submitData
     });
 
-    this.ingredientes.sort((a, b) => {
-      // Sort by producto_clave first (true values come first)
-      if (a.producto_clave !== b.producto_clave) {
-        return b.producto_clave - a.producto_clave;
-      }
-      // If producto_clave is the same, sort alphabetically by nombre
-      return a.nombre.localeCompare(b.nombre);
-    });
     this.originalIngredientes = JSON.parse(JSON.stringify(this.ingredientes));
     const proveedoresResponse = await fetch(`${API_URL}/proveedores`);
     if (proveedoresResponse.ok) {
@@ -492,11 +500,6 @@ export default {
   height: 2rem;
   font-size: 1rem;
   width: 50%;
-}
-.highlight-row {
-  background-color: rgb(97, 133, 145);
-  font-weight: bold;
-  color: black;
 }
 input {
   width: 70%;
