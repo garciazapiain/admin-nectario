@@ -81,21 +81,21 @@ const handleClick = (platillo) => {
           />
         </div>
         <div class="form-group">
-          <label for="store_route_order">Campestre Demanda Semanal:</label>
-          <input
-            id="bosques_demanda_semanal"
-            type="number"
-            step="0.01"
-            v-model.number="ingredienteEditado.bosques_demanda_semanal"
-          />
-        </div>
-        <div class="form-group">
           <label for="store_route_order">Moral Demanda Semanal:</label>
           <input
             id="moral_demanda_semanal"
             type="number"
             step="0.01"
             v-model.number="ingredienteEditado.moral_demanda_semanal"
+          />
+        </div>
+        <div class="form-group">
+          <label for="store_route_order">Campestre Demanda Semanal:</label>
+          <input
+            id="bosques_demanda_semanal"
+            type="number"
+            step="0.01"
+            v-model.number="ingredienteEditado.bosques_demanda_semanal"
           />
         </div>
         <div class="form-actions">
@@ -128,30 +128,7 @@ const handleClick = (platillo) => {
         </tr>
         <tr>
           <td><strong>Orden toma de Inventario:</strong></td>
-          <td>{{ ingrediente.orden_inventario}}</td>
-        </tr>
-        <tr>
-          <td><strong>Campestre Demanda Semanal:</strong></td>
-          <td>
-            {{ ingrediente.bosques_demanda_semanal }} {{ ingrediente.unidad }}
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong
-              >Campestre Demanda
-              <input type="number" v-model="inputDaysBosques" /> dias:</strong
-            >
-          </td>
-          <td>
-            {{
-              calculateDemandDays(
-                ingrediente.bosques_demanda_semanal,
-                "bosques"
-              ).toFixed(1)
-            }}
-            {{ ingrediente.unidad }}
-          </td>
+          <td>{{ ingrediente.orden_inventario }}</td>
         </tr>
         <tr>
           <td><strong>Moral Demanda Semanal:</strong></td>
@@ -171,6 +148,29 @@ const handleClick = (platillo) => {
               calculateDemandDays(
                 ingrediente.moral_demanda_semanal,
                 "moral"
+              ).toFixed(1)
+            }}
+            {{ ingrediente.unidad }}
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Campestre Demanda Semanal:</strong></td>
+          <td>
+            {{ ingrediente.bosques_demanda_semanal }} {{ ingrediente.unidad }}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <strong
+              >Campestre Demanda
+              <input type="number" v-model="inputDaysBosques" /> dias:</strong
+            >
+          </td>
+          <td>
+            {{
+              calculateDemandDays(
+                ingrediente.bosques_demanda_semanal,
+                "bosques"
               ).toFixed(1)
             }}
             {{ ingrediente.unidad }}
