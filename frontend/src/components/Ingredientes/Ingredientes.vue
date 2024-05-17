@@ -9,6 +9,23 @@
         }).format(totalCompradoSemana)
       }}
     </p> -->
+    <div class="sticky-icon" @click="goDownPage">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="60"
+        height="60"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="feather feather-arrow-down"
+      >
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <polyline points="19 12 12 19 5 12"></polyline>
+      </svg>
+    </div>
     <h1>Insumos</h1>
     <input v-model="searchTerm" placeholder="Search" />
     <select v-model="proveedor">
@@ -18,7 +35,7 @@
     <table>
       <thead>
         <tr>
-          <th>Código del ingrediente</th>
+          <th>Código del insumo</th>
           <th>Nombre</th>
           <th>Unidad</th>
           <th>Precio</th>
@@ -65,32 +82,43 @@
         </tr>
       </tbody>
     </table>
-    <form @submit.prevent="agregarIngrediente">
-      <input v-model="nuevoIngrediente.nombre" placeholder="Nombre" required />
-      <select v-model="nuevoIngrediente.unidad" required>
-        <option disabled value="">Unidad</option>
-        <option v-for="unidad in unidades" :key="unidad" :value="unidad">
-          {{ unidad }}
-        </option>
-      </select>
-      <input v-model="nuevoIngrediente.precio" placeholder="Precio" required />
-      <select
-        v-model="nuevoIngrediente.proveedor_id"
-        @change="setProveedorNombre"
-        required
-      >
-        <option disabled value="">Proveedor</option>
-        <option
-          v-for="proveedor in proveedores"
-          :key="proveedor.id"
-          :value="proveedor.id"
+    <div class="form-container">
+      <h2>Agregar Insumo</h2>
+      <form @submit.prevent="agregarIngrediente" class="ingredient-form">
+        <input
+          v-model="nuevoIngrediente.nombre"
+          placeholder="Nombre"
+          required
+        />
+        <select v-model="nuevoIngrediente.unidad" required>
+          <option disabled value="">Unidad</option>
+          <option v-for="unidad in unidades" :key="unidad" :value="unidad">
+            {{ unidad }}
+          </option>
+        </select>
+        <input
+          v-model="nuevoIngrediente.precio"
+          placeholder="Precio"
+          required
+        />
+        <select
+          v-model="nuevoIngrediente.proveedor_id"
+          @change="setProveedorNombre"
           required
         >
-          {{ proveedor.nombre }}
-        </option>
-      </select>
-      <button type="submit">Agregar Ingrediente</button>
-    </form>
+          <option disabled value="">Proveedor</option>
+          <option
+            v-for="proveedor in proveedores"
+            :key="proveedor.id"
+            :value="proveedor.id"
+            required
+          >
+            {{ proveedor.nombre }}
+          </option>
+        </select>
+        <button type="submit" class="submit-button">Agregar Insumo</button>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -145,6 +173,12 @@ export default {
     },
   },
   methods: {
+    goDownPage() {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      });
+    },
     setProveedorNombre(event) {
       const selectedProveedorId = Number(event.target.value);
       const selectedProveedor = this.proveedores.find(
@@ -212,4 +246,50 @@ export default {
 </script>
 
 <style scoped>
+.sticky-icon {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  cursor: pointer;
+}
+.form-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.ingredient-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.ingredient-form input,
+.ingredient-form select {
+  box-sizing: border-box;
+  width: 100%;
+  height: 3rem;
+  font-size: 16px;
+  margin: 0; /* Add this line */
+  margin-bottom: 1rem;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.submit-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
 </style>

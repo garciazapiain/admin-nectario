@@ -4,6 +4,23 @@
       {{ submitMessage.text }}
     </div>
     <!-- <button @click="verifyChangeIngredientCount">Check</button> -->
+    <div class="sticky-icon" @click="goDownPage">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="60"
+        height="60"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="feather feather-arrow-down"
+      >
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <polyline points="19 12 12 19 5 12"></polyline>
+      </svg>
+    </div>
     <h1>Toma Inventario - {{ store }}</h1>
     <div class="update-info">
       <p class="update-text">
@@ -225,6 +242,12 @@ export default {
     },
   },
   methods: {
+    goDownPage() {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      });
+    },
     verifyChangeIngredientCount() {
       const originalIngredientesArray = Object.values(
         this.originalIngredientes
@@ -635,5 +658,12 @@ input {
   color: #a94442;
   padding: 10px;
   border-radius: 5px;
+}
+.sticky-icon {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  cursor: pointer;
 }
 </style>
