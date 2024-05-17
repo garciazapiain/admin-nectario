@@ -109,7 +109,7 @@ const handleClick = (platillo) => {
             <option value=1>Inicio primer turno</option>
             <option value=2>Inicio segundo turno</option>
             <option value=3>Fin segundo turno</option>
-            <option value=5>No inventarear</option>
+            <option value=4>No inventarear</option>
           </select>
         </div>
         <div class="form-actions">
