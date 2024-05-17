@@ -76,7 +76,7 @@ const handleClick = (platillo) => {
           <input
             id="orden_inventario"
             type="number"
-            step="1"
+            step="0.1"
             v-model.number="ingredienteEditado.orden_inventario"
           />
         </div>
