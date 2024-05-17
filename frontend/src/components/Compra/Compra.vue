@@ -162,6 +162,7 @@ export default {
         "Comprado",
         "Transferir Campestre a Moral",
         "Transferir Moral a Campestre",
+        "Recibido",
         "Pausar compra",
         "Suficiente producto",
       ],
@@ -268,9 +269,12 @@ export default {
         case "Transferir Moral a Campestre":
         case "Transferir Campestre a Moral":
           return { backgroundColor: "yellow", color: "black" };
-        case "Pausar compra":
         case "Comprado":
+          return { backgroundColor: "lightgreen", color: "black" };
+        case "Pausar compra":
         case "Suficiente producto":
+          return { backgroundColor: "red", color: "white" };
+        case "Recibido":
           return { backgroundColor: "green", color: "white" };
         default:
           return {};
@@ -423,9 +427,10 @@ export default {
         "No Comprado",
         "Transferir Campestre a Moral",
         "Transferir Moral a Campestre",
-        "Pausar compra",
         "Comprado",
+        "Recibido",
         "Suficiente producto",
+        "Pausar compra",
       ];
       this.ingredients.sort((a, b) => {
         // Sort by estatus first
