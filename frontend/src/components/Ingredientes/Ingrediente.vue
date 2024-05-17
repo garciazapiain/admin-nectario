@@ -133,7 +133,19 @@ const handleClick = (platillo) => {
         <tr>
           <td><strong>Moral Demanda Semanal:</strong></td>
           <td>
-            {{ ingrediente.moral_demanda_semanal }} {{ ingrediente.unidad }}
+            {{ ingrediente.moral_demanda_semanal }}
+            <span v-if="ingrediente.moral_demanda_semanal">{{
+              ingrediente.unidad
+            }}</span>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Moral Demanda Semanal:</strong></td>
+          <td>
+            {{ ingrediente.moral_demanda_semanal }}
+            <span v-if="ingrediente.moral_demanda_semanal">{{
+              ingrediente.unidad
+            }}</span>
           </td>
         </tr>
         <tr>
@@ -150,13 +162,18 @@ const handleClick = (platillo) => {
                 "moral"
               ).toFixed(1)
             }}
-            {{ ingrediente.unidad }}
+            <span v-if="ingrediente.moral_demanda_semanal">{{
+              ingrediente.unidad
+            }}</span>
           </td>
         </tr>
         <tr>
           <td><strong>Campestre Demanda Semanal:</strong></td>
           <td>
-            {{ ingrediente.bosques_demanda_semanal }} {{ ingrediente.unidad }}
+            {{ ingrediente.bosques_demanda_semanal }}
+            <span v-if="ingrediente.bosques_demanda_semanal">{{
+              ingrediente.unidad
+            }}</span>
           </td>
         </tr>
         <tr>
@@ -173,7 +190,9 @@ const handleClick = (platillo) => {
                 "bosques"
               ).toFixed(1)
             }}
-            {{ ingrediente.unidad }}
+            <span v-if="ingrediente.bosques_demanda_semanal">{{
+              ingrediente.unidad
+            }}</span>
           </td>
         </tr>
       </tbody>
