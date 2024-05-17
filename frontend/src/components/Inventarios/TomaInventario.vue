@@ -104,14 +104,14 @@
                     </button>
                   </div>
                 </div>
-                <!-- <div class="">
+                <div v-if="!ingrediente.producto_clave">
                   <button
                     class="button-suficiente"
                     @click="setSufficient(ingrediente)"
                   >
                     Suficiente
                   </button>
-                </div> -->
+                </div>
                 <!-- <div class="">
                   <button
                     class="button-casiNoHay"
