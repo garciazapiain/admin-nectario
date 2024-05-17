@@ -237,7 +237,11 @@ app.get('/api/ingredientes', async (req, res) => {
   const client = await pool.connect();
   try {
     const result = await client.query(`
-      SELECT * FROM ingredientes
+      SELECT i.*, array_agg(f.nombre) as frecuencias_inventario
+      FROM ingredientes i
+      LEFT JOIN ingredientes_frecuencia if ON i.id_ingrediente = if.id_ingrediente
+      LEFT JOIN frecuencia_inventario f ON if.frecuencia_inventario_id = f.id
+      GROUP BY i.id_ingrediente
     `);
     res.json(result.rows)
   } catch (error) {
@@ -371,18 +375,25 @@ app.get('/api/ingrediente/:id', async (req, res) => {
   const { id } = req.params;
   const client = await pool.connect();
   try {
-    const result = await client.query('SELECT * FROM ingredientes WHERE id_ingrediente = $1', [id]);
+    const result = await client.query(`
+      SELECT i.*, array_agg(f.nombre) as frecuencias_inventario
+      FROM ingredientes i
+      LEFT JOIN ingredientes_frecuencia if ON i.id_ingrediente = if.id_ingrediente
+      LEFT JOIN frecuencia_inventario f ON if.frecuencia_inventario_id = f.id
+      WHERE i.id_ingrediente = $1
+      GROUP BY i.id_ingrediente
+    `, [id]);
     const platillosResult = await client.query(`
-    SELECT p.nombre, p.id_platillo, 'Platillo' AS type
-    FROM platillos p
-    INNER JOIN platillos_ingredientes pi ON p.id_platillo = pi.id_platillo
-    WHERE pi.id_ingrediente = $1
-    UNION
-    SELECT sp.nombre, sp.id_subplatillo, 'Subplatillo' AS type
-    FROM subplatillos sp
-    INNER JOIN subplatillos_ingredientes si ON sp.id_subplatillo = si.id_subplatillo
-    WHERE si.id_ingrediente = $1
-  `, [id]);
+      SELECT p.nombre, p.id_platillo, 'Platillo' AS type
+      FROM platillos p
+      INNER JOIN platillos_ingredientes pi ON p.id_platillo = pi.id_platillo
+      WHERE pi.id_ingrediente = $1
+      UNION
+      SELECT sp.nombre, sp.id_subplatillo, 'Subplatillo' AS type
+      FROM subplatillos sp
+      INNER JOIN subplatillos_ingredientes si ON sp.id_subplatillo = si.id_subplatillo
+      WHERE si.id_ingrediente = $1
+    `, [id]);
     const ingrediente = result.rows[0];
     ingrediente.platillos = platillosResult.rows;
     res.json(ingrediente);
@@ -481,13 +492,26 @@ app.put('/api/ingredientes/resetestatus', async (req, res) => {
 });
 
 app.put('/api/ingredientes/:id', async (req, res) => {
-  const { nombre, unidad, precio, proveedor, proveedor_id, store_route_order, producto_clave, moral_demanda_semanal, bosques_demanda_semanal, orden_inventario } = req.body;
-  const { id } = req.params; // Changed from id_ingrediente to id
+  const { nombre, unidad, precio, proveedor, proveedor_id, store_route_order, producto_clave, moral_demanda_semanal, bosques_demanda_semanal, orden_inventario, frecuencias_inventario } = req.body;
+  const { id } = req.params;
   const client = await pool.connect();
   try {
-    const result = await client.query('UPDATE ingredientes SET nombre = $1, unidad = $2, precio = $3, proveedor = $4, proveedor_id = $5, store_route_order = $7, producto_clave = $8, moral_demanda_semanal = $9, bosques_demanda_semanal = $10, orden_inventario=$11 WHERE id_ingrediente = $6 RETURNING *', [nombre, unidad, precio, proveedor, proveedor_id, id, store_route_order, producto_clave, moral_demanda_semanal, bosques_demanda_semanal, orden_inventario]); // Added id to the array
+    await client.query('BEGIN');
+    const updateIngredientesQuery = 'UPDATE ingredientes SET nombre = $1, unidad = $2, precio = $3, proveedor = $4, proveedor_id = $5, store_route_order = $7, producto_clave = $8, moral_demanda_semanal = $9, bosques_demanda_semanal = $10, orden_inventario=$11 WHERE id_ingrediente = $6 RETURNING *';
+    const result = await client.query(updateIngredientesQuery, [nombre, unidad, precio, proveedor, proveedor_id, id, store_route_order, producto_clave, moral_demanda_semanal, bosques_demanda_semanal, orden_inventario]);
+
+    const deleteFrecuenciasQuery = 'DELETE FROM ingredientes_frecuencia WHERE id_ingrediente = $1';
+    await client.query(deleteFrecuenciasQuery, [id]);
+
+    const insertFrecuenciasQuery = 'INSERT INTO ingredientes_frecuencia (id_ingrediente, frecuencia_inventario_id) VALUES ($1, $2)';
+    for (let frecuencia of frecuencias_inventario) {
+      await client.query(insertFrecuenciasQuery, [id, frecuencia]);
+    }
+
+    await client.query('COMMIT');
     res.json(result.rows[0]);
   } catch (err) {
+    await client.query('ROLLBACK');
     console.error(err);
     res.status(500).json({ error: 'An error occurred while updating data in the database' });
   } finally {

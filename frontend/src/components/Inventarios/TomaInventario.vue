@@ -29,6 +29,17 @@
           {{ proveedor.nombre }}
         </option>
       </select>
+      <label for="frecuencias_inventario">Frecuencia Inventario:</label>
+      <select
+        class="filterBar"
+        id="frecuencias_inventario"
+        v-model="selectedFrecuencia"
+      >
+        <option value="">Todos</option>
+        <option value="inicio_primer_turno">Inicio primer turno</option>
+        <option value="inicio_segundo_turno">Inicio segundo turno</option>
+        <option value="fin_segundo_turno">Fin segundo turno</option>
+      </select>
     </div>
     <input
       v-model="searchTerm"
@@ -46,10 +57,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="(ingrediente, index) in filteredIngredients"
-            :key="index"
-          >
+          <tr v-for="(ingrediente, index) in filteredIngredients" :key="index">
             <td style="font-size: 20px">{{ ingrediente.nombre }}</td>
             <td style="font-size: 20px">{{ ingrediente.unidad }}</td>
             <td>
@@ -141,6 +149,7 @@ export default {
       searchTerm: "",
       proveedor: "",
       proveedores: [], // For the select dropdown
+      selectedFrecuencia: "",
       submitData: [], // new state for data to be submitted
       submissions: [], // Add this line
       isScrollingDown: false,
@@ -185,6 +194,12 @@ export default {
       if (this.selectedProveedor) {
         ingredients = ingredients.filter(
           (ingrediente) => ingrediente.proveedor === this.selectedProveedor
+        );
+      }
+      // Filter ingredients based on selectedFrecuencia
+      if (this.selectedFrecuencia) {
+        ingredients = ingredients.filter((ingrediente) =>
+          ingrediente.frecuencias_inventario.includes(this.selectedFrecuencia)
         );
       }
       ingredients.sort((a, b) => {

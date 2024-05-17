@@ -98,6 +98,20 @@ const handleClick = (platillo) => {
             v-model.number="ingredienteEditado.bosques_demanda_semanal"
           />
         </div>
+        <div class="form-group">
+          <label for="frecuencias_inventario">Frecuencias de Inventario:</label>
+          <select
+            id="frecuencias_inventario"
+            v-model="ingredienteEditado.frecuencias_inventario"
+            multiple
+          >
+            <option disabled value="">Selecciona una frecuencia</option>
+            <option value=1>Inicio primer turno</option>
+            <option value=2>Inicio segundo turno</option>
+            <option value=3>Fin segundo turno</option>
+            <option value=5>No inventarear</option>
+          </select>
+        </div>
         <div class="form-actions">
           <button type="submit">Guardar</button>
           <button @click="showModal = false">Cancelar</button>
@@ -195,6 +209,20 @@ const handleClick = (platillo) => {
             }}</span>
           </td>
         </tr>
+        <tr>
+          <td><strong>Frecuencias de Inventario:</strong></td>
+          <td>
+            <span
+              v-for="(frecuencia, index) in ingrediente.frecuencias_inventario"
+              :key="index"
+            >
+              {{ displayFrecuencia(frecuencia) }}
+              <span v-if="index < ingrediente.frecuencias_inventario.length - 1"
+                >,
+              </span>
+            </span>
+          </td>
+        </tr>
       </tbody>
     </table>
     <h2>Platillos/Subplatillos donde se usa el insumo:</h2>
@@ -246,6 +274,20 @@ export default {
         (weeklyDemand / 7) *
         (store === "moral" ? this.inputDaysMoral : this.inputDaysBosques)
       );
+    },
+    displayFrecuencia(frecuencia) {
+      switch (frecuencia) {
+        case "inicio_primer_turno":
+          return "Inicio primer turno";
+        case "inicio_segundo_turno":
+          return "Inicio segundo turno";
+        case "fin_segundo_turno":
+          return "Fin segundo turno";
+        case "no_inventarear":
+          return "No inventarear";
+        default:
+          return frecuencia;
+      }
     },
     updateProveedor(event) {
       const selectedProveedor = this.proveedores.find(
