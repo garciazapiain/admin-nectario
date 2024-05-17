@@ -505,6 +505,20 @@ app.post('/api/submissions', async (req, res) => {
     // Insert into submissions table
     const result = await client.query('INSERT INTO submissions (store, timestamp, compra) VALUES ($1, $2, $3) RETURNING *', [store, timestamp, compra]);
 
+    // Delete all but the latest submission for the current date
+    await client.query(`
+      WITH ranked_submissions AS (
+        SELECT id, 
+               ROW_NUMBER() OVER(PARTITION BY DATE(timestamp) ORDER BY timestamp DESC) as rn
+        FROM submissions
+        WHERE store = $1 AND DATE(timestamp) = DATE($2)
+      )
+      DELETE FROM submissions
+      WHERE id IN (
+        SELECT id FROM ranked_submissions WHERE rn > 1
+      )
+    `, [store, timestamp]);
+
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
