@@ -51,7 +51,6 @@ export default {
       this.ingredients = this.ingredients
         .filter((ingredient) => ingredient.producto_clave)
         .sort((a, b) => {
-          // If estatus is the same, sort by producto_clave (true values come first)
           if (a.producto_clave !== b.producto_clave) {
             return b.producto_clave - a.producto_clave;
           }

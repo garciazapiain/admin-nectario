@@ -78,7 +78,8 @@
           <th>Exi. Moral</th>
           <th>Exi. Campestre</th>
           <th>Proveedor</th>
-          <th>Estatus</th>
+          <th>Estatus Moral</th>
+          <th>Estatus Campestre</th>
           <th>Surtir Moral</th>
           <th>Surtir Campestre</th>
         </tr>
@@ -116,18 +117,43 @@
           </td>
           <td>
             <select
-              v-model="ingredient.estatus"
+              v-model="ingredient.estatus_moral"
               @change="
-                actualizarEstatus(ingredient.id_ingrediente, ingredient.estatus)
+                actualizarEstatus(
+                  ingredient.id_ingrediente,
+                  ingredient.estatus_moral,
+                  'moral'
+                )
               "
-              :style="estatusColor(ingredient.estatus)"
+              :style="estatusColor(ingredient.estatus_moral)"
             >
               <option
-                v-for="estatus in listaEstatus"
-                :key="estatus"
-                :value="estatus"
+                v-for="estatus_moral in listaEstatus"
+                :key="estatus_moral"
+                :value="estatus_moral"
               >
-                {{ estatus }}
+                {{ estatus_moral }}
+              </option>
+            </select>
+          </td>
+          <td>
+            <select
+              v-model="ingredient.estatus_bosques"
+              @change="
+                actualizarEstatus(
+                  ingredient.id_ingrediente,
+                  ingredient.estatus_bosques,
+                  'bosques'
+                )
+              "
+              :style="estatusColor(ingredient.estatus_bosques)"
+            >
+              <option
+                v-for="estatus_bosques in listaEstatus"
+                :key="estatus_bosques"
+                :value="estatus_bosques"
+              >
+                {{ estatus_bosques }}
               </option>
             </select>
           </td>
@@ -169,15 +195,15 @@ export default {
     };
   },
   methods: {
-    actualizarEstatus(ingredientId, newStatus) {
+    actualizarEstatus(ingredientId, newStatus, store) {
       const API_URL =
         process.env.NODE_ENV === "production"
           ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
           : "http://localhost:3000/api";
-      fetch(`${API_URL}/ingredientes/individual/estatusupdate`, {
+      fetch(`${API_URL}/ingredientes/individual/estatusupdate/${store}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ingredientId, newStatus }),
+        body: JSON.stringify({ ingredientId, newStatus, store }),
       });
     },
     getInventory(store, ingredientId) {
@@ -434,8 +460,8 @@ export default {
       ];
       this.ingredients.sort((a, b) => {
         // Sort by estatus first
-        const estatusA = estatusOrder.indexOf(a.estatus);
-        const estatusB = estatusOrder.indexOf(b.estatus);
+        const estatusA = estatusOrder.indexOf(a.estatus_moral);
+        const estatusB = estatusOrder.indexOf(b.estatus_moral);
         if (estatusA !== estatusB) {
           return estatusA - estatusB;
         }

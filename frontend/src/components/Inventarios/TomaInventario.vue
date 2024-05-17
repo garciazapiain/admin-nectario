@@ -267,7 +267,7 @@ export default {
         })
         .map((ingrediente) => ingrediente.id_ingrediente);
       if (this.changedIngredients.length > 0) {
-        this.updateIngredientStatus();
+        this.updateIngredientStatus(this.store);
       }
     },
     increaseQuantity(ingrediente) {
@@ -315,10 +315,10 @@ export default {
         )
       ) {
         // Perform the reset action here
-        this.resetForm();
+        this.resetForm(this.store);
       }
     },
-    resetForm() {
+    resetForm(store) {
       // Reset all cantidad_inventario values to "Suficiente"
       this.submitData.forEach((item) => {
         item.cantidad_inventario = "Suficiente";
@@ -332,7 +332,7 @@ export default {
           : "http://localhost:3000/api";
 
       // Reset all ingredient statuses
-      fetch(`${API_URL}/ingredientes/resetestatus`, {
+      fetch(`${API_URL}/ingredientes/resetestatus/${store}`, {
         method: "PUT",
       })
         .then(() => {
@@ -445,12 +445,12 @@ export default {
       ingrediente.cantidad_inventario = 0;
       this.updateSubmitData(ingrediente);
     },
-    async updateIngredientStatus() {
+    async updateIngredientStatus(store) {
       const API_URL =
         process.env.NODE_ENV === "production"
           ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
           : "http://localhost:3000/api";
-      const response = await fetch(`${API_URL}/ingredientes/estatusupdate`, {
+      const response = await fetch(`${API_URL}/ingredientes/estatusupdate/${store}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
