@@ -197,6 +197,10 @@ export default {
         );
       }
       // Filter ingredients based on selectedFrecuencia
+      ingredients = ingredients.filter(
+        (ingrediente) =>
+          !ingrediente.frecuencias_inventario.includes("no_inventarear")
+      );
       if (this.selectedFrecuencia) {
         ingredients = ingredients.filter((ingrediente) =>
           ingrediente.frecuencias_inventario.includes(this.selectedFrecuencia)
