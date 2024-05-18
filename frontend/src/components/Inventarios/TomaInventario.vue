@@ -28,7 +28,7 @@
         <span class="timestamp">{{ lastUpdate() }}</span>
       </p>
     </div>
-    <div class="filtros-container">
+    <div v-if="isAdmin" class="filtros-container">
       <h2>Filtros:</h2>
       <label for="insumos">Tipo Insumos:</label>
       <select class="filterBar" id="insumos" v-model="selectedInsumosTipo">
