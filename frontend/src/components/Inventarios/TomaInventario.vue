@@ -21,7 +21,7 @@
         <polyline points="19 12 12 19 5 12"></polyline>
       </svg>
     </div>
-    <h1>Toma Inventario - {{ store }}</h1>
+    <h1>Toma Inventario - {{ store === "bosques" ? "Campestre" : "Moral" }}</h1>
     <div class="update-info">
       <p class="update-text">
         Última actualización:
@@ -33,6 +33,7 @@
       <label for="insumos">Tipo Insumos:</label>
       <select class="filterBar" id="insumos" v-model="selectedInsumosTipo">
         <option value="Lista Peligro">Lista peligro</option>
+        <option value="Transferencias">Transferencias</option>
         <option value="Todos">Todos</option>
       </select>
       <label for="proveedores">Proveedores:</label>
@@ -223,6 +224,40 @@ export default {
           ingrediente.frecuencias_inventario.includes(this.selectedFrecuencia)
         );
       }
+      if (this.selectedInsumosTipo == "Transferencias") {
+        ingredients = ingredients.filter((ingredient) => {
+          // Check the selected store first
+          if (this.store === "moral") {
+            const moralInventory = this.getInventory(
+              "moral",
+              ingredient.id_ingrediente
+            );
+            const bosquesInventory = this.getInventory(
+              "bosques",
+              ingredient.id_ingrediente
+            );
+            return (
+              moralInventory === "Suficiente" &&
+              bosquesInventory !== "Suficiente"
+            );
+          } else if (this.store === "bosques") {
+            const moralInventory = this.getInventory(
+              "moral",
+              ingredient.id_ingrediente
+            );
+            const bosquesInventory = this.getInventory(
+              "bosques",
+              ingredient.id_ingrediente
+            );
+            return (
+              moralInventory !== "Suficiente" &&
+              bosquesInventory === "Suficiente"
+            );
+          }
+          // If the selected store is not "moral" or "bosques", include the ingredient in the list
+          return true;
+        });
+      }
       ingredients.sort((a, b) => {
         if (this.selectedInsumosTipo === "Lista Peligro") {
           // Sort by producto_clave first (true values come first)
@@ -285,6 +320,19 @@ export default {
         ingrediente.cantidad_inventario -= 0.5;
       }
       this.updateSubmitData(ingrediente);
+    },
+    getInventory(store, ingredientId) {
+      const submission = this.lastSubmission(store);
+
+      if (!submission) {
+        return "N/A";
+      }
+
+      const ingredient = submission.compra.find(
+        (ing) => ing.id_ingrediente === ingredientId
+      );
+
+      return ingredient ? ingredient.cantidad_inventario : "N/A";
     },
     updateSubmitData(ingrediente) {
       const index = this.submitData.findIndex(
@@ -450,21 +498,39 @@ export default {
         process.env.NODE_ENV === "production"
           ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
           : "http://localhost:3000/api";
-      const response = await fetch(`${API_URL}/ingredientes/estatusupdate/${store}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ingredientIds: this.changedIngredients,
-          newStatus: "No comprado",
-        }),
-      });
+      const response = await fetch(
+        `${API_URL}/ingredientes/estatusupdate/${store}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ingredientIds: this.changedIngredients,
+            newStatus: "No comprado",
+          }),
+        }
+      );
 
       if (!response.ok) {
         console.error("Failed to update ingredient status", response);
       } else {
         console.log("Successfully updated ingredient status");
+      }
+    },
+    lastSubmission(store) {
+      const storeSubmissions = this.submissions.filter(
+        (submission) => submission.store === store
+      );
+
+      if (storeSubmissions.length > 0) {
+        return storeSubmissions.reduce((latest, current) =>
+          new Date(latest.timestamp) > new Date(current.timestamp)
+            ? latest
+            : current
+        );
+      } else {
+        return null;
       }
     },
   },
