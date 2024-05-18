@@ -106,10 +106,10 @@ const handleClick = (platillo) => {
             multiple
           >
             <option disabled value="">Selecciona una frecuencia</option>
-            <option value=1>Inicio primer turno</option>
-            <option value=2>Inicio segundo turno</option>
-            <option value=3>Fin segundo turno</option>
-            <option value=4>No inventarear</option>
+            <option value="1">Inicio primer turno</option>
+            <option value="2">Inicio segundo turno</option>
+            <option value="3">Fin segundo turno</option>
+            <option value="4">No inventarear</option>
           </select>
         </div>
         <div class="form-actions">
@@ -300,6 +300,16 @@ export default {
     },
     async editIngrediente() {
       const id = this.$route.params.id;
+      let map = {
+        inicio_primer_turno: 1,
+        inicio_segundo_turno: 2,
+        fin_segundo_turno: 3,
+        no_inventarear: 4,
+      };
+      this.ingredienteEditado.frecuencias_inventario =
+        this.ingredienteEditado.frecuencias_inventario.map((value) => {
+          return map[value] || value;
+        });
       const API_URL =
         process.env.NODE_ENV === "production"
           ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
