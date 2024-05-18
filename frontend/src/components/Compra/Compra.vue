@@ -415,12 +415,22 @@ export default {
               moralDemand = 0;
               bosquesDemand = 0;
             } else {
-              moralDemand = Number(
-                this.calculateInventoryDemand("moral", ingredient)
-              );
-              bosquesDemand = Number(
-                this.calculateInventoryDemand("bosques", ingredient)
-              );
+              if (
+                ingredient.estatus_moral === "No Comprado" ||
+                ingredient.estatus_moral === "Comprado"
+              ) {
+                moralDemand = Number(
+                  this.calculateInventoryDemand("moral", ingredient)
+                );
+              }
+              if (
+                ingredient.estatus_bosques === "No Comprado" ||
+                ingredient.estatus_bosques === "Comprado"
+              ) {
+                bosquesDemand = Number(
+                  this.calculateInventoryDemand("bosques", ingredient)
+                );
+              }
             }
           }
           return total + (moralDemand + bosquesDemand) * ingredient.precio;
