@@ -188,6 +188,7 @@ export default {
         "Comprado",
         "Transferir Campestre a Moral",
         "Transferir Moral a Campestre",
+        "Transferir de CEDIS",
         "Recibido",
         "Pausar compra",
         "Suficiente producto",
@@ -294,6 +295,7 @@ export default {
           return { backgroundColor: "lightcoral", color: "white" };
         case "Transferir Moral a Campestre":
         case "Transferir Campestre a Moral":
+        case "Transferir de CEDIS":
           return { backgroundColor: "yellow", color: "black" };
         case "Comprado":
           return { backgroundColor: "lightgreen", color: "black" };
@@ -463,6 +465,7 @@ export default {
         "No Comprado",
         "Transferir Campestre a Moral",
         "Transferir Moral a Campestre",
+        "Transferir de Cedis",
         "Comprado",
         "Recibido",
         "Suficiente producto",
