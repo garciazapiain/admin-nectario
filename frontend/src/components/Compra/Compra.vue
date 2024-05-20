@@ -35,10 +35,25 @@
             <option value="Lista Peligro">Lista Peligro</option>
             <option value="Todos">Todos</option>
           </select>
-          <label for="insumos">Estatus Insumos:</label>
-          <select class="filterBar" id="insumos" v-model="selectedInsumos">
+          <label for="insumos">Urgencia suministro insumos:</label>
+          <select class="filterBar" id="insumos" v-model="selectedUrgencia">
             <option value="Urgente">Urgente</option>
             <option value="Todos">Todos</option>
+          </select>
+          <label for="insumos">Estatus insumos:</label>
+          <select
+            class="filterBar"
+            id="insumos"
+            v-model="selectedEstatusFilter"
+          >
+            <option value="Todos">Todos</option>
+            <option
+              v-for="status in listaEstatus"
+              :value="status"
+              :key="status"
+            >
+              {{ status }}
+            </option>
           </select>
           <div className="orderRouteCheckbox">
             <input
@@ -179,10 +194,11 @@ export default {
       proveedores: [],
       selectedProveedor: "",
       searchTerm: "",
-      selectedInsumos: "Urgente",
+      selectedUrgencia: "Urgente",
       selectedInsumosTipo: "Todos",
       orderRouteCheckbox: false,
       duracionDiasSuministro: 3,
+      selectedEstatusFilter: "Todos",
       listaEstatus: [
         "No Comprado",
         "Comprado",
@@ -344,7 +360,7 @@ export default {
         );
       }
 
-      if (this.selectedInsumos === "Urgente") {
+      if (this.selectedUrgencia === "Urgente") {
         ingredients = ingredients.filter((ingredient) => {
           const moralInventory = this.getInventory(
             "moral",
@@ -366,7 +382,14 @@ export default {
         });
       }
 
-      console.log(this.orderRouteCheckbox);
+      if (this.selectedEstatusFilter !== "Todos") {
+        ingredients = ingredients.filter((ingredient) => {
+          return (
+            ingredient.estatus_moral === this.selectedEstatusFilter ||
+            ingredient.estatus_bosques === this.selectedEstatusFilter
+          );
+        });
+      }
 
       if (this.orderRouteCheckbox) {
         ingredients.sort((a, b) => a.store_route_order - b.store_route_order);
