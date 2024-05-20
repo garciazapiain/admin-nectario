@@ -58,6 +58,11 @@
         <option value="inicio_segundo_turno">Inicio segundo turno</option>
         <option value="fin_segundo_turno">Fin segundo turno</option>
       </select>
+      <label for="insumos">Estatus Insumos:</label>
+      <select class="filterBar" id="insumos" v-model="selectedInsumos">
+        <option value="Urgente">Urgente</option>
+        <option value="Todos">Todos</option>
+      </select>
     </div>
     <input
       v-model="searchTerm"
@@ -175,6 +180,7 @@ export default {
       submitMessage: null,
       selectedInsumosTipo: "Lista Peligro",
       selectedProveedor: "",
+      selectedInsumos: "Todos",
       sucural: "",
     };
   },
@@ -191,6 +197,15 @@ export default {
         ingredients = ingredients.filter((ingrediente) =>
           ingrediente.nombre.toLowerCase().includes(term)
         );
+      }
+      if (this.selectedInsumos === "Urgente") {
+        ingredients = ingredients.filter((ingredient) => {
+          const storeInventory = this.getInventory(
+            this.store,
+            ingredient.id_ingrediente
+          );
+          return storeInventory !== "Suficiente";
+        });
       }
       if (this.proveedor) {
         ingredients = ingredients.filter(
