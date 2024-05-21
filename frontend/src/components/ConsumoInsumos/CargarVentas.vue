@@ -23,8 +23,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in items" :key="item.clave">
-          <td>{{ item.clave }}</td>
+        <tr v-for="item in items" :key="item.clavepos">
+          <td>{{ item.clavepos }}</td>
           <td>{{ item.descripcion }}</td>
           <td>{{ item.cantidad }}</td>
         </tr>
@@ -55,7 +55,7 @@ export default {
         const workbook = XLSX.read(data, { type: "array" });
         const worksheet = workbook.Sheets[workbook.SheetNames[0]];
         const jsonData = XLSX.utils.sheet_to_json(worksheet, {
-          header: ["clave", "descripcion", "cantidad"],
+          header: ["clavepos", "descripcion", "cantidad"],
         });
         this.items = jsonData.slice(1); // Skip the first row
       };

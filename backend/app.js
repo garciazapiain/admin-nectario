@@ -87,6 +87,70 @@ app.post('/api/platillos', async (req, res) => {
   }
 });
 
+app.put('/api/platillos/:id', async (req, res) => {
+  const { nombre } = req.body;
+  const { id } = req.params;
+  const client = await pool.connect();
+
+  try {
+    const result = await client.query(
+      'UPDATE platillos SET nombre = $1 WHERE id_platillo = $2 RETURNING nombre',
+      [nombre, id]
+    );
+
+    res.json({ nombre: result.rows[0].nombre });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred' });
+  } finally {
+    client.release();
+  }
+});
+
+app.post('/api/platillos/:id/duplicate', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const client = await pool.connect();
+    await client.query('BEGIN');
+
+    const sqlQuery1 = `
+      INSERT INTO platillos (nombre, created_at, updated_at, unidades_vendidas, clavepos)
+      SELECT nombre || ' COPIA', created_at, updated_at, unidades_vendidas, clavepos
+      FROM platillos
+      WHERE id_platillo = ${id}
+      RETURNING id_platillo
+    `;
+    const { rows } = await client.query(sqlQuery1);
+    const newId = rows[0].id_platillo;
+
+    const sqlQuery2 = `
+      INSERT INTO platillos_ingredientes (id_platillo, id_ingrediente, cantidad)
+      SELECT ${newId}, id_ingrediente, cantidad
+      FROM platillos_ingredientes
+      WHERE id_platillo = ${id}
+    `;
+    await client.query(sqlQuery2);
+
+    const sqlQuery3 = `
+      INSERT INTO platillos_subplatillos (id_platillo, id_subplatillo, cantidad)
+      SELECT ${newId}, id_subplatillo, cantidad
+      FROM platillos_subplatillos
+      WHERE id_platillo = ${id}
+    `;
+    await client.query(sqlQuery3);
+
+    await client.query('COMMIT');
+    client.release();
+
+    res.json({ message: 'Platillo duplicated successfully' });
+  } catch (error) {
+    await client.query('ROLLBACK');
+    client.release();
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while duplicating the platillo' });
+  }
+});
+
 app.get('/api/platillo/:id', async (req, res) => {
   const { id } = req.params;
   const includeSubplatillos = req.query.includeSubplatillos === 'true';
@@ -930,19 +994,107 @@ app.post('/api/consumoinsumos/cargarventas', async (req, res) => {
     // Insert each item into the SalesData table
     for (const item of items) {
       // Check if a similar record already exists
-      const existingRecord = await client.query('SELECT * FROM VentasData INNER JOIN VentasLog ON VentasData.ventasLogId = VentasLog.id WHERE VentasLog.store = $1 AND VentasLog.startDate <= $2 AND VentasLog.endDate >= $3 AND VentasData.clave = $4', [store, endDate, startDate, item.clave]);
+      const existingRecord = await client.query('SELECT * FROM VentasData INNER JOIN VentasLog ON VentasData.ventasLogId = VentasLog.id WHERE VentasLog.store = $1 AND VentasLog.startDate <= $2 AND VentasLog.endDate >= $3 AND VentasData.clavepos = $4', [store, endDate, startDate, item.clavepos]);
       if (existingRecord.rows.length > 0) {
-        console.log(`Skipping item with clave ${item.clave} for store ${store} within date range ${startDate} to ${endDate}`);
+        console.log(`Skipping item with clave ${item.clavepos} for store ${store} within date range ${startDate} to ${endDate}`);
         continue; // Skip this item and continue with the next one
       }
 
-      await client.query('INSERT INTO VentasData (ventasLogId, clave, descripcion, cantidad) VALUES ($1, $2, $3, $4)', [ventasLogId, item.clave, item.descripcion, item.cantidad]);
+      await client.query('INSERT INTO VentasData (ventasLogId, clavepos, descripcion, cantidad) VALUES ($1, $2, $3, $4)', [ventasLogId, item.clavepos, item.descripcion, item.cantidad]);
     }
 
     res.json({ message: 'Data successfully inserted' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'An error occurred while inserting data into the database' });
+  } finally {
+    client.release();
+  }
+});
+
+app.get('/api/consumption/:store', async (req, res) => {
+  const { store } = req.params;
+  const { startDate, endDate } = req.query;
+  const client = await pool.connect();
+
+  try {
+    const result = await client.query(`
+      SELECT 
+          id_ingrediente,
+          unidad,
+          nombre,
+          ROUND(SUM(consumo_platillos)::numeric, 2) AS consumo_platillos,
+          ROUND(SUM(consumo_subplatillos)::numeric, 2) AS consumo_subplatillos,
+          ROUND((SUM(consumo_platillos) + SUM(consumo_subplatillos))::numeric, 2) AS total_consumido
+      FROM 
+          (
+              SELECT 
+                  pi.id_ingrediente AS id_ingrediente,
+                  i.unidad AS unidad,
+                  i.nombre AS nombre,
+                  SUM(vd.cantidad * pi.cantidad) AS consumo_platillos,
+                  0 AS consumo_subplatillos
+              FROM 
+                  (
+                      SELECT 
+                          SUM(vd.cantidad) AS cantidad,
+                          vd.clavepos
+                      FROM 
+                          ventasdata vd
+                      INNER JOIN 
+                          ventaslog vl ON vd.ventaslogid = vl.id
+                      WHERE 
+                          vl.startdate >= $1 AND vl.enddate <= $2 AND vl.store = $3
+                      GROUP BY
+                          vd.clavepos
+                  ) vd
+              INNER JOIN 
+                  platillos p ON vd.clavepos = p.clavepos
+              INNER JOIN 
+                  platillos_ingredientes pi ON p.id_platillo = pi.id_platillo
+              INNER JOIN 
+                  ingredientes i ON pi.id_ingrediente = i.id_ingrediente
+              GROUP BY pi.id_ingrediente, i.unidad, i.nombre
+              UNION ALL
+              SELECT 
+                  spi.id_ingrediente AS id_ingrediente,
+                  i.unidad AS unidad,
+                  i.nombre AS nombre,
+                  0 AS consumo_platillos,
+                  SUM(vd.cantidad * spi.cantidad / sp.rendimiento) AS consumo_subplatillos
+              FROM 
+                  (
+                      SELECT 
+                          SUM(vd.cantidad) AS cantidad,
+                          vd.clavepos
+                      FROM 
+                          ventasdata vd
+                      INNER JOIN 
+                          ventaslog vl ON vd.ventaslogid = vl.id
+                      WHERE 
+                          vl.startdate >= $1 AND vl.enddate <= $2 AND vl.store = $3
+                      GROUP BY
+                          vd.clavepos
+                  ) vd
+              INNER JOIN 
+                  platillos p ON vd.clavepos = p.clavepos
+              INNER JOIN 
+                  platillos_subplatillos psi ON p.id_platillo = psi.id_platillo
+              INNER JOIN 
+                  subplatillos sp ON psi.id_subplatillo = sp.id_subplatillo
+              INNER JOIN 
+                  subplatillos_ingredientes spi ON sp.id_subplatillo = spi.id_subplatillo
+              INNER JOIN 
+                  ingredientes i ON spi.id_ingrediente = i.id_ingrediente
+              GROUP BY spi.id_ingrediente, i.unidad, i.nombre
+          ) t
+      GROUP BY id_ingrediente, unidad, nombre;
+    `, [startDate, endDate, store]);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while executing the query' });
   } finally {
     client.release();
   }

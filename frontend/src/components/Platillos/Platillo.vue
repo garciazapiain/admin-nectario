@@ -19,6 +19,8 @@ export default {
       API_URL: API_URL,
       editIndex: -1,
       editValue: 0,
+      isEditingName: false,
+      newName: "",
     };
   },
   components: {
@@ -91,6 +93,30 @@ export default {
         }
         const data = await response.json();
         this.platillo = data;
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    },
+    async handleSaveName() {
+      const idPlatillo = this.$route.params.id;
+      const nombre = this.newName;
+
+      try {
+        const response = await fetch(`${API_URL}/platillos/${idPlatillo}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ nombre }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        this.platillo.nombre = data.nombre;
+        this.isEditingName = false;
       } catch (error) {
         console.error("Error:", error);
       }
@@ -190,12 +216,44 @@ export default {
         console.error("Error:", error);
       }
     },
+    // Add this method to your methods object
+    async handleDuplicatePlatillo() {
+      const idPlatillo = this.$route.params.id;
+
+      try {
+        const response = await fetch(
+          `${API_URL}/platillos/${idPlatillo}/duplicate`,
+          {
+            method: "POST",
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log(data.message);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    },
   },
 };
 </script>
 <template>
   <div>
-    <h1>{{ platillo.nombre }}</h1>
+    <div v-if="isEditingName">
+      <input type="text" v-model="newName" />
+      <button @click="handleSaveName">Guardar</button>
+    </div>
+    <div v-else>
+      <h1>{{ platillo.nombre }}</h1>
+      <div className="platilloButtonContainer">
+        <button @click="isEditingName = true">Editar nombre</button>
+        <button @click="handleDuplicatePlatillo">Duplicar Platillo</button>
+      </div>
+    </div>
     <p>Unidades vendidas:{{ platillo.unidades_vendidas }}</p>
     <div>
       <input
@@ -224,7 +282,12 @@ export default {
           <td>
             <div class="editRow" v-if="editIndex === index">
               <div class="inputRow">
-                <input type="number" min=".001" v-model="editValue" step=".25" />
+                <input
+                  type="number"
+                  min=".001"
+                  v-model="editValue"
+                  step=".25"
+                />
                 <button @click="resetEditValue">X</button>
               </div>
               <button @click="handleSaveEditIngredient">Guardar</button>
@@ -278,5 +341,10 @@ div {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.platilloButtonContainer{
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem 0;
 }
 </style>
