@@ -217,6 +217,30 @@ app.post('/api/platillos/:idPlatillo/subplatillos', async (req, res) => {
   }
 });
 
+app.put('/api/platillos/:idPlatillo', async (req, res) => {
+  const { idPlatillo } = req.params;
+  const { clavepos } = req.body;
+  const client = await pool.connect();
+
+  try {
+    const result = await client.query(
+      'UPDATE platillos SET clavepos = $1 WHERE id_platillo = $2 RETURNING *',
+      [clavepos, idPlatillo]
+    );
+
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]);
+    } else {
+      res.status(404).json({ error: 'Platillo not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while updating data in the database' });
+  } finally {
+    client.release();
+  }
+});
+
 app.get('/api/subplatillos', async (req, res) => {
   const client = await pool.connect();
   try {

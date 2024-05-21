@@ -224,7 +224,7 @@ export default {
           <td>
             <div class="editRow" v-if="editIndex === index">
               <div class="inputRow">
-                <input type="number" v-model="editValue" step=".25" />
+                <input type="number" min=".001" v-model="editValue" step=".25" />
                 <button @click="resetEditValue">X</button>
               </div>
               <button @click="handleSaveEditIngredient">Guardar</button>

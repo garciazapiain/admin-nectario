@@ -19,16 +19,28 @@ const handleClickPlatillo = (idPlatillo) => {
         <tr>
           <th>Nombre</th>
           <th>Cantidad vendida/semana</th>
+          <th>Clave soft pos</th>
         </tr>
       </thead>
       <tbody>
-        <tr
-          @click="handleClickPlatillo(platillo.id_platillo)"
-          v-for="(platillo, index) in filteredPlatillos"
-          :key="index"
-        >
-          <td>{{ platillo.nombre }}</td>
-          <td>{{ platillo.unidades_vendidas }}</td>
+        <tr v-for="(platillo, index) in filteredPlatillos" :key="index">
+          <td @click="handleClickPlatillo(platillo.id_platillo)">
+            {{ platillo.nombre }}
+          </td>
+          <td @click="handleClickPlatillo(platillo.id_platillo)">
+            {{ platillo.unidades_vendidas }}
+          </td>
+          <td>
+            <div className="editClaveRow" v-if="editIndexClavePos !== index">
+              {{ platillo.clavepos }}
+              <button @click="editIndexClavePos = index">Editar</button>
+            </div>
+            <div v-else>
+              <input type="number" min="0" v-model="editValueClavePos" />
+              <button @click="saveEditClavePos(platillo)">Guardar</button>
+              <button @click="editIndexClavePos = -1">Cancelar</button>
+            </div>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -49,9 +61,37 @@ export default {
         nombre: "",
       },
       searchTerm: "",
+      editIndexClavePos: -1,
+      editValueClavePos: "",
     };
   },
   methods: {
+    async saveEditClavePos(platillo) {
+      console.log(this.editValueClavePos); // Log new value
+      platillo.clavepos = this.editValueClavePos; // Update value
+
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
+
+      const response = await fetch(
+        `${API_URL}/platillos/${platillo.id_platillo}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(platillo),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      this.editIndexClavePos = -1; // Close edit mode
+    },
     async agregarPlatillo() {
       const API_URL =
         process.env.NODE_ENV === "production"
@@ -106,4 +146,13 @@ export default {
 </script>
 
 <style scoped>
+.editClaveRow{
+  display: flex;
+  flex-direction: column;
+  font-size: 1.5rem;
+}
+.editClaveRow button{
+  margin-top: 5px;
+  font-size: .8rem;
+}
 </style>
