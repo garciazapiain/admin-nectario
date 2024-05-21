@@ -19,6 +19,8 @@ import HistorialCompra from './components/HistorialCompra/HistorialCompra.vue';
 import InsumosHistorial from './components/HistorialCompra/InsumosHistorial.vue';
 import InsumoAnalisis from './components/HistorialCompra/InsumoAnalisis.vue';
 import CompraAnalisis from './components/HistorialCompra/CompraAnalisis.vue';
+import ConsumoInsumos from './components/ConsumoInsumos/ConsumoInsumos.vue';
+import CargarVenta from './components/ConsumoInsumos/CargarVentas.vue';
 import './style.css'
 
 const routes = [
@@ -39,7 +41,9 @@ const routes = [
     { path: '/historialcompra', component: HistorialCompra   },
     { path: '/historialcompra/insumos', component: InsumosHistorial   },
     { path: '/historialcompra/insumos/:id', component: InsumoAnalisis   },
-    { path: '/historialcompra/compra/:id', component: CompraAnalisis   }
+    { path: '/historialcompra/compra/:id', component: CompraAnalisis   },
+    { path: '/consumoinsumos', component: ConsumoInsumos   },
+    { path: '/consumoinsumos/cargarventa', component: CargarVenta   }
   ];
   
   const router = createRouter({

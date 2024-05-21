@@ -395,7 +395,17 @@ export default {
         ingredients.sort((a, b) => a.store_route_order - b.store_route_order);
       }
 
-      console.log(ingredients);
+      ingredients.sort((a, b) => {
+        const aStatusIndex = Math.min(
+          this.listaEstatus.indexOf(a.estatus_moral),
+          this.listaEstatus.indexOf(a.estatus_bosques)
+        );
+        const bStatusIndex = Math.min(
+          this.listaEstatus.indexOf(b.estatus_moral),
+          this.listaEstatus.indexOf(b.estatus_bosques)
+        );
+        return aStatusIndex - bStatusIndex;
+      });
 
       return ingredients;
     },

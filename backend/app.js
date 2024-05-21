@@ -846,6 +846,37 @@ app.get('/api/historialcompra/compra/:id', async (req, res) => {
   }
 });
 
+app.post('/api/consumoinsumos/cargarventas', async (req, res) => {
+  const { store, startDate, endDate, items } = req.body;
+  const client = await pool.connect();
+  try {
+    // Insert into SalesLog table
+    const salesLogResult = await client.query('INSERT INTO VentasLog (store, startDate, endDate) VALUES ($1, $2, $3) RETURNING *', [store, startDate, endDate]);
+
+    // Get the id of the inserted sales log
+    const ventasLogId = salesLogResult.rows[0].id;
+
+    // Insert each item into the SalesData table
+    for (const item of items) {
+      // Check if a similar record already exists
+      const existingRecord = await client.query('SELECT * FROM VentasData INNER JOIN VentasLog ON VentasData.ventasLogId = VentasLog.id WHERE VentasLog.store = $1 AND VentasLog.startDate <= $2 AND VentasLog.endDate >= $3 AND VentasData.clave = $4', [store, endDate, startDate, item.clave]);
+      if (existingRecord.rows.length > 0) {
+        console.log(`Skipping item with clave ${item.clave} for store ${store} within date range ${startDate} to ${endDate}`);
+        continue; // Skip this item and continue with the next one
+      }
+
+      await client.query('INSERT INTO VentasData (ventasLogId, clave, descripcion, cantidad) VALUES ($1, $2, $3, $4)', [ventasLogId, item.clave, item.descripcion, item.cantidad]);
+    }
+
+    res.json({ message: 'Data successfully inserted' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while inserting data into the database' });
+  } finally {
+    client.release();
+  }
+});
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
 });

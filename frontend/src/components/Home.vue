@@ -37,6 +37,10 @@ const handleClickHistorialCompra = () => {
   router.push("/historialcompra");
 };
 
+const handleClickConsumoInsumos = () => {
+  router.push("/consumoinsumos");
+};
+
 onMounted(() => {
   if (!localStorage.getItem("jwt")) {
     router.push("/login");
@@ -49,14 +53,17 @@ onMounted(() => {
     <button @click="handleClickInventario">Toma Inventario</button>
     <button @click="handleClickExistencias">Resumen Existencias</button>
     <button v-if="isAdmin" @click="handleClickCompra">Compra del dia</button>
-    <!-- <button v-if="isAdmin" @click="handleClickPlatillo">Platillos</button>
-    <button v-if="isAdmin" @click="handleClickSubplatillo">Subplatillos</button> -->
+    <button v-if="isAdmin" @click="handleClickPlatillo">Platillos</button>
+    <button v-if="isAdmin" @click="handleClickSubplatillo">Subplatillos</button>
     <button v-if="isAdmin" @click="handleClickIngrediente">Insumos Info</button>
-    <!-- <button v-if="isAdmin" @click="handleClickPronosticoDemandaInsumos">
+    <button v-if="isAdmin" @click="handleClickPronosticoDemandaInsumos">
       Pronóstico Demanda Insumos
-    </button> -->
+    </button>
     <button v-if="isAdmin" @click="handleClickHistorialCompra">
       Historial Compras
+    </button>
+    <button v-if="isAdmin" @click="handleClickConsumoInsumos">
+      Consumo Insumos
     </button>
   </div>
 </template>

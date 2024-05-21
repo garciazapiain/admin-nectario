@@ -11,12 +11,15 @@
     "heroku-postbuild": "npm run build"
   },
   "dependencies": {
+    "express": "^4.17.1",
+    "file-saver": "^2.0.5",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.45",
     "vite": "^5.0.8",
     "vue": "^3.3.11",
+    "vue-excel-xlsx": "^1.2.2",
     "vue-router": "^4.2.5",
-    "express": "^4.17.1"
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.5.2",
