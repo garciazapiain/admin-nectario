@@ -116,9 +116,13 @@ app.post('/api/platillos/:id/duplicate', async (req, res) => {
     await client.query('BEGIN');
 
     const sqlQuery1 = `
-      INSERT INTO platillos (nombre, created_at, updated_at, unidades_vendidas, clavepos)
-      SELECT nombre || ' COPIA', created_at, updated_at, unidades_vendidas, clavepos
-      FROM platillos
+      WITH max_id AS (
+        SELECT MAX(id_platillo) + 1 AS new_id
+        FROM platillos
+      )
+      INSERT INTO platillos (id_platillo, nombre, created_at, updated_at, unidades_vendidas, clavepos)
+      SELECT new_id, nombre || ' COPIA', created_at, updated_at, unidades_vendidas, clavepos
+      FROM platillos, max_id
       WHERE id_platillo = ${id}
       RETURNING id_platillo
     `;
