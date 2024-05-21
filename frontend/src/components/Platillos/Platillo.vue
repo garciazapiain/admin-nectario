@@ -16,7 +16,9 @@ export default {
       mensajeError: "",
       ingredienteAgregadoExitosamente: "",
       searchTerm: "",
-      API_URL: API_URL
+      API_URL: API_URL,
+      editIndex: -1,
+      editValue: 0,
     };
   },
   components: {
@@ -126,6 +128,64 @@ export default {
         this.$router.push(`/ingrediente/${idStr}`);
       }
     },
+    handleOpenEditIngredient(index) {
+      this.editIndex = index;
+      this.editValue = this.aggregatedIngredients[index].cantidad;
+    },
+    async handleSaveEditIngredient() {
+      const idPlatillo = this.$route.params.id;
+      const idIngrediente =
+        this.aggregatedIngredients[this.editIndex].id_ingrediente;
+      const cantidad = this.editValue;
+
+      try {
+        const response = await fetch(
+          `${API_URL}/platillos/${idPlatillo}/ingredientes/${idIngrediente}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ cantidad }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        this.fetchData()
+        console.log(`Cantidad nueva: ${data.cantidad}`);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+
+      this.editIndex = -1;
+    },
+    async handleDeleteIngredient(ingrediente) {
+      const idPlatillo = this.$route.params.id;
+      const idIngrediente = ingrediente.id_ingrediente;
+
+      try {
+        const response = await fetch(
+          `${API_URL}/platillos/${idPlatillo}/ingredientes/${idIngrediente}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log(data.message);
+        this.fetchData(); // Refresh the data after a successful delete
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    },
   },
 };
 </script>
@@ -148,6 +208,7 @@ export default {
           <th>UNIDAD</th>
           <th>CANTIDAD</th>
           <th>$/CANTIDAD</th>
+          <th>BORRAR</th>
         </tr>
       </thead>
       <tbody>
@@ -157,9 +218,20 @@ export default {
           </td>
           <td>{{ ingrediente.unidad }}</td>
           <td>
-            {{ ingrediente.cantidad.toFixed(3) }}
+            <div class="editRow" v-if="editIndex !== index">
+              {{ ingrediente.cantidad.toFixed(3) }}
+              <button @click="handleOpenEditIngredient(index)">Editar</button>
+            </div>
+            <div class="editRow" v-else>
+              <input type="number" v-model="editValue" />
+              <button @click="handleSaveEditIngredient">Guardar</button>
+            </div>
           </td>
           <td>${{ (ingrediente.precio * ingrediente.cantidad).toFixed(2) }}</td>
+          <td>
+            <button @click="handleDeleteIngredient(ingrediente)">Borrar</button>
+            <!-- New delete button -->
+          </td>
         </tr>
       </tbody>
       <p>COSTO TOTAL: $ {{ totalCost.toFixed(2) }}</p>
@@ -184,5 +256,15 @@ h2,
 p,
 div {
   margin: 0.5rem 0;
+}
+.editRow {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  line-height: 1.5rem;
+}
+.editRow > button {
+  width: 80%;
 }
 </style>

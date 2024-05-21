@@ -150,6 +150,53 @@ app.post('/api/platillos/:idPlatillo/ingredientes', async (req, res) => {
   }
 });
 
+app.put('/api/platillos/:idPlatillo/ingredientes/:idIngrediente', async (req, res) => {
+  const { idPlatillo, idIngrediente } = req.params;
+  const { cantidad } = req.body;
+  const client = await pool.connect();
+
+  try {
+    const result = await client.query(
+      'UPDATE platillos_ingredientes SET cantidad = $1 WHERE id_platillo = $2 AND id_ingrediente = $3 RETURNING *',
+      [cantidad, idPlatillo, idIngrediente]
+    );
+
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]);
+    } else {
+      res.status(404).json({ error: 'Resource not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while updating data in the database' });
+  } finally {
+    client.release();
+  }
+});
+
+app.delete('/api/platillos/:idPlatillo/ingredientes/:idIngrediente', async (req, res) => {
+  const { idPlatillo, idIngrediente } = req.params;
+  const client = await pool.connect();
+
+  try {
+    const result = await client.query(
+      'DELETE FROM platillos_ingredientes WHERE id_platillo = $1 AND id_ingrediente = $2 RETURNING *',
+      [idPlatillo, idIngrediente]
+    );
+
+    if (result.rows.length > 0) {
+      res.json({ message: 'Resource deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'Resource not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while deleting data from the database' });
+  } finally {
+    client.release();
+  }
+});
+
 app.post('/api/platillos/:idPlatillo/subplatillos', async (req, res) => {
   const { idPlatillo } = req.params;
   const { id_subplatillo, cantidad } = req.body;
