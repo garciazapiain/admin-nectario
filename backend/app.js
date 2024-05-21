@@ -87,7 +87,7 @@ app.post('/api/platillos', async (req, res) => {
   }
 });
 
-app.put('/api/platillos/:id', async (req, res) => {
+app.put('/api/platillos/:id/cambiarnombre', async (req, res) => {
   const { nombre } = req.body;
   const { id } = req.params;
   const client = await pool.connect();
@@ -289,7 +289,7 @@ app.post('/api/platillos/:idPlatillo/subplatillos', async (req, res) => {
   }
 });
 
-app.put('/api/platillos/:idPlatillo', async (req, res) => {
+app.put('/api/platillos/:idPlatillo/clavepos', async (req, res) => {
   const { idPlatillo } = req.params;
   const { clavepos } = req.body;
   const client = await pool.connect();

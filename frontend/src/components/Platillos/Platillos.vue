@@ -76,7 +76,7 @@ export default {
           : "http://localhost:3000/api";
 
       const response = await fetch(
-        `${API_URL}/platillos/${platillo.id_platillo}`,
+        `${API_URL}/platillos/${platillo.id_platillo}/clavepos`,
         {
           method: "PUT",
           headers: {
@@ -91,7 +91,6 @@ export default {
       }
 
       this.editIndexClavePos = -1; // Close edit mode
-      location.reload();
     },
     async agregarPlatillo() {
       const API_URL =

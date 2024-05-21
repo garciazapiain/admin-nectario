@@ -102,7 +102,7 @@ export default {
       const nombre = this.newName;
 
       try {
-        const response = await fetch(`${API_URL}/platillos/${idPlatillo}`, {
+        const response = await fetch(`${API_URL}/platillos/${idPlatillo}/cambiarnombre`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
