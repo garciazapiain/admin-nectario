@@ -91,6 +91,7 @@ export default {
       }
 
       this.editIndexClavePos = -1; // Close edit mode
+      location.reload();
     },
     async agregarPlatillo() {
       const API_URL =
@@ -146,13 +147,13 @@ export default {
 </script>
 
 <style scoped>
-.editClaveRow{
+.editClaveRow {
   display: flex;
   flex-direction: column;
   font-size: 1.5rem;
 }
-.editClaveRow button{
+.editClaveRow button {
   margin-top: 5px;
-  font-size: .8rem;
+  font-size: 0.8rem;
 }
 </style>
