@@ -109,6 +109,8 @@ app.put('/api/platillos/:id', async (req, res) => {
 
 app.post('/api/platillos/:id/duplicate', async (req, res) => {
   const { id } = req.params;
+  let client;
+
   try {
     const client = await pool.connect();
     await client.query('BEGIN');
@@ -144,8 +146,10 @@ app.post('/api/platillos/:id/duplicate', async (req, res) => {
 
     res.json({ message: 'Platillo duplicated successfully' });
   } catch (error) {
-    await client.query('ROLLBACK');
-    client.release();
+    if (client) {
+      await client.query('ROLLBACK');
+      client.release();
+    }
     console.error(error);
     res.status(500).json({ error: 'An error occurred while duplicating the platillo' });
   }
