@@ -132,6 +132,10 @@ export default {
       this.editIndex = index;
       this.editValue = this.aggregatedIngredients[index].cantidad;
     },
+    resetEditValue() {
+      this.editValue = "0";
+      this.editIndex = -1;
+    },
     async handleSaveEditIngredient() {
       const idPlatillo = this.$route.params.id;
       const idIngrediente =
@@ -155,7 +159,7 @@ export default {
         }
 
         const data = await response.json();
-        this.fetchData()
+        this.fetchData();
         console.log(`Cantidad nueva: ${data.cantidad}`);
       } catch (error) {
         console.error("Error:", error);
@@ -218,13 +222,16 @@ export default {
           </td>
           <td>{{ ingrediente.unidad }}</td>
           <td>
-            <div class="editRow" v-if="editIndex !== index">
-              {{ ingrediente.cantidad.toFixed(3) }}
-              <button @click="handleOpenEditIngredient(index)">Editar</button>
-            </div>
-            <div class="editRow" v-else>
-              <input type="number" v-model="editValue" />
+            <div class="editRow" v-if="editIndex === index">
+              <div class="inputRow">
+                <input type="number" v-model="editValue" step=".25" />
+                <button @click="resetEditValue">X</button>
+              </div>
               <button @click="handleSaveEditIngredient">Guardar</button>
+            </div>
+            <div v-else>
+              {{ ingrediente.cantidad }}
+              <button @click="handleOpenEditIngredient(index)">Editar</button>
             </div>
           </td>
           <td>${{ (ingrediente.precio * ingrediente.cantidad).toFixed(2) }}</td>
@@ -266,5 +273,10 @@ div {
 }
 .editRow > button {
   width: 80%;
+}
+.inputRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>
