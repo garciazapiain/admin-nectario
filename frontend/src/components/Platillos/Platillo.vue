@@ -117,6 +117,7 @@ export default {
         const data = await response.json();
         this.platillo.nombre = data.nombre;
         this.isEditingName = false;
+        this.fetchData();
       } catch (error) {
         console.error("Error:", error);
       }
@@ -234,6 +235,7 @@ export default {
 
         const data = await response.json();
         console.log(data.message);
+        location.reload();
       } catch (error) {
         console.error("Error:", error);
       }
@@ -342,7 +344,7 @@ div {
   justify-content: space-between;
   align-items: center;
 }
-.platilloButtonContainer{
+.platilloButtonContainer {
   display: flex;
   justify-content: space-between;
   margin: 1rem 0;
