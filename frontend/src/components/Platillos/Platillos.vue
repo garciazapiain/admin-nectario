@@ -109,6 +109,7 @@ export default {
       }
       this.platillos.push(this.nuevoPlatillo);
       this.nuevoPlatillo = {};
+      location.reload();
     },
   },
   computed: {
