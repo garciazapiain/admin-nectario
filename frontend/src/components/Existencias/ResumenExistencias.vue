@@ -51,8 +51,24 @@
         <tr v-for="(ingrediente, index) in filteredIngredients" :key="index">
           <td>{{ ingrediente.nombre }}</td>
           <td>{{ ingrediente.unidad }}</td>
-          <td>{{ getInventory("moral", ingrediente.id_ingrediente) }}</td>
-          <td>{{ getInventory("bosques", ingrediente.id_ingrediente) }}</td>
+          <td
+            :class="{
+              'red-text':
+                getInventory('moral', ingrediente.id_ingrediente) <
+                ingrediente.moral_demanda_semanal / 7,
+            }"
+          >
+            {{ getInventory("moral", ingrediente.id_ingrediente) }}
+          </td>
+          <td
+            :class="{
+              'red-text':
+                getInventory('bosques', ingrediente.id_ingrediente) <
+                ingrediente.bosques_demanda_semanal / 7,
+            }"
+          >
+            {{ getInventory("bosques", ingrediente.id_ingrediente) }}
+          </td>
         </tr>
       </tbody>
     </table>
@@ -248,6 +264,9 @@ export default {
 }
 td {
   color: white;
+}
+.red-text {
+  color: red;
 }
 /* Add any custom styles here */
 </style>
