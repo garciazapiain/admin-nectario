@@ -15,13 +15,17 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in consumptionData" :key="item.id_ingrediente">
+        <tr v-for="item in filteredConsumptionData" :key="item.id_ingrediente">
           <td>{{ item.nombre }}</td>
           <td>{{ item.unidad }}</td>
           <td>{{ item.total_consumido_moral }}</td>
           <td>{{ item.total_consumido_bosques }}</td>
           <td>
-            {{ (item.total_consumido_moral + item.total_consumido_bosques).toFixed(2) }}
+            {{
+              (
+                item.total_consumido_moral + item.total_consumido_bosques
+              ).toFixed(2)
+            }}
           </td>
         </tr>
       </tbody>
@@ -49,6 +53,9 @@ export default {
   computed: {
     cargarVentasRoute() {
       return this.$route.path + "/cargarventa";
+    },
+    filteredConsumptionData() {
+      return this.consumptionData.filter((item) => item.producto_clave);
     },
   },
   methods: {
@@ -83,6 +90,7 @@ export default {
         combinedData.push({
           nombre: ingredient.nombre,
           unidad: ingredient.unidad,
+          producto_clave: ingredient.producto_clave,
           total_consumido_moral: parseFloat(ingredient.total_consumido),
           total_consumido_bosques: sameIngredientInBosques
             ? parseFloat(sameIngredientInBosques.total_consumido)
