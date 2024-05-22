@@ -1025,6 +1025,8 @@ app.get('/api/consumption/:store', async (req, res) => {
   const { startDate, endDate } = req.query;
   const client = await pool.connect();
 
+  console.log(`Inputs: startDate=${startDate}, endDate=${endDate}, store=${store}`);
+
   try {
     const result = await client.query(`
       SELECT 
