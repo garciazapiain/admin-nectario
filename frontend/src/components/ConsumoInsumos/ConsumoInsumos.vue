@@ -55,7 +55,8 @@ export default {
       return this.$route.path + "/cargarventa";
     },
     filteredConsumptionData() {
-      return this.consumptionData.filter((item) => item.producto_clave);
+      return this.consumptionData
+      // return this.consumptionData.filter((item) => item.producto_clave);
     },
   },
   methods: {
