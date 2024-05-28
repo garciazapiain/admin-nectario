@@ -49,7 +49,9 @@
       </thead>
       <tbody>
         <tr v-for="(ingrediente, index) in filteredIngredients" :key="index">
-          <td>{{ ingrediente.nombre }}</td>
+          <td @click="ingredienteClicked(ingrediente)">
+            {{ ingrediente.nombre }}
+          </td>
           <td>{{ ingrediente.unidad }}</td>
           <td
             :class="{
@@ -72,16 +74,25 @@
         </tr>
       </tbody>
     </table>
+    <PopupInsumo
+      v-if="isPopupVisible"
+      :ingrediente="selectedIngredient"
+      @close="closePopup"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
+import PopupInsumo from "./PopupInsumo.vue";
 </script>
 <script>
 export default {
   name: "ResumenExistencias",
+  components: {
+    PopupInsumo,
+  },
   data() {
     return {
       submissions: [],
@@ -92,6 +103,8 @@ export default {
       selectedProveedor: "",
       selectedFrecuencia: "",
       searchTerm: "",
+      isPopupVisible: false,
+      selectedIngredient: null,
     };
   },
   async created() {
@@ -212,6 +225,13 @@ export default {
     },
   },
   methods: {
+    closePopup() {
+      this.isPopupVisible = false;
+    },
+    ingredienteClicked(ingrediente) {
+      this.selectedIngredient = ingrediente;
+      this.isPopupVisible = true;
+    },
     getInventory(storeName, ingredientId) {
       const submission = this.lastSubmission(storeName);
 
