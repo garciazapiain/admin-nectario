@@ -39,8 +39,9 @@
           <th>Nombre</th>
           <th>Unidad</th>
           <th>Precio</th>
-          <th>Total usado</th>
-          <th>Total $ Comprado</th>
+          <th>Proveedor</th>
+          <!-- <th>Total usado</th>
+          <th>Total $ Comprado</th> -->
           <!-- <th>Total usado / año</th> -->
           <!-- <th>Total $ Comprado / año</th> -->
         </tr>
@@ -55,7 +56,8 @@
           <td>{{ ingrediente.nombre }}</td>
           <td>{{ ingrediente.unidad }}</td>
           <td>${{ ingrediente.precio }}</td>
-          <td>
+          <td>{{ ingrediente.proveedor }}</td>
+          <!-- <td>
             {{ Math.round(ingrediente.total_usado) + " " + ingrediente.unidad }}
           </td>
           <td>
@@ -64,7 +66,7 @@
                 (ingrediente.total_usado * ingrediente.precio).toFixed(2)
               )
             }}
-          </td>
+          </td> -->
           <!-- <td>
             {{
               Math.round(ingrediente.total_usado * 52) +
