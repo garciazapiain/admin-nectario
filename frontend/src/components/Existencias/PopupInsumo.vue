@@ -76,6 +76,13 @@ export default {
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
+@media screen and (max-width: 768px) {
+  .popup {
+    width: 80%;
+    height: 40%;
+  }
+}
+
 .popup-content > h2,
 h3 {
   color: #333;
@@ -111,7 +118,7 @@ h3 {
   cursor: pointer;
   padding: 5px;
   color: black;
-  vertical-align: middle
+  vertical-align: middle;
 }
 
 .controls input {
