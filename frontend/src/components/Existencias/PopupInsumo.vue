@@ -79,7 +79,7 @@ export default {
 @media screen and (max-width: 768px) {
   .popup {
     width: 80%;
-    height: 40%;
+    height: 50%;
   }
 }
 
