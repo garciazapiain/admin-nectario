@@ -2,9 +2,13 @@ import TomaInventario from './TomaInventario.vue'
 
 describe('<TomaInventario />', () => {
   beforeEach(() => {
+    cy.intercept('GET', '/api/ingredientes', { fixture: 'ingredientes.json' });
+    cy.intercept('POST', '/api/submissions', { fixture: 'submissions.json' });
+    cy.intercept('GET', '/api/proveedores', { fixture: 'proveedores.json' });
+
     cy.mount(TomaInventario, {
       props: {
-        store: 'bosques'
+        store: 'moral'
       }
     })
   })

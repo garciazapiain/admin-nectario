@@ -2,6 +2,9 @@ import ResumenExistencias from './ResumenExistencias.vue';
 
 describe('<ResumenExistencias />', () => {
   beforeEach(() => {
+    cy.intercept('GET', '/api/ingredientes', { fixture: 'ingredientes.json' });
+    cy.intercept('POST', '/api/submissions', { fixture: 'submissions.json' });
+    
     cy.mount(ResumenExistencias)
   })
   it('renders the component', () => {

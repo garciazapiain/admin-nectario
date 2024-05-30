@@ -19,7 +19,7 @@ onMounted(() => {
 <template>
   <div class="button-container">
     <button @click="() => navigateTo('/inventarios')">Toma Inventario</button>
-    <button @click="() => navigateTo('/existenciasresumens')">Resumen Existencias</button>
+    <button @click="() => navigateTo('/existenciasresumen')">Resumen Existencias</button>
     <!-- <button v-if="isAdmin" @click="() => navigateTo('/compra')">Compra del dia</button> -->
     <button v-if="isAdmin" @click="() => navigateTo('/platillos')">Platillos</button>
     <button v-if="isAdmin" @click="() => navigateTo('/subplatillos')">Subplatillos</button>

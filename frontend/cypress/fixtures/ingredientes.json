@@ -1,0 +1,5305 @@
+[
+    {
+        "id_ingrediente": 87,
+        "nombre": "JUGO DE NARANJA",
+        "unidad": "L",
+        "precio": "12.5",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 116,
+        "nombre": "TOMATE CHERRY",
+        "unidad": "KG",
+        "precio": "97",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 1,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 184,
+        "nombre": "PEREJIL SECO",
+        "unidad": "KG",
+        "precio": "1589.29",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 51,
+        "nombre": "HARINA DE MAIZ NIXTAMALIZADA",
+        "unidad": "KG",
+        "precio": "20",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 272,
+        "nombre": "BOLSA DE PLASTICO 40X50",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 70,
+        "nombre": "CHILE ANCHO",
+        "unidad": "KG",
+        "precio": "202.13",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 190,
+        "nombre": "QUESO RICOTTA",
+        "unidad": "KG",
+        "precio": "70",
+        "proveedor": "SAMS",
+        "proveedor_id": 5,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 278,
+        "nombre": "CORONA LIGHT",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "WALMART",
+        "proveedor_id": 4,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 169,
+        "nombre": "MAYONESA COCINA",
+        "unidad": "KG",
+        "precio": "148",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 4,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 176,
+        "nombre": "PALMITOS DRENADOS",
+        "unidad": "KG",
+        "precio": "160.23",
+        "proveedor": "SAMS",
+        "proveedor_id": 5,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 299,
+        "nombre": "CHOCO FRENCH",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": null,
+        "proveedor_id": null,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 92,
+        "nombre": "JUGO DE ZANAHORIA",
+        "unidad": "L",
+        "precio": "42",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 309,
+        "nombre": "SAN PELLEGRINO MINERAL",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": null,
+        "proveedor_id": null,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 180,
+        "nombre": "PAPRIKA",
+        "unidad": "KG",
+        "precio": "628.57",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 292,
+        "nombre": "PALILLOS",
+        "unidad": "BOTE",
+        "precio": null,
+        "proveedor": "HEB",
+        "proveedor_id": null,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 263,
+        "nombre": "VASO PARA LLEVAR",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 22,
+        "nombre": "ZARZAMORA",
+        "unidad": "KG",
+        "precio": "36",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 271,
+        "nombre": "PAPEL PLANCHA",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 156,
+        "nombre": "JUGO MAGGI COCINA",
+        "unidad": "L",
+        "precio": "250",
+        "proveedor": "SAMS",
+        "proveedor_id": 5,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 197,
+        "nombre": "TORTILLA DE HARINA",
+        "unidad": "PAQUETE",
+        "precio": "4.70",
+        "proveedor": "CUATRO MILPAS",
+        "proveedor_id": 6,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 135,
+        "nombre": "CANELA MOLIDA",
+        "unidad": "KG",
+        "precio": "205",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 282,
+        "nombre": "BUDIN FRUTOS",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "FALTA INFO",
+        "proveedor_id": 35,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 173,
+        "nombre": "MOSTAZA AMARILLA",
+        "unidad": "KG",
+        "precio": "30.14",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 149,
+        "nombre": "HARINA BLANCA",
+        "unidad": "KG",
+        "precio": "17.62",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 3,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 269,
+        "nombre": "BOLSA DE PAPEL 8",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 73,
+        "nombre": "COCO TROZO",
+        "unidad": "KG",
+        "precio": "168.54",
+        "proveedor": "DESCARGUE",
+        "proveedor_id": 26,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 261,
+        "nombre": "TAPA DE CAFE",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 280,
+        "nombre": "COCO THAI",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "FALTA INFO",
+        "proveedor_id": 35,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 42,
+        "nombre": "MIX DE QUESOS",
+        "unidad": "KG",
+        "precio": "133",
+        "proveedor": "LAS MESITAS",
+        "proveedor_id": 20,
+        "producto_clave": true,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": "30.00",
+        "bosques_demanda_semanal": "20.02",
+        "orden_inventario": "1.2",
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            "inicio_primer_turno",
+            "inicio_segundo_turno"
+        ]
+    },
+    {
+        "id_ingrediente": 189,
+        "nombre": "QUESO PARMESANO",
+        "unidad": "KG",
+        "precio": "532.20",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 161,
+        "nombre": "LECHE DESLACTOSADA",
+        "unidad": "L",
+        "precio": "22.59",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 3,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 121,
+        "nombre": "PAPA BLANCA",
+        "unidad": "KG",
+        "precio": "27",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 117,
+        "nombre": "UVA ROJA",
+        "unidad": "KG",
+        "precio": "67.65",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 88,
+        "nombre": "JUGO DE PEPINO",
+        "unidad": "L",
+        "precio": "40.28",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 188,
+        "nombre": "QUESO MOZZARELLA FRESCO",
+        "unidad": "TUBOS",
+        "precio": "202.12",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": true,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 2,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 257,
+        "nombre": "SALSERAS CON TAPA",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 40,
+        "nombre": "TOTOPOS",
+        "unidad": "BOLSA",
+        "precio": "90",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 120,
+        "nombre": "CAMOTE",
+        "unidad": "KG",
+        "precio": "37.58",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 196,
+        "nombre": "TERIYAKI",
+        "unidad": "BOTE",
+        "precio": "337.84",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            "fin_segundo_turno"
+        ]
+    },
+    {
+        "id_ingrediente": 291,
+        "nombre": "TAJIN",
+        "unidad": "BOTE",
+        "precio": null,
+        "proveedor": "HEB",
+        "proveedor_id": null,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 15,
+        "nombre": "LECHE DE COCO",
+        "unidad": "L",
+        "precio": "31",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "No Comprado",
+        "store_route_order": 3,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 210,
+        "nombre": "TOSTADITAS",
+        "unidad": "PZA",
+        "precio": "0.79",
+        "proveedor": "CUATRO MILPAS",
+        "proveedor_id": 6,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 226,
+        "nombre": "SAN PELLEGRINO SABOR",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 3,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 48,
+        "nombre": "COMINO",
+        "unidad": "KG",
+        "precio": "128",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 187,
+        "nombre": "QUESO DE CABRA",
+        "unidad": "TUBOS",
+        "precio": "142",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": true,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 2,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 298,
+        "nombre": "AGUA FIJI",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": null,
+        "proveedor_id": null,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 57,
+        "nombre": "ALMENDRA FILETEADA",
+        "unidad": "KG",
+        "precio": "144.27",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 4,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 81,
+        "nombre": "CHILE JALAPEÑO",
+        "unidad": "KG",
+        "precio": "24.44",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 19,
+        "nombre": "HUEVO",
+        "unidad": "PZA",
+        "precio": "4.17",
+        "proveedor": "ORVAG",
+        "proveedor_id": 17,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 244,
+        "nombre": "LIMPIADOR MULTIUSOS",
+        "unidad": "BOTE",
+        "precio": null,
+        "proveedor": "WALMART",
+        "proveedor_id": 4,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 160,
+        "nombre": "LECHE DE SOYA",
+        "unidad": "L",
+        "precio": "30.5",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 242,
+        "nombre": "CORONA EXTRA",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "WALMART",
+        "proveedor_id": 4,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 251,
+        "nombre": "CHAROLA COLIFLOR",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 204,
+        "nombre": "VINAGRE DE MANZANA",
+        "unidad": "L",
+        "precio": "30",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 266,
+        "nombre": "BOLSA DE ASA PAPEL",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 5,
+        "nombre": "FRIJOL PERUANO",
+        "unidad": "KG",
+        "precio": "51",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 104,
+        "nombre": "PAPAYA",
+        "unidad": "KG",
+        "precio": "71.22",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 171,
+        "nombre": "MIEL DE AGAVE",
+        "unidad": "KG",
+        "precio": "97.55",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 307,
+        "nombre": "PASTEL BROWNIE KETO",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "CURCUMA",
+        "proveedor_id": 7,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 91,
+        "nombre": "JUGO DE UVA",
+        "unidad": "L",
+        "precio": "128",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 283,
+        "nombre": "BUDIN CHISPAS",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "FALTA INFO",
+        "proveedor_id": 35,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 54,
+        "nombre": "CHAMPIÑONES",
+        "unidad": "KG",
+        "precio": "88",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 29,
+        "nombre": "BARRA DE ACAI",
+        "unidad": "PZA",
+        "precio": "19",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 4,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 305,
+        "nombre": "KOMBUCHA",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "NATURAL POR GUSTO",
+        "proveedor_id": 11,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 4,
+        "nombre": "HOJA DE PLATANO",
+        "unidad": "KG",
+        "precio": "71.11",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 297,
+        "nombre": "TOPO CHICO GRANDE",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": null,
+        "proveedor_id": null,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 181,
+        "nombre": "PAN PITA",
+        "unidad": "PZA",
+        "precio": "9.73",
+        "proveedor": "WALMART",
+        "proveedor_id": 4,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 96,
+        "nombre": "MANZANA ROJA",
+        "unidad": "KG",
+        "precio": "47.45",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 201,
+        "nombre": "VINAGRE BALSAMICO",
+        "unidad": "L",
+        "precio": "86",
+        "proveedor": "SAMS",
+        "proveedor_id": 5,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 303,
+        "nombre": "GALLETA CHOCO MENTA",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": null,
+        "proveedor_id": null,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 10,
+        "nombre": "JITOMATE SALADET",
+        "unidad": "KG",
+        "precio": "44",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 105,
+        "nombre": "PASAS RUBIAS",
+        "unidad": "KG",
+        "precio": "148",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 35,
+        "nombre": "PAN 5 GRANOS",
+        "unidad": "HOGAZA",
+        "precio": "150",
+        "proveedor": "GIUSEPPE",
+        "proveedor_id": 21,
+        "producto_clave": true,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            "inicio_primer_turno",
+            "inicio_segundo_turno"
+        ]
+    },
+    {
+        "id_ingrediente": 6,
+        "nombre": "ACEITE DE OLIVA",
+        "unidad": "L",
+        "precio": "110",
+        "proveedor": "PROSECALSA",
+        "proveedor_id": 12,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 107,
+        "nombre": "PEREJIL",
+        "unidad": "KG",
+        "precio": "48",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 220,
+        "nombre": "CANELA EN RAMA",
+        "unidad": "KG",
+        "precio": "340",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 86,
+        "nombre": "JUGO DE MANZANA ROJA",
+        "unidad": "L",
+        "precio": "74",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 89,
+        "nombre": "JUGO DE PIÑA",
+        "unidad": "L",
+        "precio": "49.15",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 93,
+        "nombre": "LENTEJAS",
+        "unidad": "KG",
+        "precio": "38",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 219,
+        "nombre": "AGUA MINERA PENAFIEL",
+        "unidad": "PZA",
+        "precio": "12.5",
+        "proveedor": "WALMART",
+        "proveedor_id": 4,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 175,
+        "nombre": "NOODLES",
+        "unidad": "PAQUETE",
+        "precio": "6.90",
+        "proveedor": "TOYO",
+        "proveedor_id": 15,
+        "producto_clave": true,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 241,
+        "nombre": "VINO ROSADO",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 1,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 252,
+        "nombre": "CUBIERTOS DESECHABLES",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 31,
+        "nombre": "GRANOLA",
+        "unidad": "KG",
+        "precio": "500",
+        "proveedor": "NECTARIO",
+        "proveedor_id": 32,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 285,
+        "nombre": "LADRILLO PLANCHA",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "DON PULCRO",
+        "proveedor_id": 33,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 327,
+        "nombre": "TOALLAS INTERDOBLABLES / SANITAS",
+        "unidad": "PZA",
+        "precio": "30",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 3,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 50,
+        "nombre": "HOJAS DE LAUREL",
+        "unidad": "KG",
+        "precio": "299",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 253,
+        "nombre": "MANGA CAFE",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 14,
+        "nombre": "HARINA PARA HOTCAKES",
+        "unidad": "KG",
+        "precio": "35.9",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 66,
+        "nombre": "CACAHUATE PELADO",
+        "unidad": "KG",
+        "precio": "65",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 109,
+        "nombre": "PORO",
+        "unidad": "KG",
+        "precio": "92.71",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 155,
+        "nombre": "JENGIBRE MOLIDO",
+        "unidad": "KG",
+        "precio": "733.33",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 13,
+        "nombre": "SAL",
+        "unidad": "KG",
+        "precio": "14.67",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 133,
+        "nombre": "CAFE",
+        "unidad": "KG",
+        "precio": "229",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 4,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 195,
+        "nombre": "SIRACHA",
+        "unidad": "L",
+        "precio": "152",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 2,
+        "nombre": "ACEITE DE COCO",
+        "unidad": "ML",
+        "precio": "138",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 1,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            "fin_segundo_turno"
+        ]
+    },
+    {
+        "id_ingrediente": 199,
+        "nombre": "TRUCHA SALMONADA",
+        "unidad": "BOLSA",
+        "precio": "530",
+        "proveedor": "ALIMENTOS SELECTOS DEL BAJIO",
+        "proveedor_id": 24,
+        "producto_clave": true,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 75,
+        "nombre": "CURRY EN POLVO",
+        "unidad": "KG",
+        "precio": "146",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 246,
+        "nombre": "ROLLOS IMPRESORA",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "OFFIX",
+        "proveedor_id": 34,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 128,
+        "nombre": "AGUA DE COCO",
+        "unidad": "L",
+        "precio": "48.17",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 3,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 166,
+        "nombre": "MANGO ORGANICO CONGELADO",
+        "unidad": "PORCIONES",
+        "precio": "99.12",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": true,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 4,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 243,
+        "nombre": "STELLA",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "WALMART",
+        "proveedor_id": 4,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 142,
+        "nombre": "CLAVO MOLIDO",
+        "unidad": "KG",
+        "precio": "869.23",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 152,
+        "nombre": "HOJA DE ARROZ",
+        "unidad": "KG",
+        "precio": "323.53",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 7,
+        "nombre": "CHILE SERRANO",
+        "unidad": "KG",
+        "precio": "21.54",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 301,
+        "nombre": "CHEESCAKE REESE",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "CURCUMA",
+        "proveedor_id": 7,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 222,
+        "nombre": "JAMAICA",
+        "unidad": "KG",
+        "precio": "210",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 38,
+        "nombre": "AMINOS",
+        "unidad": "L",
+        "precio": "422.83",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 193,
+        "nombre": "SALSA DE SOYA",
+        "unidad": "L",
+        "precio": "143",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 164,
+        "nombre": "LIQUIDO DE PALMITO",
+        "unidad": "L",
+        "precio": "160.23",
+        "proveedor": "N/A",
+        "proveedor_id": 31,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 254,
+        "nombre": "POPOTES",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 78,
+        "nombre": "ESPARRAGOS",
+        "unidad": "PORCIONES",
+        "precio": "188.92",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 1,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 217,
+        "nombre": "CHAI",
+        "unidad": "KG",
+        "precio": "433.33",
+        "proveedor": "ETRUSCA",
+        "proveedor_id": 9,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 159,
+        "nombre": "LECHE DE AVENA Y LINAZA",
+        "unidad": "L",
+        "precio": "49.90",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 3,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 186,
+        "nombre": "POLVO PARA HORNEAR",
+        "unidad": "KG",
+        "precio": "200",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 250,
+        "nombre": "CHAROLA VETSA",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 47,
+        "nombre": "CHILE PASILLA",
+        "unidad": "KG",
+        "precio": "220.29",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 177,
+        "nombre": "PAN CAJA",
+        "unidad": "PZA",
+        "precio": "5.46",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 4,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 20,
+        "nombre": "MANZANA VERDE",
+        "unidad": "KG",
+        "precio": "42.7",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 182,
+        "nombre": "PASTRAMI DE PAVO",
+        "unidad": "PORCIONES",
+        "precio": "84.49",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": true,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            "fin_segundo_turno"
+        ]
+    },
+    {
+        "id_ingrediente": 1,
+        "nombre": "JOCOQUE",
+        "unidad": "KG",
+        "precio": "140",
+        "proveedor": "GABY JOCOQUE",
+        "proveedor_id": 18,
+        "producto_clave": false,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 76,
+        "nombre": "DATILES",
+        "unidad": "KG",
+        "precio": "197",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 1,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 106,
+        "nombre": "PEPINO",
+        "unidad": "KG",
+        "precio": "61.7",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 18,
+        "nombre": "ARANDANO",
+        "unidad": "KG",
+        "precio": "154",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 110,
+        "nombre": "SANDIA",
+        "unidad": "KG",
+        "precio": "20.5",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 178,
+        "nombre": "PAN PARA HAMBURGUESA",
+        "unidad": "PZA",
+        "precio": "12",
+        "proveedor": "LA CONCHERIA",
+        "proveedor_id": 23,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 145,
+        "nombre": "CORAZONES DE ALCACHOFAS",
+        "unidad": "KG",
+        "precio": "232.98",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 4,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 129,
+        "nombre": "ARROZ",
+        "unidad": "PORCIONES",
+        "precio": "49.56",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 143,
+        "nombre": "COCOA",
+        "unidad": "KG",
+        "precio": "475",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 203,
+        "nombre": "VINAGRE DE ARROZ",
+        "unidad": "L",
+        "precio": "146",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 58,
+        "nombre": "AMARANTO",
+        "unidad": "KG",
+        "precio": "74",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 8,
+        "nombre": "CEBOLLA BLANCA",
+        "unidad": "KG",
+        "precio": "44.02",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 294,
+        "nombre": "TIZANAS MORA",
+        "unidad": "FRASCO",
+        "precio": null,
+        "proveedor": "ETRUSCA",
+        "proveedor_id": 9,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 71,
+        "nombre": "CHILE HABANERO",
+        "unidad": "KG",
+        "precio": "152.58",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 267,
+        "nombre": "BOLSA DE PAPEL 25",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 68,
+        "nombre": "CHAROLA FRESA",
+        "unidad": "KG",
+        "precio": "81.93",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 304,
+        "nombre": "GALLETA CURCUMA",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "CURCUMA",
+        "proveedor_id": 7,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 80,
+        "nombre": "HABAS",
+        "unidad": "KG",
+        "precio": "84",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 52,
+        "nombre": "CEBOLLA MORADA ",
+        "unidad": "KG",
+        "precio": "40.63",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 146,
+        "nombre": "CURCUMA",
+        "unidad": "KG",
+        "precio": "484.29",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 162,
+        "nombre": "LECHE EVAPORADA",
+        "unidad": "PZA",
+        "precio": "23.90",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 132,
+        "nombre": "AZUCAR GLASS",
+        "unidad": "KG",
+        "precio": "46.20",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 84,
+        "nombre": "JUGO DE FRESA",
+        "unidad": "L",
+        "precio": "152.63",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 170,
+        "nombre": "MIEL DE ABEJA",
+        "unidad": "KG",
+        "precio": "118",
+        "proveedor": "MIEL DE ABEJA",
+        "proveedor_id": 13,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 192,
+        "nombre": "SALMON",
+        "unidad": "PORCIONES",
+        "precio": "370",
+        "proveedor": "COSTA",
+        "proveedor_id": 14,
+        "producto_clave": true,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": "2.0",
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 276,
+        "nombre": "JAPANESE",
+        "unidad": "BOLSA",
+        "precio": null,
+        "proveedor": "FALTA INFO",
+        "proveedor_id": 35,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 237,
+        "nombre": "SPLENDA",
+        "unidad": "SOBRES",
+        "precio": null,
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 101,
+        "nombre": "NARANJA",
+        "unidad": "KG",
+        "precio": "14",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 69,
+        "nombre": "CHIA",
+        "unidad": "KG",
+        "precio": "120",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 262,
+        "nombre": "VASO FOMI",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 115,
+        "nombre": "TOMATE BOLA",
+        "unidad": "KG",
+        "precio": "32.94",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 114,
+        "nombre": "LECHUGA SPRING MIX",
+        "unidad": "CAJA",
+        "precio": "202.58",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": true,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 1,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 108,
+        "nombre": "PIÑA",
+        "unidad": "KG",
+        "precio": "45.1",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 112,
+        "nombre": "SEMILLA DE GIRASOL",
+        "unidad": "KG",
+        "precio": "60",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 59,
+        "nombre": "APIO",
+        "unidad": "KG",
+        "precio": "46.51",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 289,
+        "nombre": "COCA COLA ZERO",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "WALMART",
+        "proveedor_id": 4,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 268,
+        "nombre": "BOLSA DE PAPEL 12",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 65,
+        "nombre": "BETABEL",
+        "unidad": "KG",
+        "precio": "42.96",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 127,
+        "nombre": "ACEITUNAS NEGRAS",
+        "unidad": "KG",
+        "precio": "110.26",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 4,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 200,
+        "nombre": "VAINILLA",
+        "unidad": "L",
+        "precio": "39.9",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 329,
+        "nombre": "NOTITAS",
+        "unidad": "PAQUETE",
+        "precio": "5",
+        "proveedor": "OFFIX",
+        "proveedor_id": 34,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 44,
+        "nombre": "QUESO FETA",
+        "unidad": "BOTE",
+        "precio": "252.94",
+        "proveedor": "SAMS",
+        "proveedor_id": 5,
+        "producto_clave": true,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 11,
+        "nombre": "CILANTRO",
+        "unidad": "KG",
+        "precio": "52",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 235,
+        "nombre": "TIZANAS MARACUYA",
+        "unidad": "FRASCO",
+        "precio": null,
+        "proveedor": "ETRUSCA",
+        "proveedor_id": 9,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 82,
+        "nombre": "JENGIBRE",
+        "unidad": "KG",
+        "precio": "81.25",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 119,
+        "nombre": "LECHUGA OREJONA",
+        "unidad": "KG",
+        "precio": "24.42",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            "inicio_primer_turno"
+        ]
+    },
+    {
+        "id_ingrediente": 306,
+        "nombre": "NATURAL SNACK CHIPS",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": null,
+        "proveedor_id": null,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 286,
+        "nombre": "FIBRA TRASTES",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "FALTA INFO",
+        "proveedor_id": 35,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 153,
+        "nombre": "PAVO",
+        "unidad": "KG",
+        "precio": "199",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": true,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 147,
+        "nombre": "HIERBAS FINAS",
+        "unidad": "KG",
+        "precio": "1150",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 279,
+        "nombre": "ULTRA",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "WALMART",
+        "proveedor_id": 4,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 214,
+        "nombre": "CAJETA",
+        "unidad": "KG",
+        "precio": "220",
+        "proveedor": "SAN JULIAN",
+        "proveedor_id": 8,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 9,
+        "nombre": "NOPAL",
+        "unidad": "KG",
+        "precio": "44",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 202,
+        "nombre": "VINAGRE BLANCO",
+        "unidad": "L",
+        "precio": "83",
+        "proveedor": "SAMS",
+        "proveedor_id": 5,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 79,
+        "nombre": "FRIJOL NEGRO",
+        "unidad": "KG",
+        "precio": "45",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 85,
+        "nombre": "JUGO DE MANZANA VERDE",
+        "unidad": "L",
+        "precio": "50",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 72,
+        "nombre": "COCO RALLADO",
+        "unidad": "KG",
+        "precio": "74",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 95,
+        "nombre": "MANGO",
+        "unidad": "KG",
+        "precio": "56.95",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 281,
+        "nombre": "DESENGRASANTE/QUITACOCHAMBRE",
+        "unidad": "BOTE",
+        "precio": null,
+        "proveedor": "DON PULCRO",
+        "proveedor_id": 33,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 259,
+        "nombre": "SERVILLETAS",
+        "unidad": "PAQUETE",
+        "precio": null,
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 3,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 232,
+        "nombre": "MATCHA JAPONES",
+        "unidad": "FRASCO",
+        "precio": null,
+        "proveedor": "ETRUSCA",
+        "proveedor_id": 9,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 77,
+        "nombre": "ELOTE DESGRANADO",
+        "unidad": "KG",
+        "precio": "115",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 302,
+        "nombre": "CHOCOLATE ARTESANAL ARANDA",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": null,
+        "proveedor_id": null,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 172,
+        "nombre": "DISCO HAMBURGUESA",
+        "unidad": "PZA",
+        "precio": "167.27",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": true,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 2,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 30,
+        "nombre": "MIX DE FRUTOS ROJOS",
+        "unidad": "PZA",
+        "precio": "19.75",
+        "proveedor": "SAMS",
+        "proveedor_id": 5,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 21,
+        "nombre": "FRESA",
+        "unidad": "KG",
+        "precio": "69.88",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 288,
+        "nombre": "COCA COLA LIGHT",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "WALMART",
+        "proveedor_id": 4,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 131,
+        "nombre": "AZUCAR REGULAR",
+        "unidad": "KG",
+        "precio": "39.90",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 3,
+        "nombre": "PLATANO",
+        "unidad": "KG",
+        "precio": "24.92",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 198,
+        "nombre": "TORTILLA DE MAIZ",
+        "unidad": "PAQUETE",
+        "precio": "4",
+        "proveedor": "CUATRO MILPAS",
+        "proveedor_id": 6,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 17,
+        "nombre": "SEMILLA DE LINAZA",
+        "unidad": "KG",
+        "precio": "60",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 212,
+        "nombre": "TOMATE DESHIDRATADO",
+        "unidad": "KG",
+        "precio": "240.93",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 37,
+        "nombre": "COL MORADA",
+        "unidad": "KG",
+        "precio": "44.97",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 310,
+        "nombre": "SCONE DE CURCUMA",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "CURCUMA",
+        "proveedor_id": null,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 249,
+        "nombre": "CAJA PIZZA CHICA",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 255,
+        "nombre": "CHAROLAS POSTRE",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "SAMS",
+        "proveedor_id": 5,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 165,
+        "nombre": "MANGO CONGELADO",
+        "unidad": "KG",
+        "precio": "77.75",
+        "proveedor": "SAMS",
+        "proveedor_id": 5,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 56,
+        "nombre": "ESPINACAS",
+        "unidad": "KG",
+        "precio": "112",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 151,
+        "nombre": "HIELO",
+        "unidad": "BOLSA",
+        "precio": "1.74",
+        "proveedor": "SAMS",
+        "proveedor_id": 5,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 296,
+        "nombre": "AGUE EVIAN",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": null,
+        "proveedor_id": null,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 209,
+        "nombre": "ALGA MARINA",
+        "unidad": "KG",
+        "precio": "2040",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 74,
+        "nombre": "COLIFLOR",
+        "unidad": "KG",
+        "precio": "36",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 225,
+        "nombre": "FRESA PARA DECORAR",
+        "unidad": "CAJA",
+        "precio": null,
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 138,
+        "nombre": "CHAPATA PARMESANO",
+        "unidad": "PZA",
+        "precio": "19",
+        "proveedor": "PANCCADIA",
+        "proveedor_id": 16,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 34,
+        "nombre": "AGUA GARRAFON",
+        "unidad": "L",
+        "precio": "9",
+        "proveedor": "GARRAFON",
+        "proveedor_id": 29,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 245,
+        "nombre": "ROLLOS BAÑO",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 3,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 205,
+        "nombre": "ZARZAMORA CONGELADA",
+        "unidad": "KG",
+        "precio": "145.37",
+        "proveedor": "SAMS",
+        "proveedor_id": 5,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 83,
+        "nombre": "JUGO DE BETABEL",
+        "unidad": "L",
+        "precio": "53.73",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 90,
+        "nombre": "JUGO DE SANDIA",
+        "unidad": "L",
+        "precio": "34.17",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 45,
+        "nombre": "TOMATILLO",
+        "unidad": "KG",
+        "precio": "35",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 174,
+        "nombre": "MOSTAZA DIJON",
+        "unidad": "KG",
+        "precio": "67.65",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 216,
+        "nombre": "PANQUE DE AVELLANA",
+        "unidad": "PZA",
+        "precio": "40.08",
+        "proveedor": "CURCUMA",
+        "proveedor_id": 7,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 295,
+        "nombre": "AGUA EVIAN GRANDE",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": null,
+        "proveedor_id": null,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 213,
+        "nombre": "PAPEL NECTARIO",
+        "unidad": "PZA",
+        "precio": "0.80",
+        "proveedor": "ALICIA",
+        "proveedor_id": 30,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 134,
+        "nombre": "CAMARON",
+        "unidad": "KG",
+        "precio": "504",
+        "proveedor": "COSTA",
+        "proveedor_id": 14,
+        "producto_clave": true,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 39,
+        "nombre": "ALBAHACA",
+        "unidad": "BOLSA",
+        "precio": "227",
+        "proveedor": "VERDE COMPACTO",
+        "proveedor_id": 25,
+        "producto_clave": true,
+        "estatus_moral": "Pausar compra",
+        "store_route_order": null,
+        "moral_demanda_semanal": "1.50",
+        "bosques_demanda_semanal": "1.50",
+        "orden_inventario": null,
+        "estatus_bosques": "Pausar compra",
+        "temporal_proveedor_id": 25,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 163,
+        "nombre": "LEVADURA",
+        "unidad": "KG",
+        "precio": "291.34",
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 168,
+        "nombre": "MASAGO",
+        "unidad": "KG",
+        "precio": "1030",
+        "proveedor": "TOYO",
+        "proveedor_id": 15,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 223,
+        "nombre": "ACEITE FREIDORA 20 L",
+        "unidad": "L",
+        "precio": null,
+        "proveedor": "SAMS",
+        "proveedor_id": 5,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 36,
+        "nombre": "JUGO DE LIMON",
+        "unidad": "L",
+        "precio": "84.44",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 287,
+        "nombre": "COCA COLA REGULAR",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "WALMART",
+        "proveedor_id": 4,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 221,
+        "nombre": "MELON",
+        "unidad": "KG",
+        "precio": "30",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 167,
+        "nombre": "MANTEQUILLA",
+        "unidad": "KG",
+        "precio": "100",
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 158,
+        "nombre": "LECHE DE ALMENDRAS",
+        "unidad": "L",
+        "precio": "25.41",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 3,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 290,
+        "nombre": "AGUA EMBOTELLADA",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 3,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 118,
+        "nombre": "ZANAHORIA",
+        "unidad": "KG",
+        "precio": "29.17",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 300,
+        "nombre": "CHEESCAKE BROWNIE",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "CURCUMA",
+        "proveedor_id": 7,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 284,
+        "nombre": "FLORES",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "FALTA INFO",
+        "proveedor_id": 35,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 265,
+        "nombre": "MEDIO LITRO CON TAPA",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 111,
+        "nombre": "SEMILLA DE CALABAZA",
+        "unidad": "KG",
+        "precio": "188",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 16,
+        "nombre": "AVENA",
+        "unidad": "KG",
+        "precio": "33",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 207,
+        "nombre": "FIDEOS UDON",
+        "unidad": "PZA",
+        "precio": "29.26",
+        "proveedor": "TOYO ",
+        "proveedor_id": 15,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 62,
+        "nombre": "ARUGULA",
+        "unidad": "BOLSA",
+        "precio": "244",
+        "proveedor": "COTSCO",
+        "proveedor_id": 3,
+        "producto_clave": true,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 1,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 123,
+        "nombre": "ACEITE DE AJONJOLI",
+        "unidad": "ML",
+        "precio": "278",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 126,
+        "nombre": "ACEITE PERRO",
+        "unidad": "BOTE",
+        "precio": "42.57",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            "fin_segundo_turno"
+        ]
+    },
+    {
+        "id_ingrediente": 194,
+        "nombre": "SALSA INGLESA COCINA",
+        "unidad": "L",
+        "precio": "253",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 326,
+        "nombre": "DEL MONJE",
+        "unidad": "PZA",
+        "precio": "5.5",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 99,
+        "nombre": "MENTA",
+        "unidad": "KG",
+        "precio": "144.44",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 41,
+        "nombre": "AGUACATE",
+        "unidad": "KG",
+        "precio": "73.28",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 206,
+        "nombre": "FIDEOS DE ARROZ",
+        "unidad": "KG",
+        "precio": "286.34",
+        "proveedor": "TOYO",
+        "proveedor_id": 15,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 46,
+        "nombre": "CHILE GUAJILLO",
+        "unidad": "KG",
+        "precio": "160.62",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 224,
+        "nombre": "TOPO CHICO",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 157,
+        "nombre": "LECHE CONDENSADA",
+        "unidad": "PZA",
+        "precio": "13",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 53,
+        "nombre": "HOJA DE ALUMINIO",
+        "unidad": "PZA",
+        "precio": "0.84",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 275,
+        "nombre": "CHILE RAJAS",
+        "unidad": "LATAS",
+        "precio": null,
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 247,
+        "nombre": "VELITAS PARA CUMPLEAÑOS",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 260,
+        "nombre": "VASO DE CAFE",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 308,
+        "nombre": "PAY DE DATIL",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "CURCUMA",
+        "proveedor_id": 7,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 100,
+        "nombre": "MORRON ROJO",
+        "unidad": "KG",
+        "precio": "71.05",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 183,
+        "nombre": "PEPPERONI",
+        "unidad": "KG",
+        "precio": "120",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            "fin_segundo_turno"
+        ]
+    },
+    {
+        "id_ingrediente": 136,
+        "nombre": "CATSUP",
+        "unidad": "KG",
+        "precio": "60.28",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 150,
+        "nombre": "HARINA INTEGRAL",
+        "unidad": "KG",
+        "precio": "18.90",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 140,
+        "nombre": "CHIPOTLE MOLIDO",
+        "unidad": "KG",
+        "precio": "61",
+        "proveedor": "SAMS",
+        "proveedor_id": 5,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 139,
+        "nombre": "CHILE QUEBRADO",
+        "unidad": "KG",
+        "precio": "856",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 12,
+        "nombre": "AJO",
+        "unidad": "KG",
+        "precio": "102.08",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 248,
+        "nombre": "CAJA PIZZA GRANDE",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 137,
+        "nombre": "CHAPATA INTEGRAL",
+        "unidad": "PZA",
+        "precio": "19",
+        "proveedor": "PANCCADIA",
+        "proveedor_id": 16,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 208,
+        "nombre": "PAPAS GAJO",
+        "unidad": "KG",
+        "precio": "84.91",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 293,
+        "nombre": "JABON LIQUIDO",
+        "unidad": "BOTE",
+        "precio": null,
+        "proveedor": null,
+        "proveedor_id": null,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 191,
+        "nombre": "QUINOA",
+        "unidad": "PORCIONES",
+        "precio": "152.59",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 4,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 141,
+        "nombre": "CLARAS",
+        "unidad": "KG",
+        "precio": "51",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 122,
+        "nombre": "GERMINADO DE ALFALFA",
+        "unidad": "KG",
+        "precio": "38",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 94,
+        "nombre": "LIMON SIN SEMILLA",
+        "unidad": "KG",
+        "precio": "20",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 154,
+        "nombre": "JAMON SERRANO",
+        "unidad": "KG",
+        "precio": "571",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": true,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 3,
+        "moral_demanda_semanal": "8.00",
+        "bosques_demanda_semanal": "6.00",
+        "orden_inventario": "3.3",
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 218,
+        "nombre": "TE",
+        "unidad": "PZA",
+        "precio": "0.88",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 49,
+        "nombre": "PIMIENTA",
+        "unidad": "KG",
+        "precio": "627.78",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 234,
+        "nombre": "STEVIA",
+        "unidad": "SOBRES",
+        "precio": null,
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 211,
+        "nombre": "AJONJOLI NEGRO",
+        "unidad": "BOTE",
+        "precio": "213",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 256,
+        "nombre": "PORTAVASOS",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 332,
+        "nombre": "PRUEBA",
+        "unidad": "ML",
+        "precio": "1",
+        "proveedor": "ETRUSCA",
+        "proveedor_id": 9,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 185,
+        "nombre": "POLLO",
+        "unidad": "PORCIONES",
+        "precio": "148.15",
+        "proveedor": "COSTCO",
+        "proveedor_id": 3,
+        "producto_clave": true,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": 2,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 64,
+        "nombre": "BERENJENA",
+        "unidad": "KG",
+        "precio": "77.89",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 264,
+        "nombre": "VITAFILM",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 215,
+        "nombre": "GARBANZO",
+        "unidad": "KG",
+        "precio": "39",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 55,
+        "nombre": "CALABACITA",
+        "unidad": "KG",
+        "precio": "26.61",
+        "proveedor": "FRUTEX",
+        "proveedor_id": 1,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 130,
+        "nombre": "ATUN",
+        "unidad": "PORCIONES",
+        "precio": "43",
+        "proveedor": "COSTA",
+        "proveedor_id": 14,
+        "producto_clave": true,
+        "estatus_moral": "No Comprado",
+        "store_route_order": null,
+        "moral_demanda_semanal": "72.00",
+        "bosques_demanda_semanal": "32.00",
+        "orden_inventario": "1.0",
+        "estatus_bosques": "No Comprado",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 148,
+        "nombre": "FRESA CONGELADA",
+        "unidad": "KG",
+        "precio": "94.12",
+        "proveedor": "SAMS",
+        "proveedor_id": 5,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 23,
+        "nombre": "MIEL DE MAPLE",
+        "unidad": "L",
+        "precio": "115",
+        "proveedor": "HEB",
+        "proveedor_id": 2,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    },
+    {
+        "id_ingrediente": 270,
+        "nombre": "BOLSA DE PORCIONES",
+        "unidad": "PZA",
+        "precio": null,
+        "proveedor": "ABEJITA",
+        "proveedor_id": 19,
+        "producto_clave": null,
+        "estatus_moral": "Suficiente producto",
+        "store_route_order": null,
+        "moral_demanda_semanal": null,
+        "bosques_demanda_semanal": null,
+        "orden_inventario": null,
+        "estatus_bosques": "Suficiente producto",
+        "temporal_proveedor_id": null,
+        "frecuencias_inventario": [
+            null
+        ]
+    }
+]
