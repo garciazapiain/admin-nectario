@@ -22,4 +22,4 @@ jobs:
       - name: Run Cypress Tests
         run: |
           cd frontend
-          npx cypress open
+          npx cypress run-ct
