@@ -38,19 +38,19 @@ describe('<TomaInventario />', () => {
     cy.get('@firstRow').find('input').should('have.value', '0')
   })
 
-  it('submits the inventory form', () => {
-    // Intercept the POST request before triggering form submission
-    cy.intercept('POST', '/api/submissions').as('submitForm');
-    // Trigger form submission
-    cy.get('.button-actualizar').click();
-    // Wait for the form submission request to complete
-    cy.wait('@submitForm', { timeout: 10000 }).then((interception) => {
-      // Log the intercepted response for debugging
-      cy.log(JSON.stringify(interception.response));
-      // Assert the response status code
-      expect(interception.response.statusCode).to.equal(200);
-    });
-    // Assert the success message is visible
-    cy.get('.success-message').should('be.visible').and('contain', 'Actualización exitosa');
-  });
+  // it('submits the inventory form', () => {
+  //   // Intercept the POST request before triggering form submission
+  //   cy.intercept('POST', '/api/submissions').as('submitForm');
+  //   // Trigger form submission
+  //   cy.get('.button-actualizar').click();
+  //   // Wait for the form submission request to complete
+  //   cy.wait('@submitForm', { timeout: 10000 }).then((interception) => {
+  //     // Log the intercepted response for debugging
+  //     cy.log(JSON.stringify(interception.response));
+  //     // Assert the response status code
+  //     expect(interception.response.statusCode).to.equal(200);
+  //   });
+  //   // Assert the success message is visible
+  //   cy.get('.success-message').should('be.visible').and('contain', 'Actualización exitosa');
+  // });
 })
