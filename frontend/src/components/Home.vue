@@ -30,7 +30,7 @@ onMounted(() => {
     <!-- <button v-if="isAdmin" @click="() => navigateTo('/historialcompra')">
       Historial Compras
     </button> -->
-    <button v-if="isAdmin" @click="handleClickConsumoInsumos">
+    <button v-if="isAdmin" @click="() => navigateTo('/consumoinsumos')">
       Consumo Insumos
     </button>
   </div>
