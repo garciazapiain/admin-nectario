@@ -18,7 +18,8 @@ describe('<ResumenExistencias />', () => {
   it('shows, interacts with, and hides the popup', () => {
     // Show the popup
     cy.get('table tbody tr:first').click();
-    cy.get('.popup', { timeout: 10000 }).should('be.visible'); // Increased timeout
+    cy.wait(3000);
+    cy.get('.popup').should('be.visible');
 
     // Test the increment button
     cy.get('.popup .controls').find('button').contains('+').click();
