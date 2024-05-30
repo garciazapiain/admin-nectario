@@ -2,10 +2,13 @@ import ResumenExistencias from './ResumenExistencias.vue';
 
 describe('<ResumenExistencias />', () => {
   beforeEach(() => {
-    cy.intercept('GET', '/api/ingredientes', { fixture: 'ingredientes.json' });
-    cy.intercept('POST', '/api/submissions', { fixture: 'submissions.json' });
-    
+    cy.intercept('GET', '/api/ingredientes', { fixture: 'ingredientes.json' }).as('getIngredientes');
+    cy.intercept('GET', '/api/submissions', { fixture: 'submissions.json' }).as('getSubmissions');
+
     cy.mount(ResumenExistencias)
+
+    cy.wait('@getIngredientes');
+    cy.wait('@getSubmissions')
   })
   it('renders the component', () => {
     cy.get('h1').should('contain', 'Resumen Existencias Lista Peligro');
