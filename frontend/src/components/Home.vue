@@ -27,9 +27,9 @@ onMounted(() => {
     <!-- <button v-if="isAdmin" @click="() => navigateTo('/pronosticodemandainsumos')">
       Pronóstico Demanda Insumos
     </button> -->
-    <!-- <button v-if="isAdmin" @click="() => navigateTo('/historialcompra')">
+    <button v-if="isAdmin" @click="() => navigateTo('/historialcompra')">
       Historial Compras
-    </button> -->
+    </button>
     <button v-if="isAdmin" @click="() => navigateTo('/consumoinsumos')">
       Consumo Insumos
     </button>
