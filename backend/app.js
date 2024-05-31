@@ -1025,7 +1025,6 @@ app.get('/api/consumption/:store', async (req, res) => {
   const { startDate, endDate } = req.query;
   const client = await pool.connect();
 
-
   try {
     const result = await client.query(`
       SELECT 
@@ -1033,6 +1032,7 @@ app.get('/api/consumption/:store', async (req, res) => {
           unidad,
           nombre,
           producto_clave,
+          precio,
           ROUND(SUM(consumo_platillos)::numeric, 2) AS consumo_platillos,
           ROUND(SUM(consumo_subplatillos)::numeric, 2) AS consumo_subplatillos,
           ROUND((SUM(consumo_platillos) + SUM(consumo_subplatillos))::numeric, 2) AS total_consumido
@@ -1043,6 +1043,7 @@ app.get('/api/consumption/:store', async (req, res) => {
                   i.unidad AS unidad,
                   i.nombre AS nombre,
                   i.producto_clave AS producto_clave,
+                  i.precio AS precio,
                   SUM(vd.cantidad * pi.cantidad) AS consumo_platillos,
                   0 AS consumo_subplatillos
               FROM 
@@ -1055,7 +1056,7 @@ app.get('/api/consumption/:store', async (req, res) => {
                       INNER JOIN 
                           ventaslog vl ON vd.ventaslogid = vl.id
                       WHERE 
-                          vl.startdate >= $1 AND vl.enddate <= $2 AND vl.store = $3
+                          vl.startdate = $1 AND vl.enddate = $2 AND vl.store = $3
                       GROUP BY
                           vd.clavepos
                   ) vd
@@ -1065,13 +1066,14 @@ app.get('/api/consumption/:store', async (req, res) => {
                   platillos_ingredientes pi ON p.id_platillo = pi.id_platillo
               INNER JOIN 
                   ingredientes i ON pi.id_ingrediente = i.id_ingrediente
-              GROUP BY pi.id_ingrediente, i.unidad, i.nombre, i.producto_clave
+              GROUP BY pi.id_ingrediente, i.unidad, i.nombre, i.producto_clave, i.precio
               UNION ALL
               SELECT 
                   spi.id_ingrediente AS id_ingrediente,
                   i.unidad AS unidad,
                   i.nombre AS nombre,
                   i.producto_clave AS producto_clave,
+                  i.precio AS precio,
                   0 AS consumo_platillos,
                   SUM(vd.cantidad * spi.cantidad / sp.rendimiento) AS consumo_subplatillos
               FROM 
@@ -1084,7 +1086,7 @@ app.get('/api/consumption/:store', async (req, res) => {
                       INNER JOIN 
                           ventaslog vl ON vd.ventaslogid = vl.id
                       WHERE 
-                          vl.startdate >= $1 AND vl.enddate <= $2 AND vl.store = $3
+                          vl.startdate = $1 AND vl.enddate = $2 AND vl.store = $3
                       GROUP BY
                           vd.clavepos
                   ) vd
@@ -1098,9 +1100,9 @@ app.get('/api/consumption/:store', async (req, res) => {
                   subplatillos_ingredientes spi ON sp.id_subplatillo = spi.id_subplatillo
               INNER JOIN 
                   ingredientes i ON spi.id_ingrediente = i.id_ingrediente
-              GROUP BY spi.id_ingrediente, i.unidad, i.nombre, i.producto_clave
+              GROUP BY spi.id_ingrediente, i.unidad, i.nombre, i.producto_clave, i.precio
           ) t
-      GROUP BY id_ingrediente, unidad, nombre, producto_clave;
+      GROUP BY id_ingrediente, unidad, nombre, producto_clave, precio;
     `, [startDate, endDate, store]);
 
     res.json(result.rows);
