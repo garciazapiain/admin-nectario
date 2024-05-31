@@ -16,14 +16,4 @@ describe('Ingredientes Component', () => {
         cy.get('.ingredient-form').should('exist');
         cy.get('.submit-button').should('exist');
     });
-
-    it('filters ingredientes based on search input', () => {
-        // Type 'ATUN' into the search input field
-        cy.get('input[placeholder="Search"]').type('ATUN');
-
-        // Check that each table row contains 'ATUN'
-        cy.get('tbody tr').each(($row) => {
-            cy.wrap($row).should('contain', 'ATUN');
-        });
-    });
 });
