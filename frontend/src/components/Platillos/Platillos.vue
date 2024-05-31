@@ -18,7 +18,7 @@ const handleClickPlatillo = (idPlatillo) => {
       <thead>
         <tr>
           <th>Nombre</th>
-          <th>Cantidad vendida/semana</th>
+          <!-- <th>Cantidad vendida/semana</th> -->
           <th>Clave soft pos</th>
         </tr>
       </thead>
@@ -27,9 +27,9 @@ const handleClickPlatillo = (idPlatillo) => {
           <td @click="handleClickPlatillo(platillo.id_platillo)">
             {{ platillo.nombre }}
           </td>
-          <td @click="handleClickPlatillo(platillo.id_platillo)">
+          <!-- <td @click="handleClickPlatillo(platillo.id_platillo)">
             {{ platillo.unidades_vendidas }}
-          </td>
+          </td> -->
           <td>
             <div className="editClaveRow" v-if="editIndexClavePos !== index">
               {{ platillo.clavepos }}

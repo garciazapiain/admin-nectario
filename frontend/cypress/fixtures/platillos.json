@@ -1,0 +1,50 @@
+[
+    {
+        "id_platillo": 8,
+        "nombre": "CHILAQUILES VERDES",
+        "created_at": "2024-01-04T20:55:30.160Z",
+        "updated_at": "2024-01-04T20:55:30.160Z",
+        "unidades_vendidas": 206,
+        "clavepos": "125"
+    },
+    {
+        "id_platillo": 28,
+        "nombre": "TOSTADA DE ATUN TUNA MIA",
+        "created_at": "2024-01-10T16:31:35.219Z",
+        "updated_at": "2024-01-10T16:31:35.219Z",
+        "unidades_vendidas": 100,
+        "clavepos": "3"
+    },
+    {
+        "id_platillo": 2,
+        "nombre": "HOTCAKES",
+        "created_at": "2023-12-18T23:32:16.276Z",
+        "updated_at": "2023-12-18T23:32:16.276Z",
+        "unidades_vendidas": 93,
+        "clavepos": null
+    },
+    {
+        "id_platillo": 64,
+        "nombre": "SANDWICH CHAPATA POLLO",
+        "created_at": "2024-01-10T22:57:21.794Z",
+        "updated_at": "2024-01-10T22:57:21.794Z",
+        "unidades_vendidas": 35,
+        "clavepos": null
+    },
+    {
+        "id_platillo": 42,
+        "nombre": "POKE BOWL",
+        "created_at": "2024-01-10T19:29:31.294Z",
+        "updated_at": "2024-01-10T19:29:31.294Z",
+        "unidades_vendidas": 60,
+        "clavepos": null
+    },
+    {
+        "id_platillo": 23,
+        "nombre": "TABBOULEH DE QUINOA",
+        "created_at": "2024-01-10T16:22:26.629Z",
+        "updated_at": "2024-01-10T16:22:26.629Z",
+        "unidades_vendidas": 53,
+        "clavepos": null
+    }
+]
