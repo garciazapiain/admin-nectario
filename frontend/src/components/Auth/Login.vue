@@ -5,7 +5,7 @@
         display: flex;
         justify-content: center;
         height: 300px;
-        width:300px
+        width:300px;
         align-items: center;
       "
     >

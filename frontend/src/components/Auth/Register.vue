@@ -2,11 +2,11 @@
   <div>
     <h2>Register</h2>
     <form @submit.prevent="submitForm">
-      <input type="text" v-model="username" placeholder="Username" required />
+      <input type="text" v-model="username" placeholder="Usuario" required />
       <input
         type="password"
         v-model="password"
-        placeholder="Password"
+        placeholder="Contraseña"
         required
       />
       <button type="submit">Register</button>
@@ -53,13 +53,13 @@ export default {
           if (data.message === "User registered") {
             this.router.push("/login"); // Redirect to login page
           } else {
-            this.errorMessage = "Registration failed";
+            this.errorMessage = "Fallo en el registo";
           }
         } else {
-          this.errorMessage = "An error occurred";
+          this.errorMessage = "Ocurrió un error";
         }
       } catch (error) {
-        this.errorMessage = "An error occurred";
+        this.errorMessage = "Ocurrió un error";
       }
     },
   },
