@@ -11,6 +11,10 @@ const handleLogout = () => {
   localStorage.removeItem("jwt");
   router.push("/login");
 };
+
+const isPathNotEqual = (...paths) => {
+  return !paths.includes(router.currentRoute.value.path);
+};
 </script>
 
 <template>
@@ -20,10 +24,7 @@ const handleLogout = () => {
         <button
           class="main-page-button"
           @click="goToMainPage"
-          v-show="
-            router.currentRoute.value.path !== '/' &&
-            router.currentRoute.value.path !== '/login'
-          "
+          v-show="isPathNotEqual('/', '/login')"
         >
           Página principal
         </button>
@@ -31,10 +32,7 @@ const handleLogout = () => {
       <div class="buttonWrapper">
         <button
           class="logout-button"
-          v-if="
-            router.currentRoute.value.path !== '/login' &&
-            router.currentRoute.value.path !== '/register'
-          "
+          v-if="isPathNotEqual('/login', '/register')"
           @click="handleLogout"
         >
           Salir
@@ -44,27 +42,7 @@ const handleLogout = () => {
     <router-view />
   </div>
 </template>
-
-<script>
-export default {
-  computed: {
-    isMainPageButtonVisible() {
-      return (
-        this.router.currentRoute.value.path !== "/" &&
-        this.router.currentRoute.value.path !== "/login"
-      );
-    },
-    isLogoutButtonVisible() {
-      return (
-        this.router.currentRoute.value.path !== "/login" &&
-        this.router.currentRoute.value.path !== "/register"
-      );
-    },
-  },
-  // other options...
-};
-</script>
-
+ 
 <style scoped>
 .buttonsTop {
   display: flex;
