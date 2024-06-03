@@ -1030,6 +1030,7 @@ app.get('/api/consumption/:store', async (req, res) => {
       SELECT 
           id_ingrediente,
           unidad,
+          proveedor,
           nombre,
           producto_clave,
           precio,
@@ -1041,6 +1042,7 @@ app.get('/api/consumption/:store', async (req, res) => {
               SELECT 
                   pi.id_ingrediente AS id_ingrediente,
                   i.unidad AS unidad,
+                  i.proveedor AS proveedor,
                   i.nombre AS nombre,
                   i.producto_clave AS producto_clave,
                   i.precio AS precio,
@@ -1066,11 +1068,12 @@ app.get('/api/consumption/:store', async (req, res) => {
                   platillos_ingredientes pi ON p.id_platillo = pi.id_platillo
               INNER JOIN 
                   ingredientes i ON pi.id_ingrediente = i.id_ingrediente
-              GROUP BY pi.id_ingrediente, i.unidad, i.nombre, i.producto_clave, i.precio
+              GROUP BY pi.id_ingrediente, i.unidad, i.proveedor, i.nombre, i.producto_clave, i.precio
               UNION ALL
               SELECT 
                   spi.id_ingrediente AS id_ingrediente,
                   i.unidad AS unidad,
+                  i.proveedor AS proveedor,
                   i.nombre AS nombre,
                   i.producto_clave AS producto_clave,
                   i.precio AS precio,
@@ -1100,9 +1103,9 @@ app.get('/api/consumption/:store', async (req, res) => {
                   subplatillos_ingredientes spi ON sp.id_subplatillo = spi.id_subplatillo
               INNER JOIN 
                   ingredientes i ON spi.id_ingrediente = i.id_ingrediente
-              GROUP BY spi.id_ingrediente, i.unidad, i.nombre, i.producto_clave, i.precio
+              GROUP BY spi.id_ingrediente, i.unidad, i.proveedor, i.nombre, i.producto_clave, i.precio
           ) t
-      GROUP BY id_ingrediente, unidad, nombre, producto_clave, precio;
+      GROUP BY id_ingrediente, unidad, proveedor, nombre, producto_clave, precio;
     `, [startDate, endDate, store]);
 
     res.json(result.rows);

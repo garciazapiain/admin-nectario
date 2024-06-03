@@ -10,6 +10,7 @@
         <tr>
           <th>Insumo</th>
           <th>Unidad</th>
+          <th>Proveedor</th>
           <th>Consumido (Moral)</th>
           <th>Constumido (Bosques)</th>
           <th>Total consumido</th>
@@ -21,6 +22,7 @@
         <tr v-for="item in filteredConsumptionData" :key="item.id_ingrediente">
           <td>{{ item.nombre }}</td>
           <td>{{ item.unidad }}</td>
+          <td>{{ item.proveedor }}</td>
           <td>{{ item.total_consumido_moral.toFixed(2) }}</td>
           <td>{{ item.total_consumido_bosques.toFixed(2) }}</td>
           <td>{{ item.total_consumido_total.toFixed(2) }}</td>
@@ -115,6 +117,7 @@ export default {
           nombre: ingredient.nombre,
           precio: ingredient.precio,
           unidad: ingredient.unidad,
+          proveedor: ingredient.proveedor,
           producto_clave: ingredient.producto_clave,
           total_consumido_moral: total_consumido_moral,
           total_consumido_bosques: total_consumido_bosques,
