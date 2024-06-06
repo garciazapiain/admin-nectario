@@ -18,6 +18,7 @@ import InsumoAnalisis from './components/HistorialCompra/InsumoAnalisis.vue';
 import CompraAnalisis from './components/HistorialCompra/CompraAnalisis.vue';
 import ConsumoInsumos from './components/ConsumoInsumos/ConsumoInsumos.vue';
 import CargarVenta from './components/ConsumoInsumos/CargarVentas.vue';
+import Facturacion from './components/Facturacion/Facturacion.vue';
 
 export default [
     { path: '/', component: Home },
@@ -30,14 +31,15 @@ export default [
     { path: '/ingredientes', component: Ingredientes },
     { path: '/ingrediente/:id', component: Ingrediente },
     { path: '/inventarios', component: Inventarios },
-    { path: '/inventarios/:store', component: TomaInventario, props: true},
-    { path: '/existenciasresumen', component: ResumenExistencias},
+    { path: '/inventarios/:store', component: TomaInventario, props: true },
+    { path: '/existenciasresumen', component: ResumenExistencias },
     { path: '/compra', component: Compra },
     { path: '/pronosticodemandainsumos', component: PronosticoDemandaInsumos },
-    { path: '/historialcompra', component: HistorialCompra   },
-    { path: '/historialcompra/insumos', component: InsumosHistorial   },
-    { path: '/historialcompra/insumos/:id', component: InsumoAnalisis   },
-    { path: '/historialcompra/compra/:id', component: CompraAnalisis   },
-    { path: '/consumoinsumos', component: ConsumoInsumos   },
-    { path: '/consumoinsumos/cargarventa', component: CargarVenta   }
+    { path: '/historialcompra', component: HistorialCompra },
+    { path: '/historialcompra/insumos', component: InsumosHistorial },
+    { path: '/historialcompra/insumos/:id', component: InsumoAnalisis },
+    { path: '/historialcompra/compra/:id', component: CompraAnalisis },
+    { path: '/consumoinsumos', component: ConsumoInsumos },
+    { path: '/consumoinsumos/cargarventa', component: CargarVenta },
+    { path: '/facturacion', component: Facturacion }
 ];

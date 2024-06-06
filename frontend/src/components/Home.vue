@@ -33,6 +33,9 @@ onMounted(() => {
     <button v-if="isAdmin" @click="() => navigateTo('/consumoinsumos')">
       Consumo Insumos
     </button>
+    <!-- <button v-if="isAdmin" @click="() => navigateTo('/facturacion')">
+      Facturación
+    </button> -->
   </div>
 </template>
 

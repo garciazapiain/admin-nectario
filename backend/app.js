@@ -1117,6 +1117,37 @@ app.get('/api/consumption/:store', async (req, res) => {
   }
 });
 
+const { exec } = require('child_process');
+
+app.post('/api/test-playwright', (req, res) => {
+  const vendor = req.body.vendor;
+  let scriptPath = '';
+
+  switch (vendor) {
+    case 'heb':
+      scriptPath = 'playwright/facturacion/heb.js';
+      break;
+    case 'costco':
+      scriptPath = 'playwright/facturacion/costco.js';
+      break;
+    default:
+      return res.status(400).send('Invalid vendor');
+  }
+
+  exec(`node ${scriptPath}`, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error: ${error.message}`);
+      return res.status(500).send('Error running Playwright script');
+    }
+    if (stderr) {
+      console.error(`stderr: ${stderr}`);
+      return res.status(500).send('Script execution error');
+    }
+    console.log(`stdout: ${stdout}`);
+    res.send('Playwright script executed successfully');
+  });
+});
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
 });
