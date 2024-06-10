@@ -5,18 +5,9 @@
     </div>
     <!-- <button @click="verifyChangeIngredientCount">Check</button> -->
     <div class="sticky-icon" @click="goDownPage">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="60"
-        height="60"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="feather feather-arrow-down"
-      >
+      <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="feather feather-arrow-down">
         <line x1="12" y1="5" x2="12" y2="19"></line>
         <polyline points="19 12 12 19 5 12"></polyline>
       </svg>
@@ -39,20 +30,12 @@
       <label for="proveedores">Proveedores:</label>
       <select class="filterBar" id="proveedores" v-model="selectedProveedor">
         <option value="">Todos</option>
-        <option
-          v-for="proveedor in proveedores"
-          :key="proveedor.id"
-          :value="proveedor.nombre"
-        >
+        <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">
           {{ proveedor.nombre }}
         </option>
       </select>
       <label for="frecuencias_inventario">Frecuencia Inventario:</label>
-      <select
-        class="filterBar"
-        id="frecuencias_inventario"
-        v-model="selectedFrecuencia"
-      >
+      <select class="filterBar" id="frecuencias_inventario" v-model="selectedFrecuencia">
         <option value="">Todos</option>
         <option value="inicio_primer_turno">Inicio primer turno</option>
         <option value="inicio_segundo_turno">Inicio segundo turno</option>
@@ -64,11 +47,7 @@
         <option value="Todos">Todos</option>
       </select>
     </div>
-    <input
-      v-model="searchTerm"
-      placeholder="Buscar ingrediente..."
-      class="search-bar"
-    />
+    <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="search-bar" />
     <!-- ... -->
     <div class="table-container">
       <table>
@@ -85,36 +64,24 @@
             <td style="font-size: 20px">{{ ingrediente.unidad }}</td>
             <td>
               <div class="input-row">
-                <input
-                  v-model.number="ingrediente.cantidad_inventario"
-                  min="0"
-                  @change="updateSubmitData(ingrediente)"
-                />
+                <input v-model.number="ingrediente.cantidad_inventario" min="0"
+                  @change="updateSubmitData(ingrediente)" />
               </div>
               <div class="button-row-parent">
                 <div class="button-row">
                   <div class="button-container">
-                    <button
-                      class="button-increase-decrease"
-                      @click="decreaseQuantity(ingrediente)"
-                    >
+                    <button class="button-increase-decrease" @click="decreaseQuantity(ingrediente)">
                       -
                     </button>
                   </div>
                   <div class="button-container">
-                    <button
-                      class="button-increase-decrease"
-                      @click="increaseQuantity(ingrediente)"
-                    >
+                    <button class="button-increase-decrease" @click="increaseQuantity(ingrediente)">
                       +
                     </button>
                   </div>
                 </div>
                 <div v-if="!ingrediente.producto_clave">
-                  <button
-                    class="button-suficiente"
-                    @click="setSufficient(ingrediente)"
-                  >
+                  <button class="button-suficiente" @click="setSufficient(ingrediente)">
                     Suficiente
                   </button>
                 </div>
@@ -127,10 +94,7 @@
                   </button>
                 </div> -->
                 <div class="">
-                  <button
-                    class="button-agotado"
-                    @click="setAgotado(ingrediente)"
-                  >
+                  <button class="button-agotado" @click="setAgotado(ingrediente)">
                     Agotado
                   </button>
                 </div>
@@ -145,6 +109,7 @@
         Resetear
       </button>
       <button class="button-actualizar" @click="submitForm">Actualizar</button>
+      <button v-if="isAdmin" class="button-whatsapp" @click="sendWhatsAppMessage">Whatsapp</button>
     </div>
   </div>
 </template>
@@ -292,6 +257,42 @@ export default {
     },
   },
   methods: {
+    sendWhatsAppMessage() {
+      const phoneNumber = '+420774187964'; // The phone number you want to send the message to
+
+      // Filter out ingredients with "Suficiente"
+      const filteredIngredientes = this.ingredientes.filter(ingrediente => {
+        console.log(`Checking ingredient: ${ingrediente.nombre} with cantidad_inventario: ${ingrediente.cantidad_inventario}`);
+        return ingrediente.cantidad_inventario !== "Suficiente";
+      });
+
+      // Log the filtered ingredients
+      console.log("Filtered Ingredients after filter:", filteredIngredientes);
+
+      // Check if there are any ingredients to send
+      if (filteredIngredientes.length === 0) {
+        console.log("No ingredients to send.");
+        alert("No ingredients to send.");
+        return;
+      }
+
+      // Map the filtered ingredients to the desired format
+      const messageParts = filteredIngredientes.map(ingrediente => {
+        console.log(`Processing ingredient: ${ingrediente.nombre} ${ingrediente.cantidad_inventario} ${ingrediente.unidad}`);
+        return `${ingrediente.nombre} ${ingrediente.cantidad_inventario} ${ingrediente.unidad}`;
+      });
+
+      // Encode the message
+      const message = encodeURIComponent(`${this.store} inventario:\n${messageParts.join('\n')}`);
+      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+
+      const confirmation = window.confirm("¿Ya le picaste al botón de actualizar?");
+
+      // If confirmed, open the WhatsApp URL
+      if (confirmation) {
+        window.open(whatsappUrl, '_blank'); // This will open WhatsApp Web or the WhatsApp app with the pre-filled message for the specified number
+      }
+    },
     goDownPage() {
       window.scrollTo({
         top: document.body.scrollHeight,
@@ -312,7 +313,7 @@ export default {
           const isChanged =
             originalIngrediente &&
             ingrediente.cantidad_inventario !==
-              originalIngrediente.cantidad_inventario;
+            originalIngrediente.cantidad_inventario;
           return isChanged;
         })
         .map((ingrediente) => ingrediente.id_ingrediente);
@@ -613,23 +614,27 @@ export default {
   justify-content: center;
   align-items: center;
 }
+
 .search-bar {
   width: 50%;
   padding: 10px;
   font-size: 16px;
 }
+
 .filterBar {
   margin-left: 10px;
   height: 2rem;
   font-size: 1rem;
   width: 50%;
 }
+
 input {
   width: 70%;
   height: 2.5rem;
   text-align: center;
   font-size: 1.5rem;
 }
+
 .button-container {
   width: 100%;
   height: 2.5rem;
@@ -673,9 +678,12 @@ input {
 }
 
 .button-resetear {
-  width: fit-content; /* Increase width */
-  height: fit-content; /* Increase height */
-  font-size: 20px; /* Increase font size */
+  width: fit-content;
+  /* Increase width */
+  height: fit-content;
+  /* Increase height */
+  font-size: 20px;
+  /* Increase font size */
   margin: 5px;
   background-color: red;
   border: white solid 1px;
@@ -683,35 +691,60 @@ input {
 }
 
 .button-actualizar {
-  width: fit-content; /* Increase width */
-  height: fit-content; /* Increase height */
-  font-size: 20px; /* Increase font size */
+  width: fit-content;
+  /* Increase width */
+  height: fit-content;
+  /* Increase height */
+  font-size: 20px;
+  /* Increase font size */
   margin: 5px;
   background-color: rgb(8, 73, 8);
   color: white;
   border: white solid 1px;
 }
 
-.button-increase-decrease {
-  width: 50px; /* Increase width */
-  height: 50px; /* Increase height */
-  font-size: 20px; /* Increase font size */
+.button-whatsapp {
+  width: fit-content;
+  /* Increase width */
+  height: fit-content;
+  /* Increase height */
+  font-size: 20px;
+  /* Increase font size */
   margin: 5px;
-  display: flex; /* Add this line */
-  justify-content: center; /* Add this line */
-  align-items: center; /* Add this line */
+  background-color: #2cb92c;
+  color: white;
+  border: white solid 1px;
+}
+
+.button-increase-decrease {
+  width: 50px;
+  /* Increase width */
+  height: 50px;
+  /* Increase height */
+  font-size: 20px;
+  /* Increase font size */
+  margin: 5px;
+  display: flex;
+  /* Add this line */
+  justify-content: center;
+  /* Add this line */
+  align-items: center;
+  /* Add this line */
   background-color: #242424;
   color: white;
 }
+
 .button-row-parent {
   display: flex;
   flex-direction: column;
 }
+
 .button-row {
   display: flex;
   justify-content: center;
   margin-bottom: 10px;
 }
+
 .sticky-submit-wrapper {
   position: sticky;
   bottom: 0;
@@ -722,6 +755,7 @@ input {
   justify-content: center;
   background-color: darkgray;
 }
+
 .success-message {
   position: fixed;
   top: 50px;
@@ -731,6 +765,7 @@ input {
   padding: 10px;
   border-radius: 5px;
 }
+
 .error-message {
   position: fixed;
   top: 50px;
@@ -740,6 +775,7 @@ input {
   padding: 10px;
   border-radius: 5px;
 }
+
 .sticky-icon {
   position: fixed;
   top: 10px;

@@ -18,20 +18,12 @@
           <label for="proveedor">Proveedor:</label>
           <select class="filterBar" id="proveedor" v-model="selectedProveedor">
             <option value="">Todos</option>
-            <option
-              v-for="proveedor in sortedProveedores"
-              :value="proveedor.id"
-              :key="proveedor.id"
-            >
+            <option v-for="proveedor in sortedProveedores" :value="proveedor.id" :key="proveedor.id">
               {{ proveedor.nombre }}
             </option>
           </select>
           <label for="insumos">Tipo Insumos:</label>
-          <select
-            class="filterBar"
-            id="insumos-tipo"
-            v-model="selectedInsumosTipo"
-          >
+          <select class="filterBar" id="insumos-tipo" v-model="selectedInsumosTipo">
             <option value="Lista Peligro">Lista Peligro</option>
             <option value="Todos">Todos</option>
           </select>
@@ -41,37 +33,19 @@
             <option value="Todos">Todos</option>
           </select>
           <label for="insumos">Estatus insumos:</label>
-          <select
-            class="filterBar"
-            id="insumos"
-            v-model="selectedEstatusFilter"
-          >
+          <select class="filterBar" id="insumos" v-model="selectedEstatusFilter">
             <option value="Todos">Todos</option>
-            <option
-              v-for="status in listaEstatus"
-              :value="status"
-              :key="status"
-            >
+            <option v-for="status in listaEstatus" :value="status" :key="status">
               {{ status }}
             </option>
           </select>
           <div className="orderRouteCheckbox">
-            <input
-              type="checkbox"
-              id="sort"
-              v-model="orderRouteCheckbox"
-              :disabled="selectedProveedor === ''"
-            />
+            <input type="checkbox" id="sort" v-model="orderRouteCheckbox" :disabled="selectedProveedor === ''" />
             <label for="sort">Ruta de tienda</label>
           </div>
           <div className="duracionDiasSuministro">
             <label for="duracion">Duracion dias de suministro:</label>
-            <input
-              type="number"
-              id="duracion"
-              v-model="duracionDiasSuministro"
-              min="1"
-            />
+            <input type="number" id="duracion" v-model="duracionDiasSuministro" min="1" />
           </div>
         </div>
         <div class="flex-row">
@@ -79,11 +53,8 @@
           <p class="large-text">${{ totalPresupuestoSuministro }}</p>
         </div>
       </div>
-      <input
-        class="search-bar"
-        v-model="searchTerm"
-        placeholder="Buscar insumo"
-      />
+      <button @click="exportToWhatsApp">Exportar a WhatsApp</button>
+      <input class="search-bar" v-model="searchTerm" placeholder="Buscar insumo" />
     </div>
     <table>
       <thead>
@@ -100,11 +71,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="(ingredient, index) in filteredIngredients"
-          :key="index"
-          :class="{ 'highlight-row': ingredient.producto_clave }"
-        >
+        <tr v-for="(ingredient, index) in filteredIngredients" :key="index"
+          :class="{ 'highlight-row': ingredient.producto_clave }">
           <td style="font-size: 20px">
             {{ ingredient.nombre }}
             <!-- <i class="info-icon" @click="logIngredientName(ingredient.nombre)"
@@ -121,53 +89,33 @@
           <td>
             <!-- {{ getProveedorName(ingredient.proveedor_id) }} -->
             <select class="small-text" v-model="ingredient.proveedor_id">
-              <option
-                v-for="proveedor in proveedores"
-                :value="proveedor.id"
-                :key="proveedor.id"
-              >
+              <option v-for="proveedor in proveedores" :value="proveedor.id" :key="proveedor.id">
                 {{ proveedor.nombre }}
               </option>
             </select>
           </td>
           <td>
-            <select
-              v-model="ingredient.estatus_moral"
-              @change="
-                actualizarEstatus(
-                  ingredient.id_ingrediente,
-                  ingredient.estatus_moral,
-                  'moral'
-                )
-              "
-              :style="estatusColor(ingredient.estatus_moral)"
-            >
-              <option
-                v-for="estatus_moral in listaEstatus"
-                :key="estatus_moral"
-                :value="estatus_moral"
-              >
+            <select v-model="ingredient.estatus_moral" @change="
+              actualizarEstatus(
+                ingredient.id_ingrediente,
+                ingredient.estatus_moral,
+                'moral'
+              )
+              " :style="estatusColor(ingredient.estatus_moral)">
+              <option v-for="estatus_moral in listaEstatus" :key="estatus_moral" :value="estatus_moral">
                 {{ estatus_moral }}
               </option>
             </select>
           </td>
           <td>
-            <select
-              v-model="ingredient.estatus_bosques"
-              @change="
-                actualizarEstatus(
-                  ingredient.id_ingrediente,
-                  ingredient.estatus_bosques,
-                  'bosques'
-                )
-              "
-              :style="estatusColor(ingredient.estatus_bosques)"
-            >
-              <option
-                v-for="estatus_bosques in listaEstatus"
-                :key="estatus_bosques"
-                :value="estatus_bosques"
-              >
+            <select v-model="ingredient.estatus_bosques" @change="
+              actualizarEstatus(
+                ingredient.id_ingrediente,
+                ingredient.estatus_bosques,
+                'bosques'
+              )
+              " :style="estatusColor(ingredient.estatus_bosques)">
+              <option v-for="estatus_bosques in listaEstatus" :key="estatus_bosques" :value="estatus_bosques">
                 {{ estatus_bosques }}
               </option>
             </select>
@@ -212,6 +160,102 @@ export default {
     };
   },
   methods: {
+    exportToWhatsApp() {
+      const phoneNumber = '+420774187964'; // The phone number you want to send the message to
+
+      // Filter the ingredients to those that need to be exported
+      const filteredIngredients = this.filteredIngredients.filter(ingredient => {
+        const moralInventory = this.getInventory("moral", ingredient.id_ingrediente);
+        const bosquesInventory = this.getInventory("bosques", ingredient.id_ingrediente);
+        return moralInventory !== "Suficiente" || bosquesInventory !== "Suficiente";
+      });
+
+      // Check if there are any ingredients to send
+      if (filteredIngredients.length === 0) {
+        alert("No ingredients to send.");
+        return;
+      }
+
+      const groupedByEstatus = filteredIngredients.reduce((acc, ingredient) => {
+        const { estatus_moral, estatus_bosques } = ingredient;
+        const estatus = estatus_moral === "Transferir de CEDIS" || estatus_bosques === "Transferir de CEDIS"
+          ? "Transferir de CEDIS"
+          : estatus_moral === "Transferir Campestre a Moral" || estatus_bosques === "Transferir Campestre a Moral"
+            ? "Transferir Campestre a Moral"
+            : estatus_moral === "Transferir Moral a Campestre" || estatus_bosques === "Transferir Moral a Campestre"
+              ? "Transferir Moral a Campestre"
+              : null;
+
+        if (!acc[estatus]) {
+          acc[estatus] = [];
+        }
+        acc[estatus].push(ingredient);
+        return acc;
+      }, {});
+
+      const messageParts = [];
+
+      // Include Transferir de CEDIS section if it exists
+      if (groupedByEstatus["Transferir de CEDIS"]) {
+        messageParts.push("TRANSFERENCIA CEDIS:\n" + this.formatIngredientsList(groupedByEstatus["Transferir de CEDIS"]));
+      }
+
+      // Include sections for individual proveedores
+      Object.keys(groupedByEstatus).forEach(estatus => {
+        if (!["Transferir de CEDIS", "Transferir Campestre a Moral", "Transferir Moral a Campestre"].includes(estatus)) {
+          messageParts.push(`COMPRA DEL DIA:\n` + this.formatCompraDelDia(groupedByEstatus[estatus]));
+        }
+      });
+
+      // Include sections for other estatus
+      ["Transferir Campestre a Moral", "Transferir Moral a Campestre"].forEach(estatus => {
+        if (groupedByEstatus[estatus]) {
+          messageParts.push(`${estatus}:\n` + this.formatIngredientsList(groupedByEstatus[estatus]));
+        }
+      });
+
+      // Encode the message
+      const message = encodeURIComponent(`RESUMEN SUMINISTRO DEL DÍA:\n\n${messageParts.join('\n\n')}`);
+      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+
+      // Open the WhatsApp URL
+      window.open(whatsappUrl, '_blank'); // This will open WhatsApp Web or the WhatsApp app with the pre-filled message for the specified number
+    },
+
+    formatCompraDelDia(ingredients) {
+      const groupedByProveedor = ingredients.reduce((acc, ingredient) => {
+        const { proveedor } = ingredient;
+        if (!acc[proveedor]) {
+          acc[proveedor] = [];
+        }
+        acc[proveedor].push(ingredient);
+        return acc;
+      }, {});
+
+      let result = "";
+
+      Object.keys(groupedByProveedor).forEach(proveedor => {
+        result += `${proveedor}:\n`;
+        groupedByProveedor[proveedor].forEach(ingredient => {
+          result += `- ${this.formatIngredient(ingredient)}\n`;
+        });
+        result += "----\n";
+      });
+
+      return result;
+    },
+
+    formatIngredient(ingredient) {
+      return `${ingredient.nombre} ${ingredient.unidad} Moral: ${ingredient.moral}, Campestre: ${ingredient.campestre}`;
+    },
+
+    formatIngredientsList(ingredients) {
+      return ingredients.map(ingredient => {
+        const moralInventory = this.getInventory("moral", ingredient.id_ingrediente);
+        const bosquesInventory = this.getInventory("bosques", ingredient.id_ingrediente);
+        return `- ${ingredient.nombre} ${ingredient.unidad} Moral: ${moralInventory}, Campestre: ${bosquesInventory}`;
+      }).join('\n');
+    },
     actualizarEstatus(ingredientId, newStatus, store) {
       const API_URL =
         process.env.NODE_ENV === "production"
@@ -559,16 +603,19 @@ export default {
   font-size: 1rem;
   width: 50%;
 }
+
 .search-bar {
   width: 50%;
   padding: 10px;
   font-size: 16px;
 }
+
 .highlight-row {
   background-color: rgb(97, 133, 145);
   font-weight: bold;
   color: black;
 }
+
 .filtros-container {
   display: flex;
   flex-direction: column;
@@ -576,20 +623,25 @@ export default {
   align-items: center;
   widows: 100%;
 }
+
 .orderRouteCheckbox {
   display: flex;
   flex-direction: row;
 }
+
 .large-text {
-  font-size: 2em; /* Adjust as needed */
+  font-size: 2em;
+  /* Adjust as needed */
 }
+
 .flex-column {
   display: flex;
   flex-direction: column;
 }
 
 .small-text {
-  font-size: 0.8em; /* Adjust as needed */
+  font-size: 0.8em;
+  /* Adjust as needed */
 }
 
 .info-icon {
