@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Register</h2>
+    <h2>Registrarse</h2>
     <form @submit.prevent="submitForm">
       <input type="text" v-model="username" placeholder="Usuario" required />
       <input
@@ -9,7 +9,7 @@
         placeholder="Contraseña"
         required
       />
-      <button type="submit">Register</button>
+      <button type="submit">Registrar</button>
     </form>
     <p v-if="errorMessage">{{ errorMessage }}</p>
   </div>
