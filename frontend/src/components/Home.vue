@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import 'tailwindcss/tailwind.css'
 
 const router = useRouter();
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
@@ -17,7 +18,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="button-container">
+  <div class="bg-yellow-800">
     <button @click="() => navigateTo('/inventarios')">Toma Inventario</button>
     <button @click="() => navigateTo('/existenciasresumen')">Resumen Existencias</button>
     <button v-if="isAdmin" @click="() => navigateTo('/compra')">Compra del dia</button>

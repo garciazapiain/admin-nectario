@@ -1,5 +1,6 @@
 <script setup>
 import { useRouter } from "vue-router";
+import 'tailwindcss/tailwind.css'
 
 const router = useRouter();
 
