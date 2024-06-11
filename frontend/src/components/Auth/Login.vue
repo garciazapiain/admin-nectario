@@ -1,36 +1,24 @@
 <template>
-  <div>
-    <div
-      style="
-        display: flex;
-        justify-content: center;
-        height: 300px;
-        width:300px;
-        align-items: center;
-      "
-    >
+  <div class="flex flex-col items-center mt-10">
+    <div class="flex justify-center h-80 w-80 items-center">
       <img src="../../assets/logo.png" alt="Logo" />
     </div>
-    <h2>Admin Nectario</h2>
-    <form
-      @submit.prevent="submitForm"
-      style="display: flex; flex-direction: column"
-    >
-      <input type="text" v-model="username" placeholder="Username" required />
-      <input
-        type="password"
-        v-model="password"
-        placeholder="Password"
-        required
-      />
-      <button type="submit">Iniciar sesión</button>
+    <h2 class="text-2xl font-semibold mb-4">Admin Nectario</h2>
+    <form @submit.prevent="submitForm" class="w-full p-3 flex flex-col space-y-4">
+      <input type="text" v-model="username" placeholder="Username" required
+        class="w-full p-2 border rounded-md focus:outline-none" />
+      <input type="password" v-model="password" placeholder="Password" required
+        class="w-full p-2 border rounded-md focus:outline-none" />
+      <button type="submit" class="bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none">Iniciar
+        sesión</button>
     </form>
-    <p v-if="errorMessage">{{ errorMessage }}</p>
+    <p v-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
   </div>
 </template>
 
 <script>
 import { useRouter } from "vue-router";
+import API_URL from "../../config";
 
 export default {
   data() {
@@ -46,12 +34,8 @@ export default {
   },
   methods: {
     async submitForm() {
-      const API_URL =
-        process.env.NODE_ENV === "production"
-          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-          : "http://localhost:3000/api";
       try {
-        const response = await fetch(`${API_URL}/login`, {
+        const response = await fetch(`${API_URL}/auth/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

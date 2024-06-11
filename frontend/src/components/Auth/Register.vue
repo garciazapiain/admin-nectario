@@ -17,6 +17,7 @@
 
 <script>
 import { useRouter } from "vue-router";
+import API_URL from "../../config"; 
 
 export default {
   data() {
@@ -32,10 +33,6 @@ export default {
   },
   methods: {
     async submitForm() {
-      const API_URL =
-        process.env.NODE_ENV === "production"
-          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-          : "http://localhost:3000/api";
       try {
         const response = await fetch(`${API_URL}/register`, {
           method: "POST",

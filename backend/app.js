@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const cors = require('cors');
 const path = require('path'); // Add this line
 const { Pool } = require('pg');
+const authRoutes = require('./api/auth');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,49 +20,7 @@ const pool = new Pool({
   ssl: isProduction ? { rejectUnauthorized: false } : false,
 });
 
-app.post('/api/register', async (req, res) => {
-  const client = await pool.connect();
-  try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    await client.query('INSERT INTO users (name, password) VALUES ($1, $2)', [req.body.name, hashedPassword]);
-    res.status(201).send('User registered');
-  } catch (err) {
-    res.status(500).send(err);
-  } finally {
-    client.release();
-  }
-});
-
-app.post('/api/login', async (req, res) => {
-  const client = await pool.connect();
-  try {
-    const { name, password } = req.body;
-    if (!name || !password) {
-      return res.status(400).json({ error: 'Username and password are required.' });
-    }
-
-    const result = await client.query('SELECT * FROM users WHERE name = $1', [name]);
-    const user = result.rows[0];
-
-    if (!user) {
-      return res.status(400).json({ error: 'User not found.' });
-    }
-
-    const isPasswordMatch = await bcrypt.compare(password, user.password);
-    if (!isPasswordMatch) {
-      return res.status(403).json({ error: 'Invalid password.' });
-    }
-
-    const accessToken = jwt.sign({ name: user.name, isAdmin: user.isAdmin }, process.env.ACCESS_TOKEN_SECRET);
-    res.json({ accessToken, isAdmin: user.isAdmin });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error.' });
-  } finally {
-    client.release();
-  }
-});
+app.use('/api/auth', authRoutes);
 
 app.get('/api/platillos', async (req, res) => {
   const client = await pool.connect();
