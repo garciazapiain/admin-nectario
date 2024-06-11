@@ -480,25 +480,7 @@ export default {
       }
     },
     setSufficient(ingrediente) {
-      if (this.sucursal === "moral") {
-        if (ingrediente.moral_demanda_semanal !== null) {
-          ingrediente.cantidad_inventario = (
-            (ingrediente.moral_demanda_semanal * 2) /
-            7
-          ).toFixed(1);
-        } else {
-          ingrediente.cantidad_inventario = "Suficiente";
-        }
-      } else {
-        if (ingrediente.bosques_demanda_semanal !== null) {
-          ingrediente.cantidad_inventario = (
-            (ingrediente.bosques_demanda_semanal * 2) /
-            7
-          ).toFixed(1);
-        } else {
-          ingrediente.cantidad_inventario = "Suficiente";
-        }
-      }
+      ingrediente.cantidad_inventario = "Suficiente";
       this.updateSubmitData(ingrediente);
     },
     setCasiNoHay(ingrediente) {
