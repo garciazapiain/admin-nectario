@@ -75,7 +75,7 @@
         </tr>
       </tbody>
     </table>
-    <div class="w-full max-w-2xl mx-auto p-5 shadow-lg rounded-lg">
+    <div class="add-new-ingredient-form w-full max-w-2xl mx-auto p-5 shadow-lg rounded-lg">
       <h2>Agregar Insumo</h2>
       <form @submit.prevent="agregarIngrediente" class="flex flex-col">
         <input
@@ -112,7 +112,7 @@
             {{ proveedor.nombre }}
           </option>
         </select>
-        <button type="submit" class="py-2.5 px-5 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-700">Agregar Insumo</button>
+        <button type="submit" class="submit-button py-2.5 px-5 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-700">Agregar Insumo</button>
       </form>
     </div>
   </div>
