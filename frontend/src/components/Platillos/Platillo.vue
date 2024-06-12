@@ -1,6 +1,6 @@
 <script>
 import API_URL from "../../config";
-import IngredientForm from "../Ingredientes/IngredientForm.vue";
+import IngredientForm from "./IngredientForm.vue";
 import SubPlatilloForm from "../Subplatillos/SubPlatilloForm.vue";
 export default {
   data() {

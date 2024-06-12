@@ -14,7 +14,7 @@ const handleClick = (platillo) => {
     <h1>{{ ingrediente.nombre }}</h1>
     <h2>Info del insumo: <button @click="showModal = true">Editar</button></h2>
     <div v-if="showModal" class="modal">
-      <form @submit.prevent="editIngrediente" class="edit-form">
+      <form @submit.prevent="editIngrediente" class="grid grid-cols-2 gap-4 edit-form">
         <div class="form-group">
           <label for="nombre">Nombre:</label>
           <input id="nombre" v-model="ingredienteEditado.nombre" />
@@ -112,7 +112,7 @@ const handleClick = (platillo) => {
             <option value="4">No inventarear</option>
           </select>
         </div>
-        <div class="form-actions">
+        <div class="grid grid-cols-2 gap-4 form-actions">
           <button type="submit">Guardar</button>
           <button @click="showModal = false">Cancelar</button>
         </div>
@@ -357,20 +357,7 @@ export default {
 </script>
 
 <style scoped>
-.edit-form {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1em;
-}
-
 .form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-actions {
-  grid-column: span 2;
-  display: flex;
-  justify-content: space-between;
+  @apply flex flex-col;
 }
 </style>

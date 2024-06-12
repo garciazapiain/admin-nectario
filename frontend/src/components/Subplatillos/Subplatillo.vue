@@ -1,8 +1,6 @@
 <script setup>
 import { useRouter } from "vue-router";
 const router = useRouter();
-import API_URL from "../../config";
-
 const handleClickIngrediente = (idIngrediente) => {
   router.push(`/ingrediente/${idIngrediente}`);
 };
@@ -57,7 +55,9 @@ const handleClickIngrediente = (idIngrediente) => {
 </template>
 
 <script>
-import IngredientForm from "../Ingredientes/IngredientForm.vue";
+import IngredientForm from "../Platillos/IngredientForm.vue";
+import API_URL from "../../config";
+
 export default {
   data() {
     return {

@@ -1,15 +1,6 @@
 <template>
   <div>
-    <!-- <p>
-      Total $ Comprado:
-      {{
-        new Intl.NumberFormat("es-MX", {
-          style: "currency",
-          currency: "MXN",
-        }).format(totalCompradoSemana)
-      }}
-    </p> -->
-    <div class="sticky-icon" @click="goDownPage">
+    <div class="fixed top-2.5 right-2.5 z-50 cursor-pointer" @click="goDownPage">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="60"
@@ -84,15 +75,16 @@
         </tr>
       </tbody>
     </table>
-    <div class="form-container">
+    <div class="w-full max-w-2xl mx-auto p-5 shadow-lg rounded-lg">
       <h2>Agregar Insumo</h2>
-      <form @submit.prevent="agregarIngrediente" class="ingredient-form">
+      <form @submit.prevent="agregarIngrediente" class="flex flex-col">
         <input
           v-model="nuevoIngrediente.nombre"
           placeholder="Nombre"
           required
+          class="input-field "
         />
-        <select v-model="nuevoIngrediente.unidad" required>
+        <select class="select-field " v-model="nuevoIngrediente.unidad" required>
           <option disabled value="">Unidad</option>
           <option v-for="unidad in unidades" :key="unidad" :value="unidad">
             {{ unidad }}
@@ -102,11 +94,13 @@
           v-model="nuevoIngrediente.precio"
           placeholder="Precio"
           required
+          class="input-field "
         />
         <select
           v-model="nuevoIngrediente.proveedor_id"
           @change="setProveedorNombre"
           required
+          class="select-field"
         >
           <option disabled value="">Proveedor</option>
           <option
@@ -118,7 +112,7 @@
             {{ proveedor.nombre }}
           </option>
         </select>
-        <button type="submit" class="submit-button">Agregar Insumo</button>
+        <button type="submit" class="py-2.5 px-5 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-700">Agregar Insumo</button>
       </form>
     </div>
   </div>
@@ -167,13 +161,6 @@ export default {
         );
       }
       return ingredients;
-    },
-    totalCompradoSemana() {
-      return this.filteredIngredients.reduce(
-        (total, ingrediente) =>
-          total + ingrediente.total_usado * ingrediente.precio,
-        0
-      );
     },
   },
   methods: {
@@ -242,50 +229,11 @@ export default {
 </script>
 
 <style scoped>
-.sticky-icon {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  z-index: 1000;
-  cursor: pointer;
-}
-.form-container {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+.input-field {
+  @apply box-border w-full h-12 ml-0 text-base mb-4 p-2.5 rounded border border-gray-300;
 }
 
-.ingredient-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.ingredient-form input,
-.ingredient-form select {
-  box-sizing: border-box;
-  width: 100%;
-  height: 3rem;
-  font-size: 16px;
-  margin: 0; /* Add this line */
-  margin-bottom: 1rem;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-.submit-button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.submit-button:hover {
-  background-color: #0056b3;
+.select-field {
+  @apply box-border w-full h-12 text-base mb-4 p-2.5 rounded border border-gray-300;
 }
 </style>
