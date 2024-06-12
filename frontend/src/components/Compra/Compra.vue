@@ -162,20 +162,17 @@ export default {
   methods: {
     exportToWhatsApp() {
       const phoneNumber = '+420774187964'; // The phone number you want to send the message to
-
       // Filter the ingredients to those that need to be exported
       const filteredIngredients = this.filteredIngredients.filter(ingredient => {
         const moralInventory = this.getInventory("moral", ingredient.id_ingrediente);
         const bosquesInventory = this.getInventory("bosques", ingredient.id_ingrediente);
         return moralInventory !== "Suficiente" || bosquesInventory !== "Suficiente";
       });
-
       // Check if there are any ingredients to send
       if (filteredIngredients.length === 0) {
         alert("No ingredients to send.");
         return;
       }
-
       const groupedByEstatus = filteredIngredients.reduce((acc, ingredient) => {
         const { estatus_moral, estatus_bosques } = ingredient;
         const estatus = estatus_moral === "Transferir de CEDIS" || estatus_bosques === "Transferir de CEDIS"
@@ -185,7 +182,6 @@ export default {
             : estatus_moral === "Transferir Moral a Campestre" || estatus_bosques === "Transferir Moral a Campestre"
               ? "Transferir Moral a Campestre"
               : null;
-
         if (!acc[estatus]) {
           acc[estatus] = [];
         }
@@ -256,16 +252,37 @@ export default {
         return `- ${ingredient.nombre} ${ingredient.unidad} Moral: ${moralInventory}, Campestre: ${bosquesInventory}`;
       }).join('\n');
     },
-    actualizarEstatus(ingredientId, newStatus, store) {
+    async actualizarEstatus(ingredientId, newStatus, store) {
+      console.log(`Updating status for ingredientId: ${ingredientId}, newStatus: ${newStatus}, store: ${store}`);
       const API_URL =
         process.env.NODE_ENV === "production"
           ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
           : "http://localhost:3000/api";
-      fetch(`${API_URL}/ingredientes/individual/estatusupdate/${store}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ingredientId, newStatus, store }),
-      });
+
+      try {
+        const response = await fetch(`${API_URL}/ingredientes/individual/estatusupdate/${store}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ingredientId, newStatus, store }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('Update response:', result);
+
+        // Update the local state to reflect the change
+        const ingredient = this.ingredients.find(ing => ing.id_ingrediente === ingredientId);
+        if (store === 'moral') {
+          ingredient.estatus_moral = newStatus;
+        } else if (store === 'bosques') {
+          ingredient.estatus_bosques = newStatus;
+        }
+      } catch (error) {
+        console.error('Error updating status:', error);
+      }
     },
     getInventory(store, ingredientId) {
       const submission = this.lastSubmission(store);
