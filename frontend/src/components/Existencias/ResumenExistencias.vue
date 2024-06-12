@@ -25,7 +25,7 @@
         <option value="fin_segundo_turno">Fin segundo turno</option>
       </select>
     </div>
-    <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="w-3/4 p-2 mb-4 border rounded" />
+    <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="search-bar w-3/4 p-2 mb-4 border rounded" />
     <table class="w-full border-collapse">
       <thead>
         <tr class="bg-gray-200">
