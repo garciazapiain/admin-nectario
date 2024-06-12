@@ -133,6 +133,7 @@
 </template>
 
 <script>
+import API_URL from "../../config";
 export default {
   name: "Compra",
   data() {
@@ -253,12 +254,6 @@ export default {
       }).join('\n');
     },
     async actualizarEstatus(ingredientId, newStatus, store) {
-      console.log(`Updating status for ingredientId: ${ingredientId}, newStatus: ${newStatus}, store: ${store}`);
-      const API_URL =
-        process.env.NODE_ENV === "production"
-          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-          : "http://localhost:3000/api";
-
       try {
         const response = await fetch(`${API_URL}/ingredientes/individual/estatusupdate/${store}`, {
           method: "PUT",
@@ -269,10 +264,8 @@ export default {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
         const result = await response.json();
         console.log('Update response:', result);
-
         // Update the local state to reflect the change
         const ingredient = this.ingredients.find(ing => ing.id_ingrediente === ingredientId);
         if (store === 'moral') {
@@ -548,10 +541,6 @@ export default {
     },
   },
   async mounted() {
-    const API_URL =
-      process.env.NODE_ENV === "production"
-        ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-        : "http://localhost:3000/api";
     const response = await fetch(`${API_URL}/ingredientes`);
     if (response.ok) {
       this.ingredients = await response.json();

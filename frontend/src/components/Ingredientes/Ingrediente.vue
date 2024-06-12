@@ -248,6 +248,8 @@ const handleClick = (platillo) => {
 </template>
 
 <script>
+import API_URL from "../../config";
+
 export default {
   data() {
     return {
@@ -310,10 +312,6 @@ export default {
         this.ingredienteEditado.frecuencias_inventario.map((value) => {
           return map[value] || value;
         });
-      const API_URL =
-        process.env.NODE_ENV === "production"
-          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-          : "http://localhost:3000/api";
       const response = await fetch(`${API_URL}/ingredientes/${id}`, {
         method: "PUT",
         headers: {
@@ -331,11 +329,6 @@ export default {
   async mounted() {
     // Get the ID from the router
     const id = this.$route.params.id;
-    const API_URL =
-      process.env.NODE_ENV === "production"
-        ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-        : "http://localhost:3000/api";
-
     try {
       // Make API call to fetch the platillo data
       const response = await fetch(`${API_URL}/ingrediente/${id}`);

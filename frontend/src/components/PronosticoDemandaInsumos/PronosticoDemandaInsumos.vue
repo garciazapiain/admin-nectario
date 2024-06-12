@@ -116,6 +116,8 @@
 </template>
 
 <script>
+import API_URL from "../../config";
+
 export default {
   data() {
     return {
@@ -154,10 +156,6 @@ export default {
   },
   methods: {
     async fetchPronosticoDemanda() {
-      const API_URL =
-        process.env.NODE_ENV === "production"
-          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-          : "http://localhost:3000/api";
       try {
         const response = await fetch(`${API_URL}/pronosticodemanda`);
         const data = await response.json();
@@ -167,10 +165,6 @@ export default {
       }
     },
     guardar() {
-      const API_URL =
-        process.env.NODE_ENV === "production"
-          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-          : "http://localhost:3000/api";
       fetch(`${API_URL}/guardarpronosticodemanda`, {
         method: "POST",
         headers: {
@@ -190,10 +184,6 @@ export default {
       location.reload();
     },
     async fetchIngredients(platilloId) {
-      const API_URL =
-        process.env.NODE_ENV === "production"
-          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-          : "http://localhost:3000/api";
       const response = await fetch(
         `${API_URL}/platillo/${platilloId}?includeSubplatillos=false`
       );
@@ -292,10 +282,6 @@ export default {
   },
   async mounted() {
     this.fetchPronosticoDemanda();
-    const API_URL =
-      process.env.NODE_ENV === "production"
-        ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-        : "http://localhost:3000/api";
     try {
       const responsePlatillos = await fetch(`${API_URL}/platillos`);
       if (!responsePlatillos.ok) {

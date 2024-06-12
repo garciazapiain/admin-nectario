@@ -86,6 +86,8 @@
 import { ref } from "vue";
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 import PopupInsumo from "./PopupInsumo.vue";
+import API_URL from "../../config";
+
 </script>
 <script>
 export default {
@@ -108,10 +110,6 @@ export default {
     };
   },
   async created() {
-    const API_URL =
-      process.env.NODE_ENV === "production"
-        ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-        : "http://localhost:3000/api";
     const submissionsResponse = await fetch(`${API_URL}/submissions`);
     if (submissionsResponse.ok) {
       this.submissions = await submissionsResponse.json();

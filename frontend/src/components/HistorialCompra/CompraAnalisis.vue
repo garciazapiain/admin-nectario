@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import API_URL from "../../config";
+
 export default {
   name: "CompraAnalisis",
   data() {
@@ -41,10 +43,6 @@ export default {
     };
   },
   async created() {
-    const API_URL =
-      process.env.NODE_ENV === "production"
-        ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-        : "http://localhost:3000/api";
     const id = this.$route.params.id; // Get the id from the route params
     const response = await fetch(`${API_URL}/historialcompra/compra/${id}`);
     this.order = await response.json();

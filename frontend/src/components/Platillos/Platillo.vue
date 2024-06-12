@@ -1,8 +1,5 @@
 <script>
-const API_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-    : "http://localhost:3000/api";
+import API_URL from "../../config";
 import IngredientForm from "../Ingredientes/IngredientForm.vue";
 import SubPlatilloForm from "../Subplatillos/SubPlatilloForm.vue";
 export default {

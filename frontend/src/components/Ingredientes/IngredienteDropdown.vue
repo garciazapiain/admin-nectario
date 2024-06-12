@@ -1,13 +1,9 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
+import API_URL from "../../config";
 
 const ingredientes = ref([]);
 const selected = ref(null);
-
-const API_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-    : "http://localhost:3000/api";
 
 onMounted(async () => {
   const response = await fetch(`${API_URL}/ingredientes/demanda`);

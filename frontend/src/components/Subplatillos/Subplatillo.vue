@@ -1,10 +1,8 @@
 <script setup>
-const API_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-    : "http://localhost:3000/api";
 import { useRouter } from "vue-router";
 const router = useRouter();
+import API_URL from "../../config";
+
 const handleClickIngrediente = (idIngrediente) => {
   router.push(`/ingrediente/${idIngrediente}`);
 };
@@ -92,10 +90,6 @@ export default {
   },
   methods: {
     async fetchData() {
-      const API_URL =
-        process.env.NODE_ENV === "production"
-          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-          : "http://localhost:3000/api";
       const id = this.$route.params.id;
       try {
         const response = await fetch(`${API_URL}/subplatillo/${id}`);
@@ -109,10 +103,6 @@ export default {
       }
     },
     async fetchIngredientes() {
-      const API_URL =
-        process.env.NODE_ENV === "production"
-          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-          : "http://localhost:3000/api";
       try {
         const response = await fetch(`${API_URL}/ingredientes`);
         if (!response.ok) {

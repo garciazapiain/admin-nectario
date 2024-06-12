@@ -119,6 +119,8 @@ import { useRouter } from "vue-router";
 import moment from "moment-timezone";
 import "moment/locale/es";
 import { ref } from "vue";
+import API_URL from "../../config";
+
 const router = useRouter();
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 const handleClickIngrediente = (idIngrediente) => {
@@ -388,13 +390,6 @@ export default {
         item.cantidad_inventario = "Suficiente";
         this.updateSubmitData(item);
       });
-
-      // Define the API URL
-      const API_URL =
-        process.env.NODE_ENV === "production"
-          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-          : "http://localhost:3000/api";
-
       // Reset all ingredient statuses
       fetch(`${API_URL}/ingredientes/resetestatus/${store}`, {
         method: "PUT",
@@ -429,11 +424,6 @@ export default {
         timestamp: formattedDate, // Add timestamp to dataToSubmit
         ingredients: this.submitData,
       };
-      // Send a POST request to the server
-      const API_URL =
-        process.env.NODE_ENV === "production"
-          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-          : "http://localhost:3000/api";
       fetch(`${API_URL}/submissions`, {
         method: "POST",
         headers: {
@@ -492,10 +482,6 @@ export default {
       this.updateSubmitData(ingrediente);
     },
     async updateIngredientStatus(store) {
-      const API_URL =
-        process.env.NODE_ENV === "production"
-          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-          : "http://localhost:3000/api";
       const response = await fetch(
         `${API_URL}/ingredientes/estatusupdate/${store}`,
         {
@@ -533,10 +519,6 @@ export default {
     },
   },
   async mounted() {
-    const API_URL =
-      process.env.NODE_ENV === "production"
-        ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-        : "http://localhost:3000/api";
     const response = await fetch(`${API_URL}/ingredientes`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

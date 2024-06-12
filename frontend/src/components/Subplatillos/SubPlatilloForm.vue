@@ -57,6 +57,8 @@
 </template>
 
 <script>
+import API_URL from "../../config";
+
 export default {
   props: ["subPlatillos", "existingSubPlatilloIds"],
   data() {
@@ -68,10 +70,6 @@ export default {
   },
   methods: {
     async addSubPlatillo() {
-      const API_URL =
-        process.env.NODE_ENV === "production"
-          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-          : "http://localhost:3000/api";
       const id_platillo = this.$route.params.id;
 
       const selectedSubPlatillos = this.subPlatillos.filter(

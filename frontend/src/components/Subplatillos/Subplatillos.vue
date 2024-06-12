@@ -43,6 +43,8 @@ const handleClickSubPlatillo = (idSubplatillo) => {
 </template>
 
 <script>
+import API_URL from "../../config";
+
 export default {
   name: "Subplatillos",
   data() {
@@ -57,10 +59,6 @@ export default {
   },
   methods: {
     async agregarSubPlatillo() {
-      const API_URL =
-        process.env.NODE_ENV === "production"
-          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-          : "http://localhost:3000/api";
       this.nuevoSubPlatillo.rendimiento = parseFloat(
         this.nuevoSubPlatillo.rendimiento
       );
@@ -79,10 +77,6 @@ export default {
     },
   },
   async mounted() {
-    const API_URL =
-      process.env.NODE_ENV === "production"
-        ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-        : "http://localhost:3000/api";
     const response = await fetch(`${API_URL}/subplatillos`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

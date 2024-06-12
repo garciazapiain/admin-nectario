@@ -10,6 +10,8 @@
 </template>
 
 <script>
+import API_URL from "../../config";
+
 export default {
     name: 'Facturacion',
     data() {
@@ -19,10 +21,6 @@ export default {
     },
     methods: {
         async runPlaywrightTest() {
-            const API_URL =
-                process.env.NODE_ENV === "production"
-                    ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-                    : "http://localhost:3000/api";
             const response = await fetch(`${API_URL}/test-playwright`, {
                 method: 'POST',
                 headers: {

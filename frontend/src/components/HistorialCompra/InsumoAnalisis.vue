@@ -40,11 +40,6 @@ export default {
     // Retrieve the ID from the route
     this.id = this.$route.params.id;
 
-    const API_URL =
-      process.env.NODE_ENV === "production"
-        ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-        : "http://localhost:3000/api";
-
     // Make the API call
     try {
       const response = await fetch(

@@ -35,6 +35,7 @@
 
 <script>
 import * as XLSX from "xlsx";
+import API_URL from "../../config";
 
 export default {
   name: "CargarVentas",
@@ -72,10 +73,6 @@ export default {
           "Please fill all fields and upload an Excel file before logging data."
         );
       } else {
-        const API_URL =
-          process.env.NODE_ENV === "production"
-            ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-            : "http://localhost:3000/api";
         const response = await fetch(`${API_URL}/consumoinsumos/cargarventas`, {
           method: "POST",
           headers: {

@@ -41,10 +41,8 @@
 <script>
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
-const API_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-    : "http://localhost:3000/api";
+import API_URL from "../../config";
+
 export default {
   name: "ConsumoInsumos",
   data() {

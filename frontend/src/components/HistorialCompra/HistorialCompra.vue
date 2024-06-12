@@ -89,16 +89,13 @@
 
 <script>
 import { ref, onMounted, computed } from "vue";
+import API_URL from "../../config";
 
 export default {
   methods: {
     async deleteOrder(orderId) {
       console.log("Delete", orderId);
       try {
-        const API_URL =
-          process.env.NODE_ENV === "production"
-            ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-            : "http://localhost:3000/api";
         const response = await fetch(`${API_URL}/purchase_orders/${orderId}`, {
           method: "DELETE",
         });
@@ -150,10 +147,6 @@ export default {
       };
 
       try {
-        const API_URL =
-          process.env.NODE_ENV === "production"
-            ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-            : "http://localhost:3000/api";
         const response = await fetch(`${API_URL}/purchase_orders`, {
           method: "POST",
           headers: {
@@ -219,11 +212,6 @@ export default {
       article.allowSearch = false;
       console.log(article);
     };
-
-    const API_URL =
-      process.env.NODE_ENV === "production"
-        ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
-        : "http://localhost:3000/api";
 
     onMounted(async () => {
       try {
