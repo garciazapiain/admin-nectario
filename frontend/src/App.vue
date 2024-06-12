@@ -19,8 +19,8 @@ const isPathNotEqual = (...paths) => {
 </script>
 
 <template>
-  <div>
-    <div class="buttonsTop">
+  <div class="flex flex-col items-center justify-center w-full">
+    <div class="buttonsTop w-full justify-evenly">
       <div class="buttonWrapper">
         <button
           class="main-page-button"

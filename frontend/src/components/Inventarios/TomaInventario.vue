@@ -41,11 +41,6 @@
         <option value="inicio_segundo_turno">Inicio segundo turno</option>
         <option value="fin_segundo_turno">Fin segundo turno</option>
       </select>
-      <label for="insumos">Estatus Insumos:</label>
-      <select class="filterBar" id="insumos" v-model="selectedInsumos">
-        <option value="Urgente">Urgente</option>
-        <option value="Todos">Todos</option>
-      </select>
     </div>
     <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="search-bar" />
     <!-- ... -->

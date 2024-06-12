@@ -54,7 +54,7 @@
         </div>
       </div>
       <button @click="exportToWhatsApp">Exportar a WhatsApp</button>
-      <input class="w-1/2 p-2 text-lg" v-model="searchTerm" placeholder="Buscar insumo" />
+      <input class="w-1/2 p-4 text-lg" v-model="searchTerm" placeholder="Buscar insumo" />
     </div>
     <table>
       <thead>
