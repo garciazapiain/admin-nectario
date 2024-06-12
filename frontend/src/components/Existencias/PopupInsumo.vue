@@ -1,27 +1,32 @@
 <template>
-  <div class="popup">
-    <div class="popup-content">
-      <h2>Pronóstico demanda - {{ ingrediente.nombre }}</h2>
-      <div class="input-group">
-        <h3>Numero de dias:</h3>
-        <div class="controls">
-          <button @click="decrementDays" class="btn">-</button>
-          <input type="number" min="1" v-model.number="days" />
-          <button @click="incrementDays" class="btn">+</button>
+  <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div class="bg-white text-black p-6 rounded-lg shadow-lg w-full max-w-lg mx-4">
+      <h2 class="text-2xl text-black font-bold mb-6">Pronóstico demanda - {{ ingrediente.nombre }}</h2>
+      <div class="mb-6">
+        <h3 class="text-black text-lg font-semibold mb-2">Numero de dias:</h3>
+        <div class="flex items-center justify-center gap-4">
+          <button @click="decrementDays" class="w-12 h-12 text-2xl border border-gray-300 rounded bg-white text-black">
+            -
+          </button>
+          <input type="number" min="1" v-model.number="days"
+            class="w-16 h-12 text-2xl text-center border border-gray-300 rounded" />
+          <button @click="incrementDays" class="w-12 h-12 text-2xl border border-gray-300 rounded bg-white text-black">
+            +
+          </button>
         </div>
       </div>
-      <div class="demand">
-        <p>
-          Moral:
-          <span>{{ moralDemanda.toFixed(1) }} {{ ingrediente.unidad }}</span>
+      <div class="mb-6">
+        <p class="text-lg font-medium text-black">
+          Moral: <span class="font-bold text-black">{{ moralDemanda.toFixed(1) }} {{ ingrediente.unidad }}</span>
         </p>
-        <p>
-          Campestre:
-          <span>{{ bosquesDemanda.toFixed(1) }} {{ ingrediente.unidad }}</span>
+        <p class="text-lg font-medium text-black">
+          Campestre: <span class="font-bold text-black">{{ bosquesDemanda.toFixed(1) }} {{ ingrediente.unidad }}</span>
         </p>
       </div>
+      <button @click="closePopup" class="w-full bg-gray-800 text-white py-3 rounded-lg mt-4 hover:bg-gray-900">
+        Cerrar
+      </button>
     </div>
-    <button @click="closePopup">Cerrar</button>
   </div>
 </template>
 
@@ -61,97 +66,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #f9f9f9;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  z-index: 9999;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
-
-@media screen and (max-width: 768px) {
-  .popup {
-    width: 80%;
-    height: 50%;
-  }
-}
-
-.popup-content > h2,
-h3 {
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.input-group h3 {
-  margin-bottom: 10px;
-}
-
-.controls {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.controls button.btn {
-  width: 3rem;
-  height: 3rem;
-  font-size: 2rem;
-  text-align: center;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #fff;
-  cursor: pointer;
-  padding: 5px;
-  color: black;
-  vertical-align: middle;
-}
-
-.controls input {
-  width: 2rem;
-  height: 2rem;
-  font-size: 2rem;
-  text-align: center;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin: 0 10px;
-}
-
-.demand p {
-  color: #333;
-  margin: 0;
-}
-
-.demand span {
-  font-weight: bold;
-}
-
-button {
-  display: block;
-  background-color: #333;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
-  margin-top: 20px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #444;
-}
-</style>

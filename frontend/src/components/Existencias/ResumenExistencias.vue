@@ -1,95 +1,66 @@
 <template>
   <div>
-    <h1>Resumen Existencias Lista Peligro</h1>
-    <p>Ultima actualización Moral: {{ lastUpdatedMoral }}</p>
-    <p>Ultima actualización Campestre: {{ lastUpdatedCampestre }}</p>
-    <div v-if="isAdmin" class="filtros-container">
-      <h2>Filtros:</h2>
-      <label for="insumos">Tipo Insumos:</label>
-      <select class="filterBar" id="insumos" v-model="selectedInsumosTipo">
+    <h1 class="text-2xl font-bold mb-4">Resumen Existencias Lista Peligro</h1>
+    <p class="mb-2">Ultima actualización Moral: {{ lastUpdatedMoral }}</p>
+    <p class="mb-4">Ultima actualización Campestre: {{ lastUpdatedCampestre }}</p>
+    <div v-if="isAdmin" class="flex flex-col justify-center items-center w-full">
+      <h2 class="text-xl font-semibold mb-2">Filtros:</h2>
+      <label for="insumos" class="mb-2">Tipo Insumos:</label>
+      <select id="insumos" v-model="selectedInsumosTipo" class="filterBar">
         <option value="Lista Peligro">Lista peligro</option>
         <option value="Todos">Todos</option>
       </select>
-      <label for="proveedores">Proveedores:</label>
-      <select class="filterBar" id="proveedores" v-model="selectedProveedor">
+      <label for="proveedores" class="mb-2">Proveedores:</label>
+      <select id="proveedores" v-model="selectedProveedor" class="filterBar">
         <option value="">Todos</option>
-        <option
-          v-for="proveedor in proveedores"
-          :key="proveedor.id"
-          :value="proveedor.nombre"
-        >
+        <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">
           {{ proveedor.nombre }}
         </option>
       </select>
-      <label for="frecuencias_inventario">Frecuencia Inventario:</label>
-      <select
-        class="filterBar"
-        id="frecuencias_inventario"
-        v-model="selectedFrecuencia"
-      >
+      <label for="frecuencias_inventario" class="mb-2">Frecuencia Inventario:</label>
+      <select id="frecuencias_inventario" v-model="selectedFrecuencia" class="filterBar">
         <option value="">Todos</option>
         <option value="inicio_primer_turno">Inicio primer turno</option>
         <option value="inicio_segundo_turno">Inicio segundo turno</option>
         <option value="fin_segundo_turno">Fin segundo turno</option>
       </select>
     </div>
-    <input
-      v-model="searchTerm"
-      placeholder="Buscar ingrediente..."
-      class="search-bar"
-    />
-    <table>
+    <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="w-3/4 p-2 mb-4 border rounded" />
+    <table class="w-full border-collapse">
       <thead>
-        <tr>
-          <th>Insumo</th>
-          <th>Unidad</th>
-          <th>Moral</th>
-          <th>Campestre</th>
+        <tr class="bg-gray-200">
+          <th class="border p-2">Insumo</th>
+          <th class="border p-2">Unidad</th>
+          <th class="border p-2">Moral</th>
+          <th class="border p-2">Campestre</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(ingrediente, index) in filteredIngredients" :key="index">
-          <td @click="ingredienteClicked(ingrediente)">
+        <tr v-for="(ingrediente, index) in filteredIngredients" :key="index" class="odd:bg-gray-800 even:bg-gray-950">
+          <td class="border p-2 cursor-pointer" @click="ingredienteClicked(ingrediente)">
             {{ ingrediente.nombre }}
           </td>
-          <td>{{ ingrediente.unidad }}</td>
-          <td
-            :class="{
-              'red-text':
-                getInventory('moral', ingrediente.id_ingrediente) <
-                ingrediente.moral_demanda_semanal / 7,
-            }"
-          >
+          <td class="border p-2">{{ ingrediente.unidad }}</td>
+          <td :class="['border p-2', getInventory('moral', ingrediente.id_ingrediente) < ingrediente.moral_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
             {{ getInventory("moral", ingrediente.id_ingrediente) }}
           </td>
-          <td
-            :class="{
-              'red-text':
-                getInventory('bosques', ingrediente.id_ingrediente) <
-                ingrediente.bosques_demanda_semanal / 7,
-            }"
-          >
+          <td :class="['border p-2', getInventory('bosques', ingrediente.id_ingrediente) < ingrediente.bosques_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
             {{ getInventory("bosques", ingrediente.id_ingrediente) }}
           </td>
         </tr>
       </tbody>
     </table>
-    <PopupInsumo
-      v-if="isPopupVisible"
-      :ingrediente="selectedIngredient"
-      @close="closePopup"
-    />
+    <PopupInsumo v-if="isPopupVisible" :ingrediente="selectedIngredient" @close="closePopup" />
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
-import PopupInsumo from "./PopupInsumo.vue";
-import API_URL from "../../config";
-
 </script>
 <script>
+import PopupInsumo from "./PopupInsumo.vue";
+import API_URL from "../../config";
 export default {
   name: "ResumenExistencias",
   components: {
@@ -263,28 +234,7 @@ export default {
 </script>
 
 <style scoped>
-.filtros-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
 .filterBar {
-  margin-left: 10px;
-  height: 2rem;
-  font-size: 1rem;
-  width: 50%;
+  @apply ml-2 h-8 text-base w-3/4;
 }
-.search-bar {
-  width: 50%;
-  padding: 10px;
-  font-size: 16px;
-}
-td {
-  color: white;
-}
-.red-text {
-  color: red;
-}
-/* Add any custom styles here */
 </style>
