@@ -14,7 +14,7 @@
     <div>
       <div>
         <h2>Filtros:</h2>
-        <div className="filtros-container">
+        <div className="flex flex-col justify-center items-center w-full">
           <label for="proveedor">Proveedor:</label>
           <select class="filterBar" id="proveedor" v-model="selectedProveedor">
             <option value="">Todos</option>
@@ -39,7 +39,7 @@
               {{ status }}
             </option>
           </select>
-          <div className="orderRouteCheckbox">
+          <div className="flex flex-row">
             <input type="checkbox" id="sort" v-model="orderRouteCheckbox" :disabled="selectedProveedor === ''" />
             <label for="sort">Ruta de tienda</label>
           </div>
@@ -50,11 +50,11 @@
         </div>
         <div class="flex-row">
           Presupuesto Estimado Suministro:
-          <p class="large-text">${{ totalPresupuestoSuministro }}</p>
+          <p class="text-2xl">${{ totalPresupuestoSuministro }}</p>
         </div>
       </div>
       <button @click="exportToWhatsApp">Exportar a WhatsApp</button>
-      <input class="search-bar" v-model="searchTerm" placeholder="Buscar insumo" />
+      <input class="w-1/2 p-2 text-lg" v-model="searchTerm" placeholder="Buscar insumo" />
     </div>
     <table>
       <thead>
@@ -72,12 +72,9 @@
       </thead>
       <tbody>
         <tr v-for="(ingredient, index) in filteredIngredients" :key="index"
-          :class="{ 'highlight-row': ingredient.producto_clave }">
+          :class="{ 'bg-[#618591] font-bold text-black': ingredient.producto_clave }">
           <td style="font-size: 20px">
             {{ ingredient.nombre }}
-            <!-- <i class="info-icon" @click="logIngredientName(ingredient.nombre)"
-              >i</i
-            > -->
           </td>
           <td style="font-size: 20px">{{ ingredient.unidad }}</td>
           <td style="font-size: 20px">
@@ -88,7 +85,7 @@
           </td>
           <td>
             <!-- {{ getProveedorName(ingredient.proveedor_id) }} -->
-            <select class="small-text" v-model="ingredient.proveedor_id">
+            <select class="text-xs" v-model="ingredient.proveedor_id">
               <option v-for="proveedor in proveedores" :value="proveedor.id" :key="proveedor.id">
                 {{ proveedor.nombre }}
               </option>
@@ -604,56 +601,6 @@ export default {
 
 <style scoped>
 .filterBar {
-  margin-left: 10px;
-  height: 2rem;
-  font-size: 1rem;
-  width: 50%;
-}
-
-.search-bar {
-  width: 50%;
-  padding: 10px;
-  font-size: 16px;
-}
-
-.highlight-row {
-  background-color: rgb(97, 133, 145);
-  font-weight: bold;
-  color: black;
-}
-
-.filtros-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  widows: 100%;
-}
-
-.orderRouteCheckbox {
-  display: flex;
-  flex-direction: row;
-}
-
-.large-text {
-  font-size: 2em;
-  /* Adjust as needed */
-}
-
-.flex-column {
-  display: flex;
-  flex-direction: column;
-}
-
-.small-text {
-  font-size: 0.8em;
-  /* Adjust as needed */
-}
-
-.info-icon {
-  background: white;
-  border-radius: 50%;
-  width: 2rem;
-  padding: 5px;
+  @apply ml-2 h-8 text-base w-1/2;
 }
 </style>
