@@ -167,11 +167,8 @@ export default {
       const filteredIngredients = this.filteredIngredients.filter(ingredient => {
         const moralInventory = this.getInventory("moral", ingredient.id_ingrediente);
         const bosquesInventory = this.getInventory("bosques", ingredient.id_ingrediente);
-        console.log(ingredient, moralInventory, bosquesInventory)
         return moralInventory !== "Suficiente" || bosquesInventory !== "Suficiente";
       });
-
-      console.log(filteredIngredients)
 
       // Check if there are any ingredients to send
       if (filteredIngredients.length === 0) {

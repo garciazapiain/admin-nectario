@@ -433,7 +433,6 @@ app.get('/api/ingredientes/demanda', async (req, res) => {
 
 app.get('/api/pronosticodemandainsumos', async (req, res) => {
   const client = await pool.connect();
-  // const platillos = [{ id: 1, cantidad: 1 }, { id: 9, cantidad: 2 }];
   const platillos = [{ id: 9, cantidad: 1 }];
 
   try {
@@ -696,7 +695,6 @@ app.get('/api/submissions', async (req, res) => {
 app.get('/api/proveedores', async (req, res) => {
   const client = await pool.connect();
   try {
-    // Query the submissions table
     const result = await client.query('SELECT * FROM proveedores');
 
     res.json(result.rows);
@@ -963,7 +961,6 @@ app.post('/api/consumoinsumos/cargarventas', async (req, res) => {
       // Check if a similar record already exists
       const existingRecord = await client.query('SELECT * FROM VentasData INNER JOIN VentasLog ON VentasData.ventasLogId = VentasLog.id WHERE VentasLog.store = $1 AND VentasLog.startDate <= $2 AND VentasLog.endDate >= $3 AND VentasData.clavepos = $4', [store, endDate, startDate, item.clavepos]);
       if (existingRecord.rows.length > 0) {
-        console.log(`Skipping item with clave ${item.clavepos} for store ${store} within date range ${startDate} to ${endDate}`);
         continue; // Skip this item and continue with the next one
       }
 
@@ -1102,7 +1099,6 @@ app.post('/api/test-playwright', (req, res) => {
       console.error(`stderr: ${stderr}`);
       return res.status(500).send('Script execution error');
     }
-    console.log(`stdout: ${stdout}`);
     res.send('Playwright script executed successfully');
   });
 });
@@ -1112,6 +1108,5 @@ app.get('*', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
 });
 // app.listen(3000, () => console.log('Server listening on port 3000'));

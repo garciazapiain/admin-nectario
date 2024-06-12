@@ -28,12 +28,12 @@ onMounted(() => {
     <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/pronosticodemandainsumos')">
       Pronóstico Demanda Insumos
     </button> -->
-    <button class="button" v-if="isAdmin" @click="() => navigateTo('/historialcompra')">
+    <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/historialcompra')">
       Historial Compras
-    </button>
-    <button class="button" v-if="isAdmin" @click="() => navigateTo('/consumoinsumos')">
+    </button> -->
+    <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/consumoinsumos')">
       Consumo Insumos
-    </button>
+    </button> -->
     <!-- <button class="button"  v-if="isAdmin" @click="() => navigateTo('/facturacion')">
       Facturación
     </button> -->

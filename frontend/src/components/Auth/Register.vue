@@ -50,13 +50,13 @@ export default {
           if (data.message === "User registered") {
             this.router.push("/login"); // Redirect to login page
           } else {
-            this.errorMessage = "Fallo en el registo";
+            this.errorMessage = "Fallo en el registo"; //Failure in register process
           }
         } else {
-          this.errorMessage = "Ocurrió un error";
+          this.errorMessage = "Ocurrió un error"; // An error occurred
         }
       } catch (error) {
-        this.errorMessage = "Ocurrió un error";
+        this.errorMessage = "Ocurrió un error"; // An error occurred
       }
     },
   },

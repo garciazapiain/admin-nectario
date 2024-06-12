@@ -53,13 +53,13 @@ export default {
             localStorage.setItem("isAdmin", data.isAdmin);
             this.router.push("/"); // Redirect to home page
           } else {
-            this.errorMessage = "Login falló";
+            this.errorMessage = "Login falló";// Login failed
           }
         } else {
-          this.errorMessage = "Occurió un error";
+          this.errorMessage = "Occurió un error";// An error occurred
         }
       } catch (error) {
-        this.errorMessage = "Occurió un error";
+        this.errorMessage = "Occurió un error";// An error occurred
       }
     },
   },
