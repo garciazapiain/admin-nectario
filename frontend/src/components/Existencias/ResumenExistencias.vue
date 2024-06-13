@@ -38,19 +38,19 @@
       </thead>
       <tbody>
         <tr v-for="(ingrediente, index) in filteredIngredients" :key="index" class="odd:bg-gray-800 even:bg-gray-950">
-          <td class="border p-2 cursor-pointer" @click="ingredienteClicked(ingrediente)">
+          <td class="border p-2 cursor-pointer text-white" @click="ingredienteClicked(ingrediente)">
             {{ ingrediente.nombre }}
           </td>
-          <td class="border p-2">{{ ingrediente.unidad }}</td>
+          <td class="border p-2 text-white">{{ ingrediente.unidad }}</td>
           <td
-            :class="['border p-2', getInventory('moral', ingrediente.id_ingrediente) < ingrediente.moral_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
+            :class="['border p-2 text-white', getInventory('moral', ingrediente.id_ingrediente) < ingrediente.moral_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
             {{ getInventory("moral", ingrediente.id_ingrediente) }}
           </td>
           <td
-            :class="['border p-2', getInventory('bosques', ingrediente.id_ingrediente) < ingrediente.bosques_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
+            :class="['border p-2 text-white', getInventory('bosques', ingrediente.id_ingrediente) < ingrediente.bosques_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
             {{ getInventory("bosques", ingrediente.id_ingrediente) }}
           </td>
-          <td v-if="isAdmin" class="border p-2 max-w-3">{{ shouldTransfer(ingrediente) }}</td>
+          <td v-if="isAdmin" class="border p-2 max-w-3 text-white">{{ shouldTransfer(ingrediente) }}</td>
         </tr>
       </tbody>
     </table>
