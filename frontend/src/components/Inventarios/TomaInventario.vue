@@ -55,9 +55,9 @@
         </thead>
         <tbody>
           <tr v-for="(ingrediente, index) in filteredIngredients" :key="index">
-            <td style="font-size: 20px">{{ ingrediente.nombre }}</td>
-            <td style="font-size: 20px">{{ ingrediente.unidad }}</td>
-            <td>
+            <td class="text-white" style="font-size: 20px">{{ ingrediente.nombre }}</td>
+            <td class="text-white" style="font-size: 20px">{{ ingrediente.unidad }}</td>
+            <td class="text-white">
               <div class="input-row">
                 <input v-model.number="ingrediente.cantidad_inventario" min="0"
                   @change="updateSubmitData(ingrediente)" />

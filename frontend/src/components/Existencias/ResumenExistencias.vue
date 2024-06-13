@@ -43,11 +43,11 @@
           </td>
           <td class="border p-2 text-white">{{ ingrediente.unidad }}</td>
           <td
-            :class="['border p-2 text-white', getInventory('moral', ingrediente.id_ingrediente) < ingrediente.moral_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
+            :class="['border p-2', getInventory('moral', ingrediente.id_ingrediente) < ingrediente.moral_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
             {{ getInventory("moral", ingrediente.id_ingrediente) }}
           </td>
           <td
-            :class="['border p-2 text-white', getInventory('bosques', ingrediente.id_ingrediente) < ingrediente.bosques_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
+            :class="['border p-2', getInventory('bosques', ingrediente.id_ingrediente) < ingrediente.bosques_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
             {{ getInventory("bosques", ingrediente.id_ingrediente) }}
           </td>
           <td v-if="isAdmin" class="border p-2 max-w-3 text-white">{{ shouldTransfer(ingrediente) }}</td>
