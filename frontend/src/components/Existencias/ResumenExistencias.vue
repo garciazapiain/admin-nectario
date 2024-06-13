@@ -33,6 +33,7 @@
           <th class="border p-2">Unidad</th>
           <th class="border p-2">Moral</th>
           <th class="border p-2">Campestre</th>
+          <th v-if="isAdmin" class="border p-2">Sugerencias para Transf.</th>
         </tr>
       </thead>
       <tbody>
@@ -41,12 +42,15 @@
             {{ ingrediente.nombre }}
           </td>
           <td class="border p-2">{{ ingrediente.unidad }}</td>
-          <td :class="['border p-2', getInventory('moral', ingrediente.id_ingrediente) < ingrediente.moral_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
+          <td
+            :class="['border p-2', getInventory('moral', ingrediente.id_ingrediente) < ingrediente.moral_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
             {{ getInventory("moral", ingrediente.id_ingrediente) }}
           </td>
-          <td :class="['border p-2', getInventory('bosques', ingrediente.id_ingrediente) < ingrediente.bosques_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
+          <td
+            :class="['border p-2', getInventory('bosques', ingrediente.id_ingrediente) < ingrediente.bosques_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
             {{ getInventory("bosques", ingrediente.id_ingrediente) }}
           </td>
+          <td v-if="isAdmin" class="border p-2 max-w-3">{{ shouldTransfer(ingrediente) }}</td>
         </tr>
       </tbody>
     </table>
@@ -203,16 +207,51 @@ export default {
     },
     getInventory(storeName, ingredientId) {
       const submission = this.lastSubmission(storeName);
-
       if (!submission) {
         return "N/A";
       }
-
       const ingrediente = submission.compra.find(
         (ing) => ing.id_ingrediente === ingredientId
       );
-
       return ingrediente ? ingrediente.cantidad_inventario : "N/A";
+    },
+    shouldTransfer(ingrediente) {
+      const moralInventory = this.getInventory("moral", ingrediente.id_ingrediente);
+      const bosquesInventory = this.getInventory("bosques", ingrediente.id_ingrediente);
+      if (
+        moralInventory < ingrediente.moral_demanda_semanal / 7 ||
+        bosquesInventory < ingrediente.bosques_demanda_semanal / 7
+      ) {
+        const moralDemand = ingrediente.moral_demanda_semanal;
+        const bosquesDemand = ingrediente.bosques_demanda_semanal;
+        const totalDemand = Number(moralDemand) + Number(bosquesDemand);
+        const totalInventory = moralInventory + bosquesInventory;
+        const bothInventoriesLow = moralInventory < ingrediente.moral_demanda_semanal / 7 && bosquesInventory < ingrediente.bosques_demanda_semanal / 7;
+        const percentMoral = moralDemand / totalDemand;
+        const percentBosques = bosquesDemand / totalDemand;
+        const unitsToFixed1 = ["KG", "CAJA", "POMO", "TUBO", "BOTE", "BOLSA"];
+        let adjustMoral = Math.round(percentMoral * totalInventory);
+        let adjustBosques = Math.round(percentBosques * totalInventory);
+        if (!unitsToFixed1.includes(ingrediente.unidad)) {
+          // If unidad is NOT one of the excluded ones, apply Math.round
+          adjustMoral = Math.round(percentMoral * totalInventory);
+          adjustBosques = Math.round(percentBosques * totalInventory);
+        } else {
+          // If unidad is one of the excluded ones, do not apply Math.round
+          adjustMoral = percentMoral * totalInventory;
+          adjustBosques = percentBosques * totalInventory;
+        }
+        // Ensure the sum of adjustments equals total inventory exactly
+        const adjustmentDifference = totalInventory - (adjustMoral + adjustBosques);
+        adjustMoral += adjustmentDifference; // Adjust one of the values to compensate for rounding
+        const toFixedValue = unitsToFixed1.includes(ingrediente.unidad) ? 1 : 0;
+        const inventoryAlreadyBalanced = (Number(percentMoral * totalInventory).toFixed(1)) == Number(moralInventory) && (Number(percentBosques * totalInventory).toFixed(1)) == Number(bosquesInventory);
+        const adjustMoralMessage = adjustMoral > 0 ? `Ajuste Moral: ${adjustMoral.toFixed(toFixedValue)},` : "";
+        const adjustBosquesMessage = adjustBosques > 0 ? `Ajuste Campestre: ${adjustBosques.toFixed(toFixedValue)}` : "";
+        return `${bothInventoriesLow ? "RESURTIR URGENTE, POR EL MOMENTO:\n" : ""}${inventoryAlreadyBalanced ? "Inventario ya balanceado" : `${adjustMoralMessage}\n${adjustBosquesMessage}`}`;
+      } else {
+        return ""; // Return empty string if no adjustment needed
+      }
     },
     lastSubmission(store) {
       const storeSubmissions = this.submissions.filter(
