@@ -34,7 +34,7 @@
               <th class="border p-2">Insumo</th>
               <th class="border p-2">Unidad</th>
               <th class="border p-2">Moral</th>
-              <th class="border p-2">Campestre</th>
+              <th class="border p-2">Camp</th>
               <th v-if="isAdmin" class="border p-2">Sugerencias para Transf.</th>
             </tr>
           </thead>
