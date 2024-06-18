@@ -27,8 +27,8 @@
     </div>
     <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="search-bar w-3/4 p-4 mb-4 border rounded" />
     <div class="w-full flex justify-center">
-      <div class="overflow-x-auto -webkit-overflow-scrolling-touch">
-        <table class="w-1/2 sm:w-full border-collapse">
+      <div class="overflow-x-auto">
+        <table class="min-w-full border-collapse">
           <thead>
             <tr class="bg-gray-200">
               <th class="border p-2">Insumo</th>
@@ -59,8 +59,8 @@
         </table>
       </div>
       <PopupInsumo v-if="isPopupVisible" :ingrediente="selectedIngredient" @close="closePopup" />
-      </div>
     </div>
+  </div>
 </template>
 
 <script setup>
