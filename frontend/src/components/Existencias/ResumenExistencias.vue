@@ -26,36 +26,41 @@
       </select>
     </div>
     <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="search-bar w-3/4 p-4 mb-4 border rounded" />
-    <table class="w-full border-collapse">
-      <thead>
-        <tr class="bg-gray-200">
-          <th class="border p-2">Insumo</th>
-          <th class="border p-2">Unidad</th>
-          <th class="border p-2">Moral</th>
-          <th class="border p-2">Campestre</th>
-          <th v-if="isAdmin" class="border p-2">Sugerencias para Transf.</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(ingrediente, index) in filteredIngredients" :key="index" class="odd:bg-gray-800 even:bg-gray-950">
-          <td class="border p-2 cursor-pointer text-white" @click="ingredienteClicked(ingrediente)">
-            {{ ingrediente.nombre }}
-          </td>
-          <td class="border p-2 text-white">{{ ingrediente.unidad }}</td>
-          <td
-            :class="['border p-2', getInventory('moral', ingrediente.id_ingrediente) < ingrediente.moral_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
-            {{ getInventory("moral", ingrediente.id_ingrediente) }}
-          </td>
-          <td
-            :class="['border p-2', getInventory('bosques', ingrediente.id_ingrediente) < ingrediente.bosques_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
-            {{ getInventory("bosques", ingrediente.id_ingrediente) }}
-          </td>
-          <td v-if="isAdmin" class="border p-2 max-w-3 text-white">{{ shouldTransfer(ingrediente) }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <PopupInsumo v-if="isPopupVisible" :ingrediente="selectedIngredient" @close="closePopup" />
-  </div>
+    <div class="w-full flex justify-center">
+      <div class="overflow-x-auto -webkit-overflow-scrolling-touch">
+        <table class="w-1/2 sm:w-full border-collapse">
+          <thead>
+            <tr class="bg-gray-200">
+              <th class="border p-2">Insumo</th>
+              <th class="border p-2">Unidad</th>
+              <th class="border p-2">Moral</th>
+              <th class="border p-2">Campestre</th>
+              <th v-if="isAdmin" class="border p-2">Sugerencias para Transf.</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(ingrediente, index) in filteredIngredients" :key="index"
+              class="odd:bg-gray-800 even:bg-gray-950">
+              <td class="border p-2 cursor-pointer text-white" @click="ingredienteClicked(ingrediente)">
+                {{ ingrediente.nombre }}
+              </td>
+              <td class="border p-2 text-white">{{ ingrediente.unidad }}</td>
+              <td
+                :class="['border p-2', getInventory('moral', ingrediente.id_ingrediente) < ingrediente.moral_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
+                {{ getInventory("moral", ingrediente.id_ingrediente) }}
+              </td>
+              <td
+                :class="['border p-2', getInventory('bosques', ingrediente.id_ingrediente) < ingrediente.bosques_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
+                {{ getInventory("bosques", ingrediente.id_ingrediente) }}
+              </td>
+              <td v-if="isAdmin" class="border p-2 max-w-3 text-white">{{ shouldTransfer(ingrediente) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <PopupInsumo v-if="isPopupVisible" :ingrediente="selectedIngredient" @close="closePopup" />
+      </div>
+    </div>
 </template>
 
 <script setup>
