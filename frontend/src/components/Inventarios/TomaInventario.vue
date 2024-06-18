@@ -419,7 +419,7 @@ export default {
         timestamp: formattedDate, // Add timestamp to dataToSubmit
         ingredients: this.submitData,
       };
-      fetch(`${API_URL}/submissions`, {
+      fetch(`${API_URL}/submissions/new-submission`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -521,7 +521,7 @@ export default {
 
     const data = await response.json();
     this.ingredientes = data;
-    const responseSubmissions = await fetch(`${API_URL}/submissions`);
+    const responseSubmissions = await fetch(`${API_URL}/submissions/all-submissions`);
     if (!responseSubmissions.ok) {
       throw new Error(`HTTP error! status: ${responseSubmissions.status}`);
     }

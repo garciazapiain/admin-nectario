@@ -570,7 +570,7 @@ export default {
       console.error("HTTP error:", response.status);
     }
 
-    const submissionsResponse = await fetch(`${API_URL}/submissions`);
+    const submissionsResponse = await fetch(`${API_URL}/submissions/all-submissions`);
     if (submissionsResponse.ok) {
       this.submissions = await submissionsResponse.json();
     } else {

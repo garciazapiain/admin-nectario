@@ -90,7 +90,7 @@ export default {
     };
   },
   async created() {
-    const submissionsResponse = await fetch(`${API_URL}/submissions`);
+    const submissionsResponse = await fetch(`${API_URL}/submissions/all-submissions`);
     if (submissionsResponse.ok) {
       this.submissions = await submissionsResponse.json();
     } else {
