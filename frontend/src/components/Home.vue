@@ -22,8 +22,8 @@ onMounted(() => {
     <button class="button" @click="() => navigateTo('/inventarios')">Toma Inventario</button>
     <button class="button" @click="() => navigateTo('/existenciasresumen')">Resumen Existencias</button>
     <button class="button" v-if="isAdmin" @click="() => navigateTo('/compra')">Compra del dia</button>
-    <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/platillos')">Platillos</button>
-    <button class="button" v-if="isAdmin" @click="() => navigateTo('/subplatillos')">Subplatillos</button> -->
+    <button class="button" v-if="isAdmin" @click="() => navigateTo('/platillos')">Platillos</button>
+    <button class="button" v-if="isAdmin" @click="() => navigateTo('/subplatillos')">Subplatillos</button>
     <button class="button" v-if="isAdmin" @click="() => navigateTo('/ingredientes')">Insumos</button>
     <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/pronosticodemandainsumos')">
       Pronóstico Demanda Insumos
@@ -31,9 +31,9 @@ onMounted(() => {
     <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/historialcompra')">
       Historial Compras
     </button> -->
-    <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/consumoinsumos')">
+    <button class="button" v-if="isAdmin" @click="() => navigateTo('/consumoinsumos')">
       Consumo Insumos
-    </button> -->
+    </button>
     <!-- <button class="button"  v-if="isAdmin" @click="() => navigateTo('/facturacion')">
       Facturación
     </button> -->
