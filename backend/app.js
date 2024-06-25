@@ -1036,7 +1036,7 @@ app.get('/api/consumption/:store', async (req, res) => {
                   i.producto_clave AS producto_clave,
                   i.precio AS precio,
                   0 AS consumo_platillos,
-                  SUM(vd.cantidad * spi.cantidad / sp.rendimiento) AS consumo_subplatillos
+                  SUM(vd.cantidad * sp.rendimiento / spi.cantidad) AS consumo_subplatillos
               FROM 
                   (
                       SELECT 
