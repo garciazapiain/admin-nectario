@@ -60,6 +60,7 @@
       <table>
         <thead>
           <tr>
+            <th>Seleccionar</th>
             <th>Nombre</th>
             <th>Unidad</th>
             <th>Exi. Moral</th>
@@ -74,6 +75,10 @@
         <tbody>
           <tr v-for="(ingredient, index) in filteredIngredients" :key="index"
             :class="{ 'bg-[#618591] font-bold text-black': ingredient.producto_clave }">
+            <td>
+              <input type="checkbox" :id="`check-${ingredient.id_ingrediente}`"
+                :checked="isChecked(ingredient.id_ingrediente)" @change="toggleCheck(ingredient.id_ingrediente)">
+            </td>
             <td style="font-size: 20px">
               {{ ingredient.nombre }}
             </td>
@@ -157,22 +162,41 @@ export default {
         "Pausar compra",
         "Suficiente producto",
       ],
+      checkedIngredients: []
     };
   },
   methods: {
+    isChecked(ingredientId) {
+      // Simply checks if the ingredient ID is in the array
+      return this.checkedIngredients.includes(ingredientId);
+    },
+    toggleCheck(ingredientId) {
+      const index = this.checkedIngredients.indexOf(ingredientId);
+      if (index === -1) {
+        // If the ingredient ID is not in the array, add it
+        this.checkedIngredients.push(ingredientId);
+      } else {
+        // If the ingredient ID is in the array, remove it
+        this.checkedIngredients.splice(index, 1);
+      }
+      console.log(this.checkedIngredients)
+    },
     exportToWhatsApp() {
       const phoneNumber = '+420774187964'; // The phone number you want to send the message to
-      // Filter the ingredients to those that need to be exported
+
+      // Filter the ingredients to those that need to be exported and are checked
       const filteredIngredients = this.filteredIngredients.filter(ingredient => {
-        const moralInventory = this.getInventory("moral", ingredient.id_ingrediente);
-        const bosquesInventory = this.getInventory("bosques", ingredient.id_ingrediente);
-        return moralInventory !== "Suficiente" || bosquesInventory !== "Suficiente";
+        const isNeeded = (this.getInventory("moral", ingredient.id_ingrediente) !== "Suficiente" ||
+          this.getInventory("bosques", ingredient.id_ingrediente) !== "Suficiente") &&
+          this.isChecked(ingredient.id_ingrediente);
+        return isNeeded;
       });
       // Check if there are any ingredients to send
       if (filteredIngredients.length === 0) {
-        alert("No ingredients to send.");
+        alert("No ingredients selected to send.");
         return;
       }
+      // Group ingredients by status to format the message
       const groupedByEstatus = filteredIngredients.reduce((acc, ingredient) => {
         const { estatus_moral, estatus_bosques } = ingredient;
         const estatus = estatus_moral === "Transferir de CEDIS" || estatus_bosques === "Transferir de CEDIS"
@@ -188,32 +212,26 @@ export default {
         acc[estatus].push(ingredient);
         return acc;
       }, {});
-
       const messageParts = [];
-
       // Include Transferir de CEDIS section if it exists
       if (groupedByEstatus["Transferir de CEDIS"]) {
         messageParts.push("TRANSFERENCIA CEDIS:\n" + this.formatIngredientsList(groupedByEstatus["Transferir de CEDIS"]));
       }
-
       // Include sections for individual proveedores
       Object.keys(groupedByEstatus).forEach(estatus => {
         if (!["Transferir de CEDIS", "Transferir Campestre a Moral", "Transferir Moral a Campestre"].includes(estatus)) {
           messageParts.push(`COMPRA DEL DIA:\n` + this.formatCompraDelDia(groupedByEstatus[estatus]));
         }
       });
-
       // Include sections for other estatus
       ["Transferir Campestre a Moral", "Transferir Moral a Campestre"].forEach(estatus => {
         if (groupedByEstatus[estatus]) {
           messageParts.push(`${estatus}:\n` + this.formatIngredientsList(groupedByEstatus[estatus]));
         }
       });
-
       // Encode the message
       const message = encodeURIComponent(`RESUMEN SUMINISTRO DEL DÍA:\n\n${messageParts.join('\n\n')}`);
       const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
-
       // Open the WhatsApp URL
       window.open(whatsappUrl, '_blank'); // This will open WhatsApp Web or the WhatsApp app with the pre-filled message for the specified number
     },
@@ -264,7 +282,6 @@ export default {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const result = await response.json();
-        console.log('Update response:', result);
         // Update the local state to reflect the change
         const ingredient = this.ingredients.find(ing => ing.id_ingrediente === ingredientId);
         if (store === 'moral') {
@@ -326,23 +343,17 @@ export default {
       const storeSubmissions = this.submissions.filter(
         (submission) => submission.store === store
       );
-      // console.log("storeSubmissions:", storeSubmissions);
       if (storeSubmissions.length > 0) {
         const lastSubmission = storeSubmissions.reduce((latest, current) =>
           new Date(latest.timestamp) > new Date(current.timestamp)
             ? latest
             : current
         );
-        // console.log("lastSubmission:", lastSubmission);
         const lastUpdate = new Date(lastSubmission.timestamp).toLocaleString();
-        // console.log("lastUpdate:", lastUpdate);
         return lastUpdate;
       } else {
         return "N/A";
       }
-    },
-    logIngredientName(name) {
-      console.log("Hey", name);
     },
     getIngredientStatus(ingredientId) {
       // const submission = this.lastSubmission(store);
@@ -595,7 +606,6 @@ export default {
     // Log the latest submission for each store
     stores.forEach((store) => {
       const latestSubmission = this.lastSubmission(store);
-      console.log(`Latest submission for store ${store}:`, latestSubmission);
     });
   },
 };
