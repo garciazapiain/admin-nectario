@@ -618,10 +618,13 @@ export default {
 
 .table-container {
   width: 70%;
-  /* Set the width of the container to 90% of the viewport width */
   overflow-x: auto;
-  /* Enables horizontal scrolling */
   margin: 0 auto;
-  /* Centers the table container horizontally */
+}
+
+@media (max-width: 600px) {
+  .table-container {
+    width: 50%;
+  }
 }
 </style>
