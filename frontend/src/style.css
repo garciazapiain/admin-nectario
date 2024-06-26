@@ -2,6 +2,7 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -44,7 +45,7 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
-  min-width: 320px;
+  width: 100%;
   min-height: 100vh;
   touch-action: manipulation;
 }
@@ -78,7 +79,6 @@ button:focus-visible {
 }
 
 #app {
-  width: 100%;;
   margin: 0 auto;
   padding: 1rem;
   text-align: center;

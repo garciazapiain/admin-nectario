@@ -14,7 +14,7 @@
     <div>
       <div>
         <h2>Filtros:</h2>
-        <div className="flex flex-col justify-center items-center w-full">
+        <div className="flex flex-col w-3/4 justify-center items-center">
           <label for="proveedor">Proveedor:</label>
           <select class="filterBar" id="proveedor" v-model="selectedProveedor">
             <option value="">Todos</option>
@@ -54,10 +54,10 @@
         </div>
       </div>
       <button @click="exportToWhatsApp">Exportar a WhatsApp</button>
-      <input class="w-1/2 p-4 text-lg" v-model="searchTerm" placeholder="Buscar insumo" />
+      <input class="p-4 text-lg" v-model="searchTerm" placeholder="Buscar insumo" />
     </div>
     <div class="table-container">
-      <table>
+      <table class="w-full min-w-[400px] border-collapse">
         <thead>
           <tr>
             <th>Seleccionar</th>
@@ -617,14 +617,15 @@ export default {
 }
 
 .table-container {
-  width: 70%;
+  /* Container width set to 80% of the viewport */
+  max-width: 100%;
+  /* Ensures it doesn't exceed the viewport width */
   overflow-x: auto;
-  margin: 0 auto;
+  /* Enables horizontal scrolling */
+  margin: 1rem auto;
+  /* Centers the table container and adds vertical spacing */
+  display: block;
+  /* Ensures the container behaves as a block for centering */
 }
 
-@media (max-width: 600px) {
-  .table-container {
-    width: 50%;
-  }
-}
 </style>
