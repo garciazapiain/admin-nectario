@@ -573,6 +573,37 @@ app.put('/api/ingredientes/resetestatus/:store', async (req, res) => {
   }
 });
 
+app.put('/api/ingredientes/no-claves-resetestatus/:store', async (req, res) => {
+  const newStatus = "Suficiente producto";
+  const store = req.params.store;
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // Update non-key ingredients based on the store, including those where producto_clave is NULL
+    let query;
+    if (store === 'moral') {
+      query = 'UPDATE ingredientes SET estatus_moral = $1 WHERE producto_clave = FALSE OR producto_clave IS NULL';
+    } else if (store === 'bosques') {
+      query = 'UPDATE ingredientes SET estatus_bosques = $1 WHERE producto_clave = FALSE OR producto_clave IS NULL';
+    } else {
+      throw new Error('Invalid store');
+    }
+
+    await client.query(query, [newStatus]);
+
+    await client.query('COMMIT');
+
+    res.json({ message: 'Successfully reset non-key ingredient status, including those not marked as key' });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while updating data in the database' });
+  } finally {
+    client.release();
+  }
+});
+
 app.put('/api/ingredientes/:id', async (req, res) => {
   const { nombre, unidad, precio, proveedor, proveedor_id, store_route_order, producto_clave, moral_demanda_semanal, bosques_demanda_semanal, orden_inventario, frecuencias_inventario } = req.body;
   const { id } = req.params;

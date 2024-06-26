@@ -370,14 +370,42 @@ export default {
       // console.log(this.submitData); // Log submitData every time it gets updated
     },
     confirmReset() {
-      if (
-        window.confirm(
-          '¿Seguro que quieres resetear? Todos los valores del inventario se estableceran como "Suficiente"?'
-        )
-      ) {
-        // Perform the reset action here
+      const resetOption = window.prompt('Type "1" to reset all products or "2" to reset only non-key products:', "1");
+      if (resetOption === "1") {
+        // Resets all products
         this.resetForm(this.store);
+      } else if (resetOption === "2") {
+        // Resets only non-key products
+        this.resetNonKeyProducts(this.store);
+      } else {
+        // If user cancels or inputs an invalid option
+        console.log("Reset cancelled or invalid option entered.");
       }
+    },
+    // Dummy function for resetting only non-key products
+    resetNonKeyProducts(store) {
+      this.submitData.forEach((item) => {
+        // Check if producto_clave is not true (handles both false and undefined/null cases)
+        console.log("Checking item:", item, item.producto_clave)
+        if (!item.producto_clave) {
+          item.cantidad_inventario = "Suficiente";
+          this.updateSubmitData(item);
+        }
+      });
+      fetch(`${API_URL}/ingredientes/no-claves-resetestatus/${store}`, {
+        method: "PUT",
+      })
+        .then(() => {
+          // Call submitForm method
+          this.submitForm();
+          setTimeout(() => {
+            location.reload();
+          }, 2000);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+      // Here you would implement the actual logic to reset only non-key products
     },
     resetForm(store) {
       // Reset all cantidad_inventario values to "Suficiente"
