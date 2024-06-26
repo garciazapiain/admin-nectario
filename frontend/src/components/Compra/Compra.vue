@@ -56,76 +56,78 @@
       <button @click="exportToWhatsApp">Exportar a WhatsApp</button>
       <input class="w-1/2 p-4 text-lg" v-model="searchTerm" placeholder="Buscar insumo" />
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Unidad</th>
-          <th>Exi. Moral</th>
-          <th>Exi. Campestre</th>
-          <th>Proveedor</th>
-          <th>Estatus Moral</th>
-          <th>Estatus Campestre</th>
-          <th>Surtir Moral</th>
-          <th>Surtir Campestre</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(ingredient, index) in filteredIngredients" :key="index"
-          :class="{ 'bg-[#618591] font-bold text-black': ingredient.producto_clave }">
-          <td style="font-size: 20px">
-            {{ ingredient.nombre }}
-          </td>
-          <td style="font-size: 20px">{{ ingredient.unidad }}</td>
-          <td style="font-size: 20px">
-            {{ getInventory("moral", ingredient.id_ingrediente) }}
-          </td>
-          <td style="font-size: 20px">
-            {{ getInventory("bosques", ingredient.id_ingrediente) }}
-          </td>
-          <td>
-            <!-- {{ getProveedorName(ingredient.proveedor_id) }} -->
-            <select class="text-xs" v-model="ingredient.proveedor_id">
-              <option v-for="proveedor in proveedores" :value="proveedor.id" :key="proveedor.id">
-                {{ proveedor.nombre }}
-              </option>
-            </select>
-          </td>
-          <td>
-            <select v-model="ingredient.estatus_moral" @change="
-              actualizarEstatus(
-                ingredient.id_ingrediente,
-                ingredient.estatus_moral,
-                'moral'
-              )
-              " :style="estatusColor(ingredient.estatus_moral)">
-              <option v-for="estatus_moral in listaEstatus" :key="estatus_moral" :value="estatus_moral">
-                {{ estatus_moral }}
-              </option>
-            </select>
-          </td>
-          <td>
-            <select v-model="ingredient.estatus_bosques" @change="
-              actualizarEstatus(
-                ingredient.id_ingrediente,
-                ingredient.estatus_bosques,
-                'bosques'
-              )
-              " :style="estatusColor(ingredient.estatus_bosques)">
-              <option v-for="estatus_bosques in listaEstatus" :key="estatus_bosques" :value="estatus_bosques">
-                {{ estatus_bosques }}
-              </option>
-            </select>
-          </td>
-          <td style="font-size: 20px">
-            {{ calculateInventoryDemand("moral", ingredient) }}
-          </td>
-          <td style="font-size: 20px">
-            {{ calculateInventoryDemand("bosques", ingredient) }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Unidad</th>
+            <th>Exi. Moral</th>
+            <th>Exi. Campestre</th>
+            <th>Proveedor</th>
+            <th>Estatus Moral</th>
+            <th>Estatus Campestre</th>
+            <th>Surtir Moral</th>
+            <th>Surtir Campestre</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(ingredient, index) in filteredIngredients" :key="index"
+            :class="{ 'bg-[#618591] font-bold text-black': ingredient.producto_clave }">
+            <td style="font-size: 20px">
+              {{ ingredient.nombre }}
+            </td>
+            <td style="font-size: 20px">{{ ingredient.unidad }}</td>
+            <td style="font-size: 20px">
+              {{ getInventory("moral", ingredient.id_ingrediente) }}
+            </td>
+            <td style="font-size: 20px">
+              {{ getInventory("bosques", ingredient.id_ingrediente) }}
+            </td>
+            <td>
+              <!-- {{ getProveedorName(ingredient.proveedor_id) }} -->
+              <select class="text-xs" v-model="ingredient.proveedor_id">
+                <option v-for="proveedor in proveedores" :value="proveedor.id" :key="proveedor.id">
+                  {{ proveedor.nombre }}
+                </option>
+              </select>
+            </td>
+            <td>
+              <select v-model="ingredient.estatus_moral" @change="
+                actualizarEstatus(
+                  ingredient.id_ingrediente,
+                  ingredient.estatus_moral,
+                  'moral'
+                )
+                " :style="estatusColor(ingredient.estatus_moral)">
+                <option v-for="estatus_moral in listaEstatus" :key="estatus_moral" :value="estatus_moral">
+                  {{ estatus_moral }}
+                </option>
+              </select>
+            </td>
+            <td>
+              <select v-model="ingredient.estatus_bosques" @change="
+                actualizarEstatus(
+                  ingredient.id_ingrediente,
+                  ingredient.estatus_bosques,
+                  'bosques'
+                )
+                " :style="estatusColor(ingredient.estatus_bosques)">
+                <option v-for="estatus_bosques in listaEstatus" :key="estatus_bosques" :value="estatus_bosques">
+                  {{ estatus_bosques }}
+                </option>
+              </select>
+            </td>
+            <td style="font-size: 20px">
+              {{ calculateInventoryDemand("moral", ingredient) }}
+            </td>
+            <td style="font-size: 20px">
+              {{ calculateInventoryDemand("bosques", ingredient) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -602,5 +604,14 @@ export default {
 <style scoped>
 .filterBar {
   @apply ml-2 h-8 text-base w-1/2;
+}
+
+.table-container {
+  width: 70%;
+  /* Set the width of the container to 90% of the viewport width */
+  overflow-x: auto;
+  /* Enables horizontal scrolling */
+  margin: 0 auto;
+  /* Centers the table container horizontally */
 }
 </style>
