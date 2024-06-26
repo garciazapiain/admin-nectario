@@ -1075,6 +1075,103 @@ app.get('/api/consumption/:store', async (req, res) => {
   }
 });
 
+app.get('/api/consumption/:id/:store', async (req, res) => {
+  const { id, store } = req.params;
+  const client = await pool.connect();
+
+  try {
+    const result = await client.query(`
+      SELECT 
+          id_ingrediente,
+          unidad,
+          proveedor,
+          nombre,
+          producto_clave,
+          precio,
+          ROUND(SUM(consumo_platillos)::numeric, 2) AS consumo_platillos,
+          ROUND(SUM(consumo_subplatillos)::numeric, 2) AS consumo_subplatillos,
+          ROUND((SUM(consumo_platillos) + SUM(consumo_subplatillos))::numeric, 2) AS total_consumido
+      FROM 
+          (
+              SELECT 
+                  pi.id_ingrediente AS id_ingrediente,
+                  i.unidad AS unidad,
+                  i.proveedor AS proveedor,
+                  i.nombre AS nombre,
+                  i.producto_clave AS producto_clave,
+                  i.precio AS precio,
+                  SUM(vd.cantidad * pi.cantidad) AS consumo_platillos,
+                  0 AS consumo_subplatillos
+              FROM 
+                  (
+                      SELECT 
+                          SUM(vd.cantidad) AS cantidad,
+                          vd.clavepos
+                      FROM 
+                          ventasdata vd
+                      INNER JOIN 
+                          ventaslog vl ON vd.ventaslogid = vl.id
+                      WHERE 
+                          vl.id = $1 AND vl.store = $2
+                      GROUP BY
+                          vd.clavepos
+                  ) vd
+              INNER JOIN 
+                  platillos p ON vd.clavepos = p.clavepos
+              INNER JOIN 
+                  platillos_ingredientes pi ON p.id_platillo = pi.id_platillo
+              INNER JOIN 
+                  ingredientes i ON pi.id_ingrediente = i.id_ingrediente
+              GROUP BY pi.id_ingrediente, i.unidad, i.proveedor, i.nombre, i.producto_clave, i.precio
+              UNION ALL
+              SELECT 
+                  spi.id_ingrediente AS id_ingrediente,
+                  i.unidad AS unidad,
+                  i.proveedor AS proveedor,
+                  i.nombre AS nombre,
+                  i.producto_clave AS producto_clave,
+                  i.precio AS precio,
+                  0 AS consumo_platillos,
+                  SUM(psi.cantidad * (spi.cantidad / sp.rendimiento)) AS consumo_subplatillos
+              FROM 
+                  (
+                      SELECT 
+                          SUM(vd.cantidad) AS cantidad,
+                          vd.clavepos
+                      FROM 
+                          ventasdata vd
+                      INNER JOIN 
+                          ventaslog vl ON vd.ventaslogid = vl.id
+                      WHERE 
+                          vl.id = $1 AND vl.store = $2
+                      GROUP BY
+                          vd.clavepos
+                  ) vd
+              INNER JOIN 
+                  platillos p ON vd.clavepos = p.clavepos
+              INNER JOIN 
+                  platillos_subplatillos psi ON p.id_platillo = psi.id_platillo
+              INNER JOIN 
+                  subplatillos sp ON psi.id_subplatillo = sp.id_subplatillo
+              INNER JOIN 
+                  subplatillos_ingredientes spi ON sp.id_subplatillo = spi.id_subplatillo
+              INNER JOIN 
+                  ingredientes i ON spi.id_ingrediente = i.id_ingrediente
+              GROUP BY spi.id_ingrediente, i.unidad, i.proveedor, i.nombre, i.producto_clave, i.precio, psi.cantidad, sp.rendimiento, spi.cantidad
+          ) t
+      GROUP BY id_ingrediente, unidad, proveedor, nombre, producto_clave, precio;
+    `, [id, store]);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while executing the query' });
+  } finally {
+    client.release();
+  }
+});
+
+
 const { exec } = require('child_process');
 
 app.post('/api/test-playwright', (req, res) => {
