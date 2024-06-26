@@ -365,6 +365,7 @@ export default {
           proveedor: ingrediente.proveedor,
           moral_demanda_semanal: ingrediente.moral_demanda_semanal,
           bosques_demanda_semanal: ingrediente.bosques_demanda_semanal,
+          producto_clave: ingrediente.producto_clave,
         });
       }
       // console.log(this.submitData); // Log submitData every time it gets updated
@@ -388,6 +389,7 @@ export default {
         // Check if producto_clave is not true (handles both false and undefined/null cases)
         console.log("Checking item:", item, item.producto_clave)
         if (!item.producto_clave) {
+          console.log(item.nombre, item.producto_clave, "is not a key product")
           item.cantidad_inventario = "Suficiente";
           this.updateSubmitData(item);
         }
