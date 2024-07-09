@@ -1067,7 +1067,7 @@ app.get('/api/consumption/:store', async (req, res) => {
                   i.producto_clave AS producto_clave,
                   i.precio AS precio,
                   0 AS consumo_platillos,
-                  SUM(vd.cantidad * sp.rendimiento / spi.cantidad) AS consumo_subplatillos
+                  SUM(psi.cantidad * (spi.cantidad / sp.rendimiento)) AS consumo_subplatillos
               FROM 
                   (
                       SELECT 
@@ -1092,7 +1092,7 @@ app.get('/api/consumption/:store', async (req, res) => {
                   subplatillos_ingredientes spi ON sp.id_subplatillo = spi.id_subplatillo
               INNER JOIN 
                   ingredientes i ON spi.id_ingrediente = i.id_ingrediente
-              GROUP BY spi.id_ingrediente, i.unidad, i.proveedor, i.nombre, i.producto_clave, i.precio
+              GROUP BY spi.id_ingrediente, i.unidad, i.proveedor, i.nombre, i.producto_clave, i.precio, psi.cantidad, sp.rendimiento, spi.cantidad
           ) t
       GROUP BY id_ingrediente, unidad, proveedor, nombre, producto_clave, precio;
     `, [startDate, endDate, store]);
@@ -1105,6 +1105,7 @@ app.get('/api/consumption/:store', async (req, res) => {
     client.release();
   }
 });
+
 
 app.get('/api/consumption/:id/:store', async (req, res) => {
   const { id, store } = req.params;
