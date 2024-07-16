@@ -60,7 +60,9 @@
       <table class="w-full min-w-[400px] border-collapse">
         <thead>
           <tr>
-            <th>Seleccionar</th>
+            <th>
+              <input type="checkbox" @change="toggleSelectAll($event)" />
+            </th>
             <th>Nombre</th>
             <th>Unidad</th>
             <th>Exi. Moral</th>
@@ -169,6 +171,13 @@ export default {
     isChecked(ingredientId) {
       // Simply checks if the ingredient ID is in the array
       return this.checkedIngredients.includes(ingredientId);
+    },
+    toggleSelectAll(event) {
+      if (event.target.checked) {
+        this.checkedIngredients = this.filteredIngredients.map(ingredient => ingredient.id_ingrediente);
+      } else {
+        this.checkedIngredients = [];
+      }
     },
     toggleCheck(ingredientId) {
       const index = this.checkedIngredients.indexOf(ingredientId);
