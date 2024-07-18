@@ -4,6 +4,8 @@ const API_URL =
     ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
     : "http://localhost:3000/api";
 import { useRouter } from "vue-router";
+import * as XLSX from 'xlsx'; // Import XLSX
+
 const router = useRouter();
 const handleClickPlatillo = (idPlatillo) => {
   router.push(`/platillo/${idPlatillo}`);
@@ -14,11 +16,11 @@ const handleClickPlatillo = (idPlatillo) => {
   <div>
     <h1>Platillos</h1>
     <input v-model="searchTerm" placeholder="Search" />
+    <button @click="exportToExcel">Export to Excel</button>
     <table>
       <thead>
         <tr>
           <th>Nombre</th>
-          <!-- <th>Cantidad vendida/semana</th> -->
           <th>Clave soft pos</th>
         </tr>
       </thead>
@@ -27,11 +29,8 @@ const handleClickPlatillo = (idPlatillo) => {
           <td @click="handleClickPlatillo(platillo.id_platillo)">
             {{ platillo.nombre }}
           </td>
-          <!-- <td @click="handleClickPlatillo(platillo.id_platillo)">
-            {{ platillo.unidades_vendidas }}
-          </td> -->
           <td>
-            <div className="editClaveRow" v-if="editIndexClavePos !== index">
+            <div class="editClaveRow" v-if="editIndexClavePos !== index">
               {{ platillo.clavepos }}
               <button @click="editIndexClavePos = index">Editar</button>
             </div>
@@ -52,6 +51,8 @@ const handleClickPlatillo = (idPlatillo) => {
 </template>
 
 <script>
+import * as XLSX from 'xlsx'; // Import XLSX
+
 export default {
   name: "Platillos",
   data() {
@@ -110,6 +111,16 @@ export default {
       this.platillos.push(this.nuevoPlatillo);
       this.nuevoPlatillo = {};
       location.reload();
+    },
+    exportToExcel() {
+      const data = this.filteredPlatillos.map(platillo => ({
+        Nombre: platillo.nombre,
+        'Clave soft pos': platillo.clavepos
+      }));
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Platillos');
+      XLSX.writeFile(wb, 'platillos.xlsx');
     },
   },
   computed: {
