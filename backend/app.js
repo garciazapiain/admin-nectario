@@ -35,10 +35,21 @@ app.get('/api/platillos', async (req, res) => {
 });
 
 app.post('/api/platillos', async (req, res) => {
-  const { nombre } = req.body;
+  const { nombre, clavepos } = req.body;
   const client = await pool.connect();
   try {
-    const result = await client.query('INSERT INTO platillos (id_platillo, nombre) VALUES ((SELECT COALESCE(MAX(id_platillo), 0) + 1 FROM platillos), $1) RETURNING *', [nombre]);
+    let result;
+    if (clavepos !== undefined) {
+      result = await client.query(
+        'INSERT INTO platillos (id_platillo, nombre, clavepos) VALUES ((SELECT COALESCE(MAX(id_platillo), 0) + 1 FROM platillos), $1, $2) RETURNING *',
+        [nombre, clavepos]
+      );
+    } else {
+      result = await client.query(
+        'INSERT INTO platillos (id_platillo, nombre) VALUES ((SELECT COALESCE(MAX(id_platillo), 0) + 1 FROM platillos), $1) RETURNING *',
+        [nombre]
+      );
+    }
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
@@ -47,6 +58,7 @@ app.post('/api/platillos', async (req, res) => {
     client.release();
   }
 });
+
 
 app.put('/api/platillos/:id/cambiarnombre', async (req, res) => {
   const { nombre } = req.body;

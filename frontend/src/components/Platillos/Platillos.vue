@@ -17,6 +17,7 @@ const handleClickPlatillo = (idPlatillo) => {
     <h1>Platillos</h1>
     <input v-model="searchTerm" placeholder="Search" />
     <button @click="exportToExcel">Export to Excel</button>
+    <input type="file" @change="importFromExcel" />
     <table>
       <thead>
         <tr>
@@ -122,6 +123,54 @@ export default {
       XLSX.utils.book_append_sheet(wb, ws, 'Platillos');
       XLSX.writeFile(wb, 'platillos.xlsx');
     },
+    async importFromExcel(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        // Filter out entries with null, undefined, or empty nombre
+        const validPlatillos = jsonData
+          .map(row => ({
+            nombre: row['Nombre'],
+            clavepos: row['Clave soft pos']
+          }))
+          .filter(platillo => platillo.nombre && platillo.nombre.trim() !== "");
+
+        // Update the database with the imported data
+        for (const platillo of validPlatillos) {
+          await this.agregarPlatilloToDB(platillo);
+        }
+
+        // Update the local state
+        this.platillos = validPlatillos;
+        location.reload();
+      };
+      reader.readAsArrayBuffer(file);
+    },
+    async agregarPlatilloToDB(platillo) {
+      console.log(platillo, 'hello');
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
+      const response = await fetch(`${API_URL}/platillos`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(platillo),
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    }
   },
   computed: {
     filteredPlatillos() {
