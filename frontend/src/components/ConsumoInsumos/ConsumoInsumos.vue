@@ -1,10 +1,16 @@
 <template>
   <div>
     <h1>Consumo de insumos</h1>
-    <input type="date" v-model="startDate" />
-    <input type="date" v-model="endDate" />
+    <input type="date" v-model="startDate" :max="today" />
+    <input type="date" v-model="endDate" :max="today" />
     <button @click="fetchConsumptionData">Obtener data</button>
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+    <div>
+      <h2>Seleccionar por semana</h2>
+      <select v-model="selectedWeek" @change="updateDateRange">
+        <option v-for="week in weeks" :key="week.value" :value="week.value">{{ week.label }}</option>
+      </select>
+    </div>
     <table>
       <thead>
         <tr>
@@ -53,6 +59,9 @@ export default {
       endDate: null,
       consumptionData: [],
       errorMessage: null,
+      today: new Date().toISOString().split('T')[0],
+      selectedWeek: null,
+      weeks: []
     };
   },
   computed: {
@@ -64,6 +73,35 @@ export default {
     },
   },
   methods: {
+    generateWeeks() {
+      const weeks = [];
+      const startDate = new Date(new Date().getFullYear(), 0, 1);
+      while (startDate.getDay() !== 1) {
+        startDate.setDate(startDate.getDate() + 1);
+      }
+      const endDate = new Date(this.today);
+      while (startDate <= endDate) {
+        const weekStart = new Date(startDate);
+        const weekEnd = new Date(startDate);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+        if (weekEnd > endDate) {
+          weekEnd.setDate(endDate.getDate());
+        }
+        weeks.push({
+          value: `${weekStart.toISOString().split('T')[0]}_${weekEnd.toISOString().split('T')[0]}`,
+          label: `${weekStart.getDate()} al ${weekEnd.getDate()} de ${weekStart.toLocaleString('es-ES', { month: 'long' })}`
+        });
+        startDate.setDate(startDate.getDate() + 7);
+      }
+      this.weeks = weeks.reverse();
+    },
+    updateDateRange() {
+      if (this.selectedWeek) {
+        const [start, end] = this.selectedWeek.split('_');
+        this.startDate = start;
+        this.endDate = end;
+      }
+    },
     exportToExcel() {
       const ws = XLSX.utils.json_to_sheet(this.filteredConsumptionData);
       const wb = XLSX.utils.book_new();
@@ -138,13 +176,18 @@ export default {
       }
     },
   },
+  mounted() {
+    this.generateWeeks();
+  }
 };
 </script>
+
 
 <style scoped>
 .button-container {
   display: flex;
-  gap: 10px; /* Adjust the gap as needed */
+  gap: 10px;
+  /* Adjust the gap as needed */
 }
 
 button {
