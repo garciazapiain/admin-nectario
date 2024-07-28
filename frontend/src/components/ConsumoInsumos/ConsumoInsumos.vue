@@ -12,7 +12,7 @@
           <th>Unidad</th>
           <th>Proveedor</th>
           <th>Consumido (Moral)</th>
-          <th>Constumido (Bosques)</th>
+          <th>Consumido (Bosques)</th>
           <th>Total consumido</th>
           <th>Precio / unidad</th>
           <th>$ Total</th>
@@ -31,10 +31,12 @@
         </tr>
       </tbody>
     </table>
-    <button @click="exportToExcel" v-if="filteredConsumptionData.length > 0">Export to Excel</button>
-    <router-link :to="cargarVentasRoute">
-      <button>Cargar ventas</button>
-    </router-link>
+    <div class="button-container">
+      <button @click="exportToExcel" v-if="filteredConsumptionData.length > 0">Export to Excel</button>
+      <router-link :to="cargarVentasRoute">
+        <button>Cargar ventas</button>
+      </router-link>
+    </div>
   </div>
 </template>
 
@@ -59,7 +61,6 @@ export default {
     },
     filteredConsumptionData() {
       return this.consumptionData.sort((a, b) => b.total_consumido_dinero - a.total_consumido_dinero);
-      // return this.consumptionData.filter((item) => item.producto_clave);
     },
   },
   methods: {
@@ -101,28 +102,33 @@ export default {
           console.error("Fetch error:", error);
         }
       }
+
       const combinedData = [];
-      for (const ingredient of Object.values(results.moral)) {
-        const sameIngredientInBosques = results.bosques.find(
-          (i) => i.id_ingrediente === ingredient.id_ingrediente
-        );
-        const total_consumido_moral = parseFloat(ingredient.total_consumido);
-        const total_consumido_bosques = sameIngredientInBosques
-          ? parseFloat(sameIngredientInBosques.total_consumido)
-          : 0;
-        const total_consumido_total = total_consumido_moral + total_consumido_bosques;
-        combinedData.push({
-          nombre: ingredient.nombre,
-          precio: ingredient.precio,
-          unidad: ingredient.unidad,
-          proveedor: ingredient.proveedor,
-          producto_clave: ingredient.producto_clave,
-          total_consumido_moral: total_consumido_moral,
-          total_consumido_bosques: total_consumido_bosques,
-          total_consumido_total: total_consumido_total,
-          total_consumido_dinero: total_consumido_total * ingredient.precio,
-        });
+      if (results.moral && results.bosques) {
+        for (const ingredient of results.moral) {
+          const sameIngredientInBosques = results.bosques.find(
+            (i) => i.id_ingrediente === ingredient.id_ingrediente
+          );
+          const total_consumido_moral = parseFloat(ingredient.total_consumido);
+          const total_consumido_bosques = sameIngredientInBosques
+            ? parseFloat(sameIngredientInBosques.total_consumido)
+            : 0;
+          const total_consumido_total = total_consumido_moral + total_consumido_bosques;
+          combinedData.push({
+            id_ingrediente: ingredient.id_ingrediente,
+            nombre: ingredient.nombre,
+            precio: ingredient.precio,
+            unidad: ingredient.unidad,
+            proveedor: ingredient.proveedor,
+            producto_clave: ingredient.producto_clave,
+            total_consumido_moral: total_consumido_moral,
+            total_consumido_bosques: total_consumido_bosques,
+            total_consumido_total: total_consumido_total,
+            total_consumido_dinero: total_consumido_total * ingredient.precio,
+          });
+        }
       }
+
       this.consumptionData = combinedData;
       if (this.consumptionData.length === 0) {
         this.errorMessage = "No se encontró data en esas fechas.";
@@ -135,4 +141,22 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.button-container {
+  display: flex;
+  gap: 10px; /* Adjust the gap as needed */
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+</style>
