@@ -87,9 +87,15 @@ export default {
         if (weekEnd > endDate) {
           weekEnd.setDate(endDate.getDate());
         }
+        let label;
+        if (weekStart.getMonth() !== weekEnd.getMonth()) {
+          label = `${weekStart.getDate()} de ${weekStart.toLocaleString('es-ES', { month: 'long' })} al ${weekEnd.getDate()} de ${weekEnd.toLocaleString('es-ES', { month: 'long' })}`;
+        } else {
+          label = `${weekStart.getDate()} al ${weekEnd.getDate()} de ${weekStart.toLocaleString('es-ES', { month: 'long' })}`;
+        }
         weeks.push({
           value: `${weekStart.toISOString().split('T')[0]}_${weekEnd.toISOString().split('T')[0]}`,
-          label: `${weekStart.getDate()} al ${weekEnd.getDate()} de ${weekStart.toLocaleString('es-ES', { month: 'long' })}`
+          label: label
         });
         startDate.setDate(startDate.getDate() + 7);
       }
