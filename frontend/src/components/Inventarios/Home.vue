@@ -14,7 +14,7 @@ const handleClickBosques = () => {
 
 <template>
   <div>
-    <h1>Inventarios</h1>
+    <h1>Lista Peligro</h1>
     <div class="flex flex-wrap">
       <button class="button" @click="handleClickMoral">Moral</button>
       <button class="button" @click="handleClickBosques">Campestre</button>
