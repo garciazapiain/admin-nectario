@@ -4,17 +4,17 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 const handleClickMoral = () => {
-  router.push("/inventarios/moral");
+  router.push("/pedidos/moral");
 };
 
 const handleClickBosques = () => {
-  router.push("/inventarios/bosques");
+  router.push("/pedidos/bosques");
 };
 </script>
 
 <template>
   <div>
-    <h1>Inventarios</h1>
+    <h1>Pedidos</h1>
     <div class="flex flex-wrap">
       <button class="button" @click="handleClickMoral">Moral</button>
       <button class="button" @click="handleClickBosques">Campestre</button>

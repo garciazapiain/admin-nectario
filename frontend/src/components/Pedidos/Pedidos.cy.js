@@ -1,4 +1,4 @@
-import TomaInventario from './TomaInventario.vue'
+import TomaInventario from './Pedidos.vue'
 
 describe('<TomaInventario />', () => {
   beforeEach(() => {
@@ -18,7 +18,7 @@ describe('<TomaInventario />', () => {
   })
 
   it('renders the component', () => {
-    cy.get('h1').should('contain', 'Toma Inventario')
+    cy.get('h1').should('contain', 'Pedidos ')
   })
 
   it('filters ingredients based on search term', () => {
