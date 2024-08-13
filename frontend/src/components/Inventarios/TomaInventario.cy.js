@@ -18,7 +18,7 @@ describe('<TomaInventario />', () => {
   })
 
   it('renders the component', () => {
-    cy.get('h1').should('contain', 'Toma Inventario')
+    cy.get('h1').should('contain', 'Lista Peligro')
   })
 
   it('filters ingredients based on search term', () => {
