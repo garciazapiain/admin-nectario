@@ -24,7 +24,7 @@ const isPathNotEqual = (...paths) => {
       <div class="buttonWrapper">
         <button
           class="main-page-button"
-          @click="go/Page"
+          @click=goToMainPage
           v-show="isPathNotEqual('/', '/login')"
         >
           Página principal
