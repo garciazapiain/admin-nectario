@@ -8,7 +8,8 @@
     <div>
       <h2>Seleccionar por semana</h2>
       <select v-model="selectedWeek" @change="updateDateRange">
-        <option v-for="week in weeks" :key="week.value" :value="week.value">{{ week.label }}</option>
+        <option v-for="week in weeks" :key="week.value" :value="week.value" :disabled="week.disabled">{{ week.label }}
+        </option>
       </select>
     </div>
     <table>
@@ -80,25 +81,35 @@ export default {
         startDate.setDate(startDate.getDate() + 1);
       }
       const endDate = new Date(this.today);
+
       while (startDate <= endDate) {
         const weekStart = new Date(startDate);
         const weekEnd = new Date(startDate);
         weekEnd.setDate(weekEnd.getDate() + 6);
+
+        // If the week ends after today, adjust it to end on today
+        let isIncompleteWeek = false;
         if (weekEnd > endDate) {
           weekEnd.setDate(endDate.getDate());
+          isIncompleteWeek = true;
         }
+
         let label;
         if (weekStart.getMonth() !== weekEnd.getMonth()) {
           label = `${weekStart.getDate()} de ${weekStart.toLocaleString('es-ES', { month: 'long' })} al ${weekEnd.getDate()} de ${weekEnd.toLocaleString('es-ES', { month: 'long' })}`;
         } else {
           label = `${weekStart.getDate()} al ${weekEnd.getDate()} de ${weekStart.toLocaleString('es-ES', { month: 'long' })}`;
         }
+
         weeks.push({
           value: `${weekStart.toISOString().split('T')[0]}_${weekEnd.toISOString().split('T')[0]}`,
-          label: label
+          label: label,
+          disabled: isIncompleteWeek // Mark this week as disabled if it's incomplete
         });
+
         startDate.setDate(startDate.getDate() + 7);
       }
+
       this.weeks = weeks.reverse();
     },
     updateDateRange() {
