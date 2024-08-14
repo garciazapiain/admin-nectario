@@ -1,12 +1,12 @@
-import TomaInventario from './TomaInventario.vue'
+import ListaPeligro from './ListaPeligro.vue'
 
-describe('<TomaInventario />', () => {
+describe('<ListaPeligro />', () => {
   beforeEach(() => {
     cy.intercept('GET', '/api/ingredientes', { fixture: 'ingredientes.json' }).as('getIngredientes');
     cy.intercept('GET', '/api/submissions/all-submissions', { fixture: 'submissions.json' }).as('getSubmissions');
     cy.intercept('GET', '/api/proveedores', { fixture: 'proveedores.json' }).as('getProveedores');
 
-    cy.mount(TomaInventario, {
+    cy.mount(ListaPeligro, {
       props: {
         store: 'moral'
       }

@@ -125,7 +125,7 @@ const handleClickIngrediente = (idIngrediente) => {
 
 <script>
 export default {
-  name: "TomaInventario",
+  name: "ListaPeligro",
   props: ["store"],
   data() {
     return {

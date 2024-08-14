@@ -7,8 +7,8 @@ import Subplatillos from './components/Subplatillos/Subplatillos.vue';
 import Subplatillo from './components/Subplatillos/Subplatillo.vue';
 import Ingredientes from './components/Ingredientes/Ingredientes.vue';
 import Ingrediente from './components/Ingredientes/Ingrediente.vue';
-import Inventarios from './components/Inventarios/Home.vue';
-import TomaInventario from './components/Inventarios/TomaInventario.vue';
+import ListaPeligroHome from './components/ListaPeligro/Home.vue';
+import ListaPeligro from './components/ListaPeligro/ListaPeligro.vue';
 import ResumenExistencias from './components/Existencias/ResumenExistencias.vue';
 import Compra from './components/Compra/Compra.vue';
 import PronosticoDemandaInsumos from './components/PronosticoDemandaInsumos/PronosticoDemandaInsumos.vue';
@@ -30,8 +30,8 @@ export default [
     { path: '/subplatillo/:id', component: Subplatillo },
     { path: '/ingredientes', component: Ingredientes },
     { path: '/ingrediente/:id', component: Ingrediente },
-    { path: '/inventarios', component: Inventarios },
-    { path: '/inventarios/:store', component: TomaInventario, props: true },
+    { path: '/listapeligro', component: ListaPeligroHome },
+    { path: '/listapeligro/:store', component: ListaPeligro, props: true },
     { path: '/existenciasresumen', component: ResumenExistencias },
     { path: '/compra', component: Compra },
     { path: '/pronosticodemandainsumos', component: PronosticoDemandaInsumos },

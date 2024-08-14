@@ -4,11 +4,11 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 const handleClickMoral = () => {
-  router.push("/inventarios/moral");
+  router.push("/listapeligro/moral");
 };
 
 const handleClickBosques = () => {
-  router.push("/inventarios/bosques");
+  router.push("/listapeligro/bosques");
 };
 </script>
 
