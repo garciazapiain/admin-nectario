@@ -298,8 +298,11 @@ export default {
             }
         },
         getTotalConsumidoTeorico(id_ingrediente) {
+            if (!this.consumptionData || this.consumptionData.length === 0) {
+                return 0; // Return 0 or a default value if consumptionData is empty or undefined
+            }
             const match = this.consumptionData.find(item => item.id_ingrediente === id_ingrediente);
-            return match ? match.total_consumido_total : 0;
+            return match && typeof match.total_consumido_total === 'number' ? match.total_consumido_total : 0; // Return 0 if no match is found or if total_consumido_total is not a valid number
         },
         // Calculate the percentage difference and apply green/red coloring
         calculatePercentageDifference(id_ingrediente) {
