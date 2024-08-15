@@ -1,10 +1,10 @@
 <template>
   <div>
-    <h1>Historial de Compra</h1>
+    <h1>Registro de Compras</h1>
     <!-- <button @click="scrollToInput">Scroll to Input File Section</button> -->
     <table v-if="purchaseOrders.length">
       <tr>
-        <th># Ticket</th>
+        <th>id</th>
         <th>Fecha</th>
         <th>Proveedor</th>
         <th>Total Importe</th>
@@ -13,7 +13,7 @@
       <tr v-for="order in purchaseOrders" :key="order.id">
         <td>
           <router-link :to="`${$route.path}/compra/${order.id}`">{{
-            order.folio
+            order.id
           }}</router-link>
         </td>
         <td>{{ order.fecha }}</td>
@@ -83,6 +83,9 @@
     <p class="error-message">{{ errorMessageSubmit }}</p>
     <router-link to="/historialcompra/insumos">
       <button>Vista por Insumo</button>
+    </router-link>
+    <router-link to="/historialcompra/registrar-compra-manualmente">
+      <button>Agregar compra manualmente</button>
     </router-link>
   </div>
 </template>

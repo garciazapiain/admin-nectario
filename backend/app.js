@@ -892,6 +892,36 @@ app.post('/api/purchase_orders', async (req, res) => {
   }
 });
 
+app.get('/api/purchase_orders/analisis-consumo', async (req, res) => {
+  const { startDate, endDate } = req.query;
+
+  if (!startDate || !endDate) {
+    return res.status(400).json({ error: 'Start date and end date are required' });
+  }
+
+  const client = await pool.connect();
+  try {
+    // Query to filter purchase orders by date range and join with purchase_history_items
+    const result = await client.query(`
+      SELECT 
+        ph.id_ingrediente, 
+        SUM(ph.quantity) AS total_quantity
+      FROM purchase_orders po
+      JOIN purchase_history_items ph ON po.id = ph.purchase_order_id
+      WHERE po.fecha >= $1 AND po.fecha <= $2
+      GROUP BY ph.id_ingrediente
+    `, [startDate, endDate]);
+
+    // Send the aggregated result rows as the response
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while fetching data from the database' });
+  } finally {
+    client.release();
+  }
+});
+
 app.get('/api/historial_insumos', async (req, res) => {
   const client = await pool.connect();
   try {

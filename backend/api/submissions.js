@@ -3,13 +3,18 @@ const { connectDb } = require('./db');
 const router = express.Router();
 
 router.post('/new-submission', async (req, res, next) => {
-  const { store, timestamp, ingredients } = req.body;
+  const { store, timestamp, ingredients, selectedInventarioOption } = req.body;
   const client = await connectDb();
   try {
     const compra = JSON.stringify(ingredients);
 
-    const result = await client.query('INSERT INTO submissions (store, timestamp, compra) VALUES ($1, $2, $3) RETURNING *', [store, timestamp, compra]);
+    // Insert the submission into the submissions table
+    const result = await client.query(
+      'INSERT INTO submissions (store, timestamp, compra) VALUES ($1, $2, $3) RETURNING *',
+      [store, timestamp, compra]
+    );
 
+    // Clean up old submissions to keep only the latest for the same store and day
     await client.query(`
       WITH ranked_submissions AS (
         SELECT id, ROW_NUMBER() OVER(PARTITION BY DATE(timestamp) ORDER BY timestamp DESC) as rn
@@ -19,6 +24,24 @@ router.post('/new-submission', async (req, res, next) => {
       DELETE FROM submissions
       WHERE id IN (SELECT id FROM ranked_submissions WHERE rn > 1)
     `, [store, timestamp]);
+
+    // If selectedInventarioOption is not null, process and insert into submissionInventario
+    if (selectedInventarioOption) {
+      // Summarize inventory data for both stores
+      const summarizedInventario = ingredients.map(ingrediente => ({
+        id_ingrediente: ingrediente.id_ingrediente,
+        cantidad: ingrediente.cantidad_inventario // Assuming this is the quantity for the current store
+      }));
+
+      // Convert summarizedInventario to JSON
+      const inventarioJson = JSON.stringify(summarizedInventario);
+
+      // Insert into submissionInventario
+      await client.query(
+        'INSERT INTO submission_inventario (tipo_inventario, timestamp, inventario, store) VALUES ($1, $2, $3, $4)',
+        [selectedInventarioOption, timestamp, inventarioJson, store]
+      );
+    }
 
     res.json(result.rows[0]);
   } catch (err) {
@@ -32,6 +55,18 @@ router.get('/all-submissions', async (req, res, next) => {
   const client = await connectDb();
   try {
     const result = await client.query('SELECT * FROM submissions');
+    res.json(result.rows);
+  } catch (err) {
+    next(err);
+  } finally {
+    client.release();
+  }
+});
+
+router.get('/inventario-submissions', async (req, res, next) => {
+  const client = await connectDb();
+  try {
+    const result = await client.query('SELECT * FROM submission_inventario');
     res.json(result.rows);
   } catch (err) {
     next(err);

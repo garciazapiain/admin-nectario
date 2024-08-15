@@ -32,7 +32,10 @@ onMounted(() => {
       Historial Compras
     </button>
     <button class="button" v-if="isAdmin" @click="() => navigateTo('/consumoinsumos')">
-      Consumo Insumos
+      Consumo Teórico Insumos
+    </button>
+    <button class="button" v-if="isAdmin" @click="() => navigateTo('/analisis-consumo')">
+      Análisis de Consumo
     </button>
     <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/inventarios')">
       Inventarios

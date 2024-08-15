@@ -19,7 +19,7 @@
         <span class="timestamp">{{ lastUpdate() }}</span>
       </p>
     </div>
-    <div v-if="isAdmin" class="filtros-container">
+    <!-- <div v-if="isAdmin" class="filtros-container">
       <h2>Filtros:</h2>
       <label for="insumos">Tipo Insumos:</label>
       <select class="filterBar" id="insumos" v-model="selectedInsumosTipo">
@@ -41,8 +41,15 @@
         <option value="inicio_segundo_turno">Inicio segundo turno</option>
         <option value="fin_segundo_turno">Fin segundo turno</option>
       </select>
-    </div>
+    </div> -->
     <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="search-bar" />
+    <div v-if="isAdmin" class="inventario-options">
+      <label v-for="option in inventarioOptions" :key="option.value" class="inventario-label">
+        <input type="radio" :value="option.value" :checked="selectedInventarioOption === option.value"
+          @click="toggleSelection(option.value)" />
+        {{ option.label }}
+      </label>
+    </div>
     <!-- ... -->
     <div class="table-container">
       <table>
@@ -144,6 +151,11 @@ export default {
       selectedProveedor: "",
       selectedInsumos: "Todos",
       sucural: "",
+      selectedInventarioOption: null,
+      inventarioOptions: [
+        { label: "Inventario Inicial", value: "inicial" },
+        { label: "Inventario Final", value: "final" }
+      ],
     };
   },
   created() {
@@ -254,6 +266,15 @@ export default {
     },
   },
   methods: {
+    toggleSelection(value) {
+      // If the selected value is clicked again, set it to null (deselect)
+      if (this.selectedInventarioOption === value) {
+        this.selectedInventarioOption = null;
+      } else {
+        // Otherwise, set it to the selected value
+        this.selectedInventarioOption = value;
+      }
+    },
     sendWhatsAppMessage() {
       const phoneNumber = '+420774187964'; // The phone number you want to send the message to
 
@@ -448,6 +469,7 @@ export default {
         store: this.store,
         timestamp: formattedDate, // Add timestamp to dataToSubmit
         ingredients: this.submitData,
+        selectedInventarioOption: this.selectedInventarioOption
       };
       fetch(`${API_URL}/submissions/new-submission`, {
         method: "POST",
@@ -771,5 +793,20 @@ input {
   right: 10px;
   z-index: 1000;
   cursor: pointer;
+}
+
+.inventario-options {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.inventario-label {
+  margin-right: 15px;
+  font-size: 16px;
+}
+
+.inventario-label input {
+  margin-right: 5px;
 }
 </style>

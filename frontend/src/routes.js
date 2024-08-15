@@ -21,6 +21,8 @@ import CargarVenta from './components/ConsumoInsumos/CargarVentas.vue';
 import Facturacion from './components/Facturacion/Facturacion.vue';
 import TomaInventario from './components/Inventarios/TomaInventario.vue';
 import InventariosHome from './components/Inventarios/Home.vue';
+import AnalisisConsumo from './components/AnalisisConsumo/AnalisisConsumo.vue';
+import AgregarCompra from './components/HistorialCompra/AgregarCompra.vue';
 
 export default [
     { path: '/', component: Home },
@@ -43,7 +45,9 @@ export default [
     { path: '/historialcompra/insumos', component: InsumosHistorial },
     { path: '/historialcompra/insumos/:id', component: InsumoAnalisis },
     { path: '/historialcompra/compra/:id', component: CompraAnalisis },
+    { path: '/historialcompra/registrar-compra-manualmente', component: AgregarCompra },
     { path: '/consumoinsumos', component: ConsumoInsumos },
     { path: '/consumoinsumos/cargarventa', component: CargarVenta },
-    { path: '/facturacion', component: Facturacion }
+    { path: '/facturacion', component: Facturacion },
+    { path: '/analisis-consumo', component: AnalisisConsumo }
 ];
