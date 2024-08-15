@@ -92,18 +92,12 @@ export default {
             while (startDate.getDay() !== 1) {
                 startDate.setDate(startDate.getDate() + 1);
             }
-            const endDate = new Date(this.today);
+            const today = new Date(this.today);
 
-            while (startDate <= endDate) {
+            while (startDate <= today) {
                 const weekStart = new Date(startDate);
                 const weekEnd = new Date(startDate);
                 weekEnd.setDate(weekEnd.getDate() + 6);
-
-                let isIncompleteWeek = false;
-                if (weekEnd > endDate) {
-                    weekEnd.setDate(endDate.getDate());
-                    isIncompleteWeek = true;
-                }
 
                 let label;
                 if (weekStart.getMonth() !== weekEnd.getMonth()) {
@@ -115,7 +109,7 @@ export default {
                 weeks.push({
                     value: `${weekStart.toISOString().split('T')[0]}_${weekEnd.toISOString().split('T')[0]}`,
                     label: label,
-                    disabled: isIncompleteWeek, // Mark this week as disabled if it's incomplete
+                    disabled: false // Ensure all weeks are selectable
                 });
 
                 startDate.setDate(startDate.getDate() + 7);
