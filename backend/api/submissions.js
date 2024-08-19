@@ -36,10 +36,22 @@ router.post('/new-submission', async (req, res, next) => {
       // Calculate timestamp for final inventory as one day earlier
       const finalTimestamp = new Date(new Date(timestamp).getTime() - (24 * 60 * 60 * 1000)).toISOString();
 
+      // Delete existing final inventory record for that date
+      await client.query(
+        'DELETE FROM submission_inventario WHERE store = $1 AND DATE(timestamp) = DATE($2) AND tipo_inventario = $3',
+        [store, finalTimestamp, 'final']
+      );
+
       // Insert final inventory with the adjusted timestamp
       await client.query(
         'INSERT INTO submission_inventario (tipo_inventario, timestamp, inventario, store) VALUES ($1, $2, $3, $4)',
         ['final', finalTimestamp, inventarioJson, store]
+      );
+
+      // Delete existing initial inventory record for that date
+      await client.query(
+        'DELETE FROM submission_inventario WHERE store = $1 AND DATE(timestamp) = DATE($2) AND tipo_inventario = $3',
+        [store, timestamp, 'inicial']
       );
 
       // Insert initial inventory for the next period with the original timestamp
@@ -56,7 +68,6 @@ router.post('/new-submission', async (req, res, next) => {
     client.release();
   }
 });
-
 
 router.get('/all-submissions', async (req, res, next) => {
   const client = await connectDb();
