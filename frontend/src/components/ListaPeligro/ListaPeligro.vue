@@ -43,11 +43,10 @@
       </select>
     </div> -->
     <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="search-bar" />
-    <div v-if="isAdmin" class="inventario-options">
-      <label v-for="option in inventarioOptions" :key="option.value" class="inventario-label">
-        <input type="radio" :value="option.value" :checked="selectedInventarioOption === option.value"
-          @click="toggleSelection(option.value)" />
-        {{ option.label }}
+    <div class="checkbox-container" v-if="isAdmin">
+      <input type="checkbox" id="inventarioCheckbox" v-model="selectedInventarioOption" class="checkbox-input" />
+      <label for="inventarioCheckbox" class="checkbox-label">
+        <span class="checkbox-custom"></span> Inventario semanal
       </label>
     </div>
     <!-- ... -->
@@ -451,15 +450,15 @@ export default {
           console.error(err);
         });
     },
-    submitForm() {
+    async submitForm() {
       const date = new Date();
       const year = date.getUTCFullYear();
-      const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Months are 0-based in JavaScript
+      const month = String(date.getUTCMonth() + 1).padStart(2, "0");
       const day = String(date.getUTCDate()).padStart(2, "0");
       const hours = String(date.getUTCHours()).padStart(2, "0");
       const minutes = String(date.getUTCMinutes()).padStart(2, "0");
 
-      const timestamp = `${year}-${month}-${day}T${hours}:${minutes}:00.000Z`; // YYYY-MM-DDTHH:mm:ss.sssZ
+      const timestamp = `${year}-${month}-${day}T${hours}:${minutes}:00.000Z`;
       const dateInTimeZone = moment(timestamp)
         .tz("America/Mexico_City")
         .locale("es");
@@ -467,38 +466,34 @@ export default {
 
       const dataToSubmit = {
         store: this.store,
-        timestamp: formattedDate, // Add timestamp to dataToSubmit
+        timestamp: formattedDate,
         ingredients: this.submitData,
-        selectedInventarioOption: this.selectedInventarioOption
+        selectedInventarioOption: this.selectedInventarioOption,  // This will determine if the checkbox was checked
       };
-      fetch(`${API_URL}/submissions/new-submission`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToSubmit),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          this.submitMessage = {
-            type: "success-message",
-            text: "Actualización exitosa",
-          };
-          // Make successMessage disappear after 5 seconds
-          setTimeout(() => {
-            this.submitMessage = null;
-          }, 5000);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          this.submitMessage = {
-            type: "error-message",
-            text: "Error al actualizar",
-          };
-          setTimeout(() => {
-            this.submitMessage = null;
-          }, 5000);
+
+      try {
+        // Submit the selected inventory option
+        const response = await fetch(`${API_URL}/submissions/new-submission`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataToSubmit),
         });
+        const result = await response.json();
+        this.submitMessage = {
+          type: "success-message",
+          text: "Inventario actualizado con éxito",
+        };
+
+        console.log(result);
+      } catch (error) {
+        console.error("Error:", error);
+        this.submitMessage = {
+          type: "error-message",
+          text: "Error al actualizar el inventario",
+        };
+      }
       this.verifyChangeIngredientCount();
     },
     lastUpdate() {
@@ -808,5 +803,48 @@ input {
 
 .inventario-label input {
   margin-right: 5px;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-input {
+  display: none;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-custom {
+  width: 20px;
+  height: 20px;
+  background-color: #ccc;
+  border-radius: 4px;
+  margin-right: 8px;
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+
+.checkbox-input:checked+.checkbox-label .checkbox-custom {
+  background-color: #007bff;
+}
+
+.checkbox-input:checked+.checkbox-label .checkbox-custom::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 5px;
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 </style>

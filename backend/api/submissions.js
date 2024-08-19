@@ -25,21 +25,27 @@ router.post('/new-submission', async (req, res, next) => {
       WHERE id IN (SELECT id FROM ranked_submissions WHERE rn > 1)
     `, [store, timestamp]);
 
-    // If selectedInventarioOption is not null, process and insert into submissionInventario
+    // If selectedInventarioOption is true, handle both initial and final inventory
     if (selectedInventarioOption) {
-      // Summarize inventory data for both stores
       const summarizedInventario = ingredients.map(ingrediente => ({
         id_ingrediente: ingrediente.id_ingrediente,
-        cantidad: ingrediente.cantidad_inventario // Assuming this is the quantity for the current store
+        cantidad: ingrediente.cantidad_inventario
       }));
-
-      // Convert summarizedInventario to JSON
       const inventarioJson = JSON.stringify(summarizedInventario);
 
-      // Insert into submissionInventario
+      // Calculate timestamp for final inventory as one day earlier
+      const finalTimestamp = new Date(new Date(timestamp).getTime() - (24 * 60 * 60 * 1000)).toISOString();
+
+      // Insert final inventory with the adjusted timestamp
       await client.query(
         'INSERT INTO submission_inventario (tipo_inventario, timestamp, inventario, store) VALUES ($1, $2, $3, $4)',
-        [selectedInventarioOption, timestamp, inventarioJson, store]
+        ['final', finalTimestamp, inventarioJson, store]
+      );
+
+      // Insert initial inventory for the next period with the original timestamp
+      await client.query(
+        'INSERT INTO submission_inventario (tipo_inventario, timestamp, inventario, store) VALUES ($1, $2, $3, $4)',
+        ['inicial', timestamp, inventarioJson, store]
       );
     }
 
@@ -50,6 +56,7 @@ router.post('/new-submission', async (req, res, next) => {
     client.release();
   }
 });
+
 
 router.get('/all-submissions', async (req, res, next) => {
   const client = await connectDb();
