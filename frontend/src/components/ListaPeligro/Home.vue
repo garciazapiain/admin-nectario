@@ -1,5 +1,7 @@
 <script setup>
+import { ref } from "vue";
 import { useRouter } from "vue-router";
+const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 
 const router = useRouter();
 
@@ -10,6 +12,11 @@ const handleClickMoral = () => {
 const handleClickBosques = () => {
   router.push("/listapeligro/bosques");
 };
+
+const handleClickCedis = () => {
+  router.push("/listapeligro/cedis");
+};
+
 </script>
 
 <template>
@@ -18,6 +25,7 @@ const handleClickBosques = () => {
     <div class="flex flex-wrap">
       <button class="button" @click="handleClickMoral">Moral</button>
       <button class="button" @click="handleClickBosques">Campestre</button>
+      <button v-if="isAdmin" class="button" @click="handleClickCedis">CEDIS</button>
     </div>
   </div>
 </template>

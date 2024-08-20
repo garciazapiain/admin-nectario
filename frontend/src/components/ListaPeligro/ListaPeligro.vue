@@ -12,7 +12,7 @@
         <polyline points="19 12 12 19 5 12"></polyline>
       </svg>
     </div>
-    <h1>Lista Peligro - {{ store === "bosques" ? "Campestre" : "Moral" }}</h1>
+    <h1>Lista Peligro - {{ store === "bosques" ? "Campestre" : store === "moral" ? "Moral" : "CEDIS" }}</h1>
     <div class="update-info">
       <p class="update-text">
         Última actualización:
