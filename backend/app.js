@@ -336,6 +336,22 @@ app.put('/api/platillos/:idPlatillo/clavepos', async (req, res) => {
   }
 });
 
+app.put('/api/platillos/:id_platillo/precio', async (req, res) => {
+  const { id_platillo } = req.params;
+  const { precio_piso } = req.body;
+  const client = await pool.connect();
+  try {
+    await client.query('UPDATE platillos SET precio_piso = $1 WHERE id_platillo = $2', [precio_piso, id_platillo]);
+    res.json({ message: 'Precio updated successfully' });
+  } catch (error) {
+    console.error('Error updating precio:', error);
+    res.status(500).json({ error: 'Error updating precio' });
+  } finally {
+    client.release();
+  }
+});
+
+
 app.get('/api/subplatillos', async (req, res) => {
   const client = await pool.connect();
   try {

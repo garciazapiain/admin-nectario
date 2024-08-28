@@ -21,8 +21,11 @@ const handleClickPlatillo = (idPlatillo) => {
     <table>
       <thead>
         <tr>
-          <th>Nombre</th>
-          <th>Clave soft pos</th>
+          <th>Nombre platillo</th>
+          <th>Clave SoftRest POS</th>
+          <th>Costo total</th> <!-- New column for Costo Total -->
+          <th>Precio piso</th> <!-- New column for Costo Total -->
+          <th>% Costo</th>
         </tr>
       </thead>
       <tbody>
@@ -31,7 +34,7 @@ const handleClickPlatillo = (idPlatillo) => {
             {{ platillo.nombre }}
           </td>
           <td>
-            <div class="editClaveRow" v-if="editIndexClavePos !== index">
+            <div class="editRow" v-if="editIndexClavePos !== index">
               {{ platillo.clavepos }}
               <button @click="editIndexClavePos = index">Editar</button>
             </div>
@@ -41,9 +44,28 @@ const handleClickPlatillo = (idPlatillo) => {
               <button @click="editIndexClavePos = -1">Cancelar</button>
             </div>
           </td>
+          <td>${{ platillo.costoTotal.toFixed(2) }}</td> <!-- Display calculated Costo Total -->
+          <td>
+            <div class="editRow" v-if="editIndexPrecio !== index">
+              {{ platillo.precio_piso !== null ? `$${platillo.precio_piso.toFixed(2)}` : '' }}
+              <button @click="editIndexPrecio = index">Editar</button>
+            </div>
+            <div v-else>
+              <input type="number" min="0" v-model="editValuePrecio" />
+              <button @click="saveEditPrecio(platillo)">Guardar</button>
+              <button @click="editIndexPrecio = -1">Cancelar</button>
+            </div>
+          </td>
+          <td>
+            {{ platillo.precio_piso !== null ? `${((platillo.costoTotal / platillo.precio_piso) * 100).toFixed(0)}%` :
+              ''
+            }}
+          </td>
         </tr>
       </tbody>
     </table>
+
+    <!-- Add Platillo Form -->
     <form @submit.prevent="agregarPlatillo">
       <input v-model="nuevoPlatillo.nombre" placeholder="Nombre" required />
       <button type="submit">Agregar Platillo</button>
@@ -65,11 +87,12 @@ export default {
       searchTerm: "",
       editIndexClavePos: -1,
       editValueClavePos: "",
+      editIndexPrecio: -1,  // Add state for editing 'precio'
+      editValuePrecio: "",  // Add input value for editing 'precio'
     };
   },
   methods: {
     async saveEditClavePos(platillo) {
-      console.log(this.editValueClavePos); // Log new value
       platillo.clavepos = this.editValueClavePos; // Update value
 
       const API_URL =
@@ -94,6 +117,31 @@ export default {
 
       this.editIndexClavePos = -1; // Close edit mode
     },
+    async saveEditPrecio(platillo) {
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
+
+      platillo.precio_piso = parseFloat(this.editValuePrecio); // Update the value
+
+      const response = await fetch(
+        `${API_URL}/platillos/${platillo.id_platillo}/precio`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ precio_piso: platillo.precio_piso }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      this.editIndexPrecio = -1; // Close edit mode
+    },
     async agregarPlatillo() {
       const API_URL =
         process.env.NODE_ENV === "production"
@@ -116,7 +164,8 @@ export default {
     exportToExcel() {
       const data = this.filteredPlatillos.map(platillo => ({
         Nombre: platillo.nombre,
-        'Clave soft pos': platillo.clavepos
+        'Clave soft pos': platillo.clavepos,
+        'Costo Total': platillo.costoTotal.toFixed(2) // Add Costo Total to export data
       }));
       const ws = XLSX.utils.json_to_sheet(data);
       const wb = XLSX.utils.book_new();
@@ -153,7 +202,6 @@ export default {
       reader.readAsArrayBuffer(file);
     },
     async agregarPlatilloToDB(platillo) {
-      console.log(platillo, 'hello');
       const API_URL =
         process.env.NODE_ENV === "production"
           ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
@@ -170,7 +218,24 @@ export default {
         console.error(`HTTP error! status: ${response.status}, message: ${errorText}`);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-    }
+    },
+    calculateTotalCost(ingredients) {
+      let total = 0;
+      if (!Array.isArray(ingredients)) {
+        console.warn("Expected ingredients to be an array, but got:", ingredients);
+        return total; // Return 0 if not an array
+      }
+
+      ingredients.forEach((ingrediente) => {
+        const cantidad = ingrediente.is_subplatillo
+          ? (ingrediente.cantidad / ingrediente.rendimiento) *
+          (ingrediente.subplatillo_cantidad ? ingrediente.subplatillo_cantidad : 1)
+          : ingrediente.cantidad;
+
+        total += ingrediente.precio * cantidad; // Calculate the total cost
+      });
+      return total;
+    },
   },
   computed: {
     filteredPlatillos() {
@@ -198,21 +263,55 @@ export default {
       if (!Array.isArray(data)) {
         throw new Error("Data is not an array");
       }
-      this.platillos = data;
+
+      console.log("Platillos fetched:", data);
+
+      // Fetch ingredients for each platillo and calculate the total cost
+      for (const platillo of data) {
+        const ingredientsResponse = await fetch(`${API_URL}/platillo/${platillo.id_platillo}`);
+        if (ingredientsResponse.ok) {
+          try {
+            const ingredientsData = await ingredientsResponse.json();
+
+            if (ingredientsData && ingredientsData.ingredients && Array.isArray(ingredientsData.ingredients)) {
+              platillo.ingredientes = ingredientsData.ingredients; // Correctly use the 'ingredients' field
+              platillo.costoTotal = this.calculateTotalCost(platillo.ingredientes); // Calculate total cost
+            } else {
+              console.warn(`Expected ingredients data to be an array for platillo ID ${platillo.id_platillo}, but got:`, ingredientsData);
+              platillo.ingredientes = [];
+              platillo.costoTotal = 0;
+            }
+
+          } catch (error) {
+            console.error(`Failed to parse ingredients JSON for platillo ID ${platillo.id_platillo}:`, error);
+            platillo.ingredientes = [];
+            platillo.costoTotal = 0;
+          }
+        } else {
+          const errorText = await ingredientsResponse.text();
+          console.error(`Error fetching ingredients for platillo ID ${platillo.id_platillo}: ${errorText}`);
+          platillo.ingredientes = [];
+          platillo.costoTotal = 0;
+        }
+      }
+
+      this.platillos = data; // Set the updated platillos data
+
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching platillos:", error);
     }
-  },
+  }
 };
 </script>
 
 <style scoped>
-.editClaveRow {
+.editRow {
   display: flex;
   flex-direction: column;
   font-size: 1.5rem;
 }
-.editClaveRow button {
+
+.editRow button {
   margin-top: 5px;
   font-size: 0.8rem;
 }
