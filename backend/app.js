@@ -24,7 +24,7 @@ const pool = new Pool({
 
 app.use('/api/auth', authRoutes);
 app.use('/api/submissions', submissionRoutes);
-app.use('/api/retrieveinbox', retrieveInbox);
+// app.use('/api/retrieveinbox', retrieveInbox);
 
 app.get('/api/platillos', async (req, res) => {
   const client = await pool.connect();
