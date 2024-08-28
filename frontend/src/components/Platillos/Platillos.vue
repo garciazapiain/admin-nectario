@@ -217,11 +217,24 @@ export default {
       location.reload();
     },
     exportToExcel() {
-      const data = this.filteredPlatillos.map(platillo => ({
-        Nombre: platillo.nombre,
-        'Clave soft pos': platillo.clavepos,
-        'Precio': platillo.precio_piso
-      }));
+      const data = this.filteredPlatillos.map(platillo => {
+        let exportData = {
+          Nombre: platillo.nombre,
+          'Clave soft pos': platillo.clavepos,
+          'Precio': platillo.precio_piso
+        };
+
+        // Include Costo Total and % Costo only if showCosts is true
+        if (this.showCosts) {
+          exportData['Costo total'] = platillo.costoTotal ? platillo.costoTotal.toFixed(2) : '';
+          exportData['% Costo'] = platillo.precio_piso !== null && platillo.costoTotal
+            ? `${((platillo.costoTotal / platillo.precio_piso) * 100).toFixed(0)}%`
+            : '';
+        }
+
+        return exportData;
+      });
+
       const ws = XLSX.utils.json_to_sheet(data);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Platillos');

@@ -383,7 +383,6 @@ app.put('/api/platillos/:idPlatillo', async (req, res) => {
   }
 });
 
-
 app.put('/api/platillos/:id_platillo/precio', async (req, res) => {
   const { id_platillo } = req.params;
   const { precio_piso } = req.body;
