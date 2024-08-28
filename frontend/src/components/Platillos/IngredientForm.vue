@@ -9,6 +9,7 @@
       class="search-input"
     />
     <form @submit.prevent="addIngredient">
+      <button class="button" type="submit">AGREGAR INGREDIENTES</button>
       <table>
         <thead>
           <tr>
@@ -50,7 +51,6 @@
           </tr>
         </tbody>
       </table>
-      <button class="button" type="submit">AGREGAR INGREDIENTES</button>
       <p class="mensaje-error">{{ mensajeError }}</p>
       <p class="mensaje-exitoso">{{ ingredienteAgregadoExitosamente }}</p>
     </form>

@@ -1,13 +1,9 @@
 <template>
   <div>
     <h2>AGREGAR SUB-PLATILLO</h2>
-    <input
-      v-model="searchTerm"
-      type="text"
-      placeholder="BUSCAR SUB-PLATILLO"
-      class="search-input"
-    />
+    <input v-model="searchTerm" type="text" placeholder="BUSCAR SUB-PLATILLO" class="search-input" />
     <form @submit.prevent="addSubPlatillo">
+      <button class="button" type="submit">AGREGAR SUB-PLATILLO</button>
       <table>
         <thead>
           <tr>
@@ -18,38 +14,25 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="(subPlatillo, index) in subPlatillos
-              .filter(
-                (s) =>
-                  !existingSubPlatilloIds.includes(s.id_subplatillo) &&
-                  s.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-              )
-              .sort((a, b) => a.nombre.localeCompare(b.nombre))"
-            :key="index"
-          >
+          <tr v-for="(subPlatillo, index) in subPlatillos
+            .filter(
+              (s) =>
+                !existingSubPlatilloIds.includes(s.id_subplatillo) &&
+                s.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .sort((a, b) => a.nombre.localeCompare(b.nombre))" :key="index">
             <td>
               {{ subPlatillo.subPlatillo_id }}
-              <input
-                :id="subPlatillo.subPlatillo_id"
-                type="checkbox"
-                v-model="subPlatillo.selected"
-              />
+              <input :id="subPlatillo.subPlatillo_id" type="checkbox" v-model="subPlatillo.selected" />
             </td>
             <td>{{ subPlatillo.nombre }}</td>
             <td>{{ subPlatillo.unidad }}</td>
             <td>
-              <input
-                type="number"
-                v-model.number="subPlatillo.cantidad"
-                min="0"
-                step="0.001"
-              />
+              <input type="number" v-model.number="subPlatillo.cantidad" min="0" step="0.001" />
             </td>
           </tr>
         </tbody>
       </table>
-      <button class="button" type="submit">AGREGAR SUB-PLATILLO</button>
       <p class="mensaje-error">{{ mensajeError }}</p>
       <p class="mensaje-exitoso">{{ subPlatilloAgregadoExitosamente }}</p>
     </form>
@@ -133,12 +116,15 @@ export default {
   padding: 1rem;
   font-size: 1rem;
 }
+
 .mensaje-error {
   color: red;
 }
+
 .mensaje-exitoso {
   color: green;
 }
+
 .button {
   width: fit-content;
   margin: 10px 0;

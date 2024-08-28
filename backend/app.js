@@ -177,6 +177,36 @@ app.get('/api/platillo/:id', async (req, res) => {
   }
 });
 
+app.delete('/api/platillo/:id', async (req, res) => {
+  const { id } = req.params;
+  const client = await pool.connect();
+
+  try {
+    await client.query('BEGIN'); // Start a transaction
+
+    // Delete dependent records first
+    await client.query('DELETE FROM platillos_subplatillos WHERE id_platillo = $1', [id]);
+
+    // Now delete the platillo record
+    const result = await client.query('DELETE FROM platillos WHERE id_platillo = $1 RETURNING *', [id]);
+
+    await client.query('COMMIT'); // Commit the transaction
+
+    if (result.rowCount === 0) {
+      res.status(404).json({ message: 'Platillo not found' });
+    } else {
+      res.json({ message: 'Platillo deleted successfully', platillo: result.rows[0] });
+    }
+  } catch (error) {
+    await client.query('ROLLBACK'); // Roll back in case of an error
+    console.error('Error deleting platillo:', error);
+    res.status(500).json({ error: 'An error occurred while deleting the platillo' });
+  } finally {
+    client.release();
+  }
+});
+
+
 app.post('/api/platillos/:idPlatillo/ingredientes', async (req, res) => {
   const { idPlatillo } = req.params;
   const { id_ingrediente, cantidad } = req.body;
@@ -226,15 +256,32 @@ app.delete('/api/platillos/:idPlatillo/ingredientes/:idIngrediente', async (req,
   const client = await pool.connect();
 
   try {
-    const result = await client.query(
-      'DELETE FROM platillos_ingredientes WHERE id_platillo = $1 AND id_ingrediente = $2 RETURNING *',
-      [idPlatillo, idIngrediente]
-    );
+    if (idIngrediente.startsWith('sub_')) {
+      // If the idIngrediente starts with "sub_", handle it as a subplatillo
+      const subplatilloId = idIngrediente.replace('sub_', ''); // Remove the "sub_" prefix
 
-    if (result.rows.length > 0) {
-      res.json({ message: 'Resource deleted successfully' });
+      const result = await client.query(
+        'DELETE FROM platillos_subplatillos WHERE id_platillo = $1 AND id_subplatillo = $2 RETURNING *',
+        [idPlatillo, subplatilloId]
+      );
+
+      if (result.rows.length > 0) {
+        res.json({ message: 'Subplatillo deleted successfully' });
+      } else {
+        res.status(404).json({ error: 'Subplatillo not found' });
+      }
     } else {
-      res.status(404).json({ error: 'Resource not found' });
+      // Otherwise, handle it as an ingredient
+      const result = await client.query(
+        'DELETE FROM platillos_ingredientes WHERE id_platillo = $1 AND id_ingrediente = $2 RETURNING *',
+        [idPlatillo, idIngrediente]
+      );
+
+      if (result.rows.length > 0) {
+        res.json({ message: 'Ingredient deleted successfully' });
+      } else {
+        res.status(404).json({ error: 'Ingredient not found' });
+      }
     }
   } catch (error) {
     console.error(error);
@@ -243,6 +290,7 @@ app.delete('/api/platillos/:idPlatillo/ingredientes/:idIngrediente', async (req,
     client.release();
   }
 });
+
 
 app.post('/api/platillos/:idPlatillo/subplatillos', async (req, res) => {
   const { idPlatillo } = req.params;

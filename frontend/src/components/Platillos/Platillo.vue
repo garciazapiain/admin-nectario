@@ -31,9 +31,9 @@ export default {
         this.platillo.ingredients.forEach((ingrediente) => {
           let cantidad = ingrediente.is_subplatillo
             ? (ingrediente.cantidad / ingrediente.rendimiento) *
-              (ingrediente.subplatillo_cantidad
-                ? ingrediente.subplatillo_cantidad
-                : 1)
+            (ingrediente.subplatillo_cantidad
+              ? ingrediente.subplatillo_cantidad
+              : 1)
             : ingrediente.cantidad;
 
           if (ingredients[ingrediente.id_ingrediente]) {
@@ -237,6 +237,34 @@ export default {
         console.error("Error:", error);
       }
     },
+    async handleDeletePlatillo() {
+      const idPlatillo = this.$route.params.id;
+
+      // Add confirmation dialog
+      const isConfirmed = confirm("¿Estás seguro de que deseas eliminar este platillo? Esta acción no se puede deshacer.");
+
+      if (!isConfirmed) {
+        return; // Exit if user cancels the delete action
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/platillo/${idPlatillo}`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log(data.message);
+        // Instead of reloading, use Vue Router to redirect or reload component data
+        this.$router.push('/platillos'); // Use the correct path for your platillo list page
+      } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred while deleting the platillo. Please try again."); // Provide user feedback
+      }
+    },
   },
 };
 </script>
@@ -248,19 +276,16 @@ export default {
     </div>
     <div v-else>
       <h1>{{ platillo.nombre }}</h1>
-      <div className="platilloButtonContainer">
+      <div class="platilloButtonContainer">
         <button @click="isEditingName = true">Editar nombre</button>
         <button @click="handleDuplicatePlatillo">Duplicar Platillo</button>
+        <button class="bg-red-500" @click="handleDeletePlatillo">Borrar</button>
       </div>
     </div>
     <p>Unidades vendidas:{{ platillo.unidades_vendidas }}</p>
     <div>
-      <input
-        type="checkbox"
-        id="includeSubplatillos"
-        v-model="includeSubplatillos"
-      />
-      <label for="includeSubplatillos">INCLUIR SUBPLATILLOS</label>
+      <input type="checkbox" id="includeSubplatillos" v-model="includeSubplatillos" />
+      <label for="includeSubplatillos">DESGLOCAR CON SUBPLATILLOS</label>
     </div>
     <table>
       <thead>
@@ -281,41 +306,57 @@ export default {
           <td>
             <div class="editRow" v-if="editIndex === index">
               <div class="inputRow">
-                <input
-                  type="number"
-                  min=".001"
-                  v-model="editValue"
-                  step=".25"
-                />
+                <input type="number" min=".001" v-model="editValue" step=".25" />
                 <button @click="resetEditValue">X</button>
               </div>
               <button @click="handleSaveEditIngredient">Guardar</button>
             </div>
             <div v-else>
-              {{ ingrediente.cantidad }}
+              {{ ingrediente.cantidad.toFixed(2) }}
               <button @click="handleOpenEditIngredient(index)">Editar</button>
             </div>
           </td>
-          <td>${{ (ingrediente.precio * ingrediente.cantidad).toFixed(2) }}</td>
           <td>
-            <button @click="handleDeleteIngredient(ingrediente)">Borrar</button>
-            <!-- New delete button -->
+            <!-- If includeSubplatillos is false or ingrediente.is_subplatillo is false, show the price normally -->
+            <span v-if="!includeSubplatillos">
+              ${{ (ingrediente.precio * ingrediente.cantidad).toFixed(2) }}
+            </span>
+
+            <!-- If includeSubplatillos is true and ingrediente.is_subplatillo is true, show the info icon with a tooltip -->
+            <div v-else class="info-icon-wrapper">
+              <i class="info-icon">ℹ️</i>
+              <!-- Tooltip -->
+              <div class="tooltip">
+                Para ver esta columna, quita la opción de desgloce por subplatillos.
+              </div>
+            </div>
+          </td>
+          <td>
+            <!-- If ingrediente.isSubplatillo is false, show the delete button -->
+            <button v-if="!ingrediente.is_subplatillo || includeSubplatillos"
+              @click="handleDeleteIngredient(ingrediente)">Borrar</button>
+            <!-- If ingrediente.isSubplatillo is true, show the info icon with a tooltip -->
+            <div v-else class="info-icon-wrapper">
+              <i class="info-icon">ℹ️</i>
+              <!-- Tooltip -->
+              <div class="tooltip">
+                Este ingrediente forma parte de un subplatillo. Para eliminar este ingrediente, primero elimina el
+                subplatillo al que pertenece.
+              </div>
+            </div>
           </td>
         </tr>
       </tbody>
-      <p>COSTO TOTAL: $ {{ totalCost.toFixed(2) }}</p>
+      <p v-if=!includeSubplatillos>COSTO TOTAL: $ {{ totalCost.toFixed(2) }}</p>
     </table>
-    <IngredientForm
-      :ingredientes="ingredientes"
-      :existingIngredientIds="existingIngredientIds"
-      :postUrl="`${API_URL}/platillos/${$route.params.id}/ingredientes`"
-      @ingredientAdded="fetchData"
-    />
-    <SubPlatilloForm
-      :subPlatillos="subPlatillos"
-      :existingSubPlatilloIds="existingSubPlatilloIds"
-      @subPlatilloAdded="fetchData"
-    />
+
+    <!-- Flexbox Container for Ingredient and SubPlatillo Forms -->
+    <div class="form-container">
+      <IngredientForm :ingredientes="ingredientes" :existingIngredientIds="existingIngredientIds"
+        :postUrl="`${API_URL}/platillos/${$route.params.id}/ingredientes`" @ingredientAdded="fetchData" />
+      <SubPlatilloForm :subPlatillos="subPlatillos" :existingSubPlatilloIds="existingSubPlatilloIds"
+        @subPlatilloAdded="fetchData" />
+    </div>
   </div>
 </template>
 
@@ -326,6 +367,7 @@ p,
 div {
   margin: 0.5rem 0;
 }
+
 .editRow {
   display: flex;
   flex-direction: column;
@@ -333,17 +375,70 @@ div {
   align-items: center;
   line-height: 1.5rem;
 }
-.editRow > button {
+
+.editRow>button {
   width: 80%;
 }
+
 .inputRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .platilloButtonContainer {
   display: flex;
   justify-content: space-between;
   margin: 1rem 0;
+}
+
+.info-icon-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.info-icon {
+  cursor: pointer;
+  font-style: normal;
+  /* Ensures the info icon is styled correctly */
+}
+
+.tooltip {
+  visibility: hidden;
+  width: 220px;
+  /* Adjust width as needed */
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  /* Position the tooltip above the icon */
+  left: 50%;
+  margin-left: -110px;
+  /* Center the tooltip */
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  /* Ensures the tooltip doesn't interfere with hover */
+}
+
+.info-icon-wrapper:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.form-container {
+  display: flex; /* Use flex to arrange IngredientForm and SubPlatilloForm side by side */
+  justify-content: space-between;
+  align-items: flex-start; /* Align items to the start */
+  gap: 20px; /* Add some spacing between forms */
+  margin-top: 20px; /* Add some top margin */
+  padding-bottom: 100px; /* Add extra space at the bottom for scrolling */
+  overflow-x: auto; /* Enable horizontal scrolling if needed */
+  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: 500px; /* Limit the height to enable scrolling */
 }
 </style>

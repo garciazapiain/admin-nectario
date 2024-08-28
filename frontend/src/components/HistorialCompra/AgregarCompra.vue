@@ -48,7 +48,7 @@
                                 step="0.01" min="0"/>
                         </td>
                         <td>
-                            <input type="number" v-model="article.precio" @input="updateTotalPrice(article)" required />
+                            <input type="number" v-model="article.precio" @input="updateTotalPrice(article)" required step="0.01" min="0" />
                         </td>
                         <td>{{ article.totalImporte }}</td>
                         <td>
