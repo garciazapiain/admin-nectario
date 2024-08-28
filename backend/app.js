@@ -7,7 +7,7 @@ const path = require('path'); // Add this line
 const { Pool } = require('pg');
 const authRoutes = require('./api/auth');
 const submissionRoutes = require('./api/submissions');
-const retrieveInbox = require('./api/retrieve_inbox');
+// const retrieveInbox = require('./api/retrieve_inbox');
 
 const app = express();
 const port = process.env.PORT || 3000;
