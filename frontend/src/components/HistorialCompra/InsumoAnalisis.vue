@@ -3,12 +3,20 @@
     <!-- Title with the ingredient name -->
     <h1 v-if="history[0]">{{ history[0].nombre }} - HISTORIAL</h1>
 
+    <!-- Date range picker -->
+    <div>
+      <label for="start-date">Start Date:</label>
+      <input type="date" v-model="startDate" @change="filterDataByDate" />
+      <label for="end-date">End Date:</label>
+      <input type="date" v-model="endDate" @change="filterDataByDate" />
+    </div>
+
     <!-- Header with "Costo en recetas" analysis -->
     <div v-if="currentPrice">
       <p>Costo en recetas ${{ currentPrice }} / {{ unidad }}</p>
       <p>Precio promedio histórico: ${{ averagePrice }} / {{ unidad }}</p>
       <p>
-        Cambio porcentual: 
+        Cambio porcentual:
         <span :class="priceChange >= 0 ? 'positive' : 'negative'">
           {{ priceChange.toFixed(2) }}%
         </span>
@@ -16,7 +24,7 @@
     </div>
 
     <!-- Historical data table -->
-    <table v-if="history.length">
+    <table v-if="filteredHistory.length">
       <thead>
         <tr>
           <th>Número ticket</th>
@@ -28,7 +36,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in history" :key="item.id">
+        <tr v-for="item in filteredHistory" :key="item.id">
           <td>{{ item.folio }}</td>
           <td>{{ item.fecha }}</td>
           <td>{{ item.emisor }}</td>
@@ -59,81 +67,105 @@ export default {
     return {
       id: null,
       history: [],
+      filteredHistory: [],
       currentPrice: null,
-      unidad:null,
+      unidad: null,
       averagePrice: 0,
       priceChange: 0,
+      startDate: null,
+      endDate: null,
+      chart: null,
     };
   },
   async mounted() {
-    // Retrieve the ID from the route
     this.id = this.$route.params.id;
 
-    // Fetch historical data
     try {
       const response = await fetch(`${API_URL}/historial_insumos/insumo/${this.id}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       this.history = await response.json();
+      this.filteredHistory = this.history; // Initialize with all history
 
-      // Ensure all quantities are treated as numbers
       const totalPriceSum = this.history.reduce((sum, item) => sum + parseFloat(item.total_price), 0);
       const totalQuantitySum = this.history.reduce((sum, item) => sum + parseFloat(item.quantity), 0);
 
-      // Calculate average historical price
       this.averagePrice = (totalPriceSum / totalQuantitySum).toFixed(2);
 
-      // Fetch current price of the ingredient
       const priceResponse = await fetch(`${API_URL}/ingrediente/${this.id}`);
       if (!priceResponse.ok) {
         throw new Error(`HTTP error! status: ${priceResponse.status}`);
       }
       const ingredientData = await priceResponse.json();
       this.currentPrice = ingredientData.precio;
-      this.unidad = ingredientData.unidad
+      this.unidad = ingredientData.unidad;
 
-      // Calculate percentage change
       this.priceChange = ((this.currentPrice - this.averagePrice) / this.averagePrice) * 100;
 
-      // Initialize graph after fetching data
       this.createPriceFluctuationGraph();
     } catch (error) {
       console.error("Error:", error);
     }
   },
   methods: {
+    filterDataByDate() {
+      if (this.startDate && this.endDate) {
+        this.filteredHistory = this.history.filter(item => {
+          const itemDate = new Date(item.fecha);
+          return itemDate >= new Date(this.startDate) && itemDate <= new Date(this.endDate);
+        });
+      } else {
+        this.filteredHistory = this.history;
+      }
+
+      this.updatePriceFluctuationGraph();
+    },
     createPriceFluctuationGraph() {
       const ctx = document.getElementById('priceFluctuationChart').getContext('2d');
-      const dates = this.history.map(item => item.fecha);
-      const prices = this.history.map(item => (item.total_price / item.quantity).toFixed(2));
 
-      new Chart(ctx, {
+      if (this.chart) {
+        this.chart.destroy(); // Destroy previous chart instance to avoid overlap
+      }
+
+      this.chart = new Chart(ctx, {
         type: 'line',
-        data: {
-          labels: dates,
-          datasets: [{
-            label: 'Precio promedio por insumo',
-            data: prices,
-            borderColor: 'blue',
-            fill: false,
-          }]
-        },
+        data: this.getChartData(),
         options: {
           scales: {
             x: {
               type: 'time',
               time: {
-                unit: 'month'
-              }
+                unit: this.filteredHistory.length <= 3 ? 'day' : 'month', // Adjust based on the number of points
+              },
             },
             y: {
-              beginAtZero: true
-            }
-          }
-        }
+              beginAtZero: true,
+            },
+          },
+        },
       });
-    }
-  }
+    },
+    updatePriceFluctuationGraph() {
+      if (this.chart) {
+        this.chart.destroy(); // Destroy the existing chart instance
+      }
+      this.createPriceFluctuationGraph(); // Re-create the chart with updated data
+    },
+    getChartData() {
+      const dates = this.filteredHistory.map(item => item.fecha);
+      const prices = this.filteredHistory.map(item => (item.total_price / item.quantity).toFixed(2));
+
+      return {
+        labels: dates,
+        datasets: [{
+          label: 'Precio promedio por insumo',
+          data: prices,
+          borderColor: 'blue',
+          fill: false,
+        }],
+      };
+    },
+  },
 };
 </script>

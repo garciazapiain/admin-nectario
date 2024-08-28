@@ -6,7 +6,7 @@
         <tr>
           <th>Insumo</th>
           <th>Cantidad</th>
-          <th>Precio total</th>
+          <th>Total gastado</th>
           <th>Precio promedio</th>
         </tr>
       </thead>
@@ -18,8 +18,8 @@
             }}</router-link>
           </td>
           <td>{{ ingredient.total_quantity }}</td>
-          <td>{{ ingredient.total_price }}</td>
-          <td>{{ ingredient.total_price / ingredient.total_quantity }}</td>
+          <td>${{ ingredient.total_price }}</td>
+          <td>${{ (ingredient.total_price / ingredient.total_quantity).toFixed(2) }}/{{ ingredient.unidad }}</td>
         </tr>
       </tbody>
     </table>
