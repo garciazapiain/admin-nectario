@@ -318,6 +318,17 @@ app.put('/api/platillos/:idPlatillo/clavepos', async (req, res) => {
   const client = await pool.connect();
 
   try {
+    // Check if clavepos already exists for a different platillo
+    const checkResult = await client.query(
+      'SELECT * FROM platillos WHERE clavepos = $1 AND id_platillo != $2',
+      [clavepos, idPlatillo]
+    );
+
+    if (checkResult.rows.length > 0) {
+      res.status(400).json({ error: 'Clavepos already exists for another platillo' });
+      return; // Exit if duplicate clavepos is found
+    }
+
     const result = await client.query(
       'UPDATE platillos SET clavepos = $1 WHERE id_platillo = $2 RETURNING *',
       [clavepos, idPlatillo]
@@ -335,6 +346,43 @@ app.put('/api/platillos/:idPlatillo/clavepos', async (req, res) => {
     client.release();
   }
 });
+
+// Add this new route to handle updating the entire platillo
+app.put('/api/platillos/:idPlatillo', async (req, res) => {
+  const { idPlatillo } = req.params;
+  const { nombre, clavepos, precio_piso } = req.body;
+  const client = await pool.connect();
+
+  try {
+    // Check if clavepos already exists for a different platillo
+    const checkResult = await client.query(
+      'SELECT * FROM platillos WHERE clavepos = $1 AND id_platillo != $2',
+      [clavepos, idPlatillo]
+    );
+
+    if (checkResult.rows.length > 0) {
+      res.status(400).json({ error: 'Clavepos already exists for another platillo' });
+      return; // Exit if duplicate clavepos is found
+    }
+
+    const result = await client.query(
+      'UPDATE platillos SET nombre = $1, clavepos = $2, precio_piso = $3 WHERE id_platillo = $4 RETURNING *',
+      [nombre, clavepos, precio_piso, idPlatillo]
+    );
+
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]);
+    } else {
+      res.status(404).json({ error: 'Platillo not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while updating the platillo in the database' });
+  } finally {
+    client.release();
+  }
+});
+
 
 app.put('/api/platillos/:id_platillo/precio', async (req, res) => {
   const { id_platillo } = req.params;

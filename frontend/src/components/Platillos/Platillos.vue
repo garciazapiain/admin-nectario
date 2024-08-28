@@ -41,8 +41,8 @@ const handleClickPlatillo = (idPlatillo) => {
           <td>
             <div class="editRow" v-if="editIndexClavePos !== index">
               {{ platillo.clavepos }}
-              <button @click="editIndexClavePos = index" class="icon-button">
-                <i class="fas fa-pencil-alt"></i> <!-- Pencil Icon -->
+              <button @click="editIndexClavePos = index">
+                Editar
               </button>
             </div>
             <div v-else>
@@ -56,8 +56,8 @@ const handleClickPlatillo = (idPlatillo) => {
           <td>
             <div class="editRow" v-if="editIndexPrecio !== index">
               {{ platillo.precio_piso !== null ? `$${platillo.precio_piso.toFixed(2)}` : '' }}
-              <button @click="editIndexPrecio = index" class="icon-button">
-                <i class="fas fa-pencil-alt"></i> <!-- Pencil Icon -->
+              <button @click="editIndexPrecio = index">
+                Editar
               </button>
             </div>
             <div v-else>
@@ -103,13 +103,57 @@ export default {
     };
   },
   methods: {
-    async saveEditClavePos(platillo) {
-      platillo.clavepos = this.editValueClavePos; // Update value
-
+    async updatePlatillo(idPlatillo, updatedData) {
       const API_URL =
         process.env.NODE_ENV === "production"
           ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
           : "http://localhost:3000/api";
+
+      const response = await fetch(
+        `${API_URL}/platillos/${idPlatillo}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    },
+    async processPlatilloEntry(platillo) {
+      // Check if platillo already exists based on clavepos or nombre
+      const existingPlatillo = this.platillos.find(p =>
+        p.clavepos === platillo.clavepos || p.nombre === platillo.nombre
+      );
+
+      if (existingPlatillo) {
+        // If platillo exists (either by clavepos or nombre), update it
+        await this.updatePlatillo(existingPlatillo.id_platillo, platillo);
+      } else {
+        // If platillo does not exist, add it
+        await this.agregarPlatilloToDB(platillo);
+      }
+    },
+    async saveEditClavePos(platillo) {
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
+
+      // Check if the clavepos already exists
+      const checkResponse = await fetch(`${API_URL}/platillos?clavepos=${this.editValueClavePos}`);
+      const existingPlatillo = await checkResponse.json();
+
+      if (existingPlatillo.length > 0 && existingPlatillo[0].id_platillo !== platillo.id_platillo) {
+        alert("Error: Clave SoftRest POS ya existe");
+        return; // Exit function if clavepos exists
+      }
+
+      platillo.clavepos = this.editValueClavePos; // Update value
 
       const response = await fetch(
         `${API_URL}/platillos/${platillo.id_platillo}/clavepos`,
@@ -176,7 +220,7 @@ export default {
       const data = this.filteredPlatillos.map(platillo => ({
         Nombre: platillo.nombre,
         'Clave soft pos': platillo.clavepos,
-        'Costo Total': platillo.costoTotal.toFixed(2) // Add Costo Total to export data
+        'Precio': platillo.precio_piso
       }));
       const ws = XLSX.utils.json_to_sheet(data);
       const wb = XLSX.utils.book_new();
@@ -197,13 +241,14 @@ export default {
         const validPlatillos = jsonData
           .map(row => ({
             nombre: row['Nombre'],
-            clavepos: row['Clave soft pos']
+            clavepos: row['Clave soft pos'],
+            precio_piso: parseFloat(row['Precio']) // Include Precio from Excel
           }))
           .filter(platillo => platillo.nombre && platillo.nombre.trim() !== "");
 
         // Update the database with the imported data
         for (const platillo of validPlatillos) {
-          await this.agregarPlatilloToDB(platillo);
+          await this.processPlatilloEntry(platillo);
         }
 
         // Update the local state
