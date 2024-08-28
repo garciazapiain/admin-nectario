@@ -18,14 +18,19 @@ const handleClickPlatillo = (idPlatillo) => {
     <input v-model="searchTerm" placeholder="Search" />
     <button @click="exportToExcel">Export to Excel</button>
     <input type="file" @change="importFromExcel" />
+
+    <!-- New Button to Show Cost Calculation -->
+    <button @click="calculateCosts">Sacar costo de venta</button>
+
     <table>
       <thead>
         <tr>
           <th>Nombre platillo</th>
           <th>Clave SoftRest POS</th>
-          <th>Costo total</th> <!-- New column for Costo Total -->
-          <th>Precio piso</th> <!-- New column for Costo Total -->
-          <th>% Costo</th>
+          <!-- Conditionally render columns based on showCosts state -->
+          <th v-if="showCosts">Costo total</th>
+          <th>Precio piso</th>
+          <th v-if="showCosts">% Costo</th>
         </tr>
       </thead>
       <tbody>
@@ -36,7 +41,9 @@ const handleClickPlatillo = (idPlatillo) => {
           <td>
             <div class="editRow" v-if="editIndexClavePos !== index">
               {{ platillo.clavepos }}
-              <button @click="editIndexClavePos = index">Editar</button>
+              <button @click="editIndexClavePos = index" class="icon-button">
+                <i class="fas fa-pencil-alt"></i> <!-- Pencil Icon -->
+              </button>
             </div>
             <div v-else>
               <input type="number" min="0" v-model="editValueClavePos" />
@@ -44,11 +51,14 @@ const handleClickPlatillo = (idPlatillo) => {
               <button @click="editIndexClavePos = -1">Cancelar</button>
             </div>
           </td>
-          <td>${{ platillo.costoTotal.toFixed(2) }}</td> <!-- Display calculated Costo Total -->
+          <!-- Conditionally render "Costo total" based on showCosts state -->
+          <td v-if="showCosts">${{ platillo.costoTotal ? platillo.costoTotal.toFixed(2) : '' }}</td>
           <td>
             <div class="editRow" v-if="editIndexPrecio !== index">
               {{ platillo.precio_piso !== null ? `$${platillo.precio_piso.toFixed(2)}` : '' }}
-              <button @click="editIndexPrecio = index">Editar</button>
+              <button @click="editIndexPrecio = index" class="icon-button">
+                <i class="fas fa-pencil-alt"></i> <!-- Pencil Icon -->
+              </button>
             </div>
             <div v-else>
               <input type="number" min="0" v-model="editValuePrecio" />
@@ -56,10 +66,10 @@ const handleClickPlatillo = (idPlatillo) => {
               <button @click="editIndexPrecio = -1">Cancelar</button>
             </div>
           </td>
-          <td>
-            {{ platillo.precio_piso !== null ? `${((platillo.costoTotal / platillo.precio_piso) * 100).toFixed(0)}%` :
-              ''
-            }}
+          <!-- Conditionally render "% Costo" based on showCosts state -->
+          <td v-if="showCosts">
+            {{ platillo.precio_piso !== null && platillo.costoTotal ? `${((platillo.costoTotal / platillo.precio_piso) *
+              100).toFixed(0)}%` : '' }}
           </td>
         </tr>
       </tbody>
@@ -89,6 +99,7 @@ export default {
       editValueClavePos: "",
       editIndexPrecio: -1,  // Add state for editing 'precio'
       editValuePrecio: "",  // Add input value for editing 'precio'
+      showCosts: false
     };
   },
   methods: {
@@ -236,6 +247,42 @@ export default {
       });
       return total;
     },
+    async calculateCosts() {
+      this.showCosts = true;  // Set showCosts to true to display the columns
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
+          : "http://localhost:3000/api";
+
+      // Fetch ingredients and calculate costs
+      for (const platillo of this.platillos) {
+        const ingredientsResponse = await fetch(`${API_URL}/platillo/${platillo.id_platillo}`);
+        if (ingredientsResponse.ok) {
+          try {
+            const ingredientsData = await ingredientsResponse.json();
+
+            if (ingredientsData && ingredientsData.ingredients && Array.isArray(ingredientsData.ingredients)) {
+              platillo.ingredientes = ingredientsData.ingredients;
+              platillo.costoTotal = this.calculateTotalCost(platillo.ingredientes); // Calculate total cost
+            } else {
+              console.warn(`Expected ingredients data to be an array for platillo ID ${platillo.id_platillo}, but got:`, ingredientsData);
+              platillo.ingredientes = [];
+              platillo.costoTotal = 0;
+            }
+
+          } catch (error) {
+            console.error(`Failed to parse ingredients JSON for platillo ID ${platillo.id_platillo}:`, error);
+            platillo.ingredientes = [];
+            platillo.costoTotal = 0;
+          }
+        } else {
+          const errorText = await ingredientsResponse.text();
+          console.error(`Error fetching ingredients for platillo ID ${platillo.id_platillo}: ${errorText}`);
+          platillo.ingredientes = [];
+          platillo.costoTotal = 0;
+        }
+      }
+    },
   },
   computed: {
     filteredPlatillos() {
@@ -265,37 +312,7 @@ export default {
       }
 
       console.log("Platillos fetched:", data);
-
-      // Fetch ingredients for each platillo and calculate the total cost
-      for (const platillo of data) {
-        const ingredientsResponse = await fetch(`${API_URL}/platillo/${platillo.id_platillo}`);
-        if (ingredientsResponse.ok) {
-          try {
-            const ingredientsData = await ingredientsResponse.json();
-
-            if (ingredientsData && ingredientsData.ingredients && Array.isArray(ingredientsData.ingredients)) {
-              platillo.ingredientes = ingredientsData.ingredients; // Correctly use the 'ingredients' field
-              platillo.costoTotal = this.calculateTotalCost(platillo.ingredientes); // Calculate total cost
-            } else {
-              console.warn(`Expected ingredients data to be an array for platillo ID ${platillo.id_platillo}, but got:`, ingredientsData);
-              platillo.ingredientes = [];
-              platillo.costoTotal = 0;
-            }
-
-          } catch (error) {
-            console.error(`Failed to parse ingredients JSON for platillo ID ${platillo.id_platillo}:`, error);
-            platillo.ingredientes = [];
-            platillo.costoTotal = 0;
-          }
-        } else {
-          const errorText = await ingredientsResponse.text();
-          console.error(`Error fetching ingredients for platillo ID ${platillo.id_platillo}: ${errorText}`);
-          platillo.ingredientes = [];
-          platillo.costoTotal = 0;
-        }
-      }
-
-      this.platillos = data; // Set the updated platillos data
+      this.platillos = data; // Set the fetched platillos data
 
     } catch (error) {
       console.error("Error fetching platillos:", error);
