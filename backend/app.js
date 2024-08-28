@@ -7,6 +7,7 @@ const path = require('path'); // Add this line
 const { Pool } = require('pg');
 const authRoutes = require('./api/auth');
 const submissionRoutes = require('./api/submissions');
+const retrieveInbox = require('./api/retrieve_inbox');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -23,6 +24,7 @@ const pool = new Pool({
 
 app.use('/api/auth', authRoutes);
 app.use('/api/submissions', submissionRoutes);
+app.use('/api/retrieveinbox', retrieveInbox);
 
 app.get('/api/platillos', async (req, res) => {
   const client = await pool.connect();
@@ -859,30 +861,141 @@ app.delete('/api/purchase_orders/:id', async (req, res) => {
 });
 
 app.post('/api/purchase_orders', async (req, res) => {
-  const { articulosComprados, totalImporte, fecha, folio, emisor } = req.body;
+  const { articulosComprados, totalImporte, fecha, folio, emisor, xmldata } = req.body;
 
   // Start a transaction
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
 
-    // Insert the purchase order
+    // Insert the purchase order with status and xmldata
     const orderResult = await client.query(
-      'INSERT INTO purchase_orders (fecha, totalImporte, folio, emisor) VALUES ($1, $2, $3, $4) RETURNING id',
-      [fecha, totalImporte, folio, emisor]
+      'INSERT INTO purchase_orders (fecha, totalImporte, folio, emisor, status, xmldata) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+      [fecha, totalImporte, folio, emisor, 'pendiente', xmldata]
     );
     const orderId = orderResult.rows[0].id;
 
-    // Insert the purchased items
-    for (const item of articulosComprados) {
-      await client.query(
-        'INSERT INTO purchase_history_items (purchase_order_id, id_ingrediente, quantity, price_per_item, total_price) VALUES ($1, $2, $3, $4, $5)',
-        [orderId, item.id_ingrediente, item.quantity, item.price, item.totalPrice]
-      );
+    // Insert the purchased items if any are provided
+    if (articulosComprados && articulosComprados.length > 0) {
+      for (const item of articulosComprados) {
+        await client.query(
+          'INSERT INTO purchase_history_items (purchase_order_id, id_ingrediente, quantity, price_per_item, total_price) VALUES ($1, $2, $3, $4, $5)',
+          [orderId, item.id_ingrediente, item.quantity, item.price, item.totalPrice]
+        );
+      }
     }
 
     await client.query('COMMIT');
     res.json({ message: 'Purchase order created successfully' });
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Database error' });
+  } finally {
+    client.release();
+  }
+});
+
+app.post('/api/purchase_orders/bulk', async (req, res) => {
+  const { purchaseOrders } = req.body; // Expecting an array of purchase orders
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    const addedOrders = [];
+
+    for (const order of purchaseOrders) {
+      const { articulosComprados, totalImporte, fecha, folio, emisor, xmldata } = order;
+
+      // Clean the XML data by removing any BOM and trimming whitespace
+      const cleanedXmldata = xmldata.replace(/^\uFEFF/, '').trim();
+
+      // Check if a purchase order with the same folio and emisor already exists
+      const existingOrder = await client.query(
+        'SELECT id FROM purchase_orders WHERE folio = $1 AND emisor = $2',
+        [folio, emisor]
+      );
+
+      if (existingOrder.rows.length === 0) {
+        // Insert the purchase order if it doesn't exist
+        const orderResult = await client.query(
+          'INSERT INTO purchase_orders (fecha, totalImporte, folio, emisor, status, xmldata) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+          [fecha, totalImporte, folio, emisor, 'pendiente', cleanedXmldata]
+        );
+        const orderId = orderResult.rows[0].id;
+
+        // Insert the purchased items if any are provided
+        if (articulosComprados && articulosComprados.length > 0) {
+          for (const item of articulosComprados) {
+            await client.query(
+              'INSERT INTO purchase_history_items (purchase_order_id, id_ingrediente, quantity, price_per_item, total_price) VALUES ($1, $2, $3, $4, $5)',
+              [orderId, item.id_ingrediente, item.quantity, item.price, item.totalPrice]
+            );
+          }
+        }
+
+        addedOrders.push(orderId);
+      }
+    }
+
+    await client.query('COMMIT');
+    res.json({ message: 'Purchase orders processed successfully', addedOrders });
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Database error' });
+  } finally {
+    client.release();
+  }
+});
+
+
+app.put('/api/purchase_orders/:id', async (req, res) => {
+  const { id } = req.params;
+  const { fecha, folio, emisor, items, totalimporte, status } = req.body;
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // If status is provided, update it separately
+    if (status) {
+      await client.query(
+        'UPDATE purchase_orders SET status = $1 WHERE id = $2',
+        [status, id]
+      );
+    }
+
+    // If other fields are provided, update them
+    if (fecha || folio || emisor || totalimporte) {
+      await client.query(
+        'UPDATE purchase_orders SET fecha = $1, folio = $2, emisor = $3, totalimporte = $4 WHERE id = $5',
+        [fecha, folio, emisor, totalimporte, id]
+      );
+    }
+
+    // Delete existing items for the order (if necessary)
+    if (items && items.length > 0) {
+      await client.query('DELETE FROM purchase_history_items WHERE purchase_order_id = $1', [id]);
+
+      // Insert the updated items
+      for (const item of items) {
+        await client.query(
+          'INSERT INTO purchase_history_items (purchase_order_id, id_ingrediente, quantity, price_per_item, total_price) VALUES ($1, $2, $3, $4, $5)',
+          [
+            id,
+            item.id_ingrediente || null, // Ensure this is not null
+            item.quantity,
+            item.price_per_item || 0, // Calculate or default to 0 if missing
+            item.total_price
+          ]
+        );
+      }
+    }
+
+    await client.query('COMMIT');
+    res.json({ message: 'Purchase order updated successfully' });
   } catch (error) {
     await client.query('ROLLBACK');
     console.error('Database error:', error);

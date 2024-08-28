@@ -2,9 +2,11 @@
   <div>
     <h1>Registro de Compras</h1>
     <!-- <button @click="scrollToInput">Scroll to Input File Section</button> -->
+    <button @click="retrieveInbox">Retrieve Inbox</button>
     <table v-if="purchaseOrders.length">
       <tr>
         <th>id</th>
+        <th>Status</th>
         <th>Fecha</th>
         <th>Proveedor</th>
         <th>Total Importe</th>
@@ -14,23 +16,34 @@
         <td>
           <router-link :to="`${$route.path}/compra/${order.id}`">{{
             order.id
-          }}</router-link>
+            }}</router-link>
+        </td>
+        <td>
+          <select :value="order.status" @change="updateStatus(order.id, $event.target.value)"
+            :class="order.status === 'pendiente' ? 'bg-yellow-500' : 'bg-green-500'">
+            <option value="pendiente">Pendiente</option>
+            <option value="verificado">Verificado</option>
+          </select>
         </td>
         <td>{{ order.fecha }}</td>
         <td>{{ order.emisor }}</td>
         <td>$ {{ order.totalimporte }}</td>
         <td>
-          <button @click="deleteOrder(order.id)">Borrar</button>
+          <button class="bg-red-500" @click="deleteOrder(order.id)">Borrar</button>
         </td>
       </tr>
     </table>
     <h2>Subir Nueva Factura en formato XML</h2>
-    <input
-      type="file"
-      @change="handleFileUpload"
-      accept=".xml"
-      ref="fileInput"
-    />
+    <input type="file" @change="handleFileUpload" accept=".xml" ref="fileInput" />
+    <div v-if="xmlPromptVisible" class="xml-prompt">
+      <h3>XML Details</h3>
+      <p><strong>Subject:</strong> {{ xmlDetails.subject }}</p>
+      <p><strong>Folio:</strong> {{ xmlDetails.folio }}</p>
+      <p><strong>Fecha:</strong> {{ xmlDetails.fecha }}</p>
+      <p><strong>Emisor:</strong> {{ xmlDetails.emisor }}</p>
+      <p><strong>Total Importe:</strong> $ {{ xmlDetails.totalImporte }}</p>
+      <button @click="closeXmlPrompt">Close</button>
+    </div>
     <table v-if="articles.length">
       <p v-if="fecha">Fecha: {{ fecha }}</p>
       <p v-if="folio">Folio: {{ folio }}</p>
@@ -46,18 +59,11 @@
       </tr>
       <tr v-for="(article, index) in articles" :key="article.name">
         <td>
-          <input
-            type="text"
-            v-model="article.selectedIngredient"
-            @input="searchIngredient(article)"
-          />
+          <input type="text" v-model="article.selectedIngredient" @input="searchIngredient(article)" />
           <div class="dropdown">
             <ul v-if="article.filteredIngredients.length">
-              <li
-                v-for="ingredient in article.filteredIngredients"
-                :key="ingredient.id_ingrediente"
-                @click="selectIngredient(article, ingredient)"
-              >
+              <li v-for="ingredient in article.filteredIngredients" :key="ingredient.id_ingrediente"
+                @click="selectIngredient(article, ingredient)">
                 {{ ingredient.nombre }}
               </li>
             </ul>
@@ -96,6 +102,26 @@ import API_URL from "../../config";
 
 export default {
   methods: {
+    async updateStatus(orderId, newStatus) {
+      try {
+        const response = await fetch(`${API_URL}/purchase_orders/${orderId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status: newStatus }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        window.location.reload()
+      } catch (error) {
+        console.error('Error updating status:', error);
+      }
+    },
     async deleteOrder(orderId) {
       console.log("Delete", orderId);
       try {
@@ -177,6 +203,59 @@ export default {
     scrollToInput() {
       this.$refs.fileInput.scrollIntoView({ behavior: "smooth" });
     },
+    retrieveInbox() {
+      fetch(`${API_URL}/retrieveinbox`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(emails => {
+          if (emails.length > 0) {
+            const purchaseOrders = emails.map(xmlEmail => ({
+              articulosComprados: [],  // Assuming you'll add items later
+              totalImporte: xmlEmail.totalImporte,
+              fecha: xmlEmail.fecha,
+              folio: xmlEmail.folio,
+              emisor: xmlEmail.emisor,
+              xmldata: xmlEmail.xmlContent
+            }));
+
+            // Send the data to the backend to create new purchase orders in bulk
+            fetch(`${API_URL}/purchase_orders/bulk`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ purchaseOrders }),
+            })
+              .then(response => response.json())
+              .then(data => {
+                if (data.error) {
+                  console.error('Error:', data.error);
+                  alert('Error: ' + data.error);
+                } else {
+                  console.log('Purchase orders processed successfully:', data);
+                  alert(`Successfully added ${data.addedOrders.length} new purchase orders.`);
+                  window.location.reload()
+                }
+              })
+              .catch(error => {
+                console.error('Error creating purchase orders:', error);
+              });
+
+          } else {
+            console.log('No emails with XML attachments found.');
+          }
+        })
+        .catch(error => {
+          console.error('Fetch error:', error);
+        });
+    },
+    closeXmlPrompt() {
+      this.xmlPromptVisible = false;
+    },
   },
   name: "HistorialCompra",
   setup() {
@@ -188,6 +267,14 @@ export default {
     const fecha = ref(null);
     const folio = ref(null);
     const emisor = ref(null);
+    const xmlPromptVisible = ref(false);
+    const xmlDetails = ref({
+      subject: '',
+      folio: '',
+      fecha: '',
+      emisor: '',
+      totalImporte: 0,
+    });
 
     const searchIngredient = (article) => {
       // Only search if the search is allowed
@@ -247,43 +334,56 @@ export default {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
           try {
             const parser = new DOMParser();
             const xmlDoc = parser.parseFromString(e.target.result, "text/xml");
-            const xmlArticles = xmlDoc.getElementsByTagName("cfdi:Concepto");
-            totalImporte.value = parseFloat(
-              xmlDoc
-                .getElementsByTagName("cfdi:Comprobante")[0]
-                .getAttribute("Total")
+
+            // Extract general info
+            const extractedTotalImporte = parseFloat(
+              xmlDoc.getElementsByTagName("cfdi:Comprobante")[0].getAttribute("Total")
             );
-            fecha.value = xmlDoc
+            const extractedFecha = xmlDoc
               .getElementsByTagName("cfdi:Comprobante")[0]
               .getAttribute("Fecha");
-            folio.value = xmlDoc
+            const extractedFolio = xmlDoc
               .getElementsByTagName("cfdi:Comprobante")[0]
               .getAttribute("Folio");
-            emisor.value = xmlDoc
+            const extractedEmisor = xmlDoc
               .getElementsByTagName("cfdi:Emisor")[0]
               .getAttribute("Nombre");
-            articles.value = Array.from(xmlArticles).map((article) => {
-              const name = article.getAttribute("Descripcion");
-              const quantity = parseInt(article.getAttribute("Cantidad"));
-              const price = parseFloat(article.getAttribute("ValorUnitario"));
-              return {
-                name,
-                quantity,
-                price,
-                totalPrice: (quantity * price).toFixed(2),
-                filteredIngredients: [],
-                allowSearch: true,
-              };
+
+            // Get the raw XML content
+            const rawXmlData = e.target.result;
+
+            // Prepare the data to be saved
+            const dataToSave = {
+              totalImporte: extractedTotalImporte,
+              fecha: extractedFecha,
+              folio: extractedFolio,
+              emisor: extractedEmisor,
+              articulosComprados: [],
+              xmldata: rawXmlData,  // Save the raw XML content
+            };
+
+            // Make a POST request to save the data
+            const response = await fetch(`${API_URL}/purchase_orders`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(dataToSave),
             });
-            articles.value.forEach((article) => {
-              searchIngredient(article);
-            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const responseData = await response.json();
+            console.log('Purchase order saved successfully:', responseData);
+            location.reload(); // Optionally reload the page to reflect changes
           } catch (error) {
-            console.error("Error parsing XML:", error);
+            console.error("Error processing and saving data:", error);
           }
         };
         reader.onerror = (error) => {
@@ -307,6 +407,8 @@ export default {
       fecha,
       folio,
       emisor,
+      xmlPromptVisible,
+      xmlDetails,
     };
   },
 };
@@ -323,8 +425,10 @@ td {
   border: 1px solid #000;
   padding: 10px;
 }
+
 .dropdown {
-  max-height: 100px; /* Adjust this value to your liking */
+  max-height: 100px;
+  /* Adjust this value to your liking */
   overflow-y: auto;
 }
 
@@ -335,11 +439,13 @@ td {
 }
 
 .dropdown li {
-  padding: 5px 10px; /* Adjust this value to your liking */
+  padding: 5px 10px;
+  /* Adjust this value to your liking */
   cursor: pointer;
 }
 
 .dropdown li:hover {
-  background-color: #eee; /* Adjust this value to your liking */
+  background-color: #eee;
+  /* Adjust this value to your liking */
 }
 </style>
