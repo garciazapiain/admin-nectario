@@ -1154,6 +1154,7 @@ app.get('/api/historial_insumos', async (req, res) => {
         ingredientes.nombre, 
         ingredientes.id_ingrediente,
         ingredientes.unidad,
+        ingredientes.precio,
         SUM(purchase_history_items.quantity) AS total_quantity, 
         SUM(purchase_history_items.total_price) AS total_price
       FROM 
@@ -1165,6 +1166,7 @@ app.get('/api/historial_insumos', async (req, res) => {
       GROUP BY 
         ingredientes.nombre,
         ingredientes.id_ingrediente,
+        ingredientes.precio,
         ingredientes.unidad;
     `);
 
