@@ -21,6 +21,10 @@ const handleClickPlatillo = (idPlatillo) => {
 
     <!-- New Button to Show Cost Calculation -->
     <button @click="calculateCosts">Sacar costo de venta</button>
+    <!-- Spinner -->
+    <div v-if="showCostsLoading" class="spinner">
+      <p>Cargando costos de venta...</p>
+    </div>
 
     <table>
       <thead>
@@ -99,7 +103,8 @@ export default {
       editValueClavePos: "",
       editIndexPrecio: -1,  // Add state for editing 'precio'
       editValuePrecio: "",  // Add input value for editing 'precio'
-      showCosts: false
+      showCosts: false,
+      showCostsLoading: false
     };
   },
   methods: {
@@ -309,6 +314,7 @@ export default {
     },
     async calculateCosts() {
       this.showCosts = true;  // Set showCosts to true to display the columns
+      this.showCostsLoading = true;
       const API_URL =
         process.env.NODE_ENV === "production"
           ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
@@ -342,6 +348,7 @@ export default {
           platillo.costoTotal = 0;
         }
       }
+      this.showCostsLoading = false;
     },
   },
   computed: {
@@ -392,4 +399,10 @@ export default {
   margin-top: 5px;
   font-size: 0.8rem;
 }
+.spinner {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-top: 20px;
+}
+
 </style>
