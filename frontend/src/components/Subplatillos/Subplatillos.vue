@@ -74,6 +74,7 @@ export default {
       }
       this.subplatillos.push(this.nuevoSubPlatillo);
       this.nuevoSubPlatillo = { nombre: "", unidad: "", rendimiento: "" };
+      window.location.reload()
     },
   },
   async mounted() {
