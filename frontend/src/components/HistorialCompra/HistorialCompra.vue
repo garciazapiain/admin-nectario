@@ -6,6 +6,7 @@
     <table v-if="purchaseOrders.length">
       <tr>
         <th>id</th>
+        <th>Folio</th>
         <th>Status</th>
         <th>Fecha</th>
         <th>Proveedor</th>
@@ -18,6 +19,7 @@
             order.id
             }}</router-link>
         </td>
+        <td>{{ order.folio }}</td>
         <td>
           <select :value="order.status" @change="updateStatus(order.id, $event.target.value)"
             :class="order.status === 'pendiente' ? 'bg-yellow-500' : 'bg-green-500'">
