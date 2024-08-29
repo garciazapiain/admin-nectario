@@ -430,7 +430,13 @@ app.post('/api/subplatillos', async (req, res) => {
   const { nombre, unidad, rendimiento } = req.body;
   const client = await pool.connect();
   try {
-    const result = await client.query('INSERT INTO subplatillos (nombre, unidad, rendimiento) VALUES ($1, $2, $3) RETURNING *', [nombre, unidad, rendimiento]);
+    // Select the maximum id_subplatillo and add 1 to it for the new ID
+    const result = await client.query(`
+      INSERT INTO subplatillos (id_subplatillo, nombre, unidad, rendimiento)
+      VALUES (
+        (SELECT COALESCE(MAX(id_subplatillo), 0) + 1 FROM subplatillos), $1, $2, $3
+      ) RETURNING *`, [nombre, unidad, rendimiento]);
+
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
