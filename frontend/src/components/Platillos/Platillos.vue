@@ -145,8 +145,10 @@ export default {
           : "http://localhost:3000/api";
 
       // Check if the clavepos already exists
-      const checkResponse = await fetch(`${API_URL}/platillos?clavepos=${this.editValueClavePos}`);
+      const checkResponse = await fetch(`${API_URL}/platillos/check?clavepos=${this.editValueClavePos}`);
       const existingPlatillo = await checkResponse.json();
+
+      console.log(existingPlatillo)
 
       if (existingPlatillo.length > 0 && existingPlatillo[0].id_platillo !== platillo.id_platillo) {
         alert("Error: Clave SoftRest POS ya existe");

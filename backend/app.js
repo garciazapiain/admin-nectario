@@ -177,6 +177,23 @@ app.get('/api/platillo/:id', async (req, res) => {
   }
 });
 
+// Add this new route to check if a clavepos already exists
+app.get('/api/platillos/check', async (req, res) => {
+  const { clavepos } = req.query;
+  const client = await pool.connect();
+
+  try {
+    const result = await client.query('SELECT * FROM platillos WHERE clavepos = $1', [clavepos]);
+    res.json(result.rows);  // Return the list of matching platillos
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while checking the clavepos' });
+  } finally {
+    client.release();
+  }
+});
+
+
 app.delete('/api/platillo/:id', async (req, res) => {
   const { id } = req.params;
   const client = await pool.connect();
