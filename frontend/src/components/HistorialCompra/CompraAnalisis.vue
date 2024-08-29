@@ -46,7 +46,12 @@
             <span v-else>{{ item.total_price }}</span>
           </td>
           <td>
-            <button class="bg-green-500" v-if="item.editing" @click="saveItem(item)">Guardar</button>
+            <button class="mr-1" v-if="item.editing" @click="saveItem(item)"
+              :class="item.id_ingrediente ? 'bg-green-500' : 'bg-gray-400 cursor-not-allowed text-gray-600'"
+              :disabled="!item.id_ingrediente"
+              >
+              Guardar
+            </button>
             <button class="bg-blue-500 mr-1" v-else @click="editItem(item)">Editar</button>
             <button class="bg-red-500" @click="deleteItem(index)">Eliminar</button>
           </td>
