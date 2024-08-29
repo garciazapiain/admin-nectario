@@ -118,7 +118,8 @@ export default {
                 if (response.ok) {
                     const allIngredientes = await response.json();
                     // Filter only those ingredients where producto_clave is true
-                    this.ingredientes = allIngredientes.filter(ingrediente => ingrediente.producto_clave === true);
+                    this.ingredientes = allIngredientes
+                    // this.ingredientes = allIngredientes.filter(ingrediente => ingrediente.producto_clave === true);
                 } else {
                     console.error("Error fetching ingredientes:", response.status);
                 }
