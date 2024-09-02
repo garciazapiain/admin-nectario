@@ -19,29 +19,29 @@
         <span class="timestamp">{{ lastUpdate() }}</span>
       </p>
     </div>
-    <!-- <div v-if="isAdmin" class="filtros-container">
+    <div v-if="isAdmin" class="filtros-container">
       <h2>Filtros:</h2>
       <label for="insumos">Tipo Insumos:</label>
       <select class="filterBar" id="insumos" v-model="selectedInsumosTipo">
         <option value="Lista Peligro">Lista peligro</option>
-        <option value="Transferencias">Transferencias</option>
+        <!-- <option value="Transferencias">Transferencias</option> -->
         <option value="Todos">Todos</option>
       </select>
-      <label for="proveedores">Proveedores:</label>
+      <!-- <label for="proveedores">Proveedores:</label>
       <select class="filterBar" id="proveedores" v-model="selectedProveedor">
         <option value="">Todos</option>
         <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">
           {{ proveedor.nombre }}
         </option>
-      </select>
-      <label for="frecuencias_inventario">Frecuencia Inventario:</label>
+      </select> -->
+      <!-- <label for="frecuencias_inventario">Frecuencia Inventario:</label>
       <select class="filterBar" id="frecuencias_inventario" v-model="selectedFrecuencia">
         <option value="">Todos</option>
         <option value="inicio_primer_turno">Inicio primer turno</option>
         <option value="inicio_segundo_turno">Inicio segundo turno</option>
         <option value="fin_segundo_turno">Fin segundo turno</option>
-      </select>
-    </div> -->
+      </select> -->
+    </div>
     <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="search-bar" />
     <div class="checkbox-container" v-if="isAdmin">
       <input type="checkbox" id="inventarioCheckbox" v-model="selectedInventarioOption" class="checkbox-input" />
