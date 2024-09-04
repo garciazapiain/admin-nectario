@@ -10,14 +10,14 @@ describe('Platillos Component', () => {
 
     it('renders the Platillos component', () => {
         cy.get('h1').should('contain', 'Platillos');
-        cy.get('input[placeholder="Search"]').should('exist');
+        cy.get('input[placeholder="Buscar"]').should('exist');
         cy.get('table').should('exist');
         cy.get('form').should('exist');
     });
 
     it('filters platillos based on search input', () => {
         // Type a search term into the search input field
-        cy.get('input[placeholder="Search"]').type('CHILAQUILES');
+        cy.get('input[placeholder="Buscar"]').type('CHILAQUILES');
 
         // Check that each table row contains the search term
         cy.get('tbody tr').each(($row) => {
