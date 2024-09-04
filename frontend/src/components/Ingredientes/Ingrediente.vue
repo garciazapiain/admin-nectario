@@ -3,9 +3,9 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const handleClick = (platillo) => {
   if (platillo.type === "Platillo") {
-    router.push(`/platillo/${platillo.id_platillo}`);
+    window.open(`/platillo/${platillo.id_platillo}`, '_blank');
   } else {
-    router.push(`/subplatillo/${platillo.id_platillo}`);
+    window.open(`/subplatillo/${platillo.id_platillo}`, '_blank');
   }
 };
 </script>
