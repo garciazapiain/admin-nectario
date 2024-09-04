@@ -15,7 +15,7 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
     <div v-else>
       <h1>{{ platillo.nombre }}</h1>
       <div class="platilloButtonContainer">
-        <button v-if="isAdmin" @click="isEditingName = true">Editar nombre</button>
+        <button v-if="isAdmin || !recetaBloqueada" @click="isEditingName = true">Editar nombre</button>
         <button @click="handleDuplicatePlatillo">Duplicar Platillo</button>
         <button v-if="isAdmin" class="bg-red-500" @click="handleDeletePlatillo">Borrar</button>
       </div>
@@ -32,7 +32,7 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
           <th>UNIDAD</th>
           <th>CANTIDAD</th>
           <th>$/CANTIDAD</th>
-          <th v-if="isAdmin">BORRAR</th>
+          <th v-if="isAdmin || !recetaBloqueada">BORRAR</th>
         </tr>
       </thead>
       <tbody>
@@ -51,7 +51,7 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
             </div>
             <div v-else>
               {{ ingrediente.cantidad.toFixed(2) }}
-              <button v-if="isAdmin" @click="handleOpenEditIngredient(index)">Editar</button>
+              <button v-if="isAdmin || !recetaBloqueada" @click="handleOpenEditIngredient(index)">Editar</button>
             </div>
           </td>
           <td>
@@ -69,7 +69,7 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
               </div>
             </div>
           </td>
-          <td v-if="isAdmin">
+          <td v-if="isAdmin || !recetaBloqueada">
             <!-- If ingrediente.isSubplatillo is false, show the delete button -->
             <button v-if="!ingrediente.is_subplatillo || includeSubplatillos"
               @click="handleDeleteIngredient(ingrediente)">Borrar</button>
@@ -115,6 +115,7 @@ export default {
       editValue: 0,
       isEditingName: false,
       newName: "",
+      recetaBloqueada: true
     };
   },
   components: {
@@ -187,6 +188,7 @@ export default {
         }
         const data = await response.json();
         this.platillo = data;
+        this.recetaBloqueada = data.receta_bloqueada;
       } catch (error) {
         console.error("Error:", error);
       }
