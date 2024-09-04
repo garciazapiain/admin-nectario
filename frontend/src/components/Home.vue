@@ -5,6 +5,7 @@ import 'tailwindcss/tailwind.css'
 
 const router = useRouter();
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
+const isChef = ref(localStorage.getItem("isChef") === "true");
 
 const navigateTo = (route) => {
   router.push(route);
@@ -22,8 +23,8 @@ onMounted(() => {
     <button class="button" @click="() => navigateTo('/listapeligro')">Lista Peligro</button>
     <button class="button" @click="() => navigateTo('/existenciasresumen')">Resumen Existencias</button>
     <button class="button" v-if="isAdmin" @click="() => navigateTo('/compra')">Compra del dia</button>
-    <button class="button" v-if="isAdmin" @click="() => navigateTo('/platillos')">Platillos</button>
-    <button class="button" v-if="isAdmin" @click="() => navigateTo('/subplatillos')">Subplatillos</button>
+    <button class="button" v-if="isAdmin || isChef" @click="() => navigateTo('/platillos')">Platillos</button>
+    <button class="button" v-if="isAdmin || isChef" @click="() => navigateTo('/subplatillos')">Subplatillos</button>
     <button class="button" v-if="isAdmin" @click="() => navigateTo('/ingredientes')">Insumos</button>
     <button class="button" v-if="isAdmin" @click="() => navigateTo('/pronosticodemandainsumos')">
       Pronóstico Demanda Insumos

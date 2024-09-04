@@ -5,6 +5,8 @@ const API_URL =
     : "http://localhost:3000/api";
 import { useRouter } from "vue-router";
 import * as XLSX from 'xlsx'; // Import XLSX
+import { ref } from "vue";
+const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 
 const router = useRouter();
 const handleClickPlatillo = (idPlatillo) => {
@@ -15,16 +17,15 @@ const handleClickPlatillo = (idPlatillo) => {
 <template>
   <div>
     <h1>Platillos</h1>
-    <input v-model="searchTerm" placeholder="Search" />
-    <button @click="exportToExcel">Export to Excel</button>
-    <input type="file" @change="importFromExcel" />
-
+    <button class="m-4" @click="exportToExcel">Exportar a Excel</button>
+    <input v-if="isAdmin" type="file" @change="importFromExcel" />
     <!-- New Button to Show Cost Calculation -->
     <button @click="calculateCosts">Sacar costo de venta</button>
     <!-- Spinner -->
     <div v-if="showCostsLoading" class="spinner">
       <p>Cargando costos de venta...</p>
     </div>
+    <input class="h-8 w-full" v-model="searchTerm" placeholder="Buscar" />
 
     <table>
       <thead>
@@ -45,7 +46,7 @@ const handleClickPlatillo = (idPlatillo) => {
           <td>
             <div class="editRow" v-if="editIndexClavePos !== index">
               {{ platillo.clavepos }}
-              <button @click="editIndexClavePos = index">
+              <button v-if="isAdmin" @click="editIndexClavePos = index">
                 Editar
               </button>
             </div>
@@ -60,7 +61,7 @@ const handleClickPlatillo = (idPlatillo) => {
           <td>
             <div class="editRow" v-if="editIndexPrecio !== index">
               {{ platillo.precio_piso !== null ? `$${platillo.precio_piso.toFixed(2)}` : '' }}
-              <button @click="editIndexPrecio = index">
+              <button v-if="isAdmin" @click="editIndexPrecio = index">
                 Editar
               </button>
             </div>
@@ -81,7 +82,7 @@ const handleClickPlatillo = (idPlatillo) => {
 
     <!-- Add Platillo Form -->
     <form @submit.prevent="agregarPlatillo">
-      <input v-model="nuevoPlatillo.nombre" placeholder="Nombre" required />
+      <input class="h-8" v-model="nuevoPlatillo.nombre" placeholder="Nombre de platillo" required />
       <button type="submit">Agregar Platillo</button>
     </form>
   </div>
@@ -209,6 +210,7 @@ export default {
         process.env.NODE_ENV === "production"
           ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
           : "http://localhost:3000/api";
+
       const response = await fetch(`${API_URL}/platillos`, {
         method: "POST",
         headers: {
@@ -216,12 +218,14 @@ export default {
         },
         body: JSON.stringify(this.nuevoPlatillo),
       });
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      this.platillos.push(this.nuevoPlatillo);
-      this.nuevoPlatillo = {};
-      location.reload();
+      // Get the newly created platillo from the response
+      const newPlatillo = await response.json();
+      // Redirect to the new platillo route
+      this.$router.push(`/platillo/${newPlatillo.id_platillo}`);
     },
     exportToExcel() {
       const data = this.filteredPlatillos.map(platillo => {
@@ -399,10 +403,10 @@ export default {
   margin-top: 5px;
   font-size: 0.8rem;
 }
+
 .spinner {
   text-align: center;
   font-size: 1.5rem;
   margin-top: 20px;
 }
-
 </style>

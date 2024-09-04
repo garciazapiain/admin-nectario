@@ -1,7 +1,104 @@
-<script>
+<script setup>
 import API_URL from "../../config";
 import IngredientForm from "./IngredientForm.vue";
 import SubPlatilloForm from "../Subplatillos/SubPlatilloForm.vue";
+import { ref } from "vue";
+const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
+
+</script>
+<template>
+  <div>
+    <div v-if="isEditingName">
+      <input type="text" v-model="newName" />
+      <button @click="handleSaveName">Guardar</button>
+    </div>
+    <div v-else>
+      <h1>{{ platillo.nombre }}</h1>
+      <div class="platilloButtonContainer">
+        <button v-if="isAdmin" @click="isEditingName = true">Editar nombre</button>
+        <button @click="handleDuplicatePlatillo">Duplicar Platillo</button>
+        <button v-if="isAdmin" class="bg-red-500" @click="handleDeletePlatillo">Borrar</button>
+      </div>
+    </div>
+    <p>Unidades vendidas:{{ platillo.unidades_vendidas }}</p>
+    <div>
+      <input type="checkbox" id="includeSubplatillos" v-model="includeSubplatillos" />
+      <label for="includeSubplatillos">DESGLOCAR CON SUBPLATILLOS</label>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>INGREDIENTE</th>
+          <th>UNIDAD</th>
+          <th>CANTIDAD</th>
+          <th>$/CANTIDAD</th>
+          <th v-if="isAdmin">BORRAR</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(ingrediente, index) in aggregatedIngredients" :key="index">
+          <td @click="handleClickIngrediente(ingrediente.id_ingrediente)">
+            {{ ingrediente.nombre }}
+          </td>
+          <td>{{ ingrediente.unidad }}</td>
+          <td>
+            <div class="editRow" v-if="editIndex === index">
+              <div class="inputRow">
+                <input type="number" min=".001" v-model="editValue" step=".25" />
+                <button @click="resetEditValue">X</button>
+              </div>
+              <button @click="handleSaveEditIngredient">Guardar</button>
+            </div>
+            <div v-else>
+              {{ ingrediente.cantidad.toFixed(2) }}
+              <button v-if="isAdmin" @click="handleOpenEditIngredient(index)">Editar</button>
+            </div>
+          </td>
+          <td>
+            <!-- If includeSubplatillos is false or ingrediente.is_subplatillo is false, show the price normally -->
+            <span v-if="!includeSubplatillos">
+              ${{ (ingrediente.precio * ingrediente.cantidad).toFixed(2) }}
+            </span>
+
+            <!-- If includeSubplatillos is true and ingrediente.is_subplatillo is true, show the info icon with a tooltip -->
+            <div v-else class="info-icon-wrapper">
+              <i class="info-icon">ℹ️</i>
+              <!-- Tooltip -->
+              <div class="tooltip">
+                Para ver esta columna, quita la opción de desgloce por subplatillos.
+              </div>
+            </div>
+          </td>
+          <td v-if="isAdmin">
+            <!-- If ingrediente.isSubplatillo is false, show the delete button -->
+            <button v-if="!ingrediente.is_subplatillo || includeSubplatillos"
+              @click="handleDeleteIngredient(ingrediente)">Borrar</button>
+            <!-- If ingrediente.isSubplatillo is true, show the info icon with a tooltip -->
+            <div v-else class="info-icon-wrapper">
+              <i class="info-icon">ℹ️</i>
+              <!-- Tooltip -->
+              <div class="tooltip">
+                Este ingrediente forma parte de un subplatillo. Para eliminar este ingrediente, primero elimina el
+                subplatillo al que pertenece.
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+      <p v-if=!includeSubplatillos>COSTO TOTAL: $ {{ totalCost.toFixed(2) }}</p>
+    </table>
+
+    <!-- Flexbox Container for Ingredient and SubPlatillo Forms -->
+    <div class="form-container">
+      <IngredientForm :ingredientes="ingredientes" :existingIngredientIds="existingIngredientIds"
+        :postUrl="`${API_URL}/platillos/${$route.params.id}/ingredientes`" @ingredientAdded="fetchData" />
+      <SubPlatilloForm :subPlatillos="subPlatillos" :existingSubPlatilloIds="existingSubPlatilloIds"
+        @subPlatilloAdded="fetchData" />
+    </div>
+  </div>
+</template>
+
+<script>
 export default {
   data() {
     return {
@@ -268,97 +365,7 @@ export default {
   },
 };
 </script>
-<template>
-  <div>
-    <div v-if="isEditingName">
-      <input type="text" v-model="newName" />
-      <button @click="handleSaveName">Guardar</button>
-    </div>
-    <div v-else>
-      <h1>{{ platillo.nombre }}</h1>
-      <div class="platilloButtonContainer">
-        <button @click="isEditingName = true">Editar nombre</button>
-        <button @click="handleDuplicatePlatillo">Duplicar Platillo</button>
-        <button class="bg-red-500" @click="handleDeletePlatillo">Borrar</button>
-      </div>
-    </div>
-    <p>Unidades vendidas:{{ platillo.unidades_vendidas }}</p>
-    <div>
-      <input type="checkbox" id="includeSubplatillos" v-model="includeSubplatillos" />
-      <label for="includeSubplatillos">DESGLOCAR CON SUBPLATILLOS</label>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th>INGREDIENTE</th>
-          <th>UNIDAD</th>
-          <th>CANTIDAD</th>
-          <th>$/CANTIDAD</th>
-          <th>BORRAR</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(ingrediente, index) in aggregatedIngredients" :key="index">
-          <td @click="handleClickIngrediente(ingrediente.id_ingrediente)">
-            {{ ingrediente.nombre }}
-          </td>
-          <td>{{ ingrediente.unidad }}</td>
-          <td>
-            <div class="editRow" v-if="editIndex === index">
-              <div class="inputRow">
-                <input type="number" min=".001" v-model="editValue" step=".25" />
-                <button @click="resetEditValue">X</button>
-              </div>
-              <button @click="handleSaveEditIngredient">Guardar</button>
-            </div>
-            <div v-else>
-              {{ ingrediente.cantidad.toFixed(2) }}
-              <button @click="handleOpenEditIngredient(index)">Editar</button>
-            </div>
-          </td>
-          <td>
-            <!-- If includeSubplatillos is false or ingrediente.is_subplatillo is false, show the price normally -->
-            <span v-if="!includeSubplatillos">
-              ${{ (ingrediente.precio * ingrediente.cantidad).toFixed(2) }}
-            </span>
 
-            <!-- If includeSubplatillos is true and ingrediente.is_subplatillo is true, show the info icon with a tooltip -->
-            <div v-else class="info-icon-wrapper">
-              <i class="info-icon">ℹ️</i>
-              <!-- Tooltip -->
-              <div class="tooltip">
-                Para ver esta columna, quita la opción de desgloce por subplatillos.
-              </div>
-            </div>
-          </td>
-          <td>
-            <!-- If ingrediente.isSubplatillo is false, show the delete button -->
-            <button v-if="!ingrediente.is_subplatillo || includeSubplatillos"
-              @click="handleDeleteIngredient(ingrediente)">Borrar</button>
-            <!-- If ingrediente.isSubplatillo is true, show the info icon with a tooltip -->
-            <div v-else class="info-icon-wrapper">
-              <i class="info-icon">ℹ️</i>
-              <!-- Tooltip -->
-              <div class="tooltip">
-                Este ingrediente forma parte de un subplatillo. Para eliminar este ingrediente, primero elimina el
-                subplatillo al que pertenece.
-              </div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-      <p v-if=!includeSubplatillos>COSTO TOTAL: $ {{ totalCost.toFixed(2) }}</p>
-    </table>
-
-    <!-- Flexbox Container for Ingredient and SubPlatillo Forms -->
-    <div class="form-container">
-      <IngredientForm :ingredientes="ingredientes" :existingIngredientIds="existingIngredientIds"
-        :postUrl="`${API_URL}/platillos/${$route.params.id}/ingredientes`" @ingredientAdded="fetchData" />
-      <SubPlatilloForm :subPlatillos="subPlatillos" :existingSubPlatilloIds="existingSubPlatilloIds"
-        @subPlatilloAdded="fetchData" />
-    </div>
-  </div>
-</template>
 
 
 <style scoped>

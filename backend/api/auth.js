@@ -43,8 +43,8 @@ router.post('/login', async (req, res) => {
       return res.status(403).json({ error: 'Invalid password.' });
     }
 
-    const accessToken = jwt.sign({ name: user.name, isAdmin: user.isAdmin }, process.env.ACCESS_TOKEN_SECRET);
-    res.json({ accessToken, isAdmin: user.isAdmin });
+    const accessToken = jwt.sign({ name: user.name, isAdmin: user.isAdmin, isChef: user.isChef }, process.env.ACCESS_TOKEN_SECRET);
+    res.json({ accessToken, isAdmin: user.isAdmin, isChef: user.isChef });
 
   } catch (err) {
     console.error(err);
