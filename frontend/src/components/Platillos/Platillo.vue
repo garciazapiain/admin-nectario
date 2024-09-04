@@ -50,7 +50,7 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
               <button @click="handleSaveEditIngredient">Guardar</button>
             </div>
             <div v-else>
-              {{ ingrediente.cantidad.toFixed(2) }}
+              {{ ingrediente.cantidad.toFixed(3) }}
               <button v-if="isAdmin || !recetaBloqueada" @click="handleOpenEditIngredient(index)">Editar</button>
             </div>
           </td>
