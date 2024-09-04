@@ -20,7 +20,8 @@ const handleClickPlatillo = (idPlatillo) => {
     <button class="m-4" @click="exportToExcel">Exportar a Excel</button>
     <input v-if="isAdmin" type="file" @change="importFromExcel" />
     <!-- New Button to Show Cost Calculation -->
-    <button @click="calculateCosts">Sacar costo de venta</button>
+    <button class="m-4" @click="calculateCosts">Sacar costo de venta</button>
+    <button class="m-4 bg-green-600" @click="scrollToBottomAgregarPlatillo">Agregar platillo</button>
     <!-- Spinner -->
     <div v-if="showCostsLoading" class="spinner">
       <p>Cargando costos de venta...</p>
@@ -81,9 +82,9 @@ const handleClickPlatillo = (idPlatillo) => {
     </table>
 
     <!-- Add Platillo Form -->
-    <form @submit.prevent="agregarPlatillo">
+    <form id="agregarPlatilloForm" @submit.prevent="agregarPlatillo">
       <input class="h-8" v-model="nuevoPlatillo.nombre" placeholder="Nombre de platillo" required />
-      <button type="submit">Agregar Platillo</button>
+      <button class="bg-green-600" type="submit">Agregar Platillo</button>
     </form>
   </div>
 </template>
@@ -354,6 +355,21 @@ export default {
       }
       this.showCostsLoading = false;
     },
+    scrollToBottomAgregarPlatillo() {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth"
+      });
+
+      // Highlight the form after scrolling
+      const formElement = document.querySelector("#agregarPlatilloForm");
+      if (formElement) {
+        formElement.classList.add("highlight"); // Add the highlight class
+        setTimeout(() => {
+          formElement.classList.remove("highlight"); // Remove the highlight class after 3 seconds
+        }, 3000); // 3000 milliseconds = 3 seconds
+      }
+    }
   },
   computed: {
     filteredPlatillos() {
@@ -408,5 +424,23 @@ export default {
   text-align: center;
   font-size: 1.5rem;
   margin-top: 20px;
+}
+
+.highlight {
+  animation: highlight-effect 3s ease-in-out;
+}
+
+@keyframes highlight-effect {
+  0% {
+    background-color: yellow;
+  }
+
+  50% {
+    background-color: lightgreen;
+  }
+
+  100% {
+    background-color: transparent;
+  }
 }
 </style>
