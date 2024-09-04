@@ -102,7 +102,7 @@ const handleClick = (platillo) => {
         </tr>
         <tr>
           <td><strong>% MERMA:</strong></td>
-          <td>{{ ingrediente.merma * 100 }}%</td>
+          <td>{{ (ingrediente.merma * 100).toFixed(0) }}%</td>
         </tr>
         <tr>
           <td><strong>Orden ruta de tienda:</strong></td>
