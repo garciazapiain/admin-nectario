@@ -20,7 +20,7 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
         <button v-if="isAdmin" class="bg-red-500" @click="handleDeletePlatillo">Borrar</button>
       </div>
     </div>
-    <p>Unidades vendidas:{{ platillo.unidades_vendidas }}</p>
+    <!-- <p>Unidades vendidas:{{ platillo.unidades_vendidas }}</p> -->
     <div>
       <input type="checkbox" id="includeSubplatillos" v-model="includeSubplatillos" />
       <label for="includeSubplatillos">DESGLOCAR CON SUBPLATILLOS</label>
