@@ -50,7 +50,7 @@ const handleClick = (platillo) => {
           </select>
         </div>
         <div class="form-group">
-          <label for="precio">Precio:</label>
+          <label for="precio">Costo limpio (contando % MERMA):</label>
           <input id="precio" v-model="ingredienteEditado.precio" />
         </div>
         <div class="form-group">
