@@ -23,7 +23,9 @@
                         <th>Insumo</th>
                         <th>Unidad</th>
                         <th>Cantidad</th>
-                        <th>Precio por Unidad</th>
+                        <th>% Merma</th>
+                        <th>Costo sucio / unidad</th>
+                        <th>Costo limpio / unidad</th>
                         <th>Importe Total</th>
                         <th>Borrar</th>
                     </tr>
@@ -47,8 +49,12 @@
                             <input type="number" v-model="article.cantidad" @input="updateTotalPrice(article)" required
                                 step="0.01" min="0"/>
                         </td>
+                        <td>{{ article.merma * 100 }}%</td>
                         <td>
                             <input type="number" v-model="article.precio" @input="updateTotalPrice(article)" required step="0.01" min="0" />
+                        </td>
+                        <td>
+                            ${{((article.precio / (1-article.merma))).toFixed(1) }}
                         </td>
                         <td>{{ article.totalImporte }}</td>
                         <td>
@@ -140,6 +146,7 @@ export default {
             article.allowSearch = false;
             article.filteredIngredients = []; // Clear the dropdown after selection
             article.selectedIngredientId = ingredient.id_ingrediente;
+            article.merma = ingredient.merma;
             this.updateTotalPrice(article); // Update the total price immediately
         },
         addNewArticle() {

@@ -21,17 +21,9 @@ const handleClick = (platillo) => {
         </div>
         <div class="form-group">
           <label for="proveedor">Proveedor:</label>
-          <select
-            id="proveedor"
-            v-model="ingredienteEditado.proveedor"
-            @change="updateProveedor"
-          >
+          <select id="proveedor" v-model="ingredienteEditado.proveedor" @change="updateProveedor">
             <option disabled value="">Selecciona un proveedor</option>
-            <option
-              v-for="proveedor in proveedores"
-              :key="proveedor.id"
-              :value="proveedor.nombre"
-            >
+            <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">
               {{ proveedor.nombre }}
             </option>
           </select>
@@ -40,11 +32,7 @@ const handleClick = (platillo) => {
           <label for="unidad">Unidad:</label>
           <select id="unidad" v-model="ingredienteEditado.unidad">
             <option disabled value="">Selecciona una unidad</option>
-            <option
-              v-for="(unidad, index) in unidades"
-              :key="index"
-              :value="unidad"
-            >
+            <option v-for="(unidad, index) in unidades" :key="index" :value="unidad">
               {{ unidad }}
             </option>
           </select>
@@ -54,57 +42,37 @@ const handleClick = (platillo) => {
           <input id="precio" v-model="ingredienteEditado.precio" />
         </div>
         <div class="form-group">
+          <label for="merma">% MERMA:</label>
+          <input id="merma" type="number" v-model="ingredienteEditado.merma" min="0" max="0.99" step="0.01" />
+        </div>
+        <div class="form-group">
           <label for="store_route_order">Orden ruta de tienda:</label>
-          <input
-            id="store_route_order"
-            type="number"
-            v-model.number="ingredienteEditado.store_route_order"
-          />
+          <input id="store_route_order" type="number" v-model.number="ingredienteEditado.store_route_order" />
         </div>
         <div class="form-group">
           <label for="lista_peligro">Lista peligro</label>
-          <select
-            id="lista_peligro"
-            v-model="ingredienteEditado.producto_clave"
-          >
+          <select id="lista_peligro" v-model="ingredienteEditado.producto_clave">
             <option value="true">Si</option>
             <option value="false">No</option>
           </select>
         </div>
         <div class="form-group">
           <label for="orden_inventario">Orden toma de Inventario:</label>
-          <input
-            id="orden_inventario"
-            type="number"
-            step="0.1"
-            v-model.number="ingredienteEditado.orden_inventario"
-          />
+          <input id="orden_inventario" type="number" step="0.1" v-model.number="ingredienteEditado.orden_inventario" />
         </div>
         <div class="form-group">
           <label for="store_route_order">Moral Demanda Semanal:</label>
-          <input
-            id="moral_demanda_semanal"
-            type="number"
-            step="0.01"
-            v-model.number="ingredienteEditado.moral_demanda_semanal"
-          />
+          <input id="moral_demanda_semanal" type="number" step="0.01"
+            v-model.number="ingredienteEditado.moral_demanda_semanal" />
         </div>
         <div class="form-group">
           <label for="store_route_order">Campestre Demanda Semanal:</label>
-          <input
-            id="bosques_demanda_semanal"
-            type="number"
-            step="0.01"
-            v-model.number="ingredienteEditado.bosques_demanda_semanal"
-          />
+          <input id="bosques_demanda_semanal" type="number" step="0.01"
+            v-model.number="ingredienteEditado.bosques_demanda_semanal" />
         </div>
         <div class="form-group">
           <label for="frecuencias_inventario">Frecuencias de Inventario:</label>
-          <select
-            id="frecuencias_inventario"
-            v-model="ingredienteEditado.frecuencias_inventario"
-            multiple
-          >
+          <select id="frecuencias_inventario" v-model="ingredienteEditado.frecuencias_inventario" multiple>
             <option disabled value="">Selecciona una frecuencia</option>
             <option value="1">Inicio primer turno</option>
             <option value="2">Inicio segundo turno</option>
@@ -129,8 +97,12 @@ const handleClick = (platillo) => {
           <td>{{ ingrediente.unidad }}</td>
         </tr>
         <tr>
-          <td><strong>Precio:</strong></td>
+          <td><strong>Costo limpio (contando % MERMA):</strong></td>
           <td>${{ ingrediente.precio }}</td>
+        </tr>
+        <tr>
+          <td><strong>% MERMA:</strong></td>
+          <td>{{ ingrediente.merma * 100 }}%</td>
         </tr>
         <tr>
           <td><strong>Orden ruta de tienda:</strong></td>
@@ -150,7 +122,7 @@ const handleClick = (platillo) => {
             {{ ingrediente.moral_demanda_semanal }}
             <span v-if="ingrediente.moral_demanda_semanal">{{
               ingrediente.unidad
-            }}</span>
+              }}</span>
           </td>
         </tr>
         <tr>
@@ -159,15 +131,13 @@ const handleClick = (platillo) => {
             {{ ingrediente.bosques_demanda_semanal }}
             <span v-if="ingrediente.bosques_demanda_semanal">{{
               ingrediente.unidad
-            }}</span>
+              }}</span>
           </td>
         </tr>
         <tr>
           <td>
-            <strong
-              >Moral Demanda
-              <input type="number" v-model="inputDaysMoral" /> dias:</strong
-            >
+            <strong>Moral Demanda
+              <input type="number" v-model="inputDaysMoral" /> dias:</strong>
           </td>
           <td>
             {{
@@ -178,7 +148,7 @@ const handleClick = (platillo) => {
             }}
             <span v-if="ingrediente.moral_demanda_semanal">{{
               ingrediente.unidad
-            }}</span>
+              }}</span>
           </td>
         </tr>
         <tr>
@@ -187,15 +157,13 @@ const handleClick = (platillo) => {
             {{ ingrediente.bosques_demanda_semanal }}
             <span v-if="ingrediente.bosques_demanda_semanal">{{
               ingrediente.unidad
-            }}</span>
+              }}</span>
           </td>
         </tr>
         <tr>
           <td>
-            <strong
-              >Campestre Demanda
-              <input type="number" v-model="inputDaysBosques" /> dias:</strong
-            >
+            <strong>Campestre Demanda
+              <input type="number" v-model="inputDaysBosques" /> dias:</strong>
           </td>
           <td>
             {{
@@ -206,19 +174,15 @@ const handleClick = (platillo) => {
             }}
             <span v-if="ingrediente.bosques_demanda_semanal">{{
               ingrediente.unidad
-            }}</span>
+              }}</span>
           </td>
         </tr>
         <tr>
           <td><strong>Frecuencias de Inventario:</strong></td>
           <td>
-            <span
-              v-for="(frecuencia, index) in ingrediente.frecuencias_inventario"
-              :key="index"
-            >
+            <span v-for="(frecuencia, index) in ingrediente.frecuencias_inventario" :key="index">
               {{ displayFrecuencia(frecuencia) }}
-              <span v-if="index < ingrediente.frecuencias_inventario.length - 1"
-                >,
+              <span v-if="index < ingrediente.frecuencias_inventario.length - 1">,
               </span>
             </span>
           </td>
@@ -234,11 +198,7 @@ const handleClick = (platillo) => {
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="(platillo, index) in ingrediente.platillos"
-          :key="index"
-          @click="handleClick(platillo)"
-        >
+        <tr v-for="(platillo, index) in ingrediente.platillos" :key="index" @click="handleClick(platillo)">
           <td>{{ platillo.nombre }}</td>
           <td>{{ platillo.type }}</td>
         </tr>

@@ -7,7 +7,7 @@
           <th>Insumo</th>
           <th>Cantidad</th>
           <th>Total gastado</th>
-          <th>Precio promedio</th>
+          <th>Costo promedio</th>
           <th>Costo en receta</th>
           <th>Diferencia %</th>
         </tr>
@@ -21,7 +21,7 @@
           </td>
           <td>{{ ingredient.total_quantity }}</td>
           <td>${{ ingredient.total_price }}</td>
-          <td>${{ (ingredient.total_price / ingredient.total_quantity).toFixed(2) }}/{{ ingredient.unidad }}</td>
+          <td>${{ ((ingredient.total_price / ingredient.total_quantity)/(1-ingredient.merma)).toFixed(2) }}/{{ ingredient.unidad }}</td>
           <td>${{ ingredient.precio }}/{{ ingredient.unidad }}</td>
           <td :class="getDifferenceClass(ingredient)">
             {{ calculateDifferencePercentage(ingredient).toFixed(2) }}%

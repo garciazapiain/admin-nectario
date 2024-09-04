@@ -753,21 +753,53 @@ app.put('/api/ingredientes/no-claves-resetestatus/:store', async (req, res) => {
 });
 
 app.put('/api/ingredientes/:id', async (req, res) => {
-  const { nombre, unidad, precio, proveedor, proveedor_id, store_route_order, producto_clave, moral_demanda_semanal, bosques_demanda_semanal, orden_inventario, frecuencias_inventario } = req.body;
+  const {
+    nombre,
+    unidad,
+    precio,
+    merma, // Added merma here
+    proveedor,
+    proveedor_id,
+    store_route_order,
+    producto_clave,
+    moral_demanda_semanal,
+    bosques_demanda_semanal,
+    orden_inventario,
+    frecuencias_inventario
+  } = req.body;
   const { id } = req.params;
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const updateIngredientesQuery = 'UPDATE ingredientes SET nombre = $1, unidad = $2, precio = $3, proveedor = $4, proveedor_id = $5, store_route_order = $7, producto_clave = $8, moral_demanda_semanal = $9, bosques_demanda_semanal = $10, orden_inventario=$11 WHERE id_ingrediente = $6 RETURNING *';
-    const result = await client.query(updateIngredientesQuery, [nombre, unidad, precio, proveedor, proveedor_id, id, store_route_order, producto_clave, moral_demanda_semanal, bosques_demanda_semanal, orden_inventario]);
+    const updateIngredientesQuery = `
+      UPDATE ingredientes 
+      SET nombre = $1, unidad = $2, precio = $3, merma = $4, proveedor = $5, proveedor_id = $6, store_route_order = $7, producto_clave = $8, moral_demanda_semanal = $9, bosques_demanda_semanal = $10, orden_inventario = $11 
+      WHERE id_ingrediente = $12 
+      RETURNING *`;
+    const result = await client.query(updateIngredientesQuery, [
+      nombre,
+      unidad,
+      precio,
+      merma, // Included merma here in the parameters
+      proveedor,
+      proveedor_id,
+      store_route_order,
+      producto_clave,
+      moral_demanda_semanal,
+      bosques_demanda_semanal,
+      orden_inventario,
+      id // Moved to the last position
+    ]);
 
-    if (frecuencias_inventario) { // Check if frecuencias_inventario is not null
+    if (frecuencias_inventario) {
+      // Check if frecuencias_inventario is not null
       const deleteFrecuenciasQuery = 'DELETE FROM ingredientes_frecuencia WHERE id_ingrediente = $1';
       await client.query(deleteFrecuenciasQuery, [id]);
 
       const insertFrecuenciasQuery = 'INSERT INTO ingredientes_frecuencia (id_ingrediente, frecuencia_inventario_id) VALUES ($1, $2)';
       for (let frecuencia of frecuencias_inventario) {
-        if (frecuencia) { // Check if frecuencia is not null
+        if (frecuencia) {
+          // Check if frecuencia is not null
           await client.query(insertFrecuenciasQuery, [id, frecuencia]);
         }
       }
@@ -1178,6 +1210,7 @@ app.get('/api/historial_insumos', async (req, res) => {
         ingredientes.id_ingrediente,
         ingredientes.unidad,
         ingredientes.precio,
+        ingredientes.merma,
         SUM(purchase_history_items.quantity) AS total_quantity, 
         SUM(purchase_history_items.total_price) AS total_price
       FROM 
@@ -1190,6 +1223,7 @@ app.get('/api/historial_insumos', async (req, res) => {
         ingredientes.nombre,
         ingredientes.id_ingrediente,
         ingredientes.precio,
+        ingredientes.merma,
         ingredientes.unidad;
     `);
 
