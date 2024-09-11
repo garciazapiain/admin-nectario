@@ -426,6 +426,77 @@ app.get('/api/subplatillos', async (req, res) => {
   }
 });
 
+app.put('/api/subplatillos/:idSubPlatillo/ingredientes/:idIngrediente', async (req, res) => {
+  const { idSubPlatillo, idIngrediente } = req.params;
+  const { cantidad } = req.body;
+  const client = await pool.connect();
+
+  try {
+    const result = await client.query(
+      'UPDATE subplatillos_ingredientes SET cantidad = $1 WHERE id_subplatillo = $2 AND id_ingrediente = $3 RETURNING *',
+      [cantidad, idSubPlatillo, idIngrediente]
+    );
+
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]);
+    } else {
+      res.status(404).json({ error: 'Resource not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while updating data in the database' });
+  } finally {
+    client.release();
+  }
+});
+
+app.delete('/api/subplatillos/:idSubPlatillo/ingredientes/:idIngrediente', async (req, res) => {
+  const { idSubPlatillo, idIngrediente } = req.params;
+  const client = await pool.connect();
+
+  try {
+    const result = await client.query(
+      'DELETE FROM subplatillos_ingredientes WHERE id_subplatillo = $1 AND id_ingrediente = $2 RETURNING *',
+      [idSubPlatillo, idIngrediente]
+    );
+
+    if (result.rows.length > 0) {
+      res.json({ message: 'Ingredient deleted successfully', data: result.rows[0] });
+    } else {
+      res.status(404).json({ error: 'Resource not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while deleting data in the database' });
+  } finally {
+    client.release();
+  }
+});
+
+app.put('/api/subplatillos/:idSubPlatillo/cambiarnombre', async (req, res) => {
+  const { idSubPlatillo } = req.params;
+  const { nombre } = req.body;
+  const client = await pool.connect();
+
+  try {
+    const result = await client.query(
+      'UPDATE subplatillos SET nombre = $1 WHERE id_subplatillo = $2 RETURNING *',
+      [nombre, idSubPlatillo]
+    );
+
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]);
+    } else {
+      res.status(404).json({ error: 'Resource not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while updating data in the database' });
+  } finally {
+    client.release();
+  }
+});
+
 app.post('/api/subplatillos', async (req, res) => {
   const { nombre, unidad, rendimiento } = req.body;
   const client = await pool.connect();
