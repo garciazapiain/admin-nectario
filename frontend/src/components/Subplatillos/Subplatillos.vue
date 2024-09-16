@@ -52,7 +52,6 @@ export default {
   data() {
     return {
       subplatillos: [],
-      filteredSubPlatillos: [],
       unidades: [],
       nuevoSubPlatillo: {
         nombre: "",
@@ -99,6 +98,7 @@ export default {
   },
   computed: {
     filteredSubPlatillos() {
+      console.log(this.subplatillos)
       // Add this computed property
       if (!this.searchTerm) {
         return this.subplatillos;
