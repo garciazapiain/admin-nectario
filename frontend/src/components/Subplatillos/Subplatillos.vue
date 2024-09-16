@@ -98,7 +98,6 @@ export default {
   },
   computed: {
     filteredSubPlatillos() {
-      console.log(this.subplatillos)
       // Add this computed property
       if (!this.searchTerm) {
         return this.subplatillos;

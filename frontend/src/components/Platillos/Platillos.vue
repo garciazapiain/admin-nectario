@@ -155,8 +155,6 @@ export default {
       const checkResponse = await fetch(`${API_URL}/platillos/check?clavepos=${this.editValueClavePos}`);
       const existingPlatillo = await checkResponse.json();
 
-      console.log(existingPlatillo)
-
       if (existingPlatillo.length > 0 && existingPlatillo[0].id_platillo !== platillo.id_platillo) {
         alert("Error: Clave SoftRest POS ya existe");
         return; // Exit function if clavepos exists
@@ -398,7 +396,6 @@ export default {
         throw new Error("Data is not an array");
       }
 
-      console.log("Platillos fetched:", data);
       this.platillos = data; // Set the fetched platillos data
 
     } catch (error) {
