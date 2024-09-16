@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faLock, faUnlock } from '@fortawesome/free-solid-svg-icons'
 import { library } from "@fortawesome/fontawesome-svg-core"; // Import the library function
 library.add(faLock, faUnlock)
-const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
+const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdmin as a reactive reference
 
 </script>
 <template>
@@ -20,10 +20,27 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
       <div class="flex w-full justify-center">
         <h1>{{ platillo.nombre }}</h1>
         <div class="tooltip-wrapper">
-          <!-- Lock icon with tooltip -->
-          <font-awesome-icon v-if="recetaBloqueada" :icon="['fas', 'lock']" class="tooltip-icon" />
-          <!-- Tooltip content -->
-          <span class="tooltip-text">Receta bloqueada, contacta a tu Administrador para hacer cambios.</span>
+          <!-- For Admins: Clickable Icons -->
+          <div v-if="isAdmin">
+            <font-awesome-icon v-if="recetaBloqueada" :icon="['fas', 'lock']" class="tooltip-icon"
+              @click="toggleRecetaBloqueada" />
+            <font-awesome-icon v-else :icon="['fas', 'unlock']" class="tooltip-icon" @click="toggleRecetaBloqueada" />
+            <!-- Conditional Tooltip Message for Admins -->
+            <span class="tooltip-text">
+              {{ recetaBloqueada ? 'Receta bloqueada, desbloqueala si quieres que otros usuarios puedan hacer cambios.'
+                : 'Receta desbloqueada, otros usuarios pueden hacer cambios.' }}
+            </span>
+          </div>
+
+          <!-- For Non-Admins: Non-Clickable Icons -->
+          <div v-else>
+            <font-awesome-icon v-if="recetaBloqueada" :icon="['fas', 'lock']" class="tooltip-icon" />
+            <font-awesome-icon v-else :icon="['fas', 'unlock']" class="tooltip-icon" />
+            <!-- Conditional Tooltip Message for Non-Admins -->
+            <span class="tooltip-text">
+              {{ recetaBloqueada ? 'Receta bloqueada, contacta a tu Administrador para hacer cambios.' : 'Receta desbloqueada, puedes hacer cambios.' }}
+            </span>
+          </div>
         </div>
       </div>
       <div class="platilloButtonContainer">
@@ -205,6 +222,28 @@ export default {
       } catch (error) {
         console.error("Error:", error);
       }
+    },
+    async toggleRecetaBloqueada() {
+      const idPlatillo = this.$route.params.id;
+
+      try {
+        const response = await fetch(`${API_URL}/platillos/${idPlatillo}/toggleRecetaBloqueada`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        this.recetaBloqueada = data.receta_bloqueada; // Update the local state
+      } catch (error) {
+        console.error("Error toggling receta_bloqueada:", error);
+      }
+      window.location.reload()
     },
     async handleSaveName() {
       const idPlatillo = this.$route.params.id;

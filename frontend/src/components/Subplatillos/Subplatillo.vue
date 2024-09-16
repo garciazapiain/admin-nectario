@@ -192,6 +192,26 @@ const totalCost = computed(() => {
     : 0;
 });
 
+const toggleRecetaBloqueada = async () => {
+  const idSubPlatillo = router.currentRoute.value.params.id;
+  try {
+    const response = await fetch(`${API_URL}/subplatillos/${idSubPlatillo}/toggleRecetaBloqueada`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    recetaBloqueada.value = !recetaBloqueada; // Update the local state
+  } catch (error) {
+    console.error("Error toggling receta_bloqueada:", error);
+  }
+  window.location.reload()
+}
 // Fetch data on mount
 fetchData();
 fetchIngredientes();
@@ -207,10 +227,27 @@ fetchIngredientes();
       <div class="flex w-full justify-center">
         <h1>{{ subplatillo.nombre }}</h1>
         <div class="tooltip-wrapper">
-          <!-- Lock icon with tooltip -->
-          <font-awesome-icon v-if="recetaBloqueada" :icon="['fas', 'lock']" class="tooltip-icon" />
-          <!-- Tooltip content -->
-          <span class="tooltip-text">Receta bloqueada, contacta a tu Administrador para hacer cambios.</span>
+          <!-- For Admins: Clickable Icons -->
+          <div v-if="isAdmin">
+            <font-awesome-icon v-if="recetaBloqueada" :icon="['fas', 'lock']" class="tooltip-icon"
+              @click="toggleRecetaBloqueada" />
+            <font-awesome-icon v-else :icon="['fas', 'unlock']" class="tooltip-icon" @click="toggleRecetaBloqueada" />
+            <!-- Conditional Tooltip Message for Admins -->
+            <span class="tooltip-text">
+              {{ recetaBloqueada ? 'Receta bloqueada, desbloqueala si quieres que otros usuarios puedan hacer cambios.'
+                : 'Receta desbloqueada, otros usuarios pueden hacer cambios.' }}
+            </span>
+          </div>
+
+          <!-- For Non-Admins: Non-Clickable Icons -->
+          <div v-else>
+            <font-awesome-icon v-if="recetaBloqueada" :icon="['fas', 'lock']" class="tooltip-icon" />
+            <font-awesome-icon v-else :icon="['fas', 'unlock']" class="tooltip-icon" />
+            <!-- Conditional Tooltip Message for Non-Admins -->
+            <span class="tooltip-text">
+              {{ recetaBloqueada ? 'Receta bloqueada, contacta a tu Administrador para hacer cambios.' : 'Receta desbloqueada, puedes hacer cambios.' }}
+            </span>
+          </div>
         </div>
       </div>
       <div class="platilloButtonContainer">

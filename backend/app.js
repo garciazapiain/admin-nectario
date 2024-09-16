@@ -61,6 +61,37 @@ app.post('/api/platillos', async (req, res) => {
   }
 });
 
+// Toggle recetaBloqueada state
+app.put('/api/platillos/:id/toggleRecetaBloqueada', async (req, res) => {
+  const { id } = req.params;
+  const client = await pool.connect();
+
+  try {
+    // Retrieve the current receta_bloqueada state
+    const currentStateResult = await client.query(
+      'SELECT receta_bloqueada FROM platillos WHERE id_platillo = $1',
+      [id]
+    );
+
+    const currentState = currentStateResult.rows[0].receta_bloqueada;
+
+    // Toggle the state
+    const newState = !currentState;
+
+    // Update the receta_bloqueada state in the database
+    const result = await client.query(
+      'UPDATE platillos SET receta_bloqueada = $1 WHERE id_platillo = $2 RETURNING receta_bloqueada',
+      [newState, id]
+    );
+
+    res.json({ receta_bloqueada: result.rows[0].receta_bloqueada });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while toggling the receta_bloqueada state.' });
+  } finally {
+    client.release();
+  }
+});
 
 app.put('/api/platillos/:id/cambiarnombre', async (req, res) => {
   const { nombre } = req.body;
@@ -445,6 +476,38 @@ app.put('/api/subplatillos/:idSubPlatillo/ingredientes/:idIngrediente', async (r
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred while updating data in the database' });
+  } finally {
+    client.release();
+  }
+});
+
+// Toggle recetaBloqueada state
+app.put('/api/subplatillos/:id/toggleRecetaBloqueada', async (req, res) => {
+  const { id } = req.params;
+  const client = await pool.connect();
+
+  try {
+    // Retrieve the current receta_bloqueada state
+    const currentStateResult = await client.query(
+      'SELECT receta_bloqueada FROM subplatillos WHERE id_subplatillo = $1',
+      [id]
+    );
+
+    const currentState = currentStateResult.rows[0].receta_bloqueada;
+
+    // Toggle the state
+    const newState = !currentState;
+
+    // Update the receta_bloqueada state in the database
+    const result = await client.query(
+      'UPDATE subplatillos SET receta_bloqueada = $1 WHERE id_subplatillo = $2 RETURNING receta_bloqueada',
+      [newState, id]
+    );
+
+    res.json({ receta_bloqueada: result.rows[0].receta_bloqueada });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while toggling the receta_bloqueada state.' });
   } finally {
     client.release();
   }
