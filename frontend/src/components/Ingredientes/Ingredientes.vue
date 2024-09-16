@@ -75,7 +75,7 @@
         </tr>
       </tbody>
     </table>
-    <div class="add-new-ingredient-form w-full max-w-2xl mx-auto p-5 shadow-lg rounded-lg">
+    <div v-if="isAdmin" class="add-new-ingredient-form w-full max-w-2xl mx-auto p-5 shadow-lg rounded-lg">
       <h2>Agregar Insumo</h2>
       <form @submit.prevent="agregarIngrediente" class="flex flex-col">
         <input

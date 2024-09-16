@@ -12,7 +12,7 @@ const handleClick = (platillo) => {
 <template>
   <div>
     <h1>{{ ingrediente.nombre }}</h1>
-    <h2>Info del insumo: <button @click="showModal = true">Editar</button></h2>
+    <h2>Info del insumo: <button v-if="isAdmin" @click="showModal = true">Editar</button></h2>
     <div v-if="showModal" class="modal">
       <form @submit.prevent="editIngrediente" class="grid grid-cols-2 gap-4 edit-form">
         <div class="form-group">
