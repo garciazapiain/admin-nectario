@@ -188,6 +188,7 @@ export default {
         }
         const data = await response.json();
         this.platillo = data;
+        this.newName = data.nombre
         this.recetaBloqueada = data.receta_bloqueada;
       } catch (error) {
         console.error("Error:", error);

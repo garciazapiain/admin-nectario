@@ -11,7 +11,9 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 const subplatillo = ref({});
 const ingredientes = ref([]);  // Define ingredientes here as a ref
 const isEditingName = ref(false);
+const isEditingRendimiento = ref(false);
 const newName = ref("");
+const newRendimiento = ref("");
 const recetaBloqueada = ref(true);
 const editIndex = ref(-1);
 const editValue = ref(0);
@@ -97,12 +99,12 @@ const handleDeleteIngredient = async (ingrediente) => {
 const handleSaveName = async () => {
   const idSubPlatillo = router.currentRoute.value.params.id;
   try {
-    const response = await fetch(`${API_URL}/subplatillos/${idSubPlatillo}/cambiarnombre`, {
+    const response = await fetch(`${API_URL}/subplatillos/${idSubPlatillo}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ nombre: newName.value }),
+      body: JSON.stringify({ nombre: newName.value }), // Send only the name
     });
 
     if (!response.ok) {
@@ -112,6 +114,31 @@ const handleSaveName = async () => {
     const data = await response.json();
     subplatillo.value.nombre = data.nombre;
     isEditingName.value = false;
+    fetchData();
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
+
+
+const handleSaveRendimiento = async () => {
+  const idSubPlatillo = router.currentRoute.value.params.id;
+  try {
+    const response = await fetch(`${API_URL}/subplatillos/${idSubPlatillo}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ rendimiento: newRendimiento.value }), // Send only the rendimiento
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    subplatillo.value.rendimiento = data.rendimiento;
+    isEditingRendimiento.value = false;
     fetchData();
   } catch (error) {
     console.error("Error:", error);
@@ -128,6 +155,8 @@ const fetchData = async () => {
     }
     const data = await response.json();
     subplatillo.value = data;
+    newName.value = data.nombre; // Set the current name to input field
+    newRendimiento.value = data.rendimiento; // Set the current rendimiento to input field
   } catch (error) {
     console.error("Error:", error);
   }
@@ -151,9 +180,9 @@ const fetchIngredientes = async () => {
 const totalCost = computed(() => {
   return subplatillo.value.ingredients
     ? subplatillo.value.ingredients.reduce(
-        (total, ingrediente) => total + ingrediente.precio * ingrediente.cantidad,
-        0
-      )
+      (total, ingrediente) => total + ingrediente.precio * ingrediente.cantidad,
+      0
+    )
     : 0;
 });
 
@@ -213,7 +242,15 @@ fetchIngredientes();
       </tbody>
     </table>
     <p>COSTO TOTAL: ${{ totalCost.toFixed(2) }}</p>
-    <p>RENDIMIENTO: {{ subplatillo.rendimiento }} {{ subplatillo.unidad }}</p>
+    <div v-if="isEditingRendimiento">
+      <input type="number" v-model="newRendimiento" step="0.01" min="0" />
+      <button @click="handleSaveRendimiento">Guardar</button>
+      <button @click="isEditingRendimiento = false">X</button>
+    </div>
+    <div v-else>
+      <p>RENDIMIENTO: {{ subplatillo.rendimiento }} {{ subplatillo.unidad }}</p>
+      <button v-if="isAdmin" @click="isEditingRendimiento = true">Editar rendimiento</button>
+    </div>
     <p>
       COSTO / {{ subplatillo.unidad }}: ${{
         (totalCost / subplatillo.rendimiento).toFixed(2)

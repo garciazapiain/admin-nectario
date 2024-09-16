@@ -473,25 +473,53 @@ app.delete('/api/subplatillos/:idSubPlatillo/ingredientes/:idIngrediente', async
   }
 });
 
-app.put('/api/subplatillos/:idSubPlatillo/cambiarnombre', async (req, res) => {
-  const { idSubPlatillo } = req.params;
-  const { nombre } = req.body;
+app.put('/api/subplatillos/:id', async (req, res) => {
+  const { nombre, rendimiento } = req.body; // Destructure both fields from the request body
+  const { id } = req.params; // Get the id from the route parameters
   const client = await pool.connect();
 
   try {
-    const result = await client.query(
-      'UPDATE subplatillos SET nombre = $1 WHERE id_subplatillo = $2 RETURNING *',
-      [nombre, idSubPlatillo]
-    );
+    // Construct the dynamic update query based on which fields are provided
+    const fieldsToUpdate = [];
+    const values = [];
+    let queryIndex = 1;
+
+    if (nombre) {
+      fieldsToUpdate.push(`nombre = $${queryIndex}`);
+      values.push(nombre);
+      queryIndex++;
+    }
+
+    if (rendimiento) {
+      fieldsToUpdate.push(`rendimiento = $${queryIndex}`);
+      values.push(rendimiento);
+      queryIndex++;
+    }
+
+    // Ensure at least one field is being updated
+    if (fieldsToUpdate.length === 0) {
+      return res.status(400).json({ error: 'No fields provided for update' });
+    }
+
+    const query = `
+      UPDATE subplatillos 
+      SET ${fieldsToUpdate.join(', ')} 
+      WHERE id_subplatillo = $${queryIndex}
+      RETURNING nombre, rendimiento
+    `;
+
+    values.push(id); // Add the ID as the last parameter for the WHERE clause
+
+    const result = await client.query(query, values);
 
     if (result.rows.length > 0) {
-      res.json(result.rows[0]);
+      res.json(result.rows[0]); // Return the updated fields
     } else {
-      res.status(404).json({ error: 'Resource not found' });
+      res.status(404).json({ error: 'Subplatillo not found' });
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'An error occurred while updating data in the database' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred' });
   } finally {
     client.release();
   }
