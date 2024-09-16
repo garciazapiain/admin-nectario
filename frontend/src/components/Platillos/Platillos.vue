@@ -409,6 +409,11 @@ export default {
 </script>
 
 <style scoped>
+.button {
+  background-color: black;
+  color: white;
+}
+
 .editRow {
   display: flex;
   flex-direction: column;

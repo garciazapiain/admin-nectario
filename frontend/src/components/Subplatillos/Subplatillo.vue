@@ -212,7 +212,7 @@ fetchIngredientes();
         </tr>
       </tbody>
     </table>
-    <p>COSTO TOTAL: ${{ totalCost.toFixed(2) }} / {{ subplatillo.unidad }}</p>
+    <p>COSTO TOTAL: ${{ totalCost.toFixed(2) }}</p>
     <p>RENDIMIENTO: {{ subplatillo.rendimiento }} {{ subplatillo.unidad }}</p>
     <p>
       COSTO / {{ subplatillo.unidad }}: ${{
