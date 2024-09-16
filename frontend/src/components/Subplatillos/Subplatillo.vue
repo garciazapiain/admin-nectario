@@ -157,6 +157,8 @@ const fetchData = async () => {
     subplatillo.value = data;
     newName.value = data.nombre; // Set the current name to input field
     newRendimiento.value = data.rendimiento; // Set the current rendimiento to input field
+    recetaBloqueada.value = data.receta_bloqueada;
+    console.log(recetaBloqueada)
   } catch (error) {
     console.error("Error:", error);
   }
@@ -249,7 +251,7 @@ fetchIngredientes();
     </div>
     <div v-else>
       <p>RENDIMIENTO: {{ subplatillo.rendimiento }} {{ subplatillo.unidad }}</p>
-      <button v-if="isAdmin" @click="isEditingRendimiento = true">Editar rendimiento</button>
+      <button v-if="isAdmin ||!recetaBloqueada" @click="isEditingRendimiento = true">Editar rendimiento</button>
     </div>
     <p>
       COSTO / {{ subplatillo.unidad }}: ${{

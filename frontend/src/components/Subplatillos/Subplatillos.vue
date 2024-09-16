@@ -38,7 +38,7 @@ const handleClickSubPlatillo = (idSubplatillo) => {
           {{ unidad }}
         </option>
       </select>
-      <input v-model="nuevoSubPlatillo.rendimiento" placeholder="Rendimiento" type="number" min="0.01" step="0.1" required />
+      <input v-model="nuevoSubPlatillo.rendimiento" placeholder="Rendimiento" type="number" min="0.01" step="0.01" required />
       <button class="bg-green-600" type="submit">Agregar Subplatillo</button>
     </form>
   </div>
@@ -116,7 +116,6 @@ export default {
         throw new Error(`HTTP error! status: ${responseSubplatillos.status}`);
       }
       this.subplatillos = await responseSubplatillos.json();
-
       // Fetching unidades
       const responseUnidades = await fetch(`${API_URL}/unidades`);
       if (!responseUnidades.ok) {
