@@ -3,6 +3,10 @@ import { useRouter } from "vue-router";
 import { ref, computed } from "vue";
 import API_URL from "../../config";  // Import the API URL configuration
 import IngredientForm from "../Platillos/IngredientForm.vue";
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faLock, faUnlock } from '@fortawesome/free-solid-svg-icons'
+import { library } from "@fortawesome/fontawesome-svg-core"; // Import the library function
+library.add(faLock, faUnlock)
 
 const router = useRouter();
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
@@ -200,7 +204,15 @@ fetchIngredientes();
       <button @click="handleSaveName">Guardar</button>
     </div>
     <div v-else>
-      <h1>{{ subplatillo.nombre }}</h1>
+      <div class="flex w-full justify-center">
+        <h1>{{ subplatillo.nombre }}</h1>
+        <div class="tooltip-wrapper">
+          <!-- Lock icon with tooltip -->
+          <font-awesome-icon v-if="recetaBloqueada" :icon="['fas', 'lock']" class="tooltip-icon" />
+          <!-- Tooltip content -->
+          <span class="tooltip-text">Receta bloqueada, contacta a tu Administrador para hacer cambios.</span>
+        </div>
+      </div>
       <div class="platilloButtonContainer">
         <button v-if="isAdmin || !recetaBloqueada" @click="isEditingName = true">Editar nombre</button>
       </div>
@@ -251,7 +263,7 @@ fetchIngredientes();
     </div>
     <div v-else>
       <p>RENDIMIENTO: {{ subplatillo.rendimiento }} {{ subplatillo.unidad }}</p>
-      <button v-if="isAdmin ||!recetaBloqueada" @click="isEditingRendimiento = true">Editar rendimiento</button>
+      <button v-if="isAdmin || !recetaBloqueada" @click="isEditingRendimiento = true">Editar rendimiento</button>
     </div>
     <p>
       COSTO / {{ subplatillo.unidad }}: ${{
@@ -262,3 +274,55 @@ fetchIngredientes();
       :postUrl="`${API_URL}/subplatillos/${$route.params.id}/ingredientes`" @ingredientAdded="fetchData" />
   </div>
 </template>
+
+<style scoped>
+.tooltip-wrapper {
+  position: relative;
+  /* Position relative to contain the tooltip */
+  display: inline-block;
+  /* Inline block for proper positioning */
+}
+
+.tooltip-icon {
+  cursor: pointer;
+  /* Make the cursor pointer to indicate interactivity */
+}
+
+.tooltip-text {
+  visibility: hidden;
+  /* Hidden by default */
+  width: 220px;
+  /* Width of the tooltip */
+  background-color: #333;
+  /* Background color */
+  color: #fff;
+  /* Text color */
+  text-align: center;
+  /* Centered text */
+  border-radius: 5px;
+  /* Rounded corners */
+  padding: 5px;
+  /* Padding around the text */
+  position: absolute;
+  /* Position relative to the wrapper */
+  z-index: 1;
+  /* Above other elements */
+  bottom: 125%;
+  /* Position above the icon */
+  left: 50%;
+  /* Center horizontally */
+  margin-left: -110px;
+  /* Center adjustment */
+  opacity: 0;
+  /* Invisible by default */
+  transition: opacity 0.3s;
+  /* Smooth transition */
+}
+
+.tooltip-wrapper:hover .tooltip-text {
+  visibility: visible;
+  /* Show on hover */
+  opacity: 1;
+  /* Fully opaque */
+}
+</style>
