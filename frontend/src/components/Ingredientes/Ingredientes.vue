@@ -124,6 +124,8 @@ const router = useRouter();
 const handleClickIngrediente = (idIngrediente) => {
   router.push(`/ingrediente/${idIngrediente}`);
 };
+import { ref } from "vue";
+const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 </script>
 
 <script>
