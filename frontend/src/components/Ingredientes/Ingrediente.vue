@@ -8,6 +8,8 @@ const handleClick = (platillo) => {
     window.open(`/subplatillo/${platillo.id_platillo}`, '_blank');
   }
 };
+import { ref } from "vue";
+const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 </script>
 <template>
   <div>
