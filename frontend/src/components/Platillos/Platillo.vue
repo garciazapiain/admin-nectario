@@ -13,8 +13,8 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdm
 <template>
   <div class="container">
     <!-- Title and Lock/Unlock Icons with Tooltip -->
-    <div class="flex flex-col sm:flex-row justify-between items-center mt-2">
-      <h1 class="text-xl sm:text-md mb-2 sm:mb-0">{{ platillo.nombre }}</h1>
+    <div class="flex sm:flex-row items-center mt-2">
+      <h1 class="text-4xl mb-2 mr-4 sm:mb-0">{{ platillo.nombre }}</h1>
       <div class="tooltip-wrapper">
         <!-- For Admins: Clickable Icons -->
         <div v-if="isAdmin" class="flex items-center">
@@ -43,6 +43,9 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdm
       <button v-if="isAdmin" class="mb-2 sm:mb-0 sm:mr-2" @click="handleDuplicatePlatillo">Duplicar Platillo</button>
       <button v-if="isAdmin" class="bg-red-500 mb-2 sm:mb-0" @click="handleDeletePlatillo">Borrar</button>
     </div>
+
+    <!-- <input type="checkbox" id="includeSubplatillos" v-model="includeSubplatillos" />
+    <label for="includeSubplatillos">DESGLOCAR CON SUBPLATILLOS</label> -->
 
     <!-- Ingredients Table -->
     <div class="overflow-auto mt-4">
@@ -76,13 +79,13 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdm
               </div>
             </td>
             <td>
-              <span v-if="!includeSubplatillos">
+              <span v-if="!ingrediente.is_subplatillo">
                 ${{ (ingrediente.precio * ingrediente.cantidad).toFixed(2) }}
               </span>
               <div v-else class="info-icon-wrapper">
                 <i class="info-icon">ℹ️</i>
                 <div class="tooltip">
-                  Para ver esta columna, quita la opción de desgloce por subplatillos.
+                  Este es un subplatillo, para consultar costo hacer click en el nombre
                 </div>
               </div>
             </td>
@@ -98,7 +101,7 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdm
           </tr>
         </tbody>
         <tfoot>
-          <tr>
+          <tr v-if="!includeSubplatillos">
             <td colspan="4" class="text-left text-lg">COSTO TOTAL: ${{ totalCost.toFixed(2) }}</td>
           </tr>
         </tfoot>
@@ -106,7 +109,7 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdm
     </div>
 
     <!-- Ingredients and SubPlatillo Forms -->
-    <div class="form-container flex flex-col gap-4 sm:flex-row items-start overflow-auto mt-4">
+    <div v-if="isAdmin || !recetaBloqueada" class="form-container flex flex-col gap-4 sm:flex-row items-start overflow-auto mt-4">
       <IngredientForm :ingredientes="ingredientes" :existingIngredientIds="existingIngredientIds"
         :postUrl="`${API_URL}/platillos/${$route.params.id}/ingredientes`" @ingredientAdded="fetchData" />
       <SubPlatilloForm :subPlatillos="subPlatillos" :existingSubPlatilloIds="existingSubPlatilloIds"
@@ -144,7 +147,7 @@ export default {
       let ingredients = {};
       if (this.platillo && this.platillo.ingredients) {
         this.platillo.ingredients.forEach((ingrediente) => {
-          let cantidad = ingrediente.is_subplatillo
+          let cantidad = ingrediente.is_part_of_subplatillo
             ? (ingrediente.cantidad / ingrediente.rendimiento) *
             (ingrediente.subplatillo_cantidad
               ? ingrediente.subplatillo_cantidad
@@ -198,7 +201,7 @@ export default {
       const id = this.$route.params.id;
       try {
         const response = await fetch(
-          `${API_URL}/platillo/${id}?includeSubplatillos=${this.includeSubplatillos}`
+          `${API_URL}/platillo/${id}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

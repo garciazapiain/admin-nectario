@@ -167,38 +167,59 @@ app.post('/api/platillos/:id/duplicate', async (req, res) => {
 
 app.get('/api/platillo/:id', async (req, res) => {
   const { id } = req.params;
-  const includeSubplatillos = req.query.includeSubplatillos === 'true';
   const client = await pool.connect();
   try {
     const result = await client.query('SELECT *, unidades_vendidas FROM platillos WHERE id_platillo = $1', [id]);
     let ingredientsQuery;
-    if (includeSubplatillos) {
+      // If not including subplatillos, only get direct ingredients
       ingredientsQuery = `
-      SELECT i.nombre, i.id_ingrediente::text, i.unidad, pi.cantidad, NULL as rendimiento, false as is_subplatillo, NULL as subplatillo_cantidad
-      FROM ingredientes i
-      INNER JOIN platillos_ingredientes pi ON i.id_ingrediente = pi.id_ingrediente
-      WHERE pi.id_platillo = $1
-      UNION
-      SELECT s.nombre, 'sub_' || s.id_subplatillo::text, s.unidad, ps.cantidad, s.rendimiento, true as is_subplatillo, ps.cantidad as subplatillo_cantidad
-      FROM subplatillos s
-      INNER JOIN platillos_subplatillos ps ON s.id_subplatillo = ps.id_subplatillo
-      WHERE ps.id_platillo = $1
-      `;
-    } else {
-      ingredientsQuery = `
-        SELECT i.nombre, i.id_ingrediente, i.unidad, i.precio, pi.cantidad, NULL as rendimiento, false as is_subplatillo, NULL as subplatillo_cantidad
+        SELECT i.nombre, 
+               i.id_ingrediente::text, 
+               i.unidad, 
+               pi.cantidad, 
+               i.precio, 
+               NULL as rendimiento, 
+               false as is_subplatillo, 
+               NULL as subplatillo_cantidad,
+               false as is_part_of_subplatillo
         FROM ingredientes i
         INNER JOIN platillos_ingredientes pi ON i.id_ingrediente = pi.id_ingrediente
         WHERE pi.id_platillo = $1
+        
         UNION
-        SELECT i.nombre, i.id_ingrediente, i.unidad, i.precio, si.cantidad, s.rendimiento, true as is_subplatillo, ps.cantidad as subplatillo_cantidad
+        
+        -- Subplatillos directly associated with the platillo
+        SELECT s.nombre, 
+               'sub_' || s.id_subplatillo::text, 
+               s.unidad, 
+               ps.cantidad, 
+               NULL as precio,
+               s.rendimiento, 
+               true as is_subplatillo, 
+               ps.cantidad as subplatillo_cantidad,
+               false as is_part_of_subplatillo
+        FROM subplatillos s
+        INNER JOIN platillos_subplatillos ps ON s.id_subplatillo = ps.id_subplatillo
+        WHERE ps.id_platillo = $1
+        
+        UNION
+        
+        -- Ingredients that are part of subplatillos
+        SELECT i.nombre, 
+               i.id_ingrediente::text, 
+               i.unidad, 
+               si.cantidad, 
+               i.precio,
+               s.rendimiento, 
+               false as is_subplatillo, 
+               ps.cantidad as subplatillo_cantidad,  -- Adjusted to correctly reflect the subplatillo quantity in platillo
+               true as is_part_of_subplatillo
         FROM ingredientes i
         INNER JOIN subplatillos_ingredientes si ON i.id_ingrediente = si.id_ingrediente
         INNER JOIN platillos_subplatillos ps ON si.id_subplatillo = ps.id_subplatillo
         INNER JOIN subplatillos s ON s.id_subplatillo = ps.id_subplatillo
         WHERE ps.id_platillo = $1
-      `;
-    }
+      `
     const ingredientsResult = await client.query(ingredientsQuery, [id]);
     const platillo = result.rows[0];
     platillo.ingredients = ingredientsResult.rows;
@@ -207,6 +228,7 @@ app.get('/api/platillo/:id', async (req, res) => {
     client.release();
   }
 });
+
 
 // Add this new route to check if a clavepos already exists
 app.get('/api/platillos/check', async (req, res) => {
