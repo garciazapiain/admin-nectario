@@ -26,7 +26,8 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdm
             @click="toggleRecetaBloqueada" />
           <font-awesome-icon v-else :icon="['fas', 'unlock']" class="tooltip-icon" @click="toggleRecetaBloqueada" />
           <span class="tooltip-text">
-            {{ recetaBloqueada ? 'Receta bloqueada, desbloqueala si quieres que otros usuarios puedan hacer cambios.' : 'Receta desbloqueada, otros usuarios pueden hacer cambios.' }}
+            {{ recetaBloqueada ? 'Receta bloqueada, desbloqueala si quieres que otros usuarios puedan hacer cambios.' :
+            'Receta desbloqueada, otros usuarios pueden hacer cambios.' }}
           </span>
         </div>
 
@@ -43,7 +44,8 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdm
 
     <!-- Edit, Duplicate, and Delete Buttons -->
     <div class="platilloButtonContainer flex flex-col sm:flex-row items-center mt-2">
-      <button v-if="isAdmin || !recetaBloqueada" class="mb-2 sm:mb-0 sm:mr-2" @click="isEditingName = true">Editar nombre</button>
+      <button v-if="isAdmin || !recetaBloqueada" class="mb-2 sm:mb-0 sm:mr-2" @click="isEditingName = true">Editar
+        nombre</button>
       <button v-if="isAdmin" class="mb-2 sm:mb-0 sm:mr-2" @click="handleDuplicatePlatillo">Duplicar Platillo</button>
       <button v-if="isAdmin" class="bg-red-500 mb-2 sm:mb-0" @click="handleDeletePlatillo">Borrar</button>
     </div>
@@ -66,7 +68,7 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdm
         <tbody>
           <tr v-for="(ingrediente, index) in aggregatedIngredients" :key="index">
             <td @click="handleClickIngrediente(ingrediente.id_ingrediente)">
-              {{ ingrediente.nombre }}
+              {{ ingrediente.nombre }}{{ ingrediente.is_subplatillo ? ` (Subplatillo)` : "" }}
             </td>
             <td>{{ ingrediente.unidad }}</td>
             <td>
@@ -79,7 +81,27 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdm
               </div>
               <div v-else>
                 {{ ingrediente.cantidad.toFixed(3) }}
-                <button v-if="isAdmin || !recetaBloqueada" @click="handleOpenEditIngredient(index)">Editar</button>
+                <button
+                  v-if="(isAdmin || !recetaBloqueada) && !ingrediente.is_part_of_subplatillo && !ingrediente.is_subplatillo"
+                  @click="handleOpenEditIngredient(index)">
+                  Editar
+                </button>
+                <!-- Information for ingrediente part of subplatillo -->
+                <div v-if="(isAdmin || !recetaBloqueada) && ingrediente.is_part_of_subplatillo"
+                  class="info-icon-wrapper">
+                  <i class="info-icon">ℹ️</i>
+                  <div class="tooltip">
+                    Este ingrediente es parte de un subplatillo para modificar cantidad,
+                    hacerlo en subplatillo correspondiente.
+                  </div>
+                </div>
+                <!-- Information for ingrediente is a subplatillo -->
+                <div v-if="(isAdmin || !recetaBloqueada) && ingrediente.is_subplatillo" class="info-icon-wrapper">
+                  <i class="info-icon">ℹ️</i>
+                  <div class="tooltip">
+                    Para modificar cantidad de subplatillo, borrarlo y agregarlo nuevamente.
+                  </div>
+                </div>
               </div>
             </td>
             <td>
@@ -94,11 +116,13 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdm
               </div>
             </td>
             <td v-if="isAdmin || !recetaBloqueada">
-              <button v-if="!ingrediente.is_subplatillo || includeSubplatillos" @click="handleDeleteIngredient(ingrediente)">Borrar</button>
+              <button v-if="!ingrediente.is_part_of_subplatillo"
+                @click="handleDeleteIngredient(ingrediente)">Borrar</button>
               <div v-else class="info-icon-wrapper">
                 <i class="info-icon">ℹ️</i>
                 <div class="tooltip">
-                  Este ingrediente forma parte de un subplatillo. Para eliminar este ingrediente, primero elimina el subplatillo al que pertenece.
+                  Este ingrediente forma parte de un subplatillo. Para eliminar este ingrediente, primero eliminalo del
+                  subplatillo al que pertenece.
                 </div>
               </div>
             </td>
@@ -113,7 +137,8 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdm
     </div>
 
     <!-- Ingredients and SubPlatillo Forms -->
-    <div v-if="isAdmin || !recetaBloqueada" class="form-container flex flex-col gap-4 sm:flex-row items-start overflow-auto mt-4">
+    <div v-if="isAdmin || !recetaBloqueada"
+      class="form-container flex flex-col gap-4 sm:flex-row items-start overflow-auto mt-4">
       <IngredientForm :ingredientes="ingredientes" :existingIngredientIds="existingIngredientIds"
         :postUrl="`${API_URL}/platillos/${$route.params.id}/ingredientes`" @ingredientAdded="fetchData" />
       <SubPlatilloForm :subPlatillos="subPlatillos" :existingSubPlatilloIds="existingSubPlatilloIds"
