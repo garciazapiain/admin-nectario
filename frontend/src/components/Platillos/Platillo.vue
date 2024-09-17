@@ -11,114 +11,102 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdm
 
 </script>
 <template>
-  <div>
-    <div v-if="isEditingName">
-      <input type="text" v-model="newName" />
-      <button @click="handleSaveName">Guardar</button>
-    </div>
-    <div v-else>
-      <div class="flex w-full justify-center">
-        <h1>{{ platillo.nombre }}</h1>
-        <div class="tooltip-wrapper">
-          <!-- For Admins: Clickable Icons -->
-          <div v-if="isAdmin">
-            <font-awesome-icon v-if="recetaBloqueada" :icon="['fas', 'lock']" class="tooltip-icon"
-              @click="toggleRecetaBloqueada" />
-            <font-awesome-icon v-else :icon="['fas', 'unlock']" class="tooltip-icon" @click="toggleRecetaBloqueada" />
-            <!-- Conditional Tooltip Message for Admins -->
-            <span class="tooltip-text">
-              {{ recetaBloqueada ? 'Receta bloqueada, desbloqueala si quieres que otros usuarios puedan hacer cambios.'
-                : 'Receta desbloqueada, otros usuarios pueden hacer cambios.' }}
-            </span>
-          </div>
+  <div class="container">
+    <!-- Title and Lock/Unlock Icons with Tooltip -->
+    <div class="flex flex-col sm:flex-row justify-between items-center mt-2">
+      <h1 class="text-xl sm:text-md mb-2 sm:mb-0">{{ platillo.nombre }}</h1>
+      <div class="tooltip-wrapper">
+        <!-- For Admins: Clickable Icons -->
+        <div v-if="isAdmin" class="flex items-center">
+          <font-awesome-icon v-if="recetaBloqueada" :icon="['fas', 'lock']" class="tooltip-icon"
+            @click="toggleRecetaBloqueada" />
+          <font-awesome-icon v-else :icon="['fas', 'unlock']" class="tooltip-icon" @click="toggleRecetaBloqueada" />
+          <span class="tooltip-text">
+            {{ recetaBloqueada ? 'Receta bloqueada, desbloqueala si quieres que otros usuarios puedan hacer cambios.' : 'Receta desbloqueada, otros usuarios pueden hacer cambios.' }}
+          </span>
+        </div>
 
-          <!-- For Non-Admins: Non-Clickable Icons -->
-          <div v-else>
-            <font-awesome-icon v-if="recetaBloqueada" :icon="['fas', 'lock']" class="tooltip-icon" />
-            <font-awesome-icon v-else :icon="['fas', 'unlock']" class="tooltip-icon" />
-            <!-- Conditional Tooltip Message for Non-Admins -->
-            <span class="tooltip-text">
-              {{ recetaBloqueada ? 'Receta bloqueada, contacta a tu Administrador para hacer cambios.' : 'Receta desbloqueada, puedes hacer cambios.' }}
-            </span>
-          </div>
+        <!-- For Non-Admins: Non-Clickable Icons -->
+        <div v-else class="flex items-center">
+          <font-awesome-icon v-if="recetaBloqueada" :icon="['fas', 'lock']" class="tooltip-icon" />
+          <font-awesome-icon v-else :icon="['fas', 'unlock']" class="tooltip-icon" />
+          <span class="tooltip-text">
+            {{ recetaBloqueada ? 'Receta bloqueada, contacta a tu Administrador para hacer cambios.' : 'Receta desbloqueada, puedes hacer cambios.' }}
+          </span>
         </div>
       </div>
-      <div class="platilloButtonContainer">
-        <button v-if="isAdmin || !recetaBloqueada" @click="isEditingName = true">Editar nombre</button>
-        <button @click="handleDuplicatePlatillo">Duplicar Platillo</button>
-        <button v-if="isAdmin" class="bg-red-500" @click="handleDeletePlatillo">Borrar</button>
-      </div>
     </div>
-    <!-- <p>Unidades vendidas:{{ platillo.unidades_vendidas }}</p> -->
-    <div>
-      <input type="checkbox" id="includeSubplatillos" v-model="includeSubplatillos" />
-      <label for="includeSubplatillos">DESGLOCAR CON SUBPLATILLOS</label>
+
+    <!-- Edit, Duplicate, and Delete Buttons -->
+    <div class="platilloButtonContainer flex flex-col sm:flex-row items-center mt-2">
+      <button v-if="isAdmin || !recetaBloqueada" class="mb-2 sm:mb-0 sm:mr-2" @click="isEditingName = true">Editar nombre</button>
+      <button v-if="isAdmin" class="mb-2 sm:mb-0 sm:mr-2" @click="handleDuplicatePlatillo">Duplicar Platillo</button>
+      <button v-if="isAdmin" class="bg-red-500 mb-2 sm:mb-0" @click="handleDeletePlatillo">Borrar</button>
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th>INGREDIENTE</th>
-          <th>UNIDAD</th>
-          <th>CANTIDAD</th>
-          <th>$/CANTIDAD</th>
-          <th v-if="isAdmin || !recetaBloqueada">BORRAR</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(ingrediente, index) in aggregatedIngredients" :key="index">
-          <td @click="handleClickIngrediente(ingrediente.id_ingrediente)">
-            {{ ingrediente.nombre }}
-          </td>
-          <td>{{ ingrediente.unidad }}</td>
-          <td>
-            <div class="editRow" v-if="editIndex === index">
-              <div class="inputRow">
-                <input type="number" min=".001" v-model="editValue" step=".25" />
-                <button @click="resetEditValue">X</button>
-              </div>
-              <button @click="handleSaveEditIngredient">Guardar</button>
-            </div>
-            <div v-else>
-              {{ ingrediente.cantidad.toFixed(3) }}
-              <button v-if="isAdmin || !recetaBloqueada" @click="handleOpenEditIngredient(index)">Editar</button>
-            </div>
-          </td>
-          <td>
-            <!-- If includeSubplatillos is false or ingrediente.is_subplatillo is false, show the price normally -->
-            <span v-if="!includeSubplatillos">
-              ${{ (ingrediente.precio * ingrediente.cantidad).toFixed(2) }}
-            </span>
 
-            <!-- If includeSubplatillos is true and ingrediente.is_subplatillo is true, show the info icon with a tooltip -->
-            <div v-else class="info-icon-wrapper">
-              <i class="info-icon">ℹ️</i>
-              <!-- Tooltip -->
-              <div class="tooltip">
-                Para ver esta columna, quita la opción de desgloce por subplatillos.
+    <!-- Ingredients Table -->
+    <div class="overflow-auto mt-4">
+      <table class="w-full text-sm sm:text-base">
+        <thead>
+          <tr>
+            <th>Ingrediente</th>
+            <th>Unidad</th>
+            <th>Cantidad</th>
+            <th>$/Cantidad</th>
+            <th v-if="isAdmin || !recetaBloqueada">Borrar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(ingrediente, index) in aggregatedIngredients" :key="index">
+            <td @click="handleClickIngrediente(ingrediente.id_ingrediente)">
+              {{ ingrediente.nombre }}
+            </td>
+            <td>{{ ingrediente.unidad }}</td>
+            <td>
+              <div class="editRow" v-if="editIndex === index">
+                <div class="inputRow">
+                  <input type="number" min=".001" v-model="editValue" step=".25" />
+                  <button @click="resetEditValue">X</button>
+                </div>
+                <button @click="handleSaveEditIngredient">Guardar</button>
               </div>
-            </div>
-          </td>
-          <td v-if="isAdmin || !recetaBloqueada">
-            <!-- If ingrediente.isSubplatillo is false, show the delete button -->
-            <button v-if="!ingrediente.is_subplatillo || includeSubplatillos"
-              @click="handleDeleteIngredient(ingrediente)">Borrar</button>
-            <!-- If ingrediente.isSubplatillo is true, show the info icon with a tooltip -->
-            <div v-else class="info-icon-wrapper">
-              <i class="info-icon">ℹ️</i>
-              <!-- Tooltip -->
-              <div class="tooltip">
-                Este ingrediente forma parte de un subplatillo. Para eliminar este ingrediente, primero elimina el
-                subplatillo al que pertenece.
+              <div v-else>
+                {{ ingrediente.cantidad.toFixed(3) }}
+                <button v-if="isAdmin || !recetaBloqueada" @click="handleOpenEditIngredient(index)">Editar</button>
               </div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-      <p v-if=!includeSubplatillos>COSTO TOTAL: $ {{ totalCost.toFixed(2) }}</p>
-    </table>
+            </td>
+            <td>
+              <span v-if="!includeSubplatillos">
+                ${{ (ingrediente.precio * ingrediente.cantidad).toFixed(2) }}
+              </span>
+              <div v-else class="info-icon-wrapper">
+                <i class="info-icon">ℹ️</i>
+                <div class="tooltip">
+                  Para ver esta columna, quita la opción de desgloce por subplatillos.
+                </div>
+              </div>
+            </td>
+            <td v-if="isAdmin || !recetaBloqueada">
+              <button v-if="!ingrediente.is_subplatillo || includeSubplatillos" @click="handleDeleteIngredient(ingrediente)">Borrar</button>
+              <div v-else class="info-icon-wrapper">
+                <i class="info-icon">ℹ️</i>
+                <div class="tooltip">
+                  Este ingrediente forma parte de un subplatillo. Para eliminar este ingrediente, primero elimina el subplatillo al que pertenece.
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4" class="text-left text-lg">COSTO TOTAL: ${{ totalCost.toFixed(2) }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
 
-    <!-- Flexbox Container for Ingredient and SubPlatillo Forms -->
-    <div class="form-container">
+    <!-- Ingredients and SubPlatillo Forms -->
+    <div class="form-container flex flex-col gap-4 sm:flex-row items-start overflow-auto mt-4">
       <IngredientForm :ingredientes="ingredientes" :existingIngredientIds="existingIngredientIds"
         :postUrl="`${API_URL}/platillos/${$route.params.id}/ingredientes`" @ingredientAdded="fetchData" />
       <SubPlatilloForm :subPlatillos="subPlatillos" :existingSubPlatilloIds="existingSubPlatilloIds"
@@ -429,6 +417,12 @@ div {
   margin: 0.5rem 0;
 }
 
+.container {
+  padding: 1rem;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
 .editRow {
   display: flex;
   flex-direction: column;
@@ -559,5 +553,30 @@ div {
   /* Show on hover */
   opacity: 1;
   /* Fully opaque */
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 640px) {
+  .container {
+    padding: 0.5rem;
+  }
+
+  .platilloButtonContainer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tooltip-text {
+    width: 180px;
+  }
+
+  .form-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .tooltip-wrapper {
+    margin-top: 10px;
+  }
 }
 </style>

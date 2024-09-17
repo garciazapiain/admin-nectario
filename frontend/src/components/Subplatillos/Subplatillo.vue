@@ -218,148 +218,182 @@ fetchIngredientes();
 </script>
 
 <template>
-  <div>
-    <div v-if="isEditingName">
-      <input type="text" v-model="newName" />
-      <button @click="handleSaveName">Guardar</button>
-    </div>
-    <div v-else>
-      <div class="flex w-full justify-center">
-        <h1>{{ subplatillo.nombre }}</h1>
-        <div class="tooltip-wrapper">
-          <!-- For Admins: Clickable Icons -->
-          <div v-if="isAdmin">
-            <font-awesome-icon v-if="recetaBloqueada" :icon="['fas', 'lock']" class="tooltip-icon"
-              @click="toggleRecetaBloqueada" />
-            <font-awesome-icon v-else :icon="['fas', 'unlock']" class="tooltip-icon" @click="toggleRecetaBloqueada" />
-            <!-- Conditional Tooltip Message for Admins -->
-            <span class="tooltip-text">
-              {{ recetaBloqueada ? 'Receta bloqueada, desbloqueala si quieres que otros usuarios puedan hacer cambios.'
-                : 'Receta desbloqueada, otros usuarios pueden hacer cambios.' }}
-            </span>
-          </div>
+  <div class="container">
+    <!-- Title and Lock/Unlock Icons with Tooltip -->
+    <div class="flex flex-col sm:flex-row justify-between items-center mt-2">
+      <h1 class="text-xl sm:text-base mb-2 sm:mb-0">{{ subplatillo.nombre }}</h1>
+      <div class="tooltip-wrapper">
+        <!-- For Admins: Clickable Icons -->
+        <div v-if="isAdmin" class="flex items-center">
+          <font-awesome-icon v-if="recetaBloqueada" :icon="['fas', 'lock']" class="tooltip-icon"
+            @click="toggleRecetaBloqueada" />
+          <font-awesome-icon v-else :icon="['fas', 'unlock']" class="tooltip-icon" @click="toggleRecetaBloqueada" />
+          <!-- Conditional Tooltip Message for Admins -->
+          <span class="tooltip-text">
+            {{ recetaBloqueada ? 'Receta bloqueada, desbloqueala si quieres que otros usuarios puedan hacer cambios.'
+              : 'Receta desbloqueada, otros usuarios pueden hacer cambios.' }}
+          </span>
+        </div>
 
-          <!-- For Non-Admins: Non-Clickable Icons -->
-          <div v-else>
-            <font-awesome-icon v-if="recetaBloqueada" :icon="['fas', 'lock']" class="tooltip-icon" />
-            <font-awesome-icon v-else :icon="['fas', 'unlock']" class="tooltip-icon" />
-            <!-- Conditional Tooltip Message for Non-Admins -->
-            <span class="tooltip-text">
-              {{ recetaBloqueada ? 'Receta bloqueada, contacta a tu Administrador para hacer cambios.' : 'Receta desbloqueada, puedes hacer cambios.' }}
-            </span>
-          </div>
+        <!-- For Non-Admins: Non-Clickable Icons -->
+        <div v-else class="flex items-center">
+          <font-awesome-icon v-if="recetaBloqueada" :icon="['fas', 'lock']" class="tooltip-icon" />
+          <font-awesome-icon v-else :icon="['fas', 'unlock']" class="tooltip-icon" />
+          <!-- Conditional Tooltip Message for Non-Admins -->
+          <span class="tooltip-text">
+            {{ recetaBloqueada ? 'Receta bloqueada, contacta a tu Administrador para hacer cambios.' : 'Receta desbloqueada, puedes hacer cambios.' }}
+          </span>
         </div>
       </div>
-      <div class="platilloButtonContainer">
-        <button v-if="isAdmin || !recetaBloqueada" @click="isEditingName = true">Editar nombre</button>
+    </div>
+
+    <!-- Edit Name Button -->
+    <div class="flex justify-center mt-2">
+      <button v-if="isAdmin || !recetaBloqueada" @click="isEditingName = true" class="mb-2 sm:mb-0">Editar nombre</button>
+    </div>
+
+    <!-- Ingredients Table -->
+    <div class="overflow-auto mt-4">
+      <table class="w-full text-sm sm:text-base">
+        <thead>
+          <tr>
+            <th>Ingredientes</th>
+            <th>Unidad</th>
+            <th>Cantidad</th>
+            <th>$/Cantidad</th>
+            <th v-if="isAdmin || !recetaBloqueada">Borrar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(ingrediente, index) in subplatillo.ingredients" :key="index">
+            <td @click="handleClickIngrediente(ingrediente.id_ingrediente)">
+              {{ ingrediente.nombre }}
+            </td>
+            <td>{{ ingrediente.unidad }}</td>
+            <td>
+              <div class="editRow" v-if="editIndex === index">
+                <div class="inputRow">
+                  <input type="number" min=".001" v-model="editValue" step=".25" />
+                  <button @click="resetEditValue">X</button>
+                </div>
+                <button @click="handleSaveEditIngredient">Guardar</button>
+              </div>
+              <div v-else>
+                {{ ingrediente.cantidad }}
+                <button v-if="isAdmin || !recetaBloqueada" @click="handleOpenEditIngredient(index)">Editar</button>
+              </div>
+            </td>
+            <td>
+              ${{ (ingrediente.precio * ingrediente.cantidad).toFixed(2) }}
+            </td>
+            <td v-if="isAdmin || !recetaBloqueada">
+              <button @click="handleDeleteIngredient(ingrediente)">Borrar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Total Cost -->
+    <p class="mt-4 text-left text-lg">COSTO TOTAL: ${{ totalCost.toFixed(2) }}</p>
+
+    <!-- Edit Rendimiento Section -->
+    <div class="mt-4 text-left">
+      <div v-if="isEditingRendimiento">
+        <input type="number" v-model="newRendimiento" step="0.01" min="0" />
+        <button @click="handleSaveRendimiento">Guardar</button>
+        <button @click="isEditingRendimiento = false">X</button>
+      </div>
+      <div class="text-left" v-else>
+        <p class="text-left">RENDIMIENTO: {{ subplatillo.rendimiento }} {{ subplatillo.unidad }}</p>
+        <button class="text-left" v-if="isAdmin || !recetaBloqueada" @click="isEditingRendimiento = true">Editar rendimiento</button>
       </div>
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Ingredientes</th>
-          <th>Unidad</th>
-          <th>Cantidad</th>
-          <th>$/Cantidad</th>
-          <th v-if="isAdmin || !recetaBloqueada">BORRAR</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(ingrediente, index) in subplatillo.ingredients" :key="index">
-          <td @click="handleClickIngrediente(ingrediente.id_ingrediente)">
-            {{ ingrediente.nombre }}
-          </td>
-          <td>{{ ingrediente.unidad }}</td>
-          <td>
-            <div class="editRow" v-if="editIndex === index">
-              <div class="inputRow">
-                <input type="number" min=".001" v-model="editValue" step=".25" />
-                <button @click="resetEditValue">X</button>
-              </div>
-              <button @click="handleSaveEditIngredient">Guardar</button>
-            </div>
-            <div v-else>
-              {{ ingrediente.cantidad }}
-              <button v-if="isAdmin || !recetaBloqueada" @click="handleOpenEditIngredient(index)">Editar</button>
-            </div>
-          </td>
-          <td>
-            ${{ (ingrediente.precio * ingrediente.cantidad).toFixed(2) }}
-          </td>
-          <td v-if="isAdmin || !recetaBloqueada">
-            <button @click="handleDeleteIngredient(ingrediente)">Borrar</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <p>COSTO TOTAL: ${{ totalCost.toFixed(2) }}</p>
-    <div v-if="isEditingRendimiento">
-      <input type="number" v-model="newRendimiento" step="0.01" min="0" />
-      <button @click="handleSaveRendimiento">Guardar</button>
-      <button @click="isEditingRendimiento = false">X</button>
-    </div>
-    <div v-else>
-      <p>RENDIMIENTO: {{ subplatillo.rendimiento }} {{ subplatillo.unidad }}</p>
-      <button v-if="isAdmin || !recetaBloqueada" @click="isEditingRendimiento = true">Editar rendimiento</button>
-    </div>
-    <p>
-      COSTO / {{ subplatillo.unidad }}: ${{
-        (totalCost / subplatillo.rendimiento).toFixed(2)
-      }}
-    </p>
-    <IngredientForm :ingredientes="ingredientes" :existingIngredientIds="existingIngredientIds"
+
+    <!-- Cost Per Unit -->
+    <p class="mt-4 text-left">COSTO / {{ subplatillo.unidad }}: ${{ (totalCost / subplatillo.rendimiento).toFixed(2) }}</p>
+
+    <!-- Ingredient Form -->
+    <IngredientForm class="text-left" :ingredientes="ingredientes" :existingIngredientIds="existingIngredientIds"
       :postUrl="`${API_URL}/subplatillos/${$route.params.id}/ingredientes`" @ingredientAdded="fetchData" />
   </div>
 </template>
 
 <style scoped>
+.container {
+  padding: 1rem;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
 .tooltip-wrapper {
   position: relative;
-  /* Position relative to contain the tooltip */
   display: inline-block;
-  /* Inline block for proper positioning */
 }
 
 .tooltip-icon {
   cursor: pointer;
-  /* Make the cursor pointer to indicate interactivity */
 }
 
 .tooltip-text {
   visibility: hidden;
-  /* Hidden by default */
   width: 220px;
-  /* Width of the tooltip */
   background-color: #333;
-  /* Background color */
   color: #fff;
-  /* Text color */
   text-align: center;
-  /* Centered text */
   border-radius: 5px;
-  /* Rounded corners */
   padding: 5px;
-  /* Padding around the text */
   position: absolute;
-  /* Position relative to the wrapper */
   z-index: 1;
-  /* Above other elements */
   bottom: 125%;
-  /* Position above the icon */
   left: 50%;
-  /* Center horizontally */
   margin-left: -110px;
-  /* Center adjustment */
   opacity: 0;
-  /* Invisible by default */
   transition: opacity 0.3s;
-  /* Smooth transition */
 }
 
 .tooltip-wrapper:hover .tooltip-text {
   visibility: visible;
-  /* Show on hover */
   opacity: 1;
-  /* Fully opaque */
+}
+
+.editRow {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  line-height: 1.5rem;
+}
+
+.inputRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 640px) {
+  .container {
+    padding: 0.5rem;
+  }
+
+  .platilloButtonContainer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tooltip-text {
+    width: 180px;
+  }
+
+  .form-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .tooltip-wrapper {
+    margin-top: 10px;
+  }
 }
 </style>
+

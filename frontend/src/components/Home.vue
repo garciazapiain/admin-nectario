@@ -19,31 +19,35 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-wrap">
-    <button class="button" @click="() => navigateTo('/listapeligro')">Lista Peligro</button>
-    <button class="button" @click="() => navigateTo('/existenciasresumen')">Resumen Existencias</button>
-    <button class="button" v-if="isAdmin" @click="() => navigateTo('/compra')">Compra del dia</button>
-    <button class="button" v-if="isAdmin || isChef" @click="() => navigateTo('/platillos')">Platillos</button>
-    <button class="button" v-if="isAdmin || isChef" @click="() => navigateTo('/subplatillos')">Subplatillos</button>
-    <button class="button" v-if="isAdmin|| isChef" @click="() => navigateTo('/ingredientes')">Insumos</button>
-    <button class="button" v-if="isAdmin" @click="() => navigateTo('/pronosticodemandainsumos')">
-      Pronóstico Demanda Insumos
-    </button>
-    <button class="button" v-if="isAdmin" @click="() => navigateTo('/historialcompra')">
-      Historial Compras
-    </button>
-    <button class="button" v-if="isAdmin" @click="() => navigateTo('/consumoinsumos')">
-      Consumo Teórico Insumos
-    </button>
-    <button class="button" v-if="isAdmin" @click="() => navigateTo('/analisis-consumo')">
-      Análisis de Consumo
-    </button>
-    <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/inventarios')">
+  <div class="flex flex-wrap flex-col">
+    <div>
+      <button class="button" @click="() => navigateTo('/listapeligro')">Lista Peligro</button>
+      <button class="button" @click="() => navigateTo('/existenciasresumen')">Resumen Existencias</button>
+    </div>
+    <div>
+      <button class="button" v-if="isAdmin" @click="() => navigateTo('/compra')">Compra del dia</button>
+      <button class="button" @click="() => navigateTo('/platillos')">Platillos</button>
+      <button class="button" @click="() => navigateTo('/subplatillos')">Subplatillos</button>
+      <button class="button" @click="() => navigateTo('/ingredientes')">Insumos</button>
+      <button class="button" v-if="isAdmin" @click="() => navigateTo('/pronosticodemandainsumos')">
+        Pronóstico Demanda Insumos
+      </button>
+      <button class="button" v-if="isAdmin" @click="() => navigateTo('/historialcompra')">
+        Historial Compras
+      </button>
+      <button class="button" v-if="isAdmin" @click="() => navigateTo('/consumoinsumos')">
+        Consumo Teórico Insumos
+      </button>
+      <button class="button" v-if="isAdmin" @click="() => navigateTo('/analisis-consumo')">
+        Análisis de Consumo
+      </button>
+      <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/inventarios')">
       Inventarios
     </button> -->
-    <!-- <button class="button"  v-if="isAdmin" @click="() => navigateTo('/facturacion')">
+      <!-- <button class="button"  v-if="isAdmin" @click="() => navigateTo('/facturacion')">
       Facturación
     </button> -->
+    </div>
   </div>
 </template>
 

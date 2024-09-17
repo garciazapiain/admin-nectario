@@ -143,5 +143,7 @@ export default {
   width: fit-content;
   margin: 10px 0;
   padding: 1rem;
+  color: white;
+  background-color: black;
 }
 </style>
