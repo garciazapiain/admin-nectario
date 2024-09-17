@@ -299,20 +299,33 @@ export default {
       }
     },
     calculateTotalCost(ingredients) {
-      let total = 0;
-      if (!Array.isArray(ingredients)) {
-        console.warn("Expected ingredients to be an array, but got:", ingredients);
-        return total; // Return 0 if not an array
-      }
+      let aggregatedIngredients = {};
 
+      // Aggregating ingredients considering subplatillos and their parts
       ingredients.forEach((ingrediente) => {
-        const cantidad = ingrediente.is_subplatillo
+        // Calculate the quantity considering if it's part of a subplatillo
+        let cantidad = ingrediente.is_part_of_subplatillo
           ? (ingrediente.cantidad / ingrediente.rendimiento) *
           (ingrediente.subplatillo_cantidad ? ingrediente.subplatillo_cantidad : 1)
           : ingrediente.cantidad;
 
-        total += ingrediente.precio * cantidad; // Calculate the total cost
+        // Aggregate ingredients
+        if (aggregatedIngredients[ingrediente.id_ingrediente]) {
+          aggregatedIngredients[ingrediente.id_ingrediente].cantidad += parseFloat(cantidad);
+        } else {
+          aggregatedIngredients[ingrediente.id_ingrediente] = {
+            ...ingrediente,
+            cantidad: parseFloat(cantidad),
+          };
+        }
       });
+
+      // Calculate the total cost
+      let total = 0;
+      Object.values(aggregatedIngredients).forEach((ingrediente) => {
+        total += ingrediente.precio * ingrediente.cantidad;
+      });
+
       return total;
     },
     async calculateCosts() {
