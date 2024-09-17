@@ -220,7 +220,11 @@ fetchIngredientes();
 <template>
   <div class="container">
     <!-- Title and Lock/Unlock Icons with Tooltip -->
-    <div class="flex sm:flex-row items-center mt-2">
+    <div v-if="isEditingName">
+      <input type="text" v-model="newName" />
+      <button @click="handleSaveName">Guardar</button>
+    </div>
+    <div v-if="!isEditingName" class="flex sm:flex-row items-center mt-2">
       <h1 class="text-4xl mr-4 mb-2 sm:mb-0">{{ subplatillo.nombre }}</h1>
       <div class="tooltip-wrapper">
         <!-- For Admins: Clickable Icons -->
@@ -249,7 +253,8 @@ fetchIngredientes();
 
     <!-- Edit Name Button -->
     <div class="flex justify-center mt-2">
-      <button v-if="isAdmin || !recetaBloqueada" @click="isEditingName = true" class="mb-2 sm:mb-0">Editar nombre</button>
+      <button v-if="isAdmin || !recetaBloqueada" @click="isEditingName = true" class="mb-2 sm:mb-0">Editar
+        nombre</button>
     </div>
 
     <!-- Ingredients Table -->
@@ -306,15 +311,18 @@ fetchIngredientes();
       </div>
       <div class="text-left text-lg" v-else>
         <p class="text-left text-lg">RENDIMIENTO: {{ subplatillo.rendimiento }} {{ subplatillo.unidad }}</p>
-        <button class="text-left text-lg" v-if="isAdmin || !recetaBloqueada" @click="isEditingRendimiento = true">Editar rendimiento</button>
+        <button class="text-left text-lg" v-if="isAdmin || !recetaBloqueada" @click="isEditingRendimiento = true">Editar
+          rendimiento</button>
       </div>
     </div>
 
     <!-- Cost Per Unit -->
-    <p class="mt-4 text-left">COSTO / {{ subplatillo.unidad }}: ${{ (totalCost / subplatillo.rendimiento).toFixed(2) }}</p>
+    <p class="mt-4 text-left">COSTO / {{ subplatillo.unidad }}: ${{ (totalCost / subplatillo.rendimiento).toFixed(2) }}
+    </p>
 
     <!-- Ingredient Form -->
-    <IngredientForm v-if="!recetaBloqueada" class="text-left" :ingredientes="ingredientes" :existingIngredientIds="existingIngredientIds"
+    <IngredientForm v-if="!recetaBloqueada" class="text-left" :ingredientes="ingredientes"
+      :existingIngredientIds="existingIngredientIds"
       :postUrl="`${API_URL}/subplatillos/${$route.params.id}/ingredientes`" @ingredientAdded="fetchData" />
   </div>
 </template>
@@ -396,4 +404,3 @@ fetchIngredientes();
   }
 }
 </style>
-

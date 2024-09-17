@@ -13,7 +13,11 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdm
 <template>
   <div class="container">
     <!-- Title and Lock/Unlock Icons with Tooltip -->
-    <div class="flex sm:flex-row items-center mt-2">
+    <div v-if="isEditingName">
+      <input type="text" v-model="newName" />
+      <button @click="handleSaveName">Guardar</button>
+    </div>
+    <div v-if="!isEditingName" class="flex sm:flex-row items-center mt-2">
       <h1 class="text-4xl mb-2 mr-4 sm:mb-0">{{ platillo.nombre }}</h1>
       <div class="tooltip-wrapper">
         <!-- For Admins: Clickable Icons -->
