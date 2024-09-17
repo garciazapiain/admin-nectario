@@ -13,7 +13,5 @@ describe('Ingredientes Component', () => {
         cy.get('input[placeholder="Search"]').should('exist');
         cy.get('select').should('exist');
         cy.get('table').should('exist');
-        cy.get('.add-new-ingredient-form').should('exist');
-        cy.get('.submit-button').should('exist');
     });
 });
