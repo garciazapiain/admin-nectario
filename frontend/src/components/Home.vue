@@ -29,6 +29,7 @@ onMounted(() => {
       <button class="button" @click="() => navigateTo('/platillos')">Platillos</button>
       <button class="button" @click="() => navigateTo('/subplatillos')">Subplatillos</button>
       <button class="button" @click="() => navigateTo('/ingredientes')">Insumos</button>
+      <button class="button" v-if="isAdmin" @click="() => navigateTo('/entradasysalidas')">Entradas y Salidas</button>
       <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/inventarios')">
       Inventarios
     </button> -->
@@ -37,9 +38,9 @@ onMounted(() => {
     </button> -->
     </div>
     <div>
-      <button class="button" v-if="isAdmin" @click="() => navigateTo('/pronosticodemandainsumos')">
+      <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/pronosticodemandainsumos')">
         Pronóstico Demanda Insumos
-      </button>
+      </button> -->
       <button class="button" v-if="isAdmin" @click="() => navigateTo('/historialcompra')">
         Historial Compras
       </button>

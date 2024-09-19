@@ -141,7 +141,7 @@ export default {
       });
 
       if (response.ok) {
-        alert("Order updated successfully!");
+        alert("Orden actualizada exitósamente!");
         window.location.reload()
       } else {
         alert("Error updating order.");

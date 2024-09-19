@@ -7,6 +7,8 @@ const path = require('path'); // Add this line
 const { Pool } = require('pg');
 const authRoutes = require('./api/auth');
 const submissionRoutes = require('./api/submissions');
+const entradasSalidasRouter = require('./api/entradas_salidas');
+
 // const retrieveInbox = require('./api/retrieve_inbox');
 
 const app = express();
@@ -24,6 +26,7 @@ const pool = new Pool({
 
 app.use('/api/auth', authRoutes);
 app.use('/api/submissions', submissionRoutes);
+app.use('/api/entradas_salidas', entradasSalidasRouter)
 // app.use('/api/retrieveinbox', retrieveInbox);
 
 app.get('/api/platillos', async (req, res) => {
@@ -171,8 +174,8 @@ app.get('/api/platillo/:id', async (req, res) => {
   try {
     const result = await client.query('SELECT *, unidades_vendidas FROM platillos WHERE id_platillo = $1', [id]);
     let ingredientsQuery;
-      // If not including subplatillos, only get direct ingredients
-      ingredientsQuery = `
+    // If not including subplatillos, only get direct ingredients
+    ingredientsQuery = `
         SELECT i.nombre, 
                i.id_ingrediente::text, 
                i.unidad, 
@@ -1213,6 +1216,25 @@ app.delete('/api/purchase_orders/:id', async (req, res) => {
 app.post('/api/purchase_orders', async (req, res) => {
   const { articulosComprados, totalImporte, fecha, folio, emisor, xmldata } = req.body;
 
+  // Function to calculate fecha_inicio and fecha_fin based on a given date (Monday to Sunday)
+  function calculateWeekRange(date) {
+    const inputDate = new Date(date);
+    const dayOfWeek = inputDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    // Calculate Monday as the start of the week
+    const startOfWeek = new Date(inputDate);
+    // If its not Monday, do this calculation you subtract 1 currently do to some unresolved issues always returning Tuesday as starting date
+    if(dayOfWeek != 0){
+      startOfWeek.setDate(inputDate.getDate() - ((dayOfWeek + 6) % 7) - 1);
+    }
+    // Calculate Sunday as the end of the week, its 6 and not 7 substraction do to unresolved offset of starting day
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    return {
+      fecha_inicio: startOfWeek.toISOString().split('T')[0], // Format as YYYY-MM-DD
+      fecha_fin: endOfWeek.toISOString().split('T')[0]       // Format as YYYY-MM-DD
+    };
+  }
+
   // Start a transaction
   const client = await pool.connect();
   try {
@@ -1225,6 +1247,8 @@ app.post('/api/purchase_orders', async (req, res) => {
     );
     const orderId = orderResult.rows[0].id;
 
+    const { fecha_inicio, fecha_fin } = calculateWeekRange(fecha); // Use corrected week range
+
     // Insert the purchased items if any are provided
     if (articulosComprados && articulosComprados.length > 0) {
       for (const item of articulosComprados) {
@@ -1232,6 +1256,39 @@ app.post('/api/purchase_orders', async (req, res) => {
           'INSERT INTO purchase_history_items (purchase_order_id, id_ingrediente, quantity, price_per_item, total_price) VALUES ($1, $2, $3, $4, $5)',
           [orderId, item.id_ingrediente, item.quantity, item.price, item.totalPrice]
         );
+
+        // Insert or update entries in the entradas_salidas table
+        const existingEntry = await client.query(
+          'SELECT * FROM entradas_salidas WHERE id_ingrediente = $1 AND fecha_inicio = $2',
+          [item.id_ingrediente, fecha_inicio]
+        );
+
+        if (existingEntry.rows.length === 0) {
+          // Insert a new entry if one doesn't exist
+          await client.query(
+            'INSERT INTO entradas_salidas (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            [
+              item.id_ingrediente,
+              fecha_inicio,
+              fecha_fin,
+              item.quantity, // total_quantity starts with the new purchase
+              item.quantity, // Everything is initially assigned to CEDIS
+              0, // Start with zero for Moral
+              0 // Start with zero for Campestre
+            ]
+          );
+        } else {
+          // Update the existing entry with the new quantity
+          await client.query(
+            'UPDATE entradas_salidas SET total_quantity = total_quantity + $1, quantity_cedis = quantity_cedis + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
+            [
+              item.quantity, // Add the new purchase to total_quantity
+              item.quantity, // Add the new quantity to CEDIS
+              item.id_ingrediente,
+              fecha_inicio
+            ]
+          );
+        }
       }
     }
 

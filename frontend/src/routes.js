@@ -23,6 +23,7 @@ import TomaInventario from './components/Inventarios/TomaInventario.vue';
 import InventariosHome from './components/Inventarios/Home.vue';
 import AnalisisConsumo from './components/AnalisisConsumo/AnalisisConsumo.vue';
 import AgregarCompra from './components/HistorialCompra/AgregarCompra.vue';
+import EntradasYSalidas from './components/EntradasYSalidas/EntradasYSalidas.vue';
 
 export default [
     { path: '/', component: Home },
@@ -49,5 +50,6 @@ export default [
     { path: '/consumoinsumos', component: ConsumoInsumos },
     { path: '/consumoinsumos/cargarventa', component: CargarVenta },
     { path: '/facturacion', component: Facturacion },
-    { path: '/analisis-consumo', component: AnalisisConsumo }
+    { path: '/analisis-consumo', component: AnalisisConsumo },
+    { path: '/entradasysalidas', component: EntradasYSalidas }
 ];

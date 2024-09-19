@@ -198,7 +198,8 @@ export default {
                 }
 
                 const responseData = await response.json();
-                console.log(responseData);
+                alert("Orden agregada exitósamente!");
+                window.location.reload()
                 // Optionally, reset the form after submission
             } catch (error) {
                 console.error("Fetch error:", error);
