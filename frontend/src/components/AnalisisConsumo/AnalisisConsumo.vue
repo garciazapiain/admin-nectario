@@ -1,16 +1,6 @@
 <template>
     <div>
         <h1>Análisis de Consumo</h1>
-
-        <!-- Date Range Selection -->
-        <div>
-            <label for="startDate">Fecha de inicio:</label>
-            <input type="date" id="startDate" v-model="startDate" :max="today" />
-            <label for="endDate">Fecha de fin:</label>
-            <input type="date" id="endDate" v-model="endDate" :max="today" />
-            <button @click="fetchConsumptionData">Obtener data</button>
-        </div>
-
         <!-- Week Selection -->
         <div>
             <h2>Seleccionar por semana</h2>
@@ -20,7 +10,28 @@
                 </option>
             </select>
         </div>
-
+        <!-- Date Range Selection -->
+        <div>
+            <!-- <label for="startDate">Fecha de inicio:</label>
+            <input type="date" id="startDate" v-model="startDate" :max="today" />
+            <label for="endDate">Fecha de fin:</label>
+            <input type="date" id="endDate" v-model="endDate" :max="today" /> -->
+            <button @click="fetchConsumptionData">Obtener data</button>
+        </div>
+        <div>
+            <label>
+                <input type="radio" value="todos" v-model="selectedLocation" />
+                TODOS (INCLUYENDO CEDIS)
+            </label>
+            <label>
+                <input type="radio" value="moral" v-model="selectedLocation" />
+                MORAL
+            </label>
+            <label>
+                <input type="radio" value="campestre" v-model="selectedLocation" />
+                CAMPESTRE
+            </label>
+        </div>
         <!-- Data Table -->
         <table>
             <thead>
@@ -40,12 +51,12 @@
                 <tr v-for="item in filteredIngredientes" :key="item.id_ingrediente">
                     <td>{{ item.nombre }}</td>
                     <td>{{ item.unidad }}</td>
-                    <td>{{ item.inventario_inicial }}</td>
-                    <td>{{ item.inventario_final }}</td>
-                    <td>{{ item.compras }}</td>
-                    <td>{{ (Number(item.inventario_inicial) + Number(item.compras) -
-                        Number(item.inventario_final)).toFixed(2) }}</td>
-                    <td>{{ getTotalConsumidoTeorico(item.id_ingrediente).toFixed(2) }}</td>
+                    <td>{{ calculateInventarioInicial(item) }}</td>
+                    <td>{{ calculateInventarioFinal(item) }}</td>
+                    <td>{{ calculateCompraByLocation(item) }}</td>
+                    <td>{{ (Number(calculateInventarioInicial(item)) + Number(calculateCompraByLocation(item)) -
+                        Number(calculateInventarioFinal(item))).toFixed(2) }}</td>
+                    <td>{{ calculateTeoricoByLocation(item).toFixed(2) }}</td>
                     <td :style="{ color: getPercentageDifferenceColor(item.id_ingrediente) }">
                         {{ calculatePercentageDifference(item.id_ingrediente) }}%
                     </td>
@@ -82,7 +93,8 @@ export default {
             selectedWeek: null,
             weeks: [],
             totalConsumidoTeoricoData: [],
-            dataLoaded: false // Add this flag to track data load
+            dataLoaded: false, // Add this flag to track data load
+            selectedLocation: 'todos'
         };
     },
     methods: {
@@ -152,7 +164,7 @@ export default {
 
             const stores = ["moral", "bosques"];
             const results = {};
-
+            // consumo teorico
             for (const store of stores) {
                 try {
                     const response = await fetch(
@@ -195,6 +207,7 @@ export default {
             }
 
             this.consumptionData = combinedData;
+            console.log(this.consumptionData)
             if (this.consumptionData.length === 0) {
                 this.errorMessage = "No se encontró data en esas fechas.";
                 setTimeout(() => {
@@ -208,16 +221,18 @@ export default {
                 if (submissionsResponse.ok) {
                     const submissions = await submissionsResponse.json();
 
+                    // Filter by the selected location (todos, moral, campestre)
                     const filteredSubmissions = submissions.filter(submission => {
                         const submissionDate = new Date(submission.timestamp);
                         return submissionDate >= new Date(`${this.startDate}T00:00:00`) && submissionDate <= new Date(`${this.endDate}T23:59:59`);
                     });
 
-                    const sumQuantitiesForDate = (submissions, date, ingredienteId, tipoInventario) => {
+                    const sumQuantitiesForDate = (submissions, date, ingredienteId, tipoInventario, store) => {
                         return submissions
                             .filter(submission =>
                                 new Date(submission.timestamp).toDateString() === date.toDateString() &&
-                                submission.tipo_inventario === tipoInventario
+                                submission.tipo_inventario === tipoInventario &&
+                                (store === 'todos' || submission.store === store)  // Filter by store based on selectedLocation
                             )
                             .reduce((sum, submission) => {
                                 const inventario = submission.inventario.find(i => i.id_ingrediente === ingredienteId);
@@ -227,10 +242,15 @@ export default {
                     };
 
                     this.filteredIngredientes.forEach(ingrediente => {
-                        const initialInventory = sumQuantitiesForDate(filteredSubmissions, new Date(`${this.startDate}T00:00:00`), ingrediente.id_ingrediente, 'inicial');
-                        const finalInventory = sumQuantitiesForDate(filteredSubmissions, new Date(`${this.endDate}T23:59:59`), ingrediente.id_ingrediente, 'final');
-                        ingrediente.inventario_inicial = initialInventory;
-                        ingrediente.inventario_final = finalInventory;
+                        // Calculate total, moral, and campestre inventories
+                        ingrediente.inventario_inicial = sumQuantitiesForDate(filteredSubmissions, new Date(`${this.startDate}T00:00:00`), ingrediente.id_ingrediente, 'inicial', 'todos');
+                        ingrediente.inventario_final = sumQuantitiesForDate(filteredSubmissions, new Date(`${this.endDate}T23:59:59`), ingrediente.id_ingrediente, 'final', 'todos');
+
+                        ingrediente.inventario_inicial_moral = sumQuantitiesForDate(filteredSubmissions, new Date(`${this.startDate}T00:00:00`), ingrediente.id_ingrediente, 'inicial', 'moral');
+                        ingrediente.inventario_final_moral = sumQuantitiesForDate(filteredSubmissions, new Date(`${this.endDate}T23:59:59`), ingrediente.id_ingrediente, 'final', 'moral');
+
+                        ingrediente.inventario_inicial_campestre = sumQuantitiesForDate(filteredSubmissions, new Date(`${this.startDate}T00:00:00`), ingrediente.id_ingrediente, 'inicial', 'bosques');
+                        ingrediente.inventario_final_campestre = sumQuantitiesForDate(filteredSubmissions, new Date(`${this.endDate}T23:59:59`), ingrediente.id_ingrediente, 'final', 'bosques');
                     });
                 } else {
                     console.error("Error fetching submissions data:", submissionsResponse.status);
@@ -240,21 +260,22 @@ export default {
             }
 
             try {
-                const purchaseOrdersResponse = await fetch(`${API_URL}/purchase_orders/analisis-consumo?startDate=${this.startDate}&endDate=${this.endDate}`);
-                if (purchaseOrdersResponse.ok) {
-                    const purchaseData = await purchaseOrdersResponse.json();
+                const entradasSalidasResponse = await fetch(`${API_URL}/entradas_salidas?startDate=${this.startDate}&endDate=${this.endDate}`);
+                if (entradasSalidasResponse.ok) {
+                    const entradasSalidasData = await entradasSalidasResponse.json();
                     this.filteredIngredientes.forEach(ingrediente => {
-                        const matchingData = purchaseData.find(d => d.id_ingrediente === ingrediente.id_ingrediente);
-                        ingrediente.compras = matchingData ? matchingData.total_quantity : 0;
+                        const matchingData = entradasSalidasData.find(d => d.id_ingrediente === ingrediente.id_ingrediente);
+                        ingrediente.total_quantity = matchingData ? parseFloat(matchingData.total_quantity) : 0;
+                        ingrediente.quantity_moral = matchingData ? parseFloat(matchingData.quantity_moral) : 0;
+                        ingrediente.quantity_campestre = matchingData ? parseFloat(matchingData.quantity_campestre) : 0;
                     });
                 } else {
-                    console.error("Error fetching data:", purchaseOrdersResponse.status);
+                    console.error("Error fetching data:", entradasSalidasResponse.status);
                 }
             } catch (error) {
                 console.error("Fetch error:", error);
             }
         }
-
         ,
         sumPurchasesForIngredients() {
             // Reset previous purchase sums
@@ -291,31 +312,21 @@ export default {
                 console.error("Fetch error:", error);
             }
         },
-        getTotalConsumidoTeorico(id_ingrediente) {
-            if (!this.consumptionData || this.consumptionData.length === 0) {
-                return 0; // Return 0 or a default value if consumptionData is empty or undefined
-            }
-            const match = this.consumptionData.find(item => item.id_ingrediente === id_ingrediente);
-            return match && typeof match.total_consumido_total === 'number' ? match.total_consumido_total : 0; // Return 0 if no match is found or if total_consumido_total is not a valid number
-        },
         // Calculate the percentage difference and apply green/red coloring
         calculatePercentageDifference(id_ingrediente) {
             const item = this.filteredIngredientes.find(i => i.id_ingrediente === id_ingrediente);
-            const realConsumption = Number(item.inventario_inicial) + Number(item.compras) - Number(item.inventario_final);
-            const theoreticalConsumption = this.getTotalConsumidoTeorico(id_ingrediente);
+            const realConsumption = Number(this.calculateInventarioInicial(item)) +
+                Number(this.calculateCompraByLocation(item)) -
+                Number(this.calculateInventarioFinal(item));
+            const theoreticalConsumption = this.calculateTeoricoByLocation(item);
 
-            // Check if theoreticalConsumption is zero or if either value is invalid
             if (theoreticalConsumption === 0 || isNaN(realConsumption) || isNaN(theoreticalConsumption)) {
-                return 'Falta informacion para '; // Return an empty string for invalid values
+                return 'Falta informacion para ';
             }
 
-            // Calculate the percentage difference
             const percentageDifference = ((theoreticalConsumption - realConsumption) / theoreticalConsumption) * 100;
-
-            // Return the calculated percentage or an empty string if invalid
             return isNaN(percentageDifference) || !isFinite(percentageDifference) ? '' : percentageDifference.toFixed(2);
         },
-
         // Determine the color based on whether the theoretical consumption is larger or smaller than the real consumption
         getPercentageDifferenceColor(id_ingrediente) {
             const percentageDifference = this.calculatePercentageDifference(id_ingrediente);
@@ -325,10 +336,11 @@ export default {
         // Calculate the dollar difference between theoretical and real consumption
         calculateDollarDifference(id_ingrediente) {
             const item = this.filteredIngredientes.find(i => i.id_ingrediente === id_ingrediente);
-            const realConsumption = Number(item.inventario_inicial) + Number(item.compras) - Number(item.inventario_final);
-            const theoreticalConsumption = this.getTotalConsumidoTeorico(id_ingrediente);
+            const realConsumption = Number(this.calculateInventarioInicial(item)) +
+                Number(this.calculateCompraByLocation(item)) -
+                Number(this.calculateInventarioFinal(item));
+            const theoreticalConsumption = this.calculateTeoricoByLocation(item);
 
-            // Calculate the dollar difference
             return (theoreticalConsumption - realConsumption) * item.precio;
         },
         calculateTotalDollarDifference() {
@@ -338,29 +350,29 @@ export default {
         },
         exportToExcel() {
             const wb = XLSX.utils.book_new();
-            const wsData = this.filteredIngredientes.map(item => {
-                const consumoTeorico = this.getTotalConsumidoTeorico(item.id_ingrediente);
-                const consumoTeoricoValue = (typeof consumoTeorico === 'number' && !isNaN(consumoTeorico) && isFinite(consumoTeorico))
-                    ? consumoTeorico.toFixed(2)
-                    : '';
 
-                const diferenciaDollar = this.calculateDollarDifference(item.id_ingrediente);
-                const diferenciaDollarValue = (typeof diferenciaDollar === 'number' && !isNaN(diferenciaDollar) && isFinite(diferenciaDollar))
-                    ? diferenciaDollar.toFixed(2)
-                    : '';
+            // Prepare data for Excel export
+            const wsData = this.filteredIngredientes.map(item => {
+                const consumoTeoricoValue = this.calculateTeoricoByLocation(item).toFixed(2);
+                const diferenciaDollarValue = this.calculateDollarDifference(item.id_ingrediente).toFixed(2);
 
                 return {
                     Ingrediente: item.nombre,
                     Unidad: item.unidad,
-                    "Inventario Inicial": Number(item.inventario_inicial),
-                    "Inventario Final": Number(item.inventario_final),
-                    Compras: Number(item.compras),
-                    "Consumo Real": Number((Number(item.inventario_inicial) + Number(item.compras) - Number(item.inventario_final)).toFixed(2)),
+                    "Inventario Inicial": Number(this.calculateInventarioInicial(item)),
+                    "Inventario Final": Number(this.calculateInventarioFinal(item)),
+                    Compras: Number(this.calculateCompraByLocation(item)),
+                    "Consumo Real": Number(
+                        (Number(this.calculateInventarioInicial(item)) +
+                            Number(this.calculateCompraByLocation(item)) -
+                            Number(this.calculateInventarioFinal(item))
+                        ).toFixed(2)),
                     "Consumo Teórico": consumoTeoricoValue,
                     "Diferencia $": diferenciaDollarValue
                 };
             });
 
+            // Add total row at the end
             wsData.push({
                 Ingrediente: 'Total',
                 Unidad: '',
@@ -372,13 +384,71 @@ export default {
                 "Diferencia $": this.calculateTotalDollarDifference().toFixed(2)
             });
 
+            // Convert data to Excel sheet and save
             const ws = XLSX.utils.json_to_sheet(wsData);
             XLSX.utils.book_append_sheet(wb, ws, "Análisis de Consumo");
 
             XLSX.writeFile(wb, "analisis_consumo.xlsx");
-        }
+        },
+    },
+    computed: {
+        calculateInventarioInicial() {
+            return (item) => {
+                if (this.selectedLocation === 'moral') {
+                    return item.inventario_inicial_moral;
+                } else if (this.selectedLocation === 'campestre') {
+                    return item.inventario_inicial_campestre;
+                } else {
+                    return item.inventario_inicial; // Default to total or combined
+                }
+            };
+        },
+        calculateInventarioFinal() {
+            return (item) => {
+                if (this.selectedLocation === 'moral') {
+                    return item.inventario_final_moral;
+                } else if (this.selectedLocation === 'campestre') {
+                    return item.inventario_final_campestre;
+                } else {
+                    return item.inventario_final; // Default to total or combined
+                }
+            };
+        },
+        calculateCompraByLocation() {
+            return (item) => {
+                if (this.selectedLocation === 'moral') {
+                    return item.quantity_moral;
+                } else if (this.selectedLocation === 'campestre') {
+                    return item.quantity_campestre;
+                } else {
+                    return item.total_quantity; // Default to total or combined
+                }
+            };
+        },
+        calculateTeoricoByLocation() {
+            return (item) => {
+                // Find the matching ingredient data from consumptionData
+                const matchedConsumption = this.consumptionData.find(cons => cons.id_ingrediente === item.id_ingrediente);
 
+                if (!matchedConsumption) {
+                    console.warn(`No consumption data found for ${item.nombre}`);
+                    return 0; // Return 0 if no match is found
+                }
 
+                // Select the correct total_consumido field based on the selected location
+                let totalConsumido = 0;
+                if (this.selectedLocation === 'moral') {
+                    totalConsumido = matchedConsumption.total_consumido_moral || 0;
+                } else if (this.selectedLocation === 'campestre') {
+                    totalConsumido = matchedConsumption.total_consumido_bosques || 0;
+                } else {
+                    totalConsumido = matchedConsumption.total_consumido_total || 0; // Default to total or combined
+                }
+
+                // Ensure totalConsumido is a valid number before calling .toFixed()
+                return isNaN(totalConsumido) ? 0 : totalConsumido;
+            };
+        },
     },
     async mounted() {
         this.generateWeeks();

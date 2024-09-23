@@ -1223,7 +1223,7 @@ app.post('/api/purchase_orders', async (req, res) => {
     // Calculate Monday as the start of the week
     const startOfWeek = new Date(inputDate);
     // If its not Monday, do this calculation you subtract 1 currently do to some unresolved issues always returning Tuesday as starting date
-    if(dayOfWeek != 0){
+    if (dayOfWeek != 0) {
       startOfWeek.setDate(inputDate.getDate() - ((dayOfWeek + 6) % 7) - 1);
     }
     // Calculate Sunday as the end of the week, its 6 and not 7 substraction do to unresolved offset of starting day
@@ -1357,10 +1357,29 @@ app.post('/api/purchase_orders/bulk', async (req, res) => {
   }
 });
 
-
 app.put('/api/purchase_orders/:id', async (req, res) => {
   const { id } = req.params;
   const { fecha, folio, emisor, items, totalimporte, status } = req.body;
+
+  // Define the calculateWeekRange function
+  function calculateWeekRange(date) {
+    const inputDate = new Date(date);
+    const dayOfWeek = inputDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+
+    // Calculate Monday as the start of the week (if it's Sunday, set it to Monday)
+    const startOfWeek = new Date(inputDate);
+    const offset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;  // Set Sunday as the last day (adjust accordingly)
+    startOfWeek.setDate(inputDate.getDate() + offset);
+
+    // Calculate Sunday as the end of the week
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);  // Sunday is 6 days after Monday
+
+    return {
+      fecha_inicio: startOfWeek.toISOString().split('T')[0], // Format as YYYY-MM-DD
+      fecha_fin: endOfWeek.toISOString().split('T')[0]       // Format as YYYY-MM-DD
+    };
+  }
 
   const client = await pool.connect();
   try {
@@ -1382,22 +1401,58 @@ app.put('/api/purchase_orders/:id', async (req, res) => {
       );
     }
 
+    // Retrieve original items to compare quantities
+    const originalItems = await client.query('SELECT * FROM purchase_history_items WHERE purchase_order_id = $1', [id]);
+
     // Delete existing items for the order (if necessary)
     if (items && items.length > 0) {
       await client.query('DELETE FROM purchase_history_items WHERE purchase_order_id = $1', [id]);
 
-      // Insert the updated items
       for (const item of items) {
         await client.query(
           'INSERT INTO purchase_history_items (purchase_order_id, id_ingrediente, quantity, price_per_item, total_price) VALUES ($1, $2, $3, $4, $5)',
-          [
-            id,
-            item.id_ingrediente || null, // Ensure this is not null
-            item.quantity,
-            item.price_per_item || 0, // Calculate or default to 0 if missing
-            item.total_price
-          ]
+          [id, item.id_ingrediente || null, item.quantity, item.price_per_item || 0, item.total_price]
         );
+
+        const { fecha_inicio, fecha_fin } = calculateWeekRange(fecha); // Use corrected week range
+
+        // Find original item data to compare
+        const originalItem = originalItems.rows.find(orig => orig.id_ingrediente === item.id_ingrediente);
+        const originalQuantity = originalItem ? originalItem.quantity : 0;
+        const quantityDifference = item.quantity - originalQuantity;
+
+        // Check if the entradas_salidas entry already exists for this item and week
+        const existingEntry = await client.query(
+          'SELECT * FROM entradas_salidas WHERE id_ingrediente = $1 AND fecha_inicio = $2',
+          [item.id_ingrediente, fecha_inicio]
+        );
+
+        if (existingEntry.rows.length === 0) {
+          // Insert a new entry if one doesn't exist
+          await client.query(
+            'INSERT INTO entradas_salidas (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            [
+              item.id_ingrediente,
+              fecha_inicio,
+              fecha_fin,
+              item.quantity,  // Set initial total quantity as the new purchase quantity
+              item.quantity,  // Everything assigned to CEDIS initially
+              0,              // Start with zero for Moral
+              0               // Start with zero for Campestre
+            ]
+          );
+        } else {
+          // Update the existing entry based on the difference in quantity
+          await client.query(
+            'UPDATE entradas_salidas SET total_quantity = total_quantity + $1, quantity_cedis = quantity_cedis + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
+            [
+              quantityDifference,       // Adjust total_quantity based on the difference
+              quantityDifference,       // Adjust quantity_cedis based on the difference
+              item.id_ingrediente,
+              fecha_inicio
+            ]
+          );
+        }
       }
     }
 

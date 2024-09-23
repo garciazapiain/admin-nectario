@@ -189,16 +189,16 @@ generateWeeks();
         <h3 class="text-xl font-bold mb-4 text-black">Movimiento de {{ currentEntrada?.nombre }}</h3>
 
         <!-- Origen Dropdown with Conditional Disabling -->
-        <label class="block font-semibold mb-2">Origen:</label>
+        <label class="flex font-semibold mb-2 text-black">Origen:</label>
         <select v-model="origen"
-          class="block w-full px-4 py-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring focus:ring-blue-300">
+          class="flex justify-start w-full px-4 py-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring focus:ring-blue-300">
           <option value="CEDIS" :disabled="destino === 'CEDIS'">CEDIS</option>
           <option value="Moral" :disabled="destino === 'Moral'">Moral</option>
           <option value="Campestre" :disabled="destino === 'Campestre'">Campestre</option>
         </select>
 
         <!-- Destino Dropdown with Conditional Disabling -->
-        <label class="block font-semibold mb-2">Destino:</label>
+        <label class="flex justify-start font-semibold mb-2 text-black">Destino:</label>
         <select v-model="destino"
           class="block w-full px-4 py-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring focus:ring-blue-300">
           <option value="CEDIS" :disabled="origen === 'CEDIS'">CEDIS</option>
@@ -206,22 +206,24 @@ generateWeeks();
           <option value="Campestre" :disabled="origen === 'Campestre'">Campestre</option>
         </select>
 
-        <label class="block font-semibold mb-2">Cantidad:</label>
-        <input type="number" v-model="cantidad" :min="0.01"
-          :max="origen === 'CEDIS' ? currentEntrada?.quantity_cedis : origen === 'Moral' ? currentEntrada?.quantity_moral : origen === 'Campestre' ? currentEntrada?.quantity_campestre : 0"
-          class="block w-full px-4 py-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring focus:ring-blue-300" />
+        <label class="flex justify-start font-semibold mb-2 text-black">Cantidad:</label>
+        <div class="flex">
+          <input type="number" v-model="cantidad" :min="0.01"
+            :max="origen === 'CEDIS' ? currentEntrada?.quantity_cedis : origen === 'Moral' ? currentEntrada?.quantity_moral : origen === 'Campestre' ? currentEntrada?.quantity_campestre : 0"
+            class="block w-1/4 px-4 py-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring focus:ring-blue-300" />
+          <p class="text-black text-xl text-bold">{{ currentEntrada.unidad }}</p>
+        </div>
         <p v-if="cantidad > (origen === 'CEDIS' ? currentEntrada?.quantity_cedis : origen === 'Moral' ? currentEntrada?.quantity_moral : currentEntrada?.quantity_campestre)"
           class="text-red-500">
           La cantidad no puede exceder la cantidad disponible en {{ origen }}.
         </p>
-        <p v-if="0 > cantidad"
-          class="text-red-500">
+        <p v-if="0 > cantidad" class="text-red-500">
           La cantidad no puede ser negativa.
         </p>
 
         <div class="flex justify-end">
           <button @click="handleSubmit"
-            :disabled="cantidad > (origen === 'CEDIS' ? currentEntrada?.quantity_cedis : origen === 'Moral' ? currentEntrada?.quantity_moral : origen === 'Campestre' ? currentEntrada?.quantity_campestre : 0) || cantidad <0"
+            :disabled="cantidad > (origen === 'CEDIS' ? currentEntrada?.quantity_cedis : origen === 'Moral' ? currentEntrada?.quantity_moral : origen === 'Campestre' ? currentEntrada?.quantity_campestre : 0) || cantidad < 0"
             class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md mr-2 disabled:bg-gray-400 disabled:cursor-not-allowed">Guardar</button>
           <button @click="handleCerrar"
             class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md">Cerrar</button>

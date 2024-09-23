@@ -73,9 +73,6 @@ router.put('/movimiento', async (req, res) => {
 
         // Calculate the sum of all locations
         const sumOfLocations = updatedCedis + updatedMoral + updatedCampestre;
-
-        console.log(sumOfLocations, totalQuantity, updatedCedis, updatedCampestre, updatedMoral);
-
         // Ensure the sum of locations matches the total quantity
         if (sumOfLocations !== totalQuantity) {
             return res.status(400).json({ error: 'Sum of quantities does not match total_quantity' });
