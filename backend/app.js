@@ -1384,9 +1384,11 @@ app.put('/api/purchase_orders/:id', async (req, res) => {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+    console.log('Transaction started for purchase_order:', id);
 
     // If status is provided, update it separately
     if (status) {
+      console.log('Updating status for purchase_order:', id, 'New status:', status);
       await client.query(
         'UPDATE purchase_orders SET status = $1 WHERE id = $2',
         [status, id]
@@ -1395,6 +1397,7 @@ app.put('/api/purchase_orders/:id', async (req, res) => {
 
     // If other fields are provided, update them
     if (fecha || folio || emisor || totalimporte) {
+      console.log('Updating other fields for purchase_order:', id);
       await client.query(
         'UPDATE purchase_orders SET fecha = $1, folio = $2, emisor = $3, totalimporte = $4 WHERE id = $5',
         [fecha, folio, emisor, totalimporte, id]
@@ -1402,33 +1405,40 @@ app.put('/api/purchase_orders/:id', async (req, res) => {
     }
 
     // Retrieve original items to compare quantities
+    console.log('Fetching original items for purchase_order:', id);
     const originalItems = await client.query('SELECT * FROM purchase_history_items WHERE purchase_order_id = $1', [id]);
 
     // Delete existing items for the order (if necessary)
     if (items && items.length > 0) {
+      console.log('Deleting old items for purchase_order:', id);
       await client.query('DELETE FROM purchase_history_items WHERE purchase_order_id = $1', [id]);
 
       for (const item of items) {
+        console.log('Inserting new item for purchase_order:', id, 'Item:', item);
         await client.query(
           'INSERT INTO purchase_history_items (purchase_order_id, id_ingrediente, quantity, price_per_item, total_price) VALUES ($1, $2, $3, $4, $5)',
           [id, item.id_ingrediente || null, item.quantity, item.price_per_item || 0, item.total_price]
         );
 
         const { fecha_inicio, fecha_fin } = calculateWeekRange(fecha); // Use corrected week range
+        console.log('Calculated week range:', { fecha_inicio, fecha_fin });
 
         // Find original item data to compare
         const originalItem = originalItems.rows.find(orig => orig.id_ingrediente === item.id_ingrediente);
         const originalQuantity = originalItem ? originalItem.quantity : 0;
         const quantityDifference = item.quantity - originalQuantity;
+        console.log('Quantity difference for ingredient:', item.id_ingrediente, 'Difference:', quantityDifference);
 
         // Check if the entradas_salidas entry already exists for this item and week
         const existingEntry = await client.query(
           'SELECT * FROM entradas_salidas WHERE id_ingrediente = $1 AND fecha_inicio = $2',
           [item.id_ingrediente, fecha_inicio]
         );
+        console.log('Existing entry found:', existingEntry.rows.length);
 
         if (existingEntry.rows.length === 0) {
           // Insert a new entry if one doesn't exist
+          console.log('Inserting new entradas_salidas entry for ingredient:', item.id_ingrediente);
           await client.query(
             'INSERT INTO entradas_salidas (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre) VALUES ($1, $2, $3, $4, $5, $6, $7)',
             [
@@ -1443,6 +1453,7 @@ app.put('/api/purchase_orders/:id', async (req, res) => {
           );
         } else {
           // Update the existing entry based on the difference in quantity
+          console.log('Updating existing entradas_salidas entry for ingredient:', item.id_ingrediente);
           await client.query(
             'UPDATE entradas_salidas SET total_quantity = total_quantity + $1, quantity_cedis = quantity_cedis + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
             [
@@ -1456,14 +1467,16 @@ app.put('/api/purchase_orders/:id', async (req, res) => {
       }
     }
 
+    console.log('Committing transaction for purchase_order:', id);
     await client.query('COMMIT');
     res.json({ message: 'Purchase order updated successfully' });
   } catch (error) {
+    console.error('Error occurred for purchase_order:', id, 'Error:', error);
     await client.query('ROLLBACK');
-    console.error('Database error:', error);
     res.status(500).json({ error: 'Database error' });
   } finally {
     client.release();
+    console.log('Database connection released for purchase_order:', id);
   }
 });
 
