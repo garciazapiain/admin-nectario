@@ -17,7 +17,7 @@
         <td>
           <router-link :to="`${$route.path}/compra/${order.id}`">{{
             order.id
-            }}</router-link>
+          }}</router-link>
         </td>
         <td>{{ order.folio }}</td>
         <td>
@@ -205,56 +205,56 @@ export default {
     scrollToInput() {
       this.$refs.fileInput.scrollIntoView({ behavior: "smooth" });
     },
-    retrieveInbox() {
-      fetch(`${API_URL}/retrieveinbox`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then(emails => {
-          if (emails.length > 0) {
-            const purchaseOrders = emails.map(xmlEmail => ({
-              articulosComprados: [],  // Assuming you'll add items later
-              totalImporte: xmlEmail.totalImporte,
-              fecha: xmlEmail.fecha,
-              folio: xmlEmail.folio,
-              emisor: xmlEmail.emisor,
-              xmldata: xmlEmail.xmlContent
-            }));
+    // retrieveInbox() {
+    //   fetch(`${API_URL}/retrieveinbox`)
+    //     .then(response => {
+    //       if (!response.ok) {
+    //         throw new Error(`HTTP error! status: ${response.status}`);
+    //       }
+    //       return response.json();
+    //     })
+    //     .then(emails => {
+    //       if (emails.length > 0) {
+    //         const purchaseOrders = emails.map(xmlEmail => ({
+    //           articulosComprados: [],  // Assuming you'll add items later
+    //           totalImporte: xmlEmail.totalImporte,
+    //           fecha: xmlEmail.fecha,
+    //           folio: xmlEmail.folio,
+    //           emisor: xmlEmail.emisor,
+    //           xmldata: xmlEmail.xmlContent
+    //         }));
 
-            // Send the data to the backend to create new purchase orders in bulk
-            fetch(`${API_URL}/purchase_orders/bulk`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ purchaseOrders }),
-            })
-              .then(response => response.json())
-              .then(data => {
-                if (data.error) {
-                  console.error('Error:', data.error);
-                  alert('Error: ' + data.error);
-                } else {
-                  console.log('Purchase orders processed successfully:', data);
-                  alert(`Successfully added ${data.addedOrders.length} new purchase orders.`);
-                  window.location.reload()
-                }
-              })
-              .catch(error => {
-                console.error('Error creating purchase orders:', error);
-              });
+    //         // Send the data to the backend to create new purchase orders in bulk
+    //         fetch(`${API_URL}/purchase_orders/bulk`, {
+    //           method: 'POST',
+    //           headers: {
+    //             'Content-Type': 'application/json',
+    //           },
+    //           body: JSON.stringify({ purchaseOrders }),
+    //         })
+    //           .then(response => response.json())
+    //           .then(data => {
+    //             if (data.error) {
+    //               console.error('Error:', data.error);
+    //               alert('Error: ' + data.error);
+    //             } else {
+    //               console.log('Purchase orders processed successfully:', data);
+    //               alert(`Successfully added ${data.addedOrders.length} new purchase orders.`);
+    //               window.location.reload()
+    //             }
+    //           })
+    //           .catch(error => {
+    //             console.error('Error creating purchase orders:', error);
+    //           });
 
-          } else {
-            console.log('No emails with XML attachments found.');
-          }
-        })
-        .catch(error => {
-          console.error('Fetch error:', error);
-        });
-    },
+    //       } else {
+    //         console.log('No emails with XML attachments found.');
+    //       }
+    //     })
+    //     .catch(error => {
+    //       console.error('Fetch error:', error);
+    //     });
+    // },
     closeXmlPrompt() {
       this.xmlPromptVisible = false;
     },
@@ -312,7 +312,15 @@ export default {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        purchaseOrders.value = data;
+        purchaseOrders.value = data.sort((a, b) => {
+          if (a.status === b.status) {
+            // Sort by date if status is the same
+            return new Date(a.fecha) - new Date(b.fecha); // Oldest to newest
+          }
+          // Sort by status: 'pendiente' first, then 'verificado'
+          return a.status === 'pendiente' ? -1 : 1;
+        });
+
       } catch (error) {
         console.error("Fetch error:", error);
       }
