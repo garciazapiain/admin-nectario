@@ -50,7 +50,7 @@
                     <th>Diferencia $</th>
                 </tr>
             </thead>
-            <tbody v-if="dataLoaded">
+            <tbody>
                 <tr v-for="item in filteredIngredientes" :key="item.id_ingrediente">
                     <td>{{ item.nombre }}</td>
                     <td>{{ item.unidad }}</td>
@@ -199,15 +199,77 @@ export default {
 
                 // Set consumptionData after fetching
                 this.consumptionData = combinedData;
-                this.filteredIngredientes = this.ingredientes.filter(ingrediente => ingrediente.producto_clave); // Filter as necessary
+                this.filteredIngredientes = this.filteredIngredientes.map(ingrediente => {
+                    // Attach relevant consumption data to each ingredient
+                    const consumptionData = this.consumptionData.find(cons => cons.id_ingrediente === ingrediente.id_ingrediente);
+                    return {
+                        ...ingrediente,
+                        total_consumido_moral: consumptionData ? consumptionData.total_consumido_moral : 0,
+                        total_consumido_bosques: consumptionData ? consumptionData.total_consumido_bosques : 0,
+                        total_consumido_total: consumptionData ? consumptionData.total_consumido_total : 0
+                    };
+                });
 
-                this.dataLoaded = true; // Set the flag to true once the data is loaded
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
+            // Existing logic for submissions and purchase orders
+            try {
+                const submissionsResponse = await fetch(`${API_URL}/submissions/inventario-submissions`);
+                if (submissionsResponse.ok) {
+                    const submissions = await submissionsResponse.json();
+                    // Filter by the selected location (todos, moral, campestre)
+                    const filteredSubmissions = submissions.filter(submission => {
+                        const submissionDate = new Date(submission.timestamp);
+                        return submissionDate >= new Date(`${this.startDate}T00:00:00`) && submissionDate <= new Date(`${this.endDate}T23:59:59`);
+                    });
+                    const sumQuantitiesForDate = (submissions, date, ingredienteId, tipoInventario, store) => {
+                        return submissions
+                            .filter(submission =>
+                                new Date(submission.timestamp).toDateString() === date.toDateString() &&
+                                submission.tipo_inventario === tipoInventario &&
+                                (store === 'todos' || submission.store === store)  // Filter by store based on selectedLocation
+                            )
+                            .reduce((sum, submission) => {
+                                const inventario = submission.inventario.find(i => i.id_ingrediente === ingredienteId);
+                                const cantidadInventario = inventario ? parseFloat(inventario.cantidad) || 0 : 0;
+                                return sum + cantidadInventario;
+                            }, 0);
+                    };
+                    this.filteredIngredientes.forEach(ingrediente => {
+                        // Calculate total, moral, and campestre inventories
+                        ingrediente.inventario_inicial = sumQuantitiesForDate(filteredSubmissions, new Date(`${this.startDate}T00:00:00`), ingrediente.id_ingrediente, 'inicial', 'todos');
+                        ingrediente.inventario_final = sumQuantitiesForDate(filteredSubmissions, new Date(`${this.endDate}T23:59:59`), ingrediente.id_ingrediente, 'final', 'todos');
+                        ingrediente.inventario_inicial_moral = sumQuantitiesForDate(filteredSubmissions, new Date(`${this.startDate}T00:00:00`), ingrediente.id_ingrediente, 'inicial', 'moral');
+                        ingrediente.inventario_final_moral = sumQuantitiesForDate(filteredSubmissions, new Date(`${this.endDate}T23:59:59`), ingrediente.id_ingrediente, 'final', 'moral');
+                        ingrediente.inventario_inicial_campestre = sumQuantitiesForDate(filteredSubmissions, new Date(`${this.startDate}T00:00:00`), ingrediente.id_ingrediente, 'inicial', 'bosques');
+                        ingrediente.inventario_final_campestre = sumQuantitiesForDate(filteredSubmissions, new Date(`${this.endDate}T23:59:59`), ingrediente.id_ingrediente, 'final', 'bosques');
+                    });
+                } else {
+                    console.error("Error fetching submissions data:", submissionsResponse.status);
+                }
+            } catch (error) {
+                console.error("Fetch error:", error);
+            }
+            try {
+                const entradasSalidasResponse = await fetch(`${API_URL}/entradas_salidas?startDate=${this.startDate}&endDate=${this.endDate}`);
+                if (entradasSalidasResponse.ok) {
+                    const entradasSalidasData = await entradasSalidasResponse.json();
+                    this.filteredIngredientes.forEach(ingrediente => {
+                        const matchingData = entradasSalidasData.find(d => d.id_ingrediente === ingrediente.id_ingrediente);
+                        ingrediente.total_quantity = matchingData ? parseFloat(matchingData.total_quantity) : 0;
+                        ingrediente.quantity_moral = matchingData ? parseFloat(matchingData.quantity_moral) : 0;
+                        ingrediente.quantity_campestre = matchingData ? parseFloat(matchingData.quantity_campestre) : 0;
+                    });
+                } else {
+                    console.error("Error fetching data:", entradasSalidasResponse.status);
+                }
+            } catch (error) {
+                console.error("Fetch error:", error);
+                console.error("Error fetching data:", error);
+            }
             this.dataLoaded = true;
-        }
-        ,
+        },
         sumPurchasesForIngredients() {
             // Reset previous purchase sums
             this.filteredIngredientes.forEach(ingrediente => {
@@ -228,18 +290,6 @@ export default {
                 }
             });
 
-        },
-        async fetchTotalConsumidoTeorico() {
-            try {
-                const response = await fetch(`${API_URL}/consumption`);
-                if (response.ok) {
-                    this.totalConsumidoTeoricoData = await response.json();
-                } else {
-                    console.error("Error fetching consumption data:", response.status);
-                }
-            } catch (error) {
-                console.error("Fetch error:", error);
-            }
         },
         // Calculate the percentage difference and apply green/red coloring
         calculatePercentageDifference(id_ingrediente) {
@@ -323,6 +373,9 @@ export default {
     computed: {
         calculateInventarioInicial() {
             return (item) => {
+                if (!this.dataLoaded) {
+                    return 0;
+                }
                 if (this.selectedLocation === 'moral') {
                     return item.inventario_inicial_moral;
                 } else if (this.selectedLocation === 'campestre') {
