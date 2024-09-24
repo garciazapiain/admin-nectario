@@ -151,6 +151,7 @@ generateWeeks();
         <tr class="bg-gray-100 border-b">
           <th class="py-2 px-4 text-left">Nombre</th>
           <th class="py-2 px-4 text-left">Unidad</th>
+          <th class="py-2 px-4 text-left">Inventario Inicial (Todo)</th>
           <th class="py-2 px-4 text-left">CEDIS</th>
           <th class="py-2 px-4 text-left">Moral</th>
           <th class="py-2 px-4 text-left">Campestre</th>
@@ -161,6 +162,7 @@ generateWeeks();
         <tr v-for="entrada in entradasSalidas" :key="entrada.id_ingrediente" class="border-b">
           <td class="py-2 px-4">{{ entrada.nombre }}</td>
           <td class="py-2 px-4">{{ entrada.unidad }}</td>
+          <td class="py-2 px-4">{{ entrada.inventario_inicial }}</td>
           <td class="py-2 px-4">
             <div>Cantidad: {{ entrada.quantity_cedis }}</div>
             <button @click="openModal(entrada)"

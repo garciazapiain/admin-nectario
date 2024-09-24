@@ -78,15 +78,17 @@ router.post('/new-submission', async (req, res, next) => {
 
           // **Check if a record for this id_ingrediente and fecha_inicio exists**
           const existingEntry = await client.query(
-            `SELECT 1 FROM entradas_salidas WHERE id_ingrediente = $1 AND fecha_inicio = $2`,
+            `SELECT inventario_inicial, inventario_submitted_cedis, inventario_submitted_moral, inventario_submitted_bosques 
+             FROM entradas_salidas 
+             WHERE id_ingrediente = $1 AND fecha_inicio = $2`,
             [ingrediente.id_ingrediente, startOfWeek.toISOString().split('T')[0]]
           );
 
           if (existingEntry.rows.length === 0) {
             // **Insert a new record with default quantities (0 for all)**
             await client.query(
-              `INSERT INTO entradas_salidas (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre, inventario_inicial)
-              VALUES ($1, $2, $3, 0, 0, 0, 0, $4)`,
+              `INSERT INTO entradas_salidas (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre, inventario_inicial, inventario_submitted_cedis, inventario_submitted_moral, inventario_submitted_bosques)
+              VALUES ($1, $2, $3, 0, 0, 0, 0, $4, FALSE, FALSE, FALSE)`,
               [
                 ingrediente.id_ingrediente,
                 startOfWeek.toISOString().split('T')[0],
@@ -95,17 +97,52 @@ router.post('/new-submission', async (req, res, next) => {
               ]
             );
           } else {
-            // **Update the `inventario_inicial` in the `entradas_salidas` table**
-            await client.query(
-              `UPDATE entradas_salidas 
-               SET inventario_inicial = $1 
-               WHERE id_ingrediente = $2 AND fecha_inicio = $3`,
-              [
-                ingrediente.cantidad_inventario,  // inventario_inicial
-                ingrediente.id_ingrediente,
-                startOfWeek.toISOString().split('T')[0]  // fecha_inicio
-              ]
-            );
+            // **Check which store is being submitted to and if it hasn't already been submitted**
+            const { inventario_submitted_cedis, inventario_submitted_moral, inventario_submitted_bosques } = existingEntry.rows[0];
+            let shouldUpdate = false;
+            console.log(store)
+
+            if (store === 'cedis' && !inventario_submitted_cedis) {
+              shouldUpdate = true;
+              await client.query(
+                `UPDATE entradas_salidas 
+                 SET inventario_inicial = inventario_inicial + $1, inventario_submitted_cedis = TRUE
+                 WHERE id_ingrediente = $2 AND fecha_inicio = $3`,
+                [
+                  ingrediente.cantidad_inventario,  // New value to add to inventario_inicial
+                  ingrediente.id_ingrediente,
+                  startOfWeek.toISOString().split('T')[0]  // fecha_inicio
+                ]
+              );
+            } else if (store === 'moral' && !inventario_submitted_moral) {
+              shouldUpdate = true;
+              await client.query(
+                `UPDATE entradas_salidas 
+                 SET inventario_inicial = inventario_inicial + $1, inventario_submitted_moral = TRUE
+                 WHERE id_ingrediente = $2 AND fecha_inicio = $3`,
+                [
+                  ingrediente.cantidad_inventario,  // New value to add to inventario_inicial
+                  ingrediente.id_ingrediente,
+                  startOfWeek.toISOString().split('T')[0]  // fecha_inicio
+                ]
+              );
+            } else if (store === 'bosques' && !inventario_submitted_bosques) {
+              shouldUpdate = true;
+              await client.query(
+                `UPDATE entradas_salidas 
+                 SET inventario_inicial = inventario_inicial + $1, inventario_submitted_bosques = TRUE
+                 WHERE id_ingrediente = $2 AND fecha_inicio = $3`,
+                [
+                  ingrediente.cantidad_inventario,  // New value to add to inventario_inicial
+                  ingrediente.id_ingrediente,
+                  startOfWeek.toISOString().split('T')[0]  // fecha_inicio
+                ]
+              );
+            }
+
+            if (!shouldUpdate) {
+              console.log(`Inventario already submitted for ${store}. Skipping update.`);
+            }
           }
         }
       }
@@ -118,6 +155,7 @@ router.post('/new-submission', async (req, res, next) => {
     client.release();
   }
 });
+
 
 router.get('/all-submissions', async (req, res, next) => {
   const client = await connectDb();
