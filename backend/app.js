@@ -1317,7 +1317,7 @@ app.post('/api/purchase_orders', async (req, res) => {
 
   function calculateWeekRange(date) {
     const inputDate = new Date(date);
-    const dayOfWeek = inputDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    const dayOfWeek = inputDate.getDay(); 
     const startOfWeek = new Date(inputDate);
     if (dayOfWeek != 0) {
       startOfWeek.setDate(inputDate.getDate() - ((dayOfWeek + 6) % 7) - 1);
@@ -1325,8 +1325,8 @@ app.post('/api/purchase_orders', async (req, res) => {
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
     return {
-      fecha_inicio: startOfWeek.toISOString().split('T')[0], // Format as YYYY-MM-DD
-      fecha_fin: endOfWeek.toISOString().split('T')[0]       // Format as YYYY-MM-DD
+      fecha_inicio: startOfWeek.toISOString().split('T')[0],
+      fecha_fin: endOfWeek.toISOString().split('T')[0]
     };
   }
 
@@ -1336,7 +1336,6 @@ app.post('/api/purchase_orders', async (req, res) => {
 
     await client.query('BEGIN');
 
-    // Insert the purchase order with status and xmldata
     console.log("Inserting new purchase order:", { fecha, totalImporte, folio, emisor });
     const orderResult = await client.query(
       'INSERT INTO purchase_orders (fecha, totalImporte, folio, emisor, status, xmldata) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
@@ -1371,18 +1370,17 @@ app.post('/api/purchase_orders', async (req, res) => {
               item.id_ingrediente,
               fecha_inicio,
               fecha_fin,
-              item.quantity, // total_quantity starts with the new purchase
-              item.quantity, // Everything is initially assigned to CEDIS
-              0, // Start with zero for Moral
-              0 // Start with zero for Campestre
+              parseFloat(item.quantity), 
+              parseFloat(item.quantity), 
+              0, 
+              0 
             ]
           );
         } else {
           console.log("Existing entradas_salidas entry found:", existingEntry.rows[0]);
 
-          // Ensure total_quantity is treated as a numeric value for proper addition
-          const oldTotalQuantity = parseFloat(existingEntry.rows[0].total_quantity) || 0; // Ensure a fallback to 0
-          const itemQuantity = parseFloat(item.quantity) || 0; // Ensure item quantity is numeric
+          const oldTotalQuantity = parseFloat(existingEntry.rows[0].total_quantity) || 0; 
+          const itemQuantity = parseFloat(item.quantity) || 0;
           const newTotalQuantity = oldTotalQuantity + itemQuantity;
 
           console.log(`Updating entradas_salidas: oldTotalQuantity = ${oldTotalQuantity}, itemQuantity = ${itemQuantity}, newTotalQuantity = ${newTotalQuantity}`);
@@ -1390,8 +1388,8 @@ app.post('/api/purchase_orders', async (req, res) => {
           await client.query(
             'UPDATE entradas_salidas SET total_quantity = $1, quantity_cedis = quantity_cedis::numeric + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
             [
-              newTotalQuantity,  // Use calculated newTotalQuantity
-              itemQuantity,  // Add the new quantity to CEDIS
+              newTotalQuantity,  
+              itemQuantity,  
               item.id_ingrediente,
               fecha_inicio
             ]
@@ -1414,6 +1412,7 @@ app.post('/api/purchase_orders', async (req, res) => {
     console.log("Database connection released");
   }
 });
+
 
 app.put('/api/purchase_orders/:id', async (req, res) => {
   const { id } = req.params;
