@@ -1379,10 +1379,9 @@ app.post('/api/purchase_orders', async (req, res) => {
         } else {
           console.log("Existing entradas_salidas entry found:", existingEntry.rows[0]);
 
-          const oldTotalQuantity = +existingEntry.rows[0].total_quantity || 0;
-          const itemQuantity = +item.quantity || 0;
+          const oldTotalQuantity = Number(existingEntry.rows[0].total_quantity) || 0;
+          const itemQuantity = Number(item.quantity) || 0;
           const newTotalQuantity = oldTotalQuantity + itemQuantity;
-          console.log(typeof oldTotalQuantity, typeof itemQuantity, typeof newTotalQuantity);
           console.log(`Updating entradas_salidas: oldTotalQuantity = ${oldTotalQuantity}, itemQuantity = ${itemQuantity}, newTotalQuantity = ${newTotalQuantity}`);
 
           await client.query(
