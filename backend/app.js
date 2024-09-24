@@ -1312,57 +1312,102 @@ app.post('/api/purchase_orders', async (req, res) => {
   }
 });
 
-app.post('/api/purchase_orders/bulk', async (req, res) => {
-  const { purchaseOrders } = req.body; // Expecting an array of purchase orders
+app.post('/api/purchase_orders', async (req, res) => {
+  const { articulosComprados, totalImporte, fecha, folio, emisor, xmldata } = req.body;
+
+  function calculateWeekRange(date) {
+    const inputDate = new Date(date);
+    const dayOfWeek = inputDate.getDay();
+    const startOfWeek = new Date(inputDate);
+    if (dayOfWeek != 0) {
+      startOfWeek.setDate(inputDate.getDate() - ((dayOfWeek + 6) % 7) - 1);
+    }
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    return {
+      fecha_inicio: startOfWeek.toISOString().split('T')[0],
+      fecha_fin: endOfWeek.toISOString().split('T')[0]
+    };
+  }
 
   const client = await pool.connect();
   try {
+    console.log("Transaction started for new purchase order");
+
     await client.query('BEGIN');
 
-    const addedOrders = [];
+    // Insert the purchase order with status and xmldata
+    console.log("Inserting new purchase order:", { fecha, totalImporte, folio, emisor });
+    const orderResult = await client.query(
+      'INSERT INTO purchase_orders (fecha, totalImporte, folio, emisor, status, xmldata) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+      [fecha, totalImporte, folio, emisor, 'pendiente', xmldata]
+    );
+    const orderId = orderResult.rows[0].id;
+    console.log("Inserted purchase order with ID:", orderId);
 
-    for (const order of purchaseOrders) {
-      const { articulosComprados, totalImporte, fecha, folio, emisor, xmldata } = order;
+    const { fecha_inicio, fecha_fin } = calculateWeekRange(fecha);
+    console.log(`Calculated week range: ${fecha_inicio} to ${fecha_fin}`);
 
-      // Clean the XML data by removing any BOM and trimming whitespace
-      const cleanedXmldata = xmldata.replace(/^\uFEFF/, '').trim();
-
-      // Check if a purchase order with the same folio and emisor already exists
-      const existingOrder = await client.query(
-        'SELECT id FROM purchase_orders WHERE folio = $1 AND emisor = $2',
-        [folio, emisor]
-      );
-
-      if (existingOrder.rows.length === 0) {
-        // Insert the purchase order if it doesn't exist
-        const orderResult = await client.query(
-          'INSERT INTO purchase_orders (fecha, totalImporte, folio, emisor, status, xmldata) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-          [fecha, totalImporte, folio, emisor, 'pendiente', cleanedXmldata]
+    if (articulosComprados && articulosComprados.length > 0) {
+      for (const item of articulosComprados) {
+        console.log("Inserting purchase item:", item);
+        await client.query(
+          'INSERT INTO purchase_history_items (purchase_order_id, id_ingrediente, quantity, price_per_item, total_price) VALUES ($1, $2, $3, $4, $5)',
+          [orderId, item.id_ingrediente, item.quantity, item.price, item.totalPrice]
         );
-        const orderId = orderResult.rows[0].id;
 
-        // Insert the purchased items if any are provided
-        if (articulosComprados && articulosComprados.length > 0) {
-          for (const item of articulosComprados) {
-            await client.query(
-              'INSERT INTO purchase_history_items (purchase_order_id, id_ingrediente, quantity, price_per_item, total_price) VALUES ($1, $2, $3, $4, $5)',
-              [orderId, item.id_ingrediente, item.quantity, item.price, item.totalPrice]
-            );
-          }
+        console.log(`Checking if an existing entradas_salidas entry exists for ingredient ${item.id_ingrediente} and start date ${fecha_inicio}`);
+        
+        const existingEntry = await client.query(
+          'SELECT * FROM entradas_salidas WHERE id_ingrediente = $1 AND fecha_inicio = $2',
+          [item.id_ingrediente, fecha_inicio]
+        );
+
+        if (existingEntry.rows.length === 0) {
+          console.log("No existing entradas_salidas entry found, inserting a new one");
+          await client.query(
+            'INSERT INTO entradas_salidas (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            [
+              item.id_ingrediente,
+              fecha_inicio,
+              fecha_fin,
+              item.quantity, 
+              item.quantity, 
+              0,
+              0
+            ]
+          );
+        } else {
+          console.log("Existing entradas_salidas entry found:", existingEntry.rows[0]);
+          const oldTotalQuantity = existingEntry.rows[0].total_quantity;
+          const newTotalQuantity = oldTotalQuantity + item.quantity;
+          console.log(`Updating entradas_salidas: oldTotalQuantity = ${oldTotalQuantity}, itemQuantity = ${item.quantity}, newTotalQuantity = ${newTotalQuantity}`);
+          
+          await client.query(
+            'UPDATE entradas_salidas SET total_quantity = total_quantity + $1, quantity_cedis = quantity_cedis + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
+            [
+              item.quantity,
+              item.quantity,
+              item.id_ingrediente,
+              fecha_inicio
+            ]
+          );
+          
+          console.log("Entradas_salidas updated successfully for ingredient:", item.id_ingrediente);
         }
-
-        addedOrders.push(orderId);
       }
     }
 
     await client.query('COMMIT');
-    res.json({ message: 'Purchase orders processed successfully', addedOrders });
+    console.log("Transaction committed successfully for purchase order:", orderId);
+    res.json({ message: 'Purchase order created successfully' });
   } catch (error) {
     await client.query('ROLLBACK');
     console.error('Database error:', error);
     res.status(500).json({ error: 'Database error' });
   } finally {
     client.release();
+    console.log("Database connection released");
   }
 });
 
