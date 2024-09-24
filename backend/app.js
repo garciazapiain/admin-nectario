@@ -1317,7 +1317,7 @@ app.post('/api/purchase_orders', async (req, res) => {
 
   function calculateWeekRange(date) {
     const inputDate = new Date(date);
-    const dayOfWeek = inputDate.getDay(); 
+    const dayOfWeek = inputDate.getDay();
     const startOfWeek = new Date(inputDate);
     if (dayOfWeek != 0) {
       startOfWeek.setDate(inputDate.getDate() - ((dayOfWeek + 6) % 7) - 1);
@@ -1370,26 +1370,26 @@ app.post('/api/purchase_orders', async (req, res) => {
               item.id_ingrediente,
               fecha_inicio,
               fecha_fin,
-              parseFloat(item.quantity), 
-              parseFloat(item.quantity), 
-              0, 
-              0 
+              parseFloat(item.quantity),
+              parseFloat(item.quantity),
+              0,
+              0
             ]
           );
         } else {
           console.log("Existing entradas_salidas entry found:", existingEntry.rows[0]);
 
-          const oldTotalQuantity = parseFloat(existingEntry.rows[0].total_quantity) || 0; 
-          const itemQuantity = parseFloat(item.quantity) || 0;
-          const newTotalQuantity = parseFloat(oldTotalQuantity) + parseFloat(itemQuantity);
-
+          const oldTotalQuantity = +existingEntry.rows[0].total_quantity || 0;
+          const itemQuantity = +item.quantity || 0;
+          const newTotalQuantity = oldTotalQuantity + itemQuantity;
+          console.log(typeof oldTotalQuantity, typeof itemQuantity, typeof newTotalQuantity);
           console.log(`Updating entradas_salidas: oldTotalQuantity = ${oldTotalQuantity}, itemQuantity = ${itemQuantity}, newTotalQuantity = ${newTotalQuantity}`);
 
           await client.query(
             'UPDATE entradas_salidas SET total_quantity = $1, quantity_cedis = quantity_cedis::numeric + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
             [
-              newTotalQuantity,  
-              itemQuantity,  
+              newTotalQuantity,
+              itemQuantity,
               item.id_ingrediente,
               fecha_inicio
             ]
