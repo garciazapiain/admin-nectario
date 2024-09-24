@@ -1381,6 +1381,9 @@ app.post('/api/purchase_orders', async (req, res) => {
 
           const oldTotalQuantity = Number(existingEntry.rows[0].total_quantity) || 0;
           const itemQuantity = Number(item.quantity) || 0;
+          console.log(`Types: oldTotalQuantity = ${typeof oldTotalQuantity}, itemQuantity = ${typeof itemQuantity}`);
+
+          // Ensure it logs as 'number'
           const newTotalQuantity = oldTotalQuantity + itemQuantity;
           console.log(`Updating entradas_salidas: oldTotalQuantity = ${oldTotalQuantity}, itemQuantity = ${itemQuantity}, newTotalQuantity = ${newTotalQuantity}`);
 
