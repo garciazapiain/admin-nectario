@@ -1380,17 +1380,18 @@ app.post('/api/purchase_orders', async (req, res) => {
         } else {
           console.log("Existing entradas_salidas entry found:", existingEntry.rows[0]);
 
-          // Convert total_quantity from string to numeric for proper addition
-          const oldTotalQuantity = parseFloat(existingEntry.rows[0].total_quantity);
-          const newTotalQuantity = oldTotalQuantity + parseFloat(item.quantity);
+          // Ensure total_quantity is treated as a numeric value for proper addition
+          const oldTotalQuantity = parseFloat(existingEntry.rows[0].total_quantity) || 0; // Ensure a fallback to 0
+          const itemQuantity = parseFloat(item.quantity) || 0; // Ensure item quantity is numeric
+          const newTotalQuantity = oldTotalQuantity + itemQuantity;
 
-          console.log(`Updating entradas_salidas: oldTotalQuantity = ${oldTotalQuantity}, itemQuantity = ${item.quantity}, newTotalQuantity = ${newTotalQuantity}`);
+          console.log(`Updating entradas_salidas: oldTotalQuantity = ${oldTotalQuantity}, itemQuantity = ${itemQuantity}, newTotalQuantity = ${newTotalQuantity}`);
 
           await client.query(
             'UPDATE entradas_salidas SET total_quantity = $1, quantity_cedis = quantity_cedis::numeric + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
             [
               newTotalQuantity,  // Use calculated newTotalQuantity
-              parseFloat(item.quantity),  // Add the new quantity to CEDIS
+              itemQuantity,  // Add the new quantity to CEDIS
               item.id_ingrediente,
               fecha_inicio
             ]
