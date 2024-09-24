@@ -1379,13 +1379,14 @@ app.post('/api/purchase_orders', async (req, res) => {
         } else {
           console.log("Existing entradas_salidas entry found:", existingEntry.rows[0]);
 
+          console.log('Before calculation:', {
+            oldTotalQuantity: existingEntry.rows[0].total_quantity,
+            itemQuantity: item.quantity,
+          });
           const oldTotalQuantity = Number(existingEntry.rows[0].total_quantity) || 0;
           const itemQuantity = Number(item.quantity) || 0;
-          console.log(`Types: oldTotalQuantity = ${typeof oldTotalQuantity}, itemQuantity = ${typeof itemQuantity}`);
-
-          // Ensure it logs as 'number'
           const newTotalQuantity = oldTotalQuantity + itemQuantity;
-          console.log(`Updating entradas_salidas: oldTotalQuantity = ${oldTotalQuantity}, itemQuantity = ${itemQuantity}, newTotalQuantity = ${newTotalQuantity}`);
+          console.log('After calculation:', { oldTotalQuantity, itemQuantity, newTotalQuantity });
 
           await client.query(
             'UPDATE entradas_salidas SET total_quantity = $1, quantity_cedis = quantity_cedis::numeric + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
