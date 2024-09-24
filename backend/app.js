@@ -1220,15 +1220,16 @@ app.post('/api/purchase_orders', async (req, res) => {
   function calculateWeekRange(date) {
     const inputDate = new Date(date);
     const dayOfWeek = inputDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+
     // Calculate Monday as the start of the week
     const startOfWeek = new Date(inputDate);
-    // If its not Monday, do this calculation you subtract 1 currently do to some unresolved issues always returning Tuesday as starting date
     if (dayOfWeek != 0) {
       startOfWeek.setDate(inputDate.getDate() - ((dayOfWeek + 6) % 7) - 1);
     }
-    // Calculate Sunday as the end of the week, its 6 and not 7 substraction do to unresolved offset of starting day
+    // Calculate Sunday as the end of the week
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
+    
     return {
       fecha_inicio: startOfWeek.toISOString().split('T')[0], // Format as YYYY-MM-DD
       fecha_fin: endOfWeek.toISOString().split('T')[0]       // Format as YYYY-MM-DD
@@ -1238,25 +1239,33 @@ app.post('/api/purchase_orders', async (req, res) => {
   // Start a transaction
   const client = await pool.connect();
   try {
+    console.log("Transaction started for new purchase order");
+
     await client.query('BEGIN');
 
     // Insert the purchase order with status and xmldata
+    console.log("Inserting new purchase order:", { fecha, totalImporte, folio, emisor });
     const orderResult = await client.query(
       'INSERT INTO purchase_orders (fecha, totalImporte, folio, emisor, status, xmldata) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
       [fecha, totalImporte, folio, emisor, 'pendiente', xmldata]
     );
     const orderId = orderResult.rows[0].id;
+    console.log("Inserted purchase order with ID:", orderId);
 
     const { fecha_inicio, fecha_fin } = calculateWeekRange(fecha); // Use corrected week range
+    console.log(`Calculated week range: ${fecha_inicio} to ${fecha_fin}`);
 
     // Insert the purchased items if any are provided
     if (articulosComprados && articulosComprados.length > 0) {
       for (const item of articulosComprados) {
+        console.log("Inserting purchase item:", item);
         await client.query(
           'INSERT INTO purchase_history_items (purchase_order_id, id_ingrediente, quantity, price_per_item, total_price) VALUES ($1, $2, $3, $4, $5)',
           [orderId, item.id_ingrediente, item.quantity, item.price, item.totalPrice]
         );
 
+        console.log(`Checking if an existing entradas_salidas entry exists for ingredient ${item.id_ingrediente} and start date ${fecha_inicio}`);
+        
         // Insert or update entries in the entradas_salidas table
         const existingEntry = await client.query(
           'SELECT * FROM entradas_salidas WHERE id_ingrediente = $1 AND fecha_inicio = $2',
@@ -1264,6 +1273,7 @@ app.post('/api/purchase_orders', async (req, res) => {
         );
 
         if (existingEntry.rows.length === 0) {
+          console.log("No existing entradas_salidas entry found, inserting a new one");
           // Insert a new entry if one doesn't exist
           await client.query(
             'INSERT INTO entradas_salidas (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre) VALUES ($1, $2, $3, $4, $5, $6, $7)',
@@ -1278,6 +1288,7 @@ app.post('/api/purchase_orders', async (req, res) => {
             ]
           );
         } else {
+          console.log("Existing entradas_salidas entry found, updating it");
           // Update the existing entry with the new quantity
           await client.query(
             'UPDATE entradas_salidas SET total_quantity = total_quantity + $1, quantity_cedis = quantity_cedis + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
@@ -1293,6 +1304,7 @@ app.post('/api/purchase_orders', async (req, res) => {
     }
 
     await client.query('COMMIT');
+    console.log("Transaction committed successfully for purchase order:", orderId);
     res.json({ message: 'Purchase order created successfully' });
   } catch (error) {
     await client.query('ROLLBACK');
@@ -1300,6 +1312,7 @@ app.post('/api/purchase_orders', async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   } finally {
     client.release();
+    console.log("Database connection released");
   }
 });
 
