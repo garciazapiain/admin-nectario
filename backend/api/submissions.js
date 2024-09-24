@@ -5,6 +5,7 @@ const router = express.Router();
 router.post('/new-submission', async (req, res, next) => {
   const { store, timestamp, ingredients, selectedInventarioOption } = req.body;
   const client = await connectDb();
+
   try {
     const compra = JSON.stringify(ingredients);
 
@@ -59,6 +60,55 @@ router.post('/new-submission', async (req, res, next) => {
         'INSERT INTO submission_inventario (tipo_inventario, timestamp, inventario, store) VALUES ($1, $2, $3, $4)',
         ['inicial', timestamp, inventarioJson, store]
       );
+
+      // **Update entradas_salidas for each ingredient**
+      for (const ingrediente of ingredients) {
+        // **Check if the ingredient is marked as producto_clave**
+        const checkClave = await client.query(
+          'SELECT 1 FROM ingredientes WHERE id_ingrediente = $1 AND producto_clave = true',
+          [ingrediente.id_ingrediente]
+        );
+
+        if (checkClave.rows.length > 0) {
+          // Calculate the week range for the timestamp
+          const startOfWeek = new Date(timestamp);
+          const endOfWeek = new Date(timestamp);
+          startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Monday of the current week
+          endOfWeek.setDate(startOfWeek.getDate() + 6); // Sunday of the current week
+
+          // **Check if a record for this id_ingrediente and fecha_inicio exists**
+          const existingEntry = await client.query(
+            `SELECT 1 FROM entradas_salidas WHERE id_ingrediente = $1 AND fecha_inicio = $2`,
+            [ingrediente.id_ingrediente, startOfWeek.toISOString().split('T')[0]]
+          );
+
+          if (existingEntry.rows.length === 0) {
+            // **Insert a new record with default quantities (0 for all)**
+            await client.query(
+              `INSERT INTO entradas_salidas (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre, inventario_inicial)
+              VALUES ($1, $2, $3, 0, 0, 0, 0, $4)`,
+              [
+                ingrediente.id_ingrediente,
+                startOfWeek.toISOString().split('T')[0],
+                endOfWeek.toISOString().split('T')[0],
+                ingrediente.cantidad_inventario // inventario_inicial
+              ]
+            );
+          } else {
+            // **Update the `inventario_inicial` in the `entradas_salidas` table**
+            await client.query(
+              `UPDATE entradas_salidas 
+               SET inventario_inicial = $1 
+               WHERE id_ingrediente = $2 AND fecha_inicio = $3`,
+              [
+                ingrediente.cantidad_inventario,  // inventario_inicial
+                ingrediente.id_ingrediente,
+                startOfWeek.toISOString().split('T')[0]  // fecha_inicio
+              ]
+            );
+          }
+        }
+      }
     }
 
     res.json(result.rows[0]);
