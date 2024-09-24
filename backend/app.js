@@ -1218,16 +1218,20 @@ app.post('/api/purchase_orders', async (req, res) => {
 
   function calculateWeekRange(date) {
     const inputDate = new Date(date);
-    const dayOfWeek = inputDate.getDay();
+    const dayOfWeek = inputDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+
+    // Calculate Monday as the start of the week (if it's Sunday, set it to Monday)
     const startOfWeek = new Date(inputDate);
-    if (dayOfWeek != 0) {
-      startOfWeek.setDate(inputDate.getDate() - ((dayOfWeek + 6) % 7) - 1);
-    }
+    const offset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    startOfWeek.setDate(inputDate.getDate() + offset);
+
+    // Calculate Sunday as the end of the week
     const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);  // Sunday is 6 days after Monday
+
     return {
-      fecha_inicio: startOfWeek.toISOString().split('T')[0],
-      fecha_fin: endOfWeek.toISOString().split('T')[0]
+      fecha_inicio: startOfWeek.toISOString().split('T')[0], // Format as YYYY-MM-DD
+      fecha_fin: endOfWeek.toISOString().split('T')[0]       // Format as YYYY-MM-DD
     };
   }
 
