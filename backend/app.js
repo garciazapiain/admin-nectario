@@ -1216,27 +1216,21 @@ app.delete('/api/purchase_orders/:id', async (req, res) => {
 app.post('/api/purchase_orders', async (req, res) => {
   const { articulosComprados, totalImporte, fecha, folio, emisor, xmldata } = req.body;
 
-  // Function to calculate fecha_inicio and fecha_fin based on a given date (Monday to Sunday)
   function calculateWeekRange(date) {
     const inputDate = new Date(date);
-    const dayOfWeek = inputDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-
-    // Calculate Monday as the start of the week
+    const dayOfWeek = inputDate.getDay();
     const startOfWeek = new Date(inputDate);
     if (dayOfWeek != 0) {
       startOfWeek.setDate(inputDate.getDate() - ((dayOfWeek + 6) % 7) - 1);
     }
-    // Calculate Sunday as the end of the week
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
-    
     return {
-      fecha_inicio: startOfWeek.toISOString().split('T')[0], // Format as YYYY-MM-DD
-      fecha_fin: endOfWeek.toISOString().split('T')[0]       // Format as YYYY-MM-DD
+      fecha_inicio: startOfWeek.toISOString().split('T')[0],
+      fecha_fin: endOfWeek.toISOString().split('T')[0]
     };
   }
 
-  // Start a transaction
   const client = await pool.connect();
   try {
     console.log("Transaction started for new purchase order");
@@ -1252,10 +1246,9 @@ app.post('/api/purchase_orders', async (req, res) => {
     const orderId = orderResult.rows[0].id;
     console.log("Inserted purchase order with ID:", orderId);
 
-    const { fecha_inicio, fecha_fin } = calculateWeekRange(fecha); // Use corrected week range
+    const { fecha_inicio, fecha_fin } = calculateWeekRange(fecha);
     console.log(`Calculated week range: ${fecha_inicio} to ${fecha_fin}`);
 
-    // Insert the purchased items if any are provided
     if (articulosComprados && articulosComprados.length > 0) {
       for (const item of articulosComprados) {
         console.log("Inserting purchase item:", item);
@@ -1265,8 +1258,7 @@ app.post('/api/purchase_orders', async (req, res) => {
         );
 
         console.log(`Checking if an existing entradas_salidas entry exists for ingredient ${item.id_ingrediente} and start date ${fecha_inicio}`);
-        
-        // Insert or update entries in the entradas_salidas table
+
         const existingEntry = await client.query(
           'SELECT * FROM entradas_salidas WHERE id_ingrediente = $1 AND fecha_inicio = $2',
           [item.id_ingrediente, fecha_inicio]
@@ -1274,31 +1266,35 @@ app.post('/api/purchase_orders', async (req, res) => {
 
         if (existingEntry.rows.length === 0) {
           console.log("No existing entradas_salidas entry found, inserting a new one");
-          // Insert a new entry if one doesn't exist
           await client.query(
             'INSERT INTO entradas_salidas (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre) VALUES ($1, $2, $3, $4, $5, $6, $7)',
             [
               item.id_ingrediente,
               fecha_inicio,
               fecha_fin,
-              item.quantity, // total_quantity starts with the new purchase
-              item.quantity, // Everything is initially assigned to CEDIS
-              0, // Start with zero for Moral
-              0 // Start with zero for Campestre
+              item.quantity,
+              item.quantity,
+              0,
+              0
             ]
           );
         } else {
-          console.log("Existing entradas_salidas entry found, updating it");
-          // Update the existing entry with the new quantity
+          console.log("Existing entradas_salidas entry found:", existingEntry.rows[0]);
+          const oldTotalQuantity = existingEntry.rows[0].total_quantity;
+          const newTotalQuantity = oldTotalQuantity + item.quantity;
+          console.log(`Updating entradas_salidas: oldTotalQuantity = ${oldTotalQuantity}, itemQuantity = ${item.quantity}, newTotalQuantity = ${newTotalQuantity}`);
+
           await client.query(
             'UPDATE entradas_salidas SET total_quantity = total_quantity + $1, quantity_cedis = quantity_cedis + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
             [
-              item.quantity, // Add the new purchase to total_quantity
-              item.quantity, // Add the new quantity to CEDIS
+              item.quantity,
+              item.quantity,
               item.id_ingrediente,
               fecha_inicio
             ]
           );
+
+          console.log("Entradas_salidas updated successfully for ingredient:", item.id_ingrediente);
         }
       }
     }
