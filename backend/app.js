@@ -1357,7 +1357,7 @@ app.post('/api/purchase_orders', async (req, res) => {
         );
 
         console.log(`Checking if an existing entradas_salidas entry exists for ingredient ${item.id_ingrediente} and start date ${fecha_inicio}`);
-        
+
         const existingEntry = await client.query(
           'SELECT * FROM entradas_salidas WHERE id_ingrediente = $1 AND fecha_inicio = $2',
           [item.id_ingrediente, fecha_inicio]
@@ -1371,8 +1371,8 @@ app.post('/api/purchase_orders', async (req, res) => {
               item.id_ingrediente,
               fecha_inicio,
               fecha_fin,
-              item.quantity, 
-              item.quantity, 
+              item.quantity,
+              item.quantity,
               0,
               0
             ]
@@ -1382,17 +1382,17 @@ app.post('/api/purchase_orders', async (req, res) => {
           const oldTotalQuantity = existingEntry.rows[0].total_quantity;
           const newTotalQuantity = oldTotalQuantity + item.quantity;
           console.log(`Updating entradas_salidas: oldTotalQuantity = ${oldTotalQuantity}, itemQuantity = ${item.quantity}, newTotalQuantity = ${newTotalQuantity}`);
-          
+
           await client.query(
-            'UPDATE entradas_salidas SET total_quantity = total_quantity + $1, quantity_cedis = quantity_cedis + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
+            'UPDATE entradas_salidas SET total_quantity = total_quantity::numeric + $1, quantity_cedis = quantity_cedis::numeric + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
             [
-              item.quantity,
-              item.quantity,
+              parseFloat(item.quantity),  // Ensure quantity is treated as a number
+              parseFloat(item.quantity),  // Same for quantity_cedis
               item.id_ingrediente,
               fecha_inicio
             ]
           );
-          
+
           console.log("Entradas_salidas updated successfully for ingredient:", item.id_ingrediente);
         }
       }
