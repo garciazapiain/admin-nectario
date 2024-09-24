@@ -1381,7 +1381,7 @@ app.post('/api/purchase_orders', async (req, res) => {
 
           const oldTotalQuantity = parseFloat(existingEntry.rows[0].total_quantity) || 0; 
           const itemQuantity = parseFloat(item.quantity) || 0;
-          const newTotalQuantity = oldTotalQuantity + itemQuantity;
+          const newTotalQuantity = parseFloat(oldTotalQuantity) + parseFloat(itemQuantity);
 
           console.log(`Updating entradas_salidas: oldTotalQuantity = ${oldTotalQuantity}, itemQuantity = ${itemQuantity}, newTotalQuantity = ${newTotalQuantity}`);
 
