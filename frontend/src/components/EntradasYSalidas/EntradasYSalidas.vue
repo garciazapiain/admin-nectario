@@ -97,7 +97,7 @@ const handleSubmit = async () => {
   };
 
   try {
-    const response = await fetch(`${API_URL}/entradas_salidas/movimiento/transfer`, {
+    const response = await fetch(`${API_URL}/entradas_salidas/movimiento/transfers`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
