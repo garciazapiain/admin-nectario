@@ -1261,17 +1261,17 @@ app.post('/api/purchase_orders', async (req, res) => {
           [orderId, item.id_ingrediente, item.quantity, item.price, item.totalPrice]
         );
 
-        console.log(`Checking if an existing entradas_salidas entry exists for ingredient ${item.id_ingrediente} and start date ${fecha_inicio}`);
+        console.log(`Checking if an existing entradas_salidas_compras entry exists for ingredient ${item.id_ingrediente} and start date ${fecha_inicio}`);
 
         const existingEntry = await client.query(
-          'SELECT * FROM entradas_salidas WHERE id_ingrediente = $1 AND fecha_inicio = $2',
+          'SELECT * FROM entradas_salidas_compras WHERE id_ingrediente = $1 AND fecha_inicio = $2',
           [item.id_ingrediente, fecha_inicio]
         );
 
         if (existingEntry.rows.length === 0) {
-          console.log("No existing entradas_salidas entry found, inserting a new one");
+          console.log("No existing entradas_salidas_compras entry found, inserting a new one");
           await client.query(
-            'INSERT INTO entradas_salidas (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            'INSERT INTO entradas_salidas_compras (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre) VALUES ($1, $2, $3, $4, $5, $6, $7)',
             [
               item.id_ingrediente,
               fecha_inicio,
@@ -1283,13 +1283,13 @@ app.post('/api/purchase_orders', async (req, res) => {
             ]
           );
         } else {
-          console.log("Existing entradas_salidas entry found:", existingEntry.rows[0]);
+          console.log("Existing entradas_salidas_compras entry found:", existingEntry.rows[0]);
           const oldTotalQuantity = existingEntry.rows[0].total_quantity;
           const newTotalQuantity = oldTotalQuantity + item.quantity;
-          console.log(`Updating entradas_salidas: oldTotalQuantity = ${oldTotalQuantity}, itemQuantity = ${item.quantity}, newTotalQuantity = ${newTotalQuantity}`);
+          console.log(`Updating entradas_salidas_compras: oldTotalQuantity = ${oldTotalQuantity}, itemQuantity = ${item.quantity}, newTotalQuantity = ${newTotalQuantity}`);
 
           await client.query(
-            'UPDATE entradas_salidas SET total_quantity = total_quantity + $1, quantity_cedis = quantity_cedis + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
+            'UPDATE entradas_salidas_compras SET total_quantity = total_quantity + $1, quantity_cedis = quantity_cedis + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
             [
               item.quantity,
               item.quantity,
@@ -1298,7 +1298,7 @@ app.post('/api/purchase_orders', async (req, res) => {
             ]
           );
 
-          console.log("Entradas_salidas updated successfully for ingredient:", item.id_ingrediente);
+          console.log("Entradas_salidas_compras updated successfully for ingredient:", item.id_ingrediente);
         }
       }
     }
@@ -1363,17 +1363,17 @@ app.post('/api/purchase_orders', async (req, res) => {
           [orderId, item.id_ingrediente, item.quantity, item.price, item.totalPrice]
         );
 
-        console.log(`Checking if an existing entradas_salidas entry exists for ingredient ${item.id_ingrediente} and start date ${fecha_inicio}`);
+        console.log(`Checking if an existing entradas_salidas_compras entry exists for ingredient ${item.id_ingrediente} and start date ${fecha_inicio}`);
 
         const existingEntry = await client.query(
-          'SELECT * FROM entradas_salidas WHERE id_ingrediente = $1 AND fecha_inicio = $2',
+          'SELECT * FROM entradas_salidas_compras WHERE id_ingrediente = $1 AND fecha_inicio = $2',
           [item.id_ingrediente, fecha_inicio]
         );
 
         if (existingEntry.rows.length === 0) {
-          console.log("No existing entradas_salidas entry found, inserting a new one");
+          console.log("No existing entradas_salidas_compras entry found, inserting a new one");
           await client.query(
-            'INSERT INTO entradas_salidas (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            'INSERT INTO entradas_salidas_compras (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre) VALUES ($1, $2, $3, $4, $5, $6, $7)',
             [
               item.id_ingrediente,
               fecha_inicio,
@@ -1385,7 +1385,7 @@ app.post('/api/purchase_orders', async (req, res) => {
             ]
           );
         } else {
-          console.log("Existing entradas_salidas entry found:", existingEntry.rows[0]);
+          console.log("Existing entradas_salidas_compras entry found:", existingEntry.rows[0]);
 
           console.log('Before calculation:', {
             oldTotalQuantity: existingEntry.rows[0].total_quantity,
@@ -1397,7 +1397,7 @@ app.post('/api/purchase_orders', async (req, res) => {
           console.log('After calculation:', { oldTotalQuantity, itemQuantity, newTotalQuantity });
 
           await client.query(
-            'UPDATE entradas_salidas SET total_quantity = $1, quantity_cedis = quantity_cedis::numeric + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
+            'UPDATE entradas_salidas_compras SET total_quantity = $1, quantity_cedis = quantity_cedis::numeric + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
             [
               newTotalQuantity,
               itemQuantity,
@@ -1406,7 +1406,7 @@ app.post('/api/purchase_orders', async (req, res) => {
             ]
           );
 
-          console.log("Entradas_salidas updated successfully for ingredient:", item.id_ingrediente);
+          console.log("Entradas_salidas_compras updated successfully for ingredient:", item.id_ingrediente);
         }
       }
     }
@@ -1497,18 +1497,18 @@ app.put('/api/purchase_orders/:id', async (req, res) => {
         const quantityDifference = item.quantity - originalQuantity;
         console.log('Quantity difference for ingredient:', item.id_ingrediente, 'Difference:', quantityDifference);
 
-        // Check if the entradas_salidas entry already exists for this item and week
+        // Check if the entradas_salidas_compras entry already exists for this item and week
         const existingEntry = await client.query(
-          'SELECT * FROM entradas_salidas WHERE id_ingrediente = $1 AND fecha_inicio = $2',
+          'SELECT * FROM entradas_salidas_compras WHERE id_ingrediente = $1 AND fecha_inicio = $2',
           [item.id_ingrediente, fecha_inicio]
         );
         console.log('Existing entry found:', existingEntry.rows.length);
 
         if (existingEntry.rows.length === 0) {
           // Insert a new entry if one doesn't exist
-          console.log('Inserting new entradas_salidas entry for ingredient:', item.id_ingrediente);
+          console.log('Inserting new entradas_salidas_compras entry for ingredient:', item.id_ingrediente);
           await client.query(
-            'INSERT INTO entradas_salidas (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            'INSERT INTO entradas_salidas_compras (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre) VALUES ($1, $2, $3, $4, $5, $6, $7)',
             [
               item.id_ingrediente,
               fecha_inicio,
@@ -1521,9 +1521,9 @@ app.put('/api/purchase_orders/:id', async (req, res) => {
           );
         } else {
           // Update the existing entry based on the difference in quantity
-          console.log('Updating existing entradas_salidas entry for ingredient:', item.id_ingrediente);
+          console.log('Updating existing entradas_salidas_compras entry for ingredient:', item.id_ingrediente);
           await client.query(
-            'UPDATE entradas_salidas SET total_quantity = total_quantity + $1, quantity_cedis = quantity_cedis + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
+            'UPDATE entradas_salidas_compras SET total_quantity = total_quantity + $1, quantity_cedis = quantity_cedis + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
             [
               quantityDifference,       // Adjust total_quantity based on the difference
               quantityDifference,       // Adjust quantity_cedis based on the difference

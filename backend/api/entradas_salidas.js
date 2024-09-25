@@ -3,21 +3,21 @@ const { connectDb } = require('./db');
 const router = express.Router();
 
 // GET request with date range filtering
-router.get('/', async (req, res) => {
+router.get('/compras', async (req, res) => {
     const { startDate, endDate } = req.query;
     const client = await connectDb();
 
     try {
         const query = `
             SELECT es.*, i.nombre, i.unidad 
-            FROM entradas_salidas es
+            FROM entradas_salidas_compras es
             JOIN ingredientes i ON es.id_ingrediente = i.id_ingrediente
             WHERE es.fecha_inicio >= $1 AND es.fecha_fin <= $2
         `;
         const result = await client.query(query, [startDate, endDate]);
         res.json(result.rows);
     } catch (error) {
-        console.error('Error fetching data from entradas_salidas:', error);
+        console.error('Error fetching data from entradas_salidas_compras:', error);
         res.status(500).json({ error: 'Error fetching data' });
     } finally {
         client.release();
@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
 });
 
 // PUT request to handle "Entrada" or "Salida" movements
-router.put('/movimiento', async (req, res) => {
+router.put('/movimiento/transfers', async (req, res) => {
     const { id_ingrediente, origen, destino, cantidad, startDate, endDate } = req.body;
 
     const client = await connectDb();
@@ -35,7 +35,7 @@ router.put('/movimiento', async (req, res) => {
 
         // Fetch current quantities for the given ingrediente and date range
         const currentData = await client.query(
-            'SELECT quantity_cedis, quantity_moral, quantity_campestre, total_quantity FROM entradas_salidas WHERE id_ingrediente = $1 AND fecha_inicio = $2 AND fecha_fin = $3',
+            'SELECT quantity_cedis, quantity_moral, quantity_campestre, total_quantity FROM entradas_salidas_compras WHERE id_ingrediente = $1 AND fecha_inicio = $2 AND fecha_fin = $3',
             [id_ingrediente,startDate, endDate]
         );
 
@@ -80,7 +80,7 @@ router.put('/movimiento', async (req, res) => {
 
         // Update the database with the new quantities
         await client.query(
-            'UPDATE entradas_salidas SET quantity_cedis = $1, quantity_moral = $2, quantity_campestre = $3 WHERE id_ingrediente = $4 AND fecha_inicio = $5 AND fecha_fin = $6',
+            'UPDATE entradas_salidas_compras SET quantity_cedis = $1, quantity_moral = $2, quantity_campestre = $3 WHERE id_ingrediente = $4 AND fecha_inicio = $5 AND fecha_fin = $6',
             [updatedCedis, updatedMoral, updatedCampestre, id_ingrediente, startDate, endDate]
         );
 

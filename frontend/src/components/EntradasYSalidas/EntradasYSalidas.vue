@@ -59,9 +59,9 @@ const updateDateRange = () => {
 };
 
 // Fetch "Entradas y Salidas" data for the selected week range
-const fetchEntradasSalidas = async () => {
+const fetchEntradasSalidasCompras = async () => {
   try {
-    const response = await fetch(`${API_URL}/entradas_salidas?startDate=${startDate.value}&endDate=${endDate.value}`);
+    const response = await fetch(`${API_URL}/entradas_salidas/compras?startDate=${startDate.value}&endDate=${endDate.value}`);
 
     if (!response.ok) {
       console.error(`Error: ${response.statusText}`);
@@ -71,7 +71,7 @@ const fetchEntradasSalidas = async () => {
     const data = await response.json();
     entradasSalidas.value = data;
   } catch (error) {
-    console.error('Failed to fetch Entradas y Salidas:', error);
+    console.error('Failed to fetch Entradas y Salidas de compras:', error);
   }
 };
 
@@ -97,7 +97,7 @@ const handleSubmit = async () => {
   };
 
   try {
-    const response = await fetch(`${API_URL}/entradas_salidas/movimiento`, {
+    const response = await fetch(`${API_URL}/entradas_salidas/movimiento/transfer`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -112,7 +112,7 @@ const handleSubmit = async () => {
 
     console.log('Movimiento updated successfully');
     showModal.value = false; // Close the modal after successful submission
-    fetchEntradasSalidas(); // Refresh data after the update
+    fetchEntradasSalidasCompras(); // Refresh data after the update
   } catch (error) {
     console.error('Failed to update movimiento:', error);
   }
@@ -139,7 +139,7 @@ generateWeeks();
           {{ week.label }}
         </option>
       </select>
-      <button @click="fetchEntradasSalidas"
+      <button @click="fetchEntradasSalidasCompras"
         class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md">
         Obtener datos
       </button>
