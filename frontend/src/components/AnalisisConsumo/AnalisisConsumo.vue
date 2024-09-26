@@ -252,7 +252,7 @@ export default {
                 console.error("Fetch error:", error);
             }
             try {
-                const entradasSalidasResponse = await fetch(`${API_URL}/entradas_salidas?startDate=${this.startDate}&endDate=${this.endDate}`);
+                const entradasSalidasResponse = await fetch(`${API_URL}/entradas_salidas/compras?startDate=${this.startDate}&endDate=${this.endDate}`);
                 if (entradasSalidasResponse.ok) {
                     const entradasSalidasData = await entradasSalidasResponse.json();
                     this.filteredIngredientes.forEach(ingrediente => {
