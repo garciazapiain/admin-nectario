@@ -30,116 +30,92 @@ router.post('/new-submission', async (req, res, next) => {
     if (selectedInventarioOption) {
       const summarizedInventario = ingredients.map(ingrediente => ({
         id_ingrediente: ingrediente.id_ingrediente,
-        cantidad: ingrediente.cantidad_inventario
+        cantidad: parseFloat(ingrediente.cantidad_inventario).toFixed(2)  // Ensure proper numeric format
       }));
       const inventarioJson = JSON.stringify(summarizedInventario);
 
       // Calculate timestamp for final inventory as one day earlier
       const finalTimestamp = new Date(new Date(timestamp).getTime() - (24 * 60 * 60 * 1000)).toISOString();
 
-      // Delete existing final inventory record for that date
-      await client.query(
-        'DELETE FROM submission_inventario WHERE store = $1 AND DATE(timestamp) = DATE($2) AND tipo_inventario = $3',
-        [store, finalTimestamp, 'final']
-      );
+      // Delete and insert final inventory with the adjusted timestamp
+      await client.query('DELETE FROM submission_inventario WHERE store = $1 AND DATE(timestamp) = DATE($2) AND tipo_inventario = $3', [store, finalTimestamp, 'final']);
+      await client.query('INSERT INTO submission_inventario (tipo_inventario, timestamp, inventario, store) VALUES ($1, $2, $3, $4)', ['final', finalTimestamp, inventarioJson, store]);
 
-      // Insert final inventory with the adjusted timestamp
-      await client.query(
-        'INSERT INTO submission_inventario (tipo_inventario, timestamp, inventario, store) VALUES ($1, $2, $3, $4)',
-        ['final', finalTimestamp, inventarioJson, store]
-      );
+      // Delete and insert initial inventory for the next period
+      await client.query('DELETE FROM submission_inventario WHERE store = $1 AND DATE(timestamp) = DATE($2) AND tipo_inventario = $3', [store, timestamp, 'inicial']);
+      await client.query('INSERT INTO submission_inventario (tipo_inventario, timestamp, inventario, store) VALUES ($1, $2, $3, $4)', ['inicial', timestamp, inventarioJson, store]);
 
-      // Delete existing initial inventory record for that date
-      await client.query(
-        'DELETE FROM submission_inventario WHERE store = $1 AND DATE(timestamp) = DATE($2) AND tipo_inventario = $3',
-        [store, timestamp, 'inicial']
-      );
-
-      // Insert initial inventory for the next period with the original timestamp
-      await client.query(
-        'INSERT INTO submission_inventario (tipo_inventario, timestamp, inventario, store) VALUES ($1, $2, $3, $4)',
-        ['inicial', timestamp, inventarioJson, store]
-      );
-
-      // **Update entradas_salidas for each ingredient**
+      // Update entradas_salidas_compras for each ingredient
       for (const ingrediente of ingredients) {
-        // **Check if the ingredient is marked as producto_clave**
-        const checkClave = await client.query(
-          'SELECT 1 FROM ingredientes WHERE id_ingrediente = $1 AND producto_clave = true',
-          [ingrediente.id_ingrediente]
-        );
+        const cantidadInventario = parseFloat(ingrediente.cantidad_inventario).toFixed(2);
+        const numericCantidadInventario = Number(cantidadInventario);  // Ensure it's numeric
+
+        // Check if the ingredient is marked as producto_clave
+        const checkClave = await client.query('SELECT 1 FROM ingredientes WHERE id_ingrediente = $1 AND producto_clave = true', [ingrediente.id_ingrediente]);
 
         if (checkClave.rows.length > 0) {
-          // Calculate the week range for the timestamp
           const startOfWeek = new Date(timestamp);
           const endOfWeek = new Date(timestamp);
-          startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Monday of the current week
-          endOfWeek.setDate(startOfWeek.getDate() + 6); // Sunday of the current week
+          startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1);  // Monday of the current week
+          endOfWeek.setDate(startOfWeek.getDate() + 6);  // Sunday of the current week
 
-          // **Check if a record for this id_ingrediente and fecha_inicio exists**
+          // Check if a record for this id_ingrediente and fecha_inicio exists
           const existingEntry = await client.query(
-            `SELECT inventario_inicial, inventario_submitted_cedis, inventario_submitted_moral, inventario_submitted_bosques 
+            `SELECT inventario_inicial_cedis, inventario_inicial_moral, inventario_inicial_bosques, 
+                    is_inventario_submitted_cedis, is_inventario_submitted_moral, is_inventario_submitted_bosques 
              FROM entradas_salidas_compras 
              WHERE id_ingrediente = $1 AND fecha_inicio = $2`,
             [ingrediente.id_ingrediente, startOfWeek.toISOString().split('T')[0]]
           );
 
           if (existingEntry.rows.length === 0) {
-            // **Insert a new record with default quantities (0 for all)**
+            // Insert a new record with the correct store's initial inventory
             await client.query(
-              `INSERT INTO entradas_salidas_compras (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre, inventario_inicial, inventario_submitted_cedis, inventario_submitted_moral, inventario_submitted_bosques)
-              VALUES ($1, $2, $3, 0, 0, 0, 0, $4, FALSE, FALSE, FALSE)`,
-              [
-                ingrediente.id_ingrediente,
-                startOfWeek.toISOString().split('T')[0],
-                endOfWeek.toISOString().split('T')[0],
-                ingrediente.cantidad_inventario // inventario_inicial
-              ]
+              `INSERT INTO entradas_salidas_compras 
+               (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre, 
+                inventario_inicial_cedis, inventario_inicial_moral, inventario_inicial_bosques, 
+                is_inventario_submitted_cedis, is_inventario_submitted_moral, is_inventario_submitted_bosques)
+               VALUES 
+               ($1, $2, $3, 0.0, 0.0, 0.0, 0.0, 
+                CASE WHEN $5 = 'cedis' THEN $4 ELSE 0.0 END, 
+                CASE WHEN $5 = 'moral' THEN $4 ELSE 0.0 END, 
+                CASE WHEN $5 = 'bosques' THEN $4 ELSE 0.0 END, 
+                CASE WHEN $5 = 'cedis' THEN TRUE ELSE FALSE END, 
+                CASE WHEN $5 = 'moral' THEN TRUE ELSE FALSE END, 
+                CASE WHEN $5 = 'bosques' THEN TRUE ELSE FALSE END
+               )`,
+              [ingrediente.id_ingrediente, startOfWeek.toISOString().split('T')[0], endOfWeek.toISOString().split('T')[0], numericCantidadInventario, store]
             );
           } else {
-            // **Check which store is being submitted to and if it hasn't already been submitted**
-            const { inventario_submitted_cedis, inventario_submitted_moral, inventario_submitted_bosques } = existingEntry.rows[0];
+            // Check and update the correct store's inventory
+            const { is_inventario_submitted_cedis, is_inventario_submitted_moral, is_inventario_submitted_bosques } = existingEntry.rows[0];
             let shouldUpdate = false;
-            console.log(store)
 
-            if (store === 'cedis' && !inventario_submitted_cedis) {
+            if (store === 'cedis' && !is_inventario_submitted_cedis) {
               shouldUpdate = true;
               await client.query(
                 `UPDATE entradas_salidas_compras 
-                 SET inventario_inicial = inventario_inicial + $1, inventario_submitted_cedis = TRUE
+                 SET inventario_inicial_cedis = inventario_inicial_cedis + $1, is_inventario_submitted_cedis = TRUE
                  WHERE id_ingrediente = $2 AND fecha_inicio = $3`,
-                [
-                  ingrediente.cantidad_inventario,  // New value to add to inventario_inicial
-                  ingrediente.id_ingrediente,
-                  startOfWeek.toISOString().split('T')[0]  // fecha_inicio
-                ]
+                [numericCantidadInventario, ingrediente.id_ingrediente, startOfWeek.toISOString().split('T')[0]]
               );
-            } else if (store === 'moral' && !inventario_submitted_moral) {
+            } else if (store === 'moral' && !is_inventario_submitted_moral) {
               shouldUpdate = true;
               await client.query(
                 `UPDATE entradas_salidas_compras 
-                 SET inventario_inicial = inventario_inicial + $1, inventario_submitted_moral = TRUE
+                 SET inventario_inicial_moral = inventario_inicial_moral + $1, is_inventario_submitted_moral = TRUE
                  WHERE id_ingrediente = $2 AND fecha_inicio = $3`,
-                [
-                  ingrediente.cantidad_inventario,  // New value to add to inventario_inicial
-                  ingrediente.id_ingrediente,
-                  startOfWeek.toISOString().split('T')[0]  // fecha_inicio
-                ]
+                [numericCantidadInventario, ingrediente.id_ingrediente, startOfWeek.toISOString().split('T')[0]]
               );
-            } else if (store === 'bosques' && !inventario_submitted_bosques) {
+            } else if (store === 'bosques' && !is_inventario_submitted_bosques) {
               shouldUpdate = true;
               await client.query(
                 `UPDATE entradas_salidas_compras 
-                 SET inventario_inicial = inventario_inicial + $1, inventario_submitted_bosques = TRUE
+                 SET inventario_inicial_bosques = inventario_inicial_bosques + $1, is_inventario_submitted_bosques = TRUE
                  WHERE id_ingrediente = $2 AND fecha_inicio = $3`,
-                [
-                  ingrediente.cantidad_inventario,  // New value to add to inventario_inicial
-                  ingrediente.id_ingrediente,
-                  startOfWeek.toISOString().split('T')[0]  // fecha_inicio
-                ]
+                [numericCantidadInventario, ingrediente.id_ingrediente, startOfWeek.toISOString().split('T')[0]]
               );
             }
-
             if (!shouldUpdate) {
               console.log(`Inventario already submitted for ${store}. Skipping update.`);
             }

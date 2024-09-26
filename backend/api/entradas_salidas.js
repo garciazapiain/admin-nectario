@@ -95,6 +95,81 @@ router.put('/movimiento/transfers', async (req, res) => {
     }
 });
 
+router.put('/movimiento/inventario_inicial_cedis_transfer', async (req, res) => {
+    const { id_ingrediente, origen, destino, cantidad, startDate, endDate } = req.body;
+    const client = await connectDb();
+  
+    try {
+      await client.query('BEGIN');
+  
+      // Fetch current quantities for the given ingrediente and date range
+      const currentData = await client.query(
+        `SELECT inventario_inicial_cedis,
+                transfers_inventario_inicial_cedis_a_bosques, transfers_inventario_inicial_cedis_a_moral 
+         FROM entradas_salidas_compras 
+         WHERE id_ingrediente = $1 AND fecha_inicio = $2 AND fecha_fin = $3`,
+        [id_ingrediente, startDate, endDate]
+      );
+  
+      if (currentData.rows.length === 0) {
+        return res.status(404).json({ error: 'Ingrediente not found for the given date range' });
+      }
+  
+      const { 
+        inventario_inicial_cedis, 
+        transfers_inventario_inicial_cedis_a_bosques,
+        transfers_inventario_inicial_cedis_a_moral 
+      } = currentData.rows[0];
+  
+      const transferCantidad = parseFloat(cantidad);
+      let updatedCedis = parseFloat(inventario_inicial_cedis);
+      let updatedTransfersBosques = parseFloat(transfers_inventario_inicial_cedis_a_bosques);
+      let updatedTransfersMoral = parseFloat(transfers_inventario_inicial_cedis_a_moral);
+  
+      // Ensure that the transfer does not exceed the available initial inventory in CEDIS
+      if (transferCantidad > updatedCedis) {
+        return res.status(400).json({ error: 'Insufficient initial inventory in CEDIS for transfer' });
+      }
+  
+      // Subtract from CEDIS initial inventory
+      updatedCedis -= transferCantidad;
+  
+      // Add to the appropriate destination initial inventory and track transfers
+      if (destino === 'Moral') {
+        updatedTransfersMoral += transferCantidad; // Track the transfer to Moral
+      } else if (destino === 'Campestre') {
+        updatedTransfersBosques += transferCantidad; // Track the transfer to Bosques
+      } else {
+        return res.status(400).json({ error: 'Invalid destination store' });
+      }
+  
+      // Update the database with the new quantities and transfer amounts
+      await client.query(
+        `UPDATE entradas_salidas_compras 
+         SET inventario_inicial_cedis = $1, 
+             transfers_inventario_inicial_cedis_a_bosques = $4, 
+             transfers_inventario_inicial_cedis_a_moral = $5
+         WHERE id_ingrediente = $6 AND fecha_inicio = $7 AND fecha_fin = $8`,
+        [
+          updatedCedis, 
+          updatedTransfersBosques, 
+          updatedTransfersMoral, 
+          id_ingrediente, 
+          startDate, 
+          endDate
+        ]
+      );
+  
+      await client.query('COMMIT');
+      res.json({ message: 'Inventario Inicial transfer updated successfully' });
+    } catch (error) {
+      await client.query('ROLLBACK');
+      console.error('Database error:', error);
+      res.status(500).json({ error: 'Database error' });
+    } finally {
+      client.release();
+    }
+});
 
 
 module.exports = router;

@@ -43,7 +43,7 @@
                     <th>Unidad</th>
                     <th>Inventario Inicial</th>
                     <th>Inventario Final</th>
-                    <th>Compras</th>
+                    <th>Entradas</th>
                     <th>Consumo Real</th>
                     <th>Consumo Teórico</th>
                     <th>Diferencia %</th>
@@ -56,9 +56,17 @@
                     <td>{{ item.unidad }}</td>
                     <td>{{ calculateInventarioInicial(item) }}</td>
                     <td>{{ calculateInventarioFinal(item) }}</td>
-                    <td>{{ calculateCompraByLocation(item) }}</td>
-                    <td>{{ (Number(calculateInventarioInicial(item)) + Number(calculateCompraByLocation(item)) -
-                        Number(calculateInventarioFinal(item))).toFixed(2) }}</td>
+                    <td>{{ selectedLocation !== 'todos'
+                        ? (Number(calculateCompraByLocation(item)) + Number(calculateTransfersByLocation(item)))
+                        : Number(calculateCompraByLocation(item))
+                        }}
+                    </td>
+                    <td>
+                        {{ (Number(calculateInventarioInicial(item))
+                            + Number(calculateCompraByLocation(item))
+                            + (selectedLocation !== 'todos' ? Number(calculateTransfersByLocation(item)) : 0)
+                            - Number(calculateInventarioFinal(item))).toFixed(2) }}
+                    </td>
                     <td>{{ Number(calculateTeoricoByLocation(item).toFixed(2)) }}</td>
                     <td :style="{ color: getPercentageDifferenceColor(item.id_ingrediente) }">
                         {{ calculatePercentageDifference(item.id_ingrediente) }}%
@@ -260,6 +268,9 @@ export default {
                         ingrediente.total_quantity = matchingData ? parseFloat(matchingData.total_quantity) : 0;
                         ingrediente.quantity_moral = matchingData ? parseFloat(matchingData.quantity_moral) : 0;
                         ingrediente.quantity_campestre = matchingData ? parseFloat(matchingData.quantity_campestre) : 0;
+                        ingrediente.quantity_campestre = matchingData ? parseFloat(matchingData.quantity_campestre) : 0;
+                        ingrediente.transfers_inventario_inicial_cedis_a_moral = matchingData ? parseFloat(matchingData.transfers_inventario_inicial_cedis_a_moral) : 0;
+                        ingrediente.transfers_inventario_inicial_cedis_a_bosques = matchingData ? parseFloat(matchingData.transfers_inventario_inicial_cedis_a_bosques) : 0;
                     });
                 } else {
                     console.error("Error fetching data:", entradasSalidasResponse.status);
@@ -295,7 +306,8 @@ export default {
         calculatePercentageDifference(id_ingrediente) {
             const item = this.filteredIngredientes.find(i => i.id_ingrediente === id_ingrediente);
             const realConsumption = Number(this.calculateInventarioInicial(item)) +
-                Number(this.calculateCompraByLocation(item)) -
+                Number(this.calculateCompraByLocation(item)) +
+                (this.selectedLocation !== 'todos' ? Number(this.calculateTransfersByLocation(item)) : 0) - // Include transfers
                 Number(this.calculateInventarioFinal(item));
             const theoreticalConsumption = this.calculateTeoricoByLocation(item);
 
@@ -311,12 +323,12 @@ export default {
             const percentageDifference = this.calculatePercentageDifference(id_ingrediente);
             return percentageDifference >= 0 ? 'green' : 'red';
         },
-
         // Calculate the dollar difference between theoretical and real consumption
         calculateDollarDifference(id_ingrediente) {
             const item = this.filteredIngredientes.find(i => i.id_ingrediente === id_ingrediente);
             const realConsumption = Number(this.calculateInventarioInicial(item)) +
-                Number(this.calculateCompraByLocation(item)) -
+                Number(this.calculateCompraByLocation(item)) +
+                (this.selectedLocation !== 'todos' ? Number(this.calculateTransfersByLocation(item)) : 0) - // Include transfers
                 Number(this.calculateInventarioFinal(item));
             const theoreticalConsumption = this.calculateTeoricoByLocation(item);
 
@@ -343,7 +355,8 @@ export default {
                     Compras: Number(this.calculateCompraByLocation(item)),
                     "Consumo Real": Number(
                         (Number(this.calculateInventarioInicial(item)) +
-                            Number(this.calculateCompraByLocation(item)) -
+                            Number(this.calculateCompraByLocation(item)) +
+                            (this.selectedLocation !== 'todos' ? Number(this.calculateTransfersByLocation(item)) : 0) - // Include transfers
                             Number(this.calculateInventarioFinal(item))
                         ).toFixed(2)),
                     "Consumo Teórico": consumoTeoricoValue,
@@ -404,6 +417,18 @@ export default {
                     return item.quantity_campestre;
                 } else {
                     return item.total_quantity; // Default to total or combined
+                }
+            };
+        },
+        calculateTransfersByLocation() {
+            return (item) => {
+                if (this.selectedLocation === 'moral') {
+                    console.log(item)
+                    return item.transfers_inventario_inicial_cedis_a_moral || 0;
+                } else if (this.selectedLocation === 'campestre') {
+                    return item.transfers_inventario_inicial_cedis_a_bosques || 0;
+                } else {
+                    return 0; // No transfers when "todos" is selected
                 }
             };
         },

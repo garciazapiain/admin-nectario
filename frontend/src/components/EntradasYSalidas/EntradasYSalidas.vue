@@ -75,33 +75,53 @@ const fetchEntradasSalidasCompras = async () => {
   }
 };
 
-// Function to open modal for adding "Movimiento"
-const openModal = (entrada) => {
+const setMovimientoTipoAndSubmit = (tipo, entrada) => {
+  currentEntrada.value = entrada;
+  movimientoTipo.value = tipo;
+  handleSubmit();
+};
+
+const setTransferModal = (entrada) => {
+  currentEntrada.value = entrada;
+  movimientoTipo.value = 'inventario_inicial_cedis_transfer';
+  showModal.value = true;
+};
+
+// Function to open the modal and set the movement type
+const openModal = (entrada, tipo) => {
   origen.value = null;
   destino.value = null;
   cantidad.value = null;
   currentEntrada.value = entrada;
-  showModal.value = true;
+  movimientoTipo.value = tipo;  // Set the tipo, e.g., 'Movimiento' or 'inventario_inicial_cedis_transfer'
+  showModal.value = true;  // Show modal for input
 };
 
-// Handle submission of the form (send data to the backend)
+// Update the submit function to be triggered only when the user submits data via the modal.
 const handleSubmit = async () => {
+  if (!currentEntrada.value || !movimientoTipo.value) {
+    console.error('Data missing for submission');
+    return;
+  }
+
+  const apiRoute = movimientoTipo.value === 'inventario_inicial_cedis_transfer'
+    ? `${API_URL}/entradas_salidas/movimiento/inventario_inicial_cedis_transfer`
+    : `${API_URL}/entradas_salidas/movimiento/transfers`;
+
   const payload = {
     id_ingrediente: currentEntrada.value.id_ingrediente,
-    movimientoTipo: "Movimiento", // Fixed movement type
+    movimientoTipo: movimientoTipo.value,
     origen: origen.value,
     destino: destino.value,
     cantidad: cantidad.value,
     startDate: startDate.value,
-    endDate: endDate.value
+    endDate: endDate.value,
   };
 
   try {
-    const response = await fetch(`${API_URL}/entradas_salidas/movimiento/transfers`, {
+    const response = await fetch(apiRoute, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
 
@@ -111,12 +131,14 @@ const handleSubmit = async () => {
     }
 
     console.log('Movimiento updated successfully');
-    showModal.value = false; // Close the modal after successful submission
-    fetchEntradasSalidasCompras(); // Refresh data after the update
+    showModal.value = false;
+    fetchEntradasSalidasCompras();  // Refresh data after update
   } catch (error) {
     console.error('Failed to update movimiento:', error);
   }
 };
+
+
 
 const handleCerrar = async () => {
   showModal.value = false;
@@ -146,12 +168,11 @@ generateWeeks();
     </div>
 
     <!-- Data Table -->
-    <table v-if="entradasSalidas.length > 0" class="">
+    <table v-if="entradasSalidas.length > 0">
       <thead>
         <tr class="bg-gray-100 border-b">
           <th class="py-2 px-4 text-left">Nombre</th>
           <th class="py-2 px-4 text-left">Unidad</th>
-          <th class="py-2 px-4 text-left">Inventario Inicial (Todo)</th>
           <th class="py-2 px-4 text-left">CEDIS</th>
           <th class="py-2 px-4 text-left">Moral</th>
           <th class="py-2 px-4 text-left">Campestre</th>
@@ -162,23 +183,33 @@ generateWeeks();
         <tr v-for="entrada in entradasSalidas" :key="entrada.id_ingrediente" class="border-b">
           <td class="py-2 px-4">{{ entrada.nombre }}</td>
           <td class="py-2 px-4">{{ entrada.unidad }}</td>
-          <td class="py-2 px-4">{{ entrada.inventario_inicial }}</td>
           <td class="py-2 px-4">
-            <div>Cantidad: {{ entrada.quantity_cedis }}</div>
+            <div>Inventario Inicial: {{ entrada.inventario_inicial_cedis }}</div>
+            <button @click="setTransferModal(entrada)"
+              class="mt-2 bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded-md">
+              Transferir Inventario Inicial
+            </button>
+            <div>Entradas: {{ entrada.quantity_cedis }}</div>
+            <button @click="openModal(entrada, 'Movimiento')"
+              class="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md">
+              Movimiento
+            </button>
+          </td>
+          <td class="py-2 px-4">
+            <!-- <div>Inventario Inicial: {{ entrada.inventario_inicial_moral }}</div> -->
+            <div>Entradas: {{ Number(entrada.quantity_moral) + Number(entrada.transfers_inventario_inicial_cedis_a_moral) }}</div>
+            <button @click="openModal(entrada, 'Movimiento')"
+              class="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md">
+              Movimiento
+            </button>
+          </td>
+          <td class="py-2 px-4">
+            <!-- <div>Inventario Inicial: {{ entrada.inventario_inicial_bosques }}</div> -->
+            <div>Entradas: {{ Number(entrada.quantity_campestre) + Number(entrada.transfers_inventario_inicial_cedis_a_bosques) }}</div>
             <button @click="openModal(entrada)"
               class="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md">Movimiento</button>
           </td>
-          <td class="py-2 px-4">
-            <div>Cantidad: {{ entrada.quantity_moral }}</div>
-            <button @click="openModal(entrada)"
-              class="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md">Movimiento</button>
-          </td>
-          <td class="py-2 px-4">
-            <div>Cantidad: {{ entrada.quantity_campestre }}</div>
-            <button @click="openModal(entrada)"
-              class="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md">Movimiento</button>
-          </td>
-          <td class="py-2 px-4">{{ entrada.total_quantity }}</td>
+          <td class="py-2 px-4">{{ Number(entrada.total_quantity) + Number(entrada.transfers_inventario_inicial_cedis_a_bosques) + Number(entrada.transfers_inventario_inicial_cedis_a_moral) }}</td>
         </tr>
       </tbody>
     </table>
@@ -190,7 +221,7 @@ generateWeeks();
       <div class="bg-white p-6 rounded-lg shadow-lg w-80">
         <h3 class="text-xl font-bold mb-4 text-black">Movimiento de {{ currentEntrada?.nombre }}</h3>
 
-        <!-- Origen Dropdown with Conditional Disabling -->
+        <!-- Origen Dropdown -->
         <label class="flex font-semibold mb-2 text-black">Origen:</label>
         <select v-model="origen"
           class="flex justify-start w-full px-4 py-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring focus:ring-blue-300">
@@ -199,7 +230,7 @@ generateWeeks();
           <option value="Campestre" :disabled="destino === 'Campestre'">Campestre</option>
         </select>
 
-        <!-- Destino Dropdown with Conditional Disabling -->
+        <!-- Destino Dropdown -->
         <label class="flex justify-start font-semibold mb-2 text-black">Destino:</label>
         <select v-model="destino"
           class="block w-full px-4 py-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring focus:ring-blue-300">
@@ -208,24 +239,25 @@ generateWeeks();
           <option value="Campestre" :disabled="origen === 'Campestre'">Campestre</option>
         </select>
 
+        <!-- Cantidad Input -->
         <label class="flex justify-start font-semibold mb-2 text-black">Cantidad:</label>
         <div class="flex">
-          <input type="number" v-model="cantidad" :min="0.01"
-            :max="origen === 'CEDIS' ? currentEntrada?.quantity_cedis : origen === 'Moral' ? currentEntrada?.quantity_moral : origen === 'Campestre' ? currentEntrada?.quantity_campestre : 0"
+          <input type="number" v-model="cantidad" :min="0.01" :max="availableInventory"
             class="block w-1/4 px-4 py-2 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring focus:ring-blue-300" />
           <p class="text-black text-xl text-bold">{{ currentEntrada.unidad }}</p>
         </div>
-        <p v-if="cantidad > (origen === 'CEDIS' ? currentEntrada?.quantity_cedis : origen === 'Moral' ? currentEntrada?.quantity_moral : currentEntrada?.quantity_campestre)"
-          class="text-red-500">
+
+        <!-- Error Messages -->
+        <p v-if="cantidad > availableInventory" class="text-red-500">
           La cantidad no puede exceder la cantidad disponible en {{ origen }}.
         </p>
         <p v-if="0 > cantidad" class="text-red-500">
           La cantidad no puede ser negativa.
         </p>
 
+        <!-- Modal Buttons -->
         <div class="flex justify-end">
-          <button @click="handleSubmit"
-            :disabled="cantidad > (origen === 'CEDIS' ? currentEntrada?.quantity_cedis : origen === 'Moral' ? currentEntrada?.quantity_moral : origen === 'Campestre' ? currentEntrada?.quantity_campestre : 0) || cantidad < 0"
+          <button @click="handleSubmit" :disabled="cantidad > availableInventory || cantidad <= 0"
             class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md mr-2 disabled:bg-gray-400 disabled:cursor-not-allowed">Guardar</button>
           <button @click="handleCerrar"
             class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-md">Cerrar</button>
