@@ -154,7 +154,7 @@ export default {
                 if (response.ok) {
                     this.ingredientes = await response.json();
                     // Filter out ingredientes where producto_clave is true
-                    this.filteredIngredientes = this.ingredientes.filter(ingrediente => ingrediente.producto_clave);
+                    this.filteredIngredientes = this.ingredientes.filter(ingrediente => ingrediente.trackear_inventario);
                 } else {
                     console.error("HTTP error:", response.status);
                 }

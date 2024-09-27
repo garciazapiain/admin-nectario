@@ -26,7 +26,7 @@ router.post('/new-submission', async (req, res, next) => {
       WHERE id IN (SELECT id FROM ranked_submissions WHERE rn > 1)
     `, [store, timestamp]);
 
-    // If selectedInventarioOption is true, handle both initial and final inventory
+    // Only proceed if selectedInventarioOption is true
     if (selectedInventarioOption) {
       const summarizedInventario = ingredients.map(ingrediente => ({
         id_ingrediente: ingrediente.id_ingrediente,
@@ -50,10 +50,10 @@ router.post('/new-submission', async (req, res, next) => {
         const cantidadInventario = parseFloat(ingrediente.cantidad_inventario).toFixed(2);
         const numericCantidadInventario = Number(cantidadInventario);  // Ensure it's numeric
 
-        // Check if the ingredient is marked as producto_clave
-        const checkClave = await client.query('SELECT 1 FROM ingredientes WHERE id_ingrediente = $1 AND producto_clave = true', [ingrediente.id_ingrediente]);
+        // Only proceed if the ingredient is set to track inventory
+        const checkTrackearInventario = await client.query('SELECT 1 FROM ingredientes WHERE id_ingrediente = $1 AND trackear_inventario = true', [ingrediente.id_ingrediente]);
 
-        if (checkClave.rows.length > 0) {
+        if (checkTrackearInventario.rows.length > 0) {
           const startOfWeek = new Date(timestamp);
           const endOfWeek = new Date(timestamp);
           startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1);  // Monday of the current week
@@ -131,7 +131,6 @@ router.post('/new-submission', async (req, res, next) => {
     client.release();
   }
 });
-
 
 router.get('/all-submissions', async (req, res, next) => {
   const client = await connectDb();
