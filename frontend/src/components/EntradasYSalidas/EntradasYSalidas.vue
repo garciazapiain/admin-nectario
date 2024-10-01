@@ -99,6 +99,7 @@ const openModal = (entrada, tipo) => {
 
 // Update the submit function to be triggered only when the user submits data via the modal.
 const handleSubmit = async () => {
+  console.log(currentEntrada.value, movimientoTipo.value)
   if (!currentEntrada.value || !movimientoTipo.value) {
     console.error('Data missing for submission');
     return;
@@ -206,7 +207,7 @@ generateWeeks();
           <td class="py-2 px-4">
             <!-- <div>Inventario Inicial: {{ entrada.inventario_inicial_bosques }}</div> -->
             <div>Entradas: {{ Number(entrada.quantity_campestre) + Number(entrada.transfers_inventario_inicial_cedis_a_bosques) }}</div>
-            <button @click="openModal(entrada)"
+            <button @click="openModal(entrada, 'Movimiento')"
               class="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md">Movimiento</button>
           </td>
           <td class="py-2 px-4">{{ Number(entrada.total_quantity) + Number(entrada.transfers_inventario_inicial_cedis_a_bosques) + Number(entrada.transfers_inventario_inicial_cedis_a_moral) }}</td>
