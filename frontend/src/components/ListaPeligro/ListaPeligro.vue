@@ -19,10 +19,10 @@
         <span class="timestamp">{{ lastUpdate() }}</span>
       </p>
     </div>
-    <div v-if="isAdmin" class="filtros-container">
+    <div class="filtros-container">
       <h2>Filtros:</h2>
-      <label for="insumos">Tipo Insumos:</label>
-      <select class="filterBar" id="insumos" v-model="selectedInsumosTipo">
+      <label v-if="isAdmin" for="insumos">Tipo Insumos:</label>
+      <select v-if="isAdmin" class="filterBar" id="insumos" v-model="selectedInsumosTipo">
         <option value="Lista Peligro">Lista peligro</option>
         <!-- <option value="Transferencias">Transferencias</option> -->
         <option value="Todos">Todos</option>
