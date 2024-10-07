@@ -21,8 +21,8 @@
     </div>
     <div class="filtros-container">
       <h2>Filtros:</h2>
-      <label v-if="isAdmin" for="insumos">Tipo Insumos:</label>
-      <select v-if="isAdmin" class="filterBar" id="insumos" v-model="selectedInsumosTipo">
+      <label for="insumos">Tipo Insumos:</label>
+      <select class="filterBar" id="insumos" v-model="selectedInsumosTipo">
         <option value="Lista Peligro">Lista peligro</option>
         <!-- <option value="Transferencias">Transferencias</option> -->
         <option value="Todos">Todos</option>
