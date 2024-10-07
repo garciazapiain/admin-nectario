@@ -27,13 +27,13 @@
         <!-- <option value="Transferencias">Transferencias</option> -->
         <option value="Todos">Todos</option>
       </select>
-      <!-- <label for="proveedores">Proveedores:</label>
+      <label for="proveedores">Proveedores:</label>
       <select class="filterBar" id="proveedores" v-model="selectedProveedor">
         <option value="">Todos</option>
         <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">
           {{ proveedor.nombre }}
         </option>
-      </select> -->
+      </select>
       <!-- <label for="frecuencias_inventario">Frecuencia Inventario:</label>
       <select class="filterBar" id="frecuencias_inventario" v-model="selectedFrecuencia">
         <option value="">Todos</option>
