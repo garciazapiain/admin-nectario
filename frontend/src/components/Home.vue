@@ -38,9 +38,9 @@ onMounted(() => {
     </button> -->
     </div>
     <div>
-      <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/pronosticodemandainsumos')">
+      <button class="button" v-if="isAdmin" @click="() => navigateTo('/pronosticodemandainsumos')">
         Pronóstico Demanda Insumos
-      </button> -->
+      </button>
       <button class="button" v-if="isAdmin" @click="() => navigateTo('/historialcompra')">
         Historial Compras
       </button>
