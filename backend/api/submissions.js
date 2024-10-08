@@ -45,7 +45,7 @@ router.post('/new-submission', async (req, res, next) => {
       await client.query('DELETE FROM submission_inventario WHERE store = $1 AND DATE(timestamp) = DATE($2) AND tipo_inventario = $3', [store, timestamp, 'inicial']);
       await client.query('INSERT INTO submission_inventario (tipo_inventario, timestamp, inventario, store) VALUES ($1, $2, $3, $4)', ['inicial', timestamp, inventarioJson, store]);
 
-      // Update entradas_salidas_compras for each ingredient
+      // Update entradas_salidas for each ingredient
       for (const ingrediente of ingredients) {
         const cantidadInventario = parseFloat(ingrediente.cantidad_inventario).toFixed(2);
         const numericCantidadInventario = Number(cantidadInventario);  // Ensure it's numeric
@@ -63,7 +63,7 @@ router.post('/new-submission', async (req, res, next) => {
           const existingEntry = await client.query(
             `SELECT inventario_inicial_cedis, inventario_inicial_moral, inventario_inicial_bosques, 
                     is_inventario_submitted_cedis, is_inventario_submitted_moral, is_inventario_submitted_bosques 
-             FROM entradas_salidas_compras 
+             FROM entradas_salidas 
              WHERE id_ingrediente = $1 AND fecha_inicio = $2`,
             [ingrediente.id_ingrediente, startOfWeek.toISOString().split('T')[0]]
           );
@@ -71,7 +71,7 @@ router.post('/new-submission', async (req, res, next) => {
           if (existingEntry.rows.length === 0) {
             // Insert a new record with the correct store's initial inventory
             await client.query(
-              `INSERT INTO entradas_salidas_compras 
+              `INSERT INTO entradas_salidas 
                (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre, 
                 inventario_inicial_cedis, inventario_inicial_moral, inventario_inicial_bosques, 
                 is_inventario_submitted_cedis, is_inventario_submitted_moral, is_inventario_submitted_bosques)
@@ -94,7 +94,7 @@ router.post('/new-submission', async (req, res, next) => {
             if (store === 'cedis' && !is_inventario_submitted_cedis) {
               shouldUpdate = true;
               await client.query(
-                `UPDATE entradas_salidas_compras 
+                `UPDATE entradas_salidas 
                  SET inventario_inicial_cedis = inventario_inicial_cedis + $1, is_inventario_submitted_cedis = TRUE
                  WHERE id_ingrediente = $2 AND fecha_inicio = $3`,
                 [numericCantidadInventario, ingrediente.id_ingrediente, startOfWeek.toISOString().split('T')[0]]
@@ -102,7 +102,7 @@ router.post('/new-submission', async (req, res, next) => {
             } else if (store === 'moral' && !is_inventario_submitted_moral) {
               shouldUpdate = true;
               await client.query(
-                `UPDATE entradas_salidas_compras 
+                `UPDATE entradas_salidas 
                  SET inventario_inicial_moral = inventario_inicial_moral + $1, is_inventario_submitted_moral = TRUE
                  WHERE id_ingrediente = $2 AND fecha_inicio = $3`,
                 [numericCantidadInventario, ingrediente.id_ingrediente, startOfWeek.toISOString().split('T')[0]]
@@ -110,7 +110,7 @@ router.post('/new-submission', async (req, res, next) => {
             } else if (store === 'bosques' && !is_inventario_submitted_bosques) {
               shouldUpdate = true;
               await client.query(
-                `UPDATE entradas_salidas_compras 
+                `UPDATE entradas_salidas 
                  SET inventario_inicial_bosques = inventario_inicial_bosques + $1, is_inventario_submitted_bosques = TRUE
                  WHERE id_ingrediente = $2 AND fecha_inicio = $3`,
                 [numericCantidadInventario, ingrediente.id_ingrediente, startOfWeek.toISOString().split('T')[0]]

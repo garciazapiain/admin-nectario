@@ -10,14 +10,14 @@ router.get('/compras', async (req, res) => {
   try {
     const query = `
             SELECT es.*, i.nombre, i.unidad 
-            FROM entradas_salidas_compras es
+            FROM entradas_salidas es
             JOIN ingredientes i ON es.id_ingrediente = i.id_ingrediente
             WHERE es.fecha_inicio >= $1 AND es.fecha_fin <= $2
         `;
     const result = await client.query(query, [startDate, endDate]);
     res.json(result.rows);
   } catch (error) {
-    console.error('Error fetching data from entradas_salidas_compras:', error);
+    console.error('Error fetching data from entradas_salidas:', error);
     res.status(500).json({ error: 'Error fetching data' });
   } finally {
     client.release();
@@ -35,7 +35,7 @@ router.put('/movimiento/transfers', async (req, res) => {
 
     // Fetch current quantities for the given ingrediente and date range
     const currentData = await client.query(
-      'SELECT quantity_cedis, quantity_moral, quantity_campestre, total_quantity FROM entradas_salidas_compras WHERE id_ingrediente = $1 AND fecha_inicio = $2 AND fecha_fin = $3',
+      'SELECT quantity_cedis, quantity_moral, quantity_campestre, total_quantity FROM entradas_salidas WHERE id_ingrediente = $1 AND fecha_inicio = $2 AND fecha_fin = $3',
       [id_ingrediente, startDate, endDate]
     );
 
@@ -80,7 +80,7 @@ router.put('/movimiento/transfers', async (req, res) => {
 
     // Update the database with the new quantities
     await client.query(
-      'UPDATE entradas_salidas_compras SET quantity_cedis = $1, quantity_moral = $2, quantity_campestre = $3 WHERE id_ingrediente = $4 AND fecha_inicio = $5 AND fecha_fin = $6',
+      'UPDATE entradas_salidas SET quantity_cedis = $1, quantity_moral = $2, quantity_campestre = $3 WHERE id_ingrediente = $4 AND fecha_inicio = $5 AND fecha_fin = $6',
       [updatedCedis, updatedMoral, updatedCampestre, id_ingrediente, startDate, endDate]
     );
 
@@ -109,7 +109,7 @@ router.put('/movimiento/inventario_inicial_cedis_transfer', async (req, res) => 
     const currentData = await client.query(
       `SELECT inventario_inicial_cedis,
                 transfers_inventario_inicial_cedis_a_bosques, transfers_inventario_inicial_cedis_a_moral 
-         FROM entradas_salidas_compras 
+         FROM entradas_salidas 
          WHERE id_ingrediente = $1 AND fecha_inicio = $2::date AND fecha_fin = $3::date`,
       [id_ingrediente, startDate, endDate]
     );
@@ -148,7 +148,7 @@ router.put('/movimiento/inventario_inicial_cedis_transfer', async (req, res) => 
 
     // Update the database with the new quantities and transfer amounts
     await client.query(
-      `UPDATE entradas_salidas_compras 
+      `UPDATE entradas_salidas 
        SET inventario_inicial_cedis = $1, 
            transfers_inventario_inicial_cedis_a_bosques = $2, 
            transfers_inventario_inicial_cedis_a_moral = $3
