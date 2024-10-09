@@ -197,7 +197,7 @@ export default {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ precio_piso: platillo.precio_piso }),
-        }
+        },false
       );
 
       if (!response.ok) {

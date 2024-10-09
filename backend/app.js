@@ -32,6 +32,7 @@ app.use('/api/submissions', submissionRoutes);
 app.use('/api/entradas_salidas', entradasSalidasRouter)
 // app.use('/api/retrieveinbox', retrieveInbox);
 
+//client functionality added and tested
 app.get('/api/platillos', authenticateToken, async (req, res) => {
   const client = await pool.connect();
   try {
@@ -42,7 +43,7 @@ app.get('/api/platillos', authenticateToken, async (req, res) => {
     client.release();
   }
 });
-
+//client functionality added and tested
 app.post('/api/platillos', authenticateToken, async (req, res) => {
   const { nombre, clavepos } = req.body;
   const client = await pool.connect();
@@ -71,6 +72,7 @@ app.post('/api/platillos', authenticateToken, async (req, res) => {
 });
 
 // Toggle recetaBloqueada state
+//client functionality added and tested
 app.put('/api/platillos/:id/toggleRecetaBloqueada', authenticateToken, async (req, res) => {
   const { id } = req.params;
   const client = await pool.connect();
@@ -105,6 +107,7 @@ app.put('/api/platillos/:id/toggleRecetaBloqueada', authenticateToken, async (re
   }
 });
 
+//client functionality added and tested
 app.put('/api/platillos/:id/cambiarnombre', authenticateToken, async (req, res) => {
   const { nombre } = req.body;
   const { id } = req.params;
@@ -129,7 +132,7 @@ app.put('/api/platillos/:id/cambiarnombre', authenticateToken, async (req, res) 
     client.release();
   }
 });
-
+//client functionality added and tested
 app.post('/api/platillos/:id/duplicate', authenticateToken, async (req, res) => {
   const { id } = req.params;
   const client_id = req.user.client_id;
@@ -182,13 +185,14 @@ app.post('/api/platillos/:id/duplicate', authenticateToken, async (req, res) => 
     res.status(500).json({ error: 'An error occurred while duplicating the platillo' });
   }
 });
-
+//client functionality added and tested
 app.get('/api/platillo/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
-  const client_id = req.user.client_id;
+  const client_id = req.user.client_id; // Get the client_id from the authenticated user
   const client = await pool.connect();
 
   try {
+    // First, check if the platillo belongs to the authenticated client
     const result = await client.query(
       'SELECT *, unidades_vendidas FROM platillos WHERE id_platillo = $1 AND client_id = $2',
       [id, client_id]
@@ -198,34 +202,75 @@ app.get('/api/platillo/:id', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'Platillo not found for this client' });
     }
 
-    const platillo = result.rows[0];
-
-    // Ensure this query includes placeholders for parameters
+    // Fetch ingredients and subplatillos only if the platillo exists for this client
     const ingredientsQuery = `
-      SELECT i.nombre, i.id_ingrediente, pi.cantidad 
-      FROM ingredientes i 
-      JOIN platillos_ingredientes pi ON i.id_ingrediente = pi.id_ingrediente 
-      WHERE pi.id_platillo = $1
-      UNION
-      SELECT s.nombre, s.id_subplatillo, ps.cantidad 
-      FROM subplatillos s
-      JOIN platillos_subplatillos ps ON s.id_subplatillo = ps.id_subplatillo
-      WHERE ps.id_platillo = $1
-    `;
+        SELECT i.nombre, 
+               i.id_ingrediente::text, 
+               i.unidad, 
+               pi.cantidad, 
+               i.precio, 
+               NULL as rendimiento, 
+               false as is_subplatillo, 
+               NULL as subplatillo_cantidad,
+               false as is_part_of_subplatillo
+        FROM ingredientes i
+        INNER JOIN platillos_ingredientes pi ON i.id_ingrediente = pi.id_ingrediente
+        WHERE pi.id_platillo = $1
+        
+        UNION
+        
+        -- Subplatillos directly associated with the platillo
+        SELECT s.nombre, 
+               'sub_' || s.id_subplatillo::text, 
+               s.unidad, 
+               ps.cantidad, 
+               NULL as precio,
+               s.rendimiento, 
+               true as is_subplatillo, 
+               ps.cantidad as subplatillo_cantidad,
+               false as is_part_of_subplatillo
+        FROM subplatillos s
+        INNER JOIN platillos_subplatillos ps ON s.id_subplatillo = ps.id_subplatillo
+        WHERE ps.id_platillo = $1
+        
+        UNION
+        
+        -- Ingredients that are part of subplatillos
+        SELECT i.nombre, 
+               i.id_ingrediente::text, 
+               i.unidad, 
+               si.cantidad, 
+               i.precio,
+               s.rendimiento, 
+               false as is_subplatillo, 
+               ps.cantidad as subplatillo_cantidad,  -- Adjusted to correctly reflect the subplatillo quantity in platillo
+               true as is_part_of_subplatillo
+        FROM ingredientes i
+        INNER JOIN subplatillos_ingredientes si ON i.id_ingrediente = si.id_ingrediente
+        INNER JOIN platillos_subplatillos ps ON si.id_subplatillo = ps.id_subplatillo
+        INNER JOIN subplatillos s ON s.id_subplatillo = ps.id_subplatillo
+        WHERE ps.id_platillo = $1
+      `;
     
-    const ingredientsResult = await client.query(ingredientsQuery, [id]); // Pass the parameter
+    // Run the ingredients query
+    const ingredientsResult = await client.query(ingredientsQuery, [id]);
+    
+    // Add ingredients to the platillo result
+    const platillo = result.rows[0];
     platillo.ingredients = ingredientsResult.rows;
-
+    
+    // Send the result back to the client
     res.json(platillo);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'An error occurred' });
+    res.status(500).json({ error: 'An error occurred while fetching the platillo and its ingredients' });
   } finally {
     client.release();
   }
 });
 
 // Add this new route to check if a clavepos already exists
+//client functionality added and tested
 app.get('/api/platillos/check', authenticateToken, async (req, res) => {
   const { clavepos } = req.query;
   const client_id = req.user.client_id;
@@ -244,7 +289,7 @@ app.get('/api/platillos/check', authenticateToken, async (req, res) => {
     client.release();
   }
 });
-
+//client functionality added and tested
 app.delete('/api/platillo/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
   const client_id = req.user.client_id;
@@ -277,7 +322,7 @@ app.delete('/api/platillo/:id', authenticateToken, async (req, res) => {
     client.release();
   }
 });
-
+//client functionality added and tested
 app.post('/api/platillos/:idPlatillo/ingredientes', authenticateToken, async (req, res) => {
   const { idPlatillo } = req.params;
   const { id_ingrediente, cantidad } = req.body;
@@ -309,6 +354,7 @@ app.post('/api/platillos/:idPlatillo/ingredientes', authenticateToken, async (re
   }
 });
 
+//client functionality added and tested
 app.put('/api/platillos/:idPlatillo/ingredientes/:idIngrediente', authenticateToken, async (req, res) => {
   const { idPlatillo, idIngrediente } = req.params;
   const { cantidad } = req.body;
@@ -344,6 +390,8 @@ app.put('/api/platillos/:idPlatillo/ingredientes/:idIngrediente', authenticateTo
   }
 });
 
+//client functionality added and tested
+// delete a specific ingredient from a dish
 app.delete('/api/platillos/:idPlatillo/ingredientes/:idIngrediente', authenticateToken, async (req, res) => {
   const { idPlatillo, idIngrediente } = req.params;
   const client_id = req.user.client_id;
@@ -393,13 +441,16 @@ app.delete('/api/platillos/:idPlatillo/ingredientes/:idIngrediente', authenticat
   }
 });
 
+// add a subdish and its ingredients to a dish
+//client functionality added and tested
 app.post('/api/platillos/:idPlatillo/subplatillos', authenticateToken, async (req, res) => {
   const { idPlatillo } = req.params;
   const { id_subplatillo, cantidad } = req.body;
-  const client_id = req.user.client_id;
+  const client_id = req.user.client_id; // This should come from the token
   const client = await pool.connect();
 
   try {
+
     // Check if the platillo belongs to the authenticated client
     const platilloCheck = await client.query(
       'SELECT * FROM platillos WHERE id_platillo = $1 AND client_id = $2',
@@ -423,7 +474,7 @@ app.post('/api/platillos/:idPlatillo/subplatillos', authenticateToken, async (re
     client.release();
   }
 });
-
+//client functionality added and tested
 app.put('/api/platillos/:idPlatillo/clavepos', authenticateToken, async (req, res) => {
   const { idPlatillo } = req.params;
   const { clavepos } = req.body;
@@ -471,6 +522,7 @@ app.put('/api/platillos/:idPlatillo/clavepos', authenticateToken, async (req, re
 });
 
 // Add this new route to handle updating the entire platillo
+//client functionality added and tested
 app.put('/api/platillos/:idPlatillo', authenticateToken, async (req, res) => {
   const { idPlatillo } = req.params;
   const { nombre, clavepos, precio_piso } = req.body;
@@ -517,6 +569,7 @@ app.put('/api/platillos/:idPlatillo', authenticateToken, async (req, res) => {
   }
 });
 
+//client functionality added and tested
 app.put('/api/platillos/:id_platillo/precio', authenticateToken, async (req, res) => {
   const { id_platillo } = req.params;
   const { precio_piso } = req.body;
