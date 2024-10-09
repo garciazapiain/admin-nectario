@@ -6,6 +6,8 @@ const API_URL =
 import { useRouter } from "vue-router";
 import * as XLSX from 'xlsx'; // Import XLSX
 import { ref } from "vue";
+import { fetchWithAuth } from '/src/utils/fetchWithAuth.js';
+
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 
 const router = useRouter();
@@ -116,7 +118,7 @@ export default {
           ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
           : "http://localhost:3000/api";
 
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `${API_URL}/platillos/${idPlatillo}`,
         {
           method: "PUT",
@@ -152,7 +154,7 @@ export default {
           : "http://localhost:3000/api";
 
       // Check if the clavepos already exists
-      const checkResponse = await fetch(`${API_URL}/platillos/check?clavepos=${this.editValueClavePos}`);
+      const checkResponse = await fetchWithAuth(`${API_URL}/platillos/check?clavepos=${this.editValueClavePos}`,{},false);
       const existingPlatillo = await checkResponse.json();
 
       if (existingPlatillo.length > 0 && existingPlatillo[0].id_platillo !== platillo.id_platillo) {
@@ -162,7 +164,7 @@ export default {
 
       platillo.clavepos = this.editValueClavePos; // Update value
 
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `${API_URL}/platillos/${platillo.id_platillo}/clavepos`,
         {
           method: "PUT",
@@ -170,14 +172,14 @@ export default {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(platillo),
-        }
+        },false
       );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      this.editIndexClavePos = -1; // Close edit mode
+      this.editIndexClavePos = -1;
+      window.location.reload() // Close edit mode
     },
     async saveEditPrecio(platillo) {
       const API_URL =
@@ -187,7 +189,7 @@ export default {
 
       platillo.precio_piso = parseFloat(this.editValuePrecio); // Update the value
 
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `${API_URL}/platillos/${platillo.id_platillo}/precio`,
         {
           method: "PUT",
@@ -210,13 +212,13 @@ export default {
           ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
           : "http://localhost:3000/api";
 
-      const response = await fetch(`${API_URL}/platillos`, {
+      const response = await fetchWithAuth(`${API_URL}/platillos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(this.nuevoPlatillo),
-      });
+      }, false);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -285,7 +287,7 @@ export default {
         process.env.NODE_ENV === "production"
           ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
           : "http://localhost:3000/api";
-      const response = await fetch(`${API_URL}/platillos`, {
+      const response = await fetchWithAuth(`${API_URL}/platillos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -338,7 +340,7 @@ export default {
 
       // Fetch ingredients and calculate costs
       for (const platillo of this.platillos) {
-        const ingredientsResponse = await fetch(`${API_URL}/platillo/${platillo.id_platillo}`);
+        const ingredientsResponse = await fetchWithAuth(`${API_URL}/platillo/${platillo.id_platillo}`);
         if (ingredientsResponse.ok) {
           try {
             const ingredientsData = await ingredientsResponse.json();
@@ -399,22 +401,20 @@ export default {
       process.env.NODE_ENV === "production"
         ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
         : "http://localhost:3000/api";
+
     try {
-      const response = await fetch(`${API_URL}/platillos`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
+      const data = await fetchWithAuth(`${API_URL}/platillos`, {}, true);
       if (!Array.isArray(data)) {
         throw new Error("Data is not an array");
       }
-
       this.platillos = data; // Set the fetched platillos data
 
     } catch (error) {
       console.error("Error fetching platillos:", error);
     }
   }
+
+
 };
 </script>
 

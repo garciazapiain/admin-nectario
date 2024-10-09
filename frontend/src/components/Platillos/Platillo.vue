@@ -6,6 +6,8 @@ import { ref } from "vue";
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faLock, faUnlock } from '@fortawesome/free-solid-svg-icons'
 import { library } from "@fortawesome/fontawesome-svg-core"; // Import the library function
+import { fetchWithAuth } from '/src/utils/fetchWithAuth.js';
+
 library.add(faLock, faUnlock)
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdmin as a reactive reference
 
@@ -27,7 +29,7 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdm
           <font-awesome-icon v-else :icon="['fas', 'unlock']" class="tooltip-icon" @click="toggleRecetaBloqueada" />
           <span class="tooltip-text">
             {{ recetaBloqueada ? 'Receta bloqueada, desbloqueala si quieres que otros usuarios puedan hacer cambios.' :
-            'Receta desbloqueada, otros usuarios pueden hacer cambios.' }}
+              'Receta desbloqueada, otros usuarios pueden hacer cambios.' }}
           </span>
         </div>
 
@@ -229,8 +231,8 @@ export default {
     async fetchData() {
       const id = this.$route.params.id;
       try {
-        const response = await fetch(
-          `${API_URL}/platillo/${id}`
+        const response = await fetchWithAuth(
+          `${API_URL}/platillo/${id}`,{}, false
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -247,13 +249,12 @@ export default {
       const idPlatillo = this.$route.params.id;
 
       try {
-        const response = await fetch(`${API_URL}/platillos/${idPlatillo}/toggleRecetaBloqueada`, {
+        const response = await fetchWithAuth(`${API_URL}/platillos/${idPlatillo}/toggleRecetaBloqueada`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
         });
-
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -270,7 +271,7 @@ export default {
       const nombre = this.newName;
 
       try {
-        const response = await fetch(`${API_URL}/platillos/${idPlatillo}/cambiarnombre`, {
+        const response = await fetchWithAuth(`${API_URL}/platillos/${idPlatillo}/cambiarnombre`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -285,14 +286,14 @@ export default {
         const data = await response.json();
         this.platillo.nombre = data.nombre;
         this.isEditingName = false;
-        this.fetchData();
       } catch (error) {
         console.error("Error:", error);
       }
+      window.location.reload()
     },
     async fetchIngredientes() {
       try {
-        const response = await fetch(`${API_URL}/ingredientes/demanda`);
+        const response = await fetchWithAuth(`${API_URL}/ingredientes/demanda`,{}, false);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -304,7 +305,7 @@ export default {
     },
     async fetchSubPlatillos() {
       try {
-        const response = await fetch(`${API_URL}/subplatillos`);
+        const response = await fetchWithAuth(`${API_URL}/subplatillos`,{},false);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -335,10 +336,11 @@ export default {
       const idPlatillo = this.$route.params.id;
       const idIngrediente =
         this.aggregatedIngredients[this.editIndex].id_ingrediente;
+        console.log(idIngrediente)
       const cantidad = this.editValue;
 
       try {
-        const response = await fetch(
+        const response = await fetchWithAuth(
           `${API_URL}/platillos/${idPlatillo}/ingredientes/${idIngrediente}`,
           {
             method: "PUT",
@@ -346,7 +348,7 @@ export default {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({ cantidad }),
-          }
+          }, false
         );
 
         if (!response.ok) {
@@ -367,11 +369,11 @@ export default {
       const idIngrediente = ingrediente.id_ingrediente;
 
       try {
-        const response = await fetch(
+        const response = await fetchWithAuth(
           `${API_URL}/platillos/${idPlatillo}/ingredientes/${idIngrediente}`,
           {
             method: "DELETE",
-          }
+          },false
         );
 
         if (!response.ok) {
@@ -390,7 +392,7 @@ export default {
       const idPlatillo = this.$route.params.id;
 
       try {
-        const response = await fetch(
+        const response = await fetchWithAuth(
           `${API_URL}/platillos/${idPlatillo}/duplicate`,
           {
             method: "POST",
@@ -419,9 +421,9 @@ export default {
       }
 
       try {
-        const response = await fetch(`${API_URL}/platillo/${idPlatillo}`, {
-          method: "DELETE",
-        });
+        const response = await fetchWithAuth(`${API_URL}/platillo/${idPlatillo}`, {
+          method: "DELETE"
+        },false);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

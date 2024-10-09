@@ -1,4 +1,8 @@
 // This component is to add ingredients in platillos/subplatillos component
+<script setup>
+  import { fetchWithAuth } from '/src/utils/fetchWithAuth.js';
+</script>
+
 <template>
   <div>
     <h2>AGREGAR INGREDIENTES</h2>
@@ -91,7 +95,7 @@ export default {
         }
 
         try {
-          const response = await fetch(
+          const response = await fetchWithAuth(
             `${this.postUrl}`,
             {
               method: "POST",
@@ -99,7 +103,7 @@ export default {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({ id_ingrediente, cantidad }),
-            }
+            },false
           );
 
           // Check if the request was successful
