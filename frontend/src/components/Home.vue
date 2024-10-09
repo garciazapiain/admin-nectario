@@ -5,7 +5,6 @@ import 'tailwindcss/tailwind.css'
 
 const router = useRouter();
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
-const isChef = ref(localStorage.getItem("isChef") === "true");
 
 const navigateTo = (route) => {
   router.push(route);

@@ -51,7 +51,6 @@ export default {
           if (data.accessToken) {
             localStorage.setItem("jwt", data.accessToken);
             localStorage.setItem("isAdmin", data.isAdmin);
-            localStorage.setItem("isChef", data.isChef);
             this.router.push("/"); // Redirect to home page
           } else {
             this.errorMessage = "Login falló";// Login failed
