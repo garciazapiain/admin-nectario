@@ -6,6 +6,8 @@ import IngredientForm from "../Platillos/IngredientForm.vue";
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faLock, faUnlock } from '@fortawesome/free-solid-svg-icons'
 import { library } from "@fortawesome/fontawesome-svg-core"; // Import the library function
+import { fetchWithAuth } from '/src/utils/fetchWithAuth.js';
+
 library.add(faLock, faUnlock)
 
 const router = useRouter();
@@ -53,7 +55,7 @@ const handleSaveEditIngredient = async () => {
   const cantidad = editValue.value;
 
   try {
-    const response = await fetch(
+    const response = await fetchWithAuth(
       `${API_URL}/subplatillos/${idSubPlatillo}/ingredientes/${idIngrediente}`,
       {
         method: "PUT",
@@ -61,7 +63,7 @@ const handleSaveEditIngredient = async () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ cantidad }),
-      }
+      },false
     );
 
     if (!response.ok) {
@@ -82,11 +84,11 @@ const handleDeleteIngredient = async (ingrediente) => {
   const idIngrediente = ingrediente.id_ingrediente;
 
   try {
-    const response = await fetch(
+    const response = await fetchWithAuth(
       `${API_URL}/subplatillos/${idSubPlatillo}/ingredientes/${idIngrediente}`,
       {
         method: "DELETE",
-      }
+      },false
     );
 
     if (!response.ok) {
@@ -103,13 +105,13 @@ const handleDeleteIngredient = async (ingrediente) => {
 const handleSaveName = async () => {
   const idSubPlatillo = router.currentRoute.value.params.id;
   try {
-    const response = await fetch(`${API_URL}/subplatillos/${idSubPlatillo}`, {
+    const response = await fetchWithAuth(`${API_URL}/subplatillos/${idSubPlatillo}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ nombre: newName.value }), // Send only the name
-    });
+    },false);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -128,13 +130,13 @@ const handleSaveName = async () => {
 const handleSaveRendimiento = async () => {
   const idSubPlatillo = router.currentRoute.value.params.id;
   try {
-    const response = await fetch(`${API_URL}/subplatillos/${idSubPlatillo}`, {
+    const response = await fetchWithAuth(`${API_URL}/subplatillos/${idSubPlatillo}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ rendimiento: newRendimiento.value }), // Send only the rendimiento
-    });
+    },false);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -153,7 +155,7 @@ const handleSaveRendimiento = async () => {
 const fetchData = async () => {
   const id = router.currentRoute.value.params.id;
   try {
-    const response = await fetch(`${API_URL}/subplatillo/${id}`);
+    const response = await fetchWithAuth(`${API_URL}/subplatillo/${id}`,{},false);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -195,12 +197,12 @@ const totalCost = computed(() => {
 const toggleRecetaBloqueada = async () => {
   const idSubPlatillo = router.currentRoute.value.params.id;
   try {
-    const response = await fetch(`${API_URL}/subplatillos/${idSubPlatillo}/toggleRecetaBloqueada`, {
+    const response = await fetchWithAuth(`${API_URL}/subplatillos/${idSubPlatillo}/toggleRecetaBloqueada`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-    });
+    },false);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

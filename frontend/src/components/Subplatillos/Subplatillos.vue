@@ -4,6 +4,7 @@ const router = useRouter();
 const handleClickSubPlatillo = (idSubplatillo) => {
   router.push(`/subplatillo/${idSubplatillo}`);
 };
+import { fetchWithAuth } from '/src/utils/fetchWithAuth.js';
 </script>
 
 <template>
@@ -66,13 +67,13 @@ export default {
       this.nuevoSubPlatillo.rendimiento = parseFloat(
         this.nuevoSubPlatillo.rendimiento
       );
-      const response = await fetch(`${API_URL}/subplatillos`, {
+      const response = await fetchWithAuth(`${API_URL}/subplatillos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(this.nuevoSubPlatillo),
-      });
+      },false);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -111,7 +112,7 @@ export default {
   async mounted() {
     try {
       // Fetching subplatillos
-      const responseSubplatillos = await fetch(`${API_URL}/subplatillos`);
+      const responseSubplatillos = await fetchWithAuth(`${API_URL}/subplatillos`,{},false);
       if (!responseSubplatillos.ok) {
         throw new Error(`HTTP error! status: ${responseSubplatillos.status}`);
       }

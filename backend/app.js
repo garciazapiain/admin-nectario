@@ -32,7 +32,7 @@ app.use('/api/submissions', submissionRoutes);
 app.use('/api/entradas_salidas', entradasSalidasRouter)
 // app.use('/api/retrieveinbox', retrieveInbox);
 
-//client functionality added and tested
+//multiple client functionality added and tested
 app.get('/api/platillos', authenticateToken, async (req, res) => {
   const client = await pool.connect();
   try {
@@ -43,7 +43,7 @@ app.get('/api/platillos', authenticateToken, async (req, res) => {
     client.release();
   }
 });
-//client functionality added and tested
+//multiple client functionality added and tested
 app.post('/api/platillos', authenticateToken, async (req, res) => {
   const { nombre, clavepos } = req.body;
   const client = await pool.connect();
@@ -72,7 +72,7 @@ app.post('/api/platillos', authenticateToken, async (req, res) => {
 });
 
 // Toggle recetaBloqueada state
-//client functionality added and tested
+//multiple client functionality added and tested
 app.put('/api/platillos/:id/toggleRecetaBloqueada', authenticateToken, async (req, res) => {
   const { id } = req.params;
   const client = await pool.connect();
@@ -107,7 +107,7 @@ app.put('/api/platillos/:id/toggleRecetaBloqueada', authenticateToken, async (re
   }
 });
 
-//client functionality added and tested
+//multiple client functionality added and tested
 app.put('/api/platillos/:id/cambiarnombre', authenticateToken, async (req, res) => {
   const { nombre } = req.body;
   const { id } = req.params;
@@ -132,7 +132,7 @@ app.put('/api/platillos/:id/cambiarnombre', authenticateToken, async (req, res) 
     client.release();
   }
 });
-//client functionality added and tested
+//multiple client functionality added and tested
 app.post('/api/platillos/:id/duplicate', authenticateToken, async (req, res) => {
   const { id } = req.params;
   const client_id = req.user.client_id;
@@ -185,7 +185,7 @@ app.post('/api/platillos/:id/duplicate', authenticateToken, async (req, res) => 
     res.status(500).json({ error: 'An error occurred while duplicating the platillo' });
   }
 });
-//client functionality added and tested
+//multiple client functionality added and tested
 app.get('/api/platillo/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
   const client_id = req.user.client_id; // Get the client_id from the authenticated user
@@ -251,14 +251,14 @@ app.get('/api/platillo/:id', authenticateToken, async (req, res) => {
         INNER JOIN subplatillos s ON s.id_subplatillo = ps.id_subplatillo
         WHERE ps.id_platillo = $1
       `;
-    
+
     // Run the ingredients query
     const ingredientsResult = await client.query(ingredientsQuery, [id]);
-    
+
     // Add ingredients to the platillo result
     const platillo = result.rows[0];
     platillo.ingredients = ingredientsResult.rows;
-    
+
     // Send the result back to the client
     res.json(platillo);
   } catch (error) {
@@ -270,7 +270,7 @@ app.get('/api/platillo/:id', authenticateToken, async (req, res) => {
 });
 
 // Add this new route to check if a clavepos already exists
-//client functionality added and tested
+//multiple client functionality added and tested
 app.get('/api/platillos/check', authenticateToken, async (req, res) => {
   const { clavepos } = req.query;
   const client_id = req.user.client_id;
@@ -289,7 +289,7 @@ app.get('/api/platillos/check', authenticateToken, async (req, res) => {
     client.release();
   }
 });
-//client functionality added and tested
+//multiple client functionality added and tested
 app.delete('/api/platillo/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
   const client_id = req.user.client_id;
@@ -303,7 +303,7 @@ app.delete('/api/platillo/:id', authenticateToken, async (req, res) => {
 
     // Now delete the platillo record
     const result = await client.query(
-      'DELETE FROM platillos WHERE id_platillo = $1 AND client_id = $2 RETURNING *', 
+      'DELETE FROM platillos WHERE id_platillo = $1 AND client_id = $2 RETURNING *',
       [id, client_id]
     );
 
@@ -322,7 +322,7 @@ app.delete('/api/platillo/:id', authenticateToken, async (req, res) => {
     client.release();
   }
 });
-//client functionality added and tested
+//multiple client functionality added and tested
 app.post('/api/platillos/:idPlatillo/ingredientes', authenticateToken, async (req, res) => {
   const { idPlatillo } = req.params;
   const { id_ingrediente, cantidad } = req.body;
@@ -354,7 +354,7 @@ app.post('/api/platillos/:idPlatillo/ingredientes', authenticateToken, async (re
   }
 });
 
-//client functionality added and tested
+//multiple client functionality added and tested
 app.put('/api/platillos/:idPlatillo/ingredientes/:idIngrediente', authenticateToken, async (req, res) => {
   const { idPlatillo, idIngrediente } = req.params;
   const { cantidad } = req.body;
@@ -390,7 +390,7 @@ app.put('/api/platillos/:idPlatillo/ingredientes/:idIngrediente', authenticateTo
   }
 });
 
-//client functionality added and tested
+//multiple client functionality added and tested
 // delete a specific ingredient from a dish
 app.delete('/api/platillos/:idPlatillo/ingredientes/:idIngrediente', authenticateToken, async (req, res) => {
   const { idPlatillo, idIngrediente } = req.params;
@@ -442,7 +442,7 @@ app.delete('/api/platillos/:idPlatillo/ingredientes/:idIngrediente', authenticat
 });
 
 // add a subdish and its ingredients to a dish
-//client functionality added and tested
+//multiple client functionality added and tested
 app.post('/api/platillos/:idPlatillo/subplatillos', authenticateToken, async (req, res) => {
   const { idPlatillo } = req.params;
   const { id_subplatillo, cantidad } = req.body;
@@ -474,7 +474,7 @@ app.post('/api/platillos/:idPlatillo/subplatillos', authenticateToken, async (re
     client.release();
   }
 });
-//client functionality added and tested
+//multiple client functionality added and tested
 app.put('/api/platillos/:idPlatillo/clavepos', authenticateToken, async (req, res) => {
   const { idPlatillo } = req.params;
   const { clavepos } = req.body;
@@ -522,7 +522,7 @@ app.put('/api/platillos/:idPlatillo/clavepos', authenticateToken, async (req, re
 });
 
 // Add this new route to handle updating the entire platillo
-//client functionality added and tested
+//multiple client functionality added and tested
 app.put('/api/platillos/:idPlatillo', authenticateToken, async (req, res) => {
   const { idPlatillo } = req.params;
   const { nombre, clavepos, precio_piso } = req.body;
@@ -569,7 +569,7 @@ app.put('/api/platillos/:idPlatillo', authenticateToken, async (req, res) => {
   }
 });
 
-//client functionality added and tested
+//multiple client functionality added and tested
 app.put('/api/platillos/:id_platillo/precio', authenticateToken, async (req, res) => {
   const { id_platillo } = req.params;
   const { precio_piso } = req.body;
@@ -587,7 +587,7 @@ app.put('/api/platillos/:id_platillo/precio', authenticateToken, async (req, res
       return res.status(404).json({ error: 'Platillo not found for this client' });
     }
 
-    await client.query('UPDATE platillos SET precio_piso = $1 WHERE id_platillo = $2 AND client_id = $3', 
+    await client.query('UPDATE platillos SET precio_piso = $1 WHERE id_platillo = $2 AND client_id = $3',
       [precio_piso, id_platillo, client_id]
     );
 
@@ -600,22 +600,43 @@ app.put('/api/platillos/:id_platillo/precio', authenticateToken, async (req, res
   }
 });
 
-app.get('/api/subplatillos', async (req, res) => {
+//multiple client functionality added and tested
+app.get('/api/subplatillos', authenticateToken, async (req, res) => {
   const client = await pool.connect();
+  const client_id = req.user.client_id; // Get the client_id from the authenticated user
+
   try {
-    const result = await client.query('SELECT * FROM subplatillos');
+    // Query to fetch subplatillos for the authenticated client
+    const result = await client.query('SELECT * FROM subplatillos WHERE client_id = $1', [client_id]);
+
     res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching subplatillos:', error);
+    res.status(500).json({ error: 'An error occurred while fetching subplatillos' });
   } finally {
     client.release();
   }
 });
 
-app.put('/api/subplatillos/:idSubPlatillo/ingredientes/:idIngrediente', async (req, res) => {
+//multiple client functionality added and tested
+app.put('/api/subplatillos/:idSubPlatillo/ingredientes/:idIngrediente', authenticateToken, async (req, res) => {
   const { idSubPlatillo, idIngrediente } = req.params;
   const { cantidad } = req.body;
+  const client_id = req.user.client_id; // Get client_id from the authenticated user
   const client = await pool.connect();
 
   try {
+    // Check if the subplatillo belongs to the authenticated client
+    const subplatilloCheck = await client.query(
+      'SELECT * FROM subplatillos WHERE id_subplatillo = $1 AND client_id = $2',
+      [idSubPlatillo, client_id]
+    );
+
+    if (subplatilloCheck.rows.length === 0) {
+      return res.status(404).json({ error: 'Subplatillo not found for this client' });
+    }
+
+    // Proceed with updating the ingredient if the subplatillo belongs to the client
     const result = await client.query(
       'UPDATE subplatillos_ingredientes SET cantidad = $1 WHERE id_subplatillo = $2 AND id_ingrediente = $3 RETURNING *',
       [cantidad, idSubPlatillo, idIngrediente]
@@ -624,10 +645,10 @@ app.put('/api/subplatillos/:idSubPlatillo/ingredientes/:idIngrediente', async (r
     if (result.rows.length > 0) {
       res.json(result.rows[0]);
     } else {
-      res.status(404).json({ error: 'Resource not found' });
+      res.status(404).json({ error: 'Ingredient not found in the subplatillo' });
     }
   } catch (error) {
-    console.error(error);
+    console.error('Error updating subplatillo ingredient:', error);
     res.status(500).json({ error: 'An error occurred while updating data in the database' });
   } finally {
     client.release();
@@ -635,18 +656,25 @@ app.put('/api/subplatillos/:idSubPlatillo/ingredientes/:idIngrediente', async (r
 });
 
 // Toggle recetaBloqueada state
-app.put('/api/subplatillos/:id/toggleRecetaBloqueada', async (req, res) => {
+//multiple client functionality added and tested
+app.put('/api/subplatillos/:id/toggleRecetaBloqueada', authenticateToken, async (req, res) => {
   const { id } = req.params;
+  const client_id = req.user.client_id; // Get client_id from the authenticated user
   const client = await pool.connect();
 
   try {
-    // Retrieve the current receta_bloqueada state
-    const currentStateResult = await client.query(
-      'SELECT receta_bloqueada FROM subplatillos WHERE id_subplatillo = $1',
-      [id]
+    // Check if the subplatillo belongs to the authenticated client
+    const subplatilloCheck = await client.query(
+      'SELECT receta_bloqueada FROM subplatillos WHERE id_subplatillo = $1 AND client_id = $2',
+      [id, client_id]
     );
 
-    const currentState = currentStateResult.rows[0].receta_bloqueada;
+    if (subplatilloCheck.rows.length === 0) {
+      return res.status(404).json({ error: 'Subplatillo not found for this client' });
+    }
+
+    // Retrieve the current receta_bloqueada state
+    const currentState = subplatilloCheck.rows[0].receta_bloqueada;
 
     // Toggle the state
     const newState = !currentState;
@@ -659,18 +687,31 @@ app.put('/api/subplatillos/:id/toggleRecetaBloqueada', async (req, res) => {
 
     res.json({ receta_bloqueada: result.rows[0].receta_bloqueada });
   } catch (err) {
-    console.error(err);
+    console.error('Error toggling receta_bloqueada:', err);
     res.status(500).json({ error: 'An error occurred while toggling the receta_bloqueada state.' });
   } finally {
     client.release();
   }
 });
 
-app.delete('/api/subplatillos/:idSubPlatillo/ingredientes/:idIngrediente', async (req, res) => {
+//multiple client functionality added and tested
+app.delete('/api/subplatillos/:idSubPlatillo/ingredientes/:idIngrediente', authenticateToken, async (req, res) => {
   const { idSubPlatillo, idIngrediente } = req.params;
+  const client_id = req.user.client_id; // Get the client_id from the authenticated user
   const client = await pool.connect();
 
   try {
+    // Check if the subplatillo belongs to the authenticated client
+    const subplatilloCheck = await client.query(
+      'SELECT * FROM subplatillos WHERE id_subplatillo = $1 AND client_id = $2',
+      [idSubPlatillo, client_id]
+    );
+
+    if (subplatilloCheck.rows.length === 0) {
+      return res.status(404).json({ error: 'Subplatillo not found for this client' });
+    }
+
+    // Delete the ingredient from the subplatillo if it belongs to the client
     const result = await client.query(
       'DELETE FROM subplatillos_ingredientes WHERE id_subplatillo = $1 AND id_ingrediente = $2 RETURNING *',
       [idSubPlatillo, idIngrediente]
@@ -679,22 +720,34 @@ app.delete('/api/subplatillos/:idSubPlatillo/ingredientes/:idIngrediente', async
     if (result.rows.length > 0) {
       res.json({ message: 'Ingredient deleted successfully', data: result.rows[0] });
     } else {
-      res.status(404).json({ error: 'Resource not found' });
+      res.status(404).json({ error: 'Ingredient not found' });
     }
   } catch (error) {
-    console.error(error);
+    console.error('Error deleting ingredient from subplatillo:', error);
     res.status(500).json({ error: 'An error occurred while deleting data in the database' });
   } finally {
     client.release();
   }
 });
 
-app.put('/api/subplatillos/:id', async (req, res) => {
+//multiple client functionality added and tested
+app.put('/api/subplatillos/:id', authenticateToken, async (req, res) => {
   const { nombre, rendimiento } = req.body; // Destructure both fields from the request body
   const { id } = req.params; // Get the id from the route parameters
+  const client_id = req.user.client_id; // Get the client_id from the authenticated user
   const client = await pool.connect();
 
   try {
+    // Check if the subplatillo belongs to the authenticated client
+    const subplatilloCheck = await client.query(
+      'SELECT * FROM subplatillos WHERE id_subplatillo = $1 AND client_id = $2',
+      [id, client_id]
+    );
+
+    if (subplatilloCheck.rows.length === 0) {
+      return res.status(404).json({ error: 'Subplatillo not found for this client' });
+    }
+
     // Construct the dynamic update query based on which fields are provided
     const fieldsToUpdate = [];
     const values = [];
@@ -735,57 +788,92 @@ app.put('/api/subplatillos/:id', async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'An error occurred' });
+    res.status(500).json({ error: 'An error occurred while updating the subplatillo' });
   } finally {
     client.release();
   }
 });
 
-app.post('/api/subplatillos', async (req, res) => {
+//multiple client functionality added and tested
+app.post('/api/subplatillos', authenticateToken, async (req, res) => {
   const { nombre, unidad, rendimiento } = req.body;
+  const client_id = req.user.client_id; // Get the client_id from the authenticated user
   const client = await pool.connect();
+
   try {
-    // Select the maximum id_subplatillo and add 1 to it for the new ID
+    // Insert new subplatillo with client_id
     const result = await client.query(`
-      INSERT INTO subplatillos (id_subplatillo, nombre, unidad, rendimiento)
+      INSERT INTO subplatillos (id_subplatillo, nombre, unidad, rendimiento, client_id)
       VALUES (
-        (SELECT COALESCE(MAX(id_subplatillo), 0) + 1 FROM subplatillos), $1, $2, $3
-      ) RETURNING *`, [nombre, unidad, rendimiento]);
+        (SELECT COALESCE(MAX(id_subplatillo), 0) + 1 FROM subplatillos), $1, $2, $3, $4
+      ) RETURNING *`,
+      [nombre, unidad, rendimiento, client_id]
+    );
 
     res.json(result.rows[0]);
   } catch (err) {
-    console.error(err);
+    console.error('Error inserting subplatillo:', err);
     res.status(500).json({ error: 'An error occurred while inserting data into the database' });
   } finally {
     client.release();
   }
 });
 
-app.get('/api/subplatillo/:id', async (req, res) => {
+//multiple client functionality added and tested
+app.get('/api/subplatillo/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
+  const client_id = req.user.client_id; // Get the client_id from the authenticated user
   const client = await pool.connect();
+
   try {
-    const result = await client.query('SELECT * FROM subplatillos WHERE id_subplatillo = $1', [id]);
+    // Check if the subplatillo belongs to the authenticated client
+    const result = await client.query(
+      'SELECT * FROM subplatillos WHERE id_subplatillo = $1 AND client_id = $2',
+      [id, client_id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Subplatillo not found for this client' });
+    }
+
+    // Fetch the ingredients for the subplatillo
     const ingredientsResult = await client.query(`
       SELECT i.nombre, i.id_ingrediente, i.unidad, i.precio, si.cantidad 
       FROM ingredientes i
       INNER JOIN subplatillos_ingredientes si ON i.id_ingrediente = si.id_ingrediente
       WHERE si.id_subplatillo = $1
     `, [id]);
+
     const subplatillo = result.rows[0];
     subplatillo.ingredients = ingredientsResult.rows;
     res.json(subplatillo);
+  } catch (error) {
+    console.error('Error fetching subplatillo:', error);
+    res.status(500).json({ error: 'An error occurred while fetching subplatillo data' });
   } finally {
     client.release();
   }
 });
 
-app.post('/api/subplatillos/:idSubPlatillo/ingredientes', async (req, res) => {
+//multiple client functionality added and tested
+app.post('/api/subplatillos/:idSubPlatillo/ingredientes', authenticateToken, async (req, res) => {
   const { idSubPlatillo } = req.params;
   const { id_ingrediente, cantidad } = req.body;
+  const client_id = req.user.client_id; // Get the client_id from the authenticated user
   const client = await pool.connect();
 
   try {
+    // Check if the subplatillo belongs to the authenticated client
+    const subplatilloCheck = await client.query(
+      'SELECT * FROM subplatillos WHERE id_subplatillo = $1 AND client_id = $2',
+      [idSubPlatillo, client_id]
+    );
+
+    if (subplatilloCheck.rows.length === 0) {
+      return res.status(404).json({ error: 'Subplatillo not found for this client' });
+    }
+
+    // Insert the ingredient into the subplatillo if it belongs to the client
     const result = await client.query(
       'INSERT INTO subplatillos_ingredientes (id_subplatillo, id_ingrediente, cantidad) VALUES ($1, $2, $3) RETURNING *',
       [idSubPlatillo, id_ingrediente, cantidad]
@@ -793,7 +881,7 @@ app.post('/api/subplatillos/:idSubPlatillo/ingredientes', async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error(error);
+    console.error('Error inserting ingredient into subplatillo:', error);
     res.status(500).json({ error: 'An error occurred while inserting data into the database' });
   } finally {
     client.release();
