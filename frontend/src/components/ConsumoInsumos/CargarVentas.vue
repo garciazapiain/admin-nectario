@@ -40,6 +40,7 @@
 <script>
 import * as XLSX from "xlsx";
 import API_URL from "../../config";
+import { fetchWithAuth } from '/src/utils/fetchWithAuth.js';
 
 export default {
   name: "CargarVentas",
@@ -110,7 +111,7 @@ export default {
           "Please fill all fields and upload an Excel file before logging data."
         );
       } else {
-        const response = await fetch(`${API_URL}/consumoinsumos/cargarventas`, {
+        const response = await fetchWithAuth(`${API_URL}/consumoinsumos/cargarventas`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -121,7 +122,7 @@ export default {
             endDate: this.endDate,
             items: this.items,
           }),
-        });
+        },false);
 
         if (!response.ok) {
           console.error("HTTP error", response.status);

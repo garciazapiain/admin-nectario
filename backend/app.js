@@ -1924,13 +1924,18 @@ app.get('/api/historialcompra/compra/:id', async (req, res) => {
   }
 });
 
-// pause multiple client funcionality in purchase orders 
-app.post('/api/consumoinsumos/cargarventas', async (req, res) => {
+//multiple client functionality added and tested
+app.post('/api/consumoinsumos/cargarventas', authenticateToken, async (req, res) => {
   const { store, startDate, endDate, items } = req.body;
+  const client_id = req.user.client_id; // Get client_id from the authenticated user
   const client = await pool.connect();
+
   try {
-    // Insert into SalesLog table
-    const salesLogResult = await client.query('INSERT INTO VentasLog (store, startDate, endDate) VALUES ($1, $2, $3) RETURNING *', [store, startDate, endDate]);
+    // Insert into VentasLog table, including client_id
+    const salesLogResult = await client.query(
+      'INSERT INTO VentasLog (store, startDate, endDate, client_id) VALUES ($1, $2, $3, $4) RETURNING *',
+      [store, startDate, endDate, client_id]
+    );
 
     // Get the id of the inserted sales log
     const ventasLogId = salesLogResult.rows[0].id;
@@ -1938,12 +1943,19 @@ app.post('/api/consumoinsumos/cargarventas', async (req, res) => {
     // Insert each item into the SalesData table
     for (const item of items) {
       // Check if a similar record already exists
-      const existingRecord = await client.query('SELECT * FROM VentasData INNER JOIN VentasLog ON VentasData.ventasLogId = VentasLog.id WHERE VentasLog.store = $1 AND VentasLog.startDate <= $2 AND VentasLog.endDate >= $3 AND VentasData.clavepos = $4', [store, endDate, startDate, item.clavepos]);
+      const existingRecord = await client.query(
+        'SELECT * FROM VentasData INNER JOIN VentasLog ON VentasData.ventasLogId = VentasLog.id WHERE VentasLog.store = $1 AND VentasLog.startDate <= $2 AND VentasLog.endDate >= $3 AND VentasData.clavepos = $4 AND VentasLog.client_id = $5',
+        [store, endDate, startDate, item.clavepos, client_id]
+      );
+
       if (existingRecord.rows.length > 0) {
         continue; // Skip this item and continue with the next one
       }
 
-      await client.query('INSERT INTO VentasData (ventasLogId, clavepos, descripcion, cantidad) VALUES ($1, $2, $3, $4)', [ventasLogId, item.clavepos, item.descripcion, item.cantidad]);
+      await client.query(
+        'INSERT INTO VentasData (ventasLogId, clavepos, descripcion, cantidad) VALUES ($1, $2, $3, $4)',
+        [ventasLogId, item.clavepos, item.descripcion, item.cantidad]
+      );
     }
 
     res.json({ message: 'Data successfully inserted' });
@@ -1955,9 +1967,11 @@ app.post('/api/consumoinsumos/cargarventas', async (req, res) => {
   }
 });
 
-app.get('/api/consumption/:store', async (req, res) => {
+//multiple client functionality added and tested
+app.get('/api/consumption/:store', authenticateToken, async (req, res) => {
   const { store } = req.params;
   const { startDate, endDate } = req.query;
+  const client_id = req.user.client_id; // Get client_id from the authenticated user
   const client = await pool.connect();
 
   try {
@@ -1993,7 +2007,7 @@ app.get('/api/consumption/:store', async (req, res) => {
                       INNER JOIN 
                           ventaslog vl ON vd.ventaslogid = vl.id
                       WHERE 
-                          vl.startdate = $1 AND vl.enddate = $2 AND vl.store = $3
+                          vl.startdate = $1 AND vl.enddate = $2 AND vl.store = $3 AND vl.client_id = $4
                       GROUP BY
                           vd.clavepos
                   ) vd
@@ -2024,7 +2038,7 @@ app.get('/api/consumption/:store', async (req, res) => {
                       INNER JOIN 
                           ventaslog vl ON vd.ventaslogid = vl.id
                       WHERE 
-                          vl.startdate = $1 AND vl.enddate = $2 AND vl.store = $3
+                          vl.startdate = $1 AND vl.enddate = $2 AND vl.store = $3 AND vl.client_id = $4
                       GROUP BY
                           vd.clavepos
                   ) vd
@@ -2041,7 +2055,7 @@ app.get('/api/consumption/:store', async (req, res) => {
               GROUP BY spi.id_ingrediente, i.unidad, i.proveedor, i.nombre, i.producto_clave, i.precio, psi.cantidad, sp.rendimiento, spi.cantidad
           ) t
       GROUP BY id_ingrediente, unidad, proveedor, nombre, producto_clave, precio;
-    `, [startDate, endDate, store]);
+    `, [startDate, endDate, store, client_id]);
 
     res.json(result.rows);
   } catch (err) {
@@ -2052,101 +2066,102 @@ app.get('/api/consumption/:store', async (req, res) => {
   }
 });
 
-app.get('/api/consumption/:id/:store', async (req, res) => {
-  const { id, store } = req.params;
-  const client = await pool.connect();
+//delete later
+// app.get('/api/consumption/:id/:store', async (req, res) => {
+//   const { id, store } = req.params;
+//   const client = await pool.connect();
 
-  try {
-    const result = await client.query(`
-      SELECT 
-          id_ingrediente,
-          unidad,
-          proveedor,
-          nombre,
-          producto_clave,
-          precio,
-          ROUND(SUM(consumo_platillos)::numeric, 2) AS consumo_platillos,
-          ROUND(SUM(consumo_subplatillos)::numeric, 2) AS consumo_subplatillos,
-          ROUND((SUM(consumo_platillos) + SUM(consumo_subplatillos))::numeric, 2) AS total_consumido
-      FROM 
-          (
-              SELECT 
-                  pi.id_ingrediente AS id_ingrediente,
-                  i.unidad AS unidad,
-                  i.proveedor AS proveedor,
-                  i.nombre AS nombre,
-                  i.producto_clave AS producto_clave,
-                  i.precio AS precio,
-                  SUM(vd.cantidad * pi.cantidad) AS consumo_platillos,
-                  0 AS consumo_subplatillos
-              FROM 
-                  (
-                      SELECT 
-                          SUM(vd.cantidad) AS cantidad,
-                          vd.clavepos
-                      FROM 
-                          ventasdata vd
-                      INNER JOIN 
-                          ventaslog vl ON vd.ventaslogid = vl.id
-                      WHERE 
-                          vl.id = $1 AND vl.store = $2
-                      GROUP BY
-                          vd.clavepos
-                  ) vd
-              INNER JOIN 
-                  platillos p ON vd.clavepos = p.clavepos
-              INNER JOIN 
-                  platillos_ingredientes pi ON p.id_platillo = pi.id_platillo
-              INNER JOIN 
-                  ingredientes i ON pi.id_ingrediente = i.id_ingrediente
-              GROUP BY pi.id_ingrediente, i.unidad, i.proveedor, i.nombre, i.producto_clave, i.precio
-              UNION ALL
-              SELECT 
-                  spi.id_ingrediente AS id_ingrediente,
-                  i.unidad AS unidad,
-                  i.proveedor AS proveedor,
-                  i.nombre AS nombre,
-                  i.producto_clave AS producto_clave,
-                  i.precio AS precio,
-                  0 AS consumo_platillos,
-                  SUM(psi.cantidad * (spi.cantidad / sp.rendimiento)) AS consumo_subplatillos
-              FROM 
-                  (
-                      SELECT 
-                          SUM(vd.cantidad) AS cantidad,
-                          vd.clavepos
-                      FROM 
-                          ventasdata vd
-                      INNER JOIN 
-                          ventaslog vl ON vd.ventaslogid = vl.id
-                      WHERE 
-                          vl.id = $1 AND vl.store = $2
-                      GROUP BY
-                          vd.clavepos
-                  ) vd
-              INNER JOIN 
-                  platillos p ON vd.clavepos = p.clavepos
-              INNER JOIN 
-                  platillos_subplatillos psi ON p.id_platillo = psi.id_platillo
-              INNER JOIN 
-                  subplatillos sp ON psi.id_subplatillo = sp.id_subplatillo
-              INNER JOIN 
-                  subplatillos_ingredientes spi ON sp.id_subplatillo = spi.id_subplatillo
-              INNER JOIN 
-                  ingredientes i ON spi.id_ingrediente = i.id_ingrediente
-              GROUP BY spi.id_ingrediente, i.unidad, i.proveedor, i.nombre, i.producto_clave, i.precio, psi.cantidad, sp.rendimiento, spi.cantidad
-          ) t
-      GROUP BY id_ingrediente, unidad, proveedor, nombre, producto_clave, precio;
-    `, [id, store]);
+//   try {
+//     const result = await client.query(`
+//       SELECT 
+//           id_ingrediente,
+//           unidad,
+//           proveedor,
+//           nombre,
+//           producto_clave,
+//           precio,
+//           ROUND(SUM(consumo_platillos)::numeric, 2) AS consumo_platillos,
+//           ROUND(SUM(consumo_subplatillos)::numeric, 2) AS consumo_subplatillos,
+//           ROUND((SUM(consumo_platillos) + SUM(consumo_subplatillos))::numeric, 2) AS total_consumido
+//       FROM 
+//           (
+//               SELECT 
+//                   pi.id_ingrediente AS id_ingrediente,
+//                   i.unidad AS unidad,
+//                   i.proveedor AS proveedor,
+//                   i.nombre AS nombre,
+//                   i.producto_clave AS producto_clave,
+//                   i.precio AS precio,
+//                   SUM(vd.cantidad * pi.cantidad) AS consumo_platillos,
+//                   0 AS consumo_subplatillos
+//               FROM 
+//                   (
+//                       SELECT 
+//                           SUM(vd.cantidad) AS cantidad,
+//                           vd.clavepos
+//                       FROM 
+//                           ventasdata vd
+//                       INNER JOIN 
+//                           ventaslog vl ON vd.ventaslogid = vl.id
+//                       WHERE 
+//                           vl.id = $1 AND vl.store = $2
+//                       GROUP BY
+//                           vd.clavepos
+//                   ) vd
+//               INNER JOIN 
+//                   platillos p ON vd.clavepos = p.clavepos
+//               INNER JOIN 
+//                   platillos_ingredientes pi ON p.id_platillo = pi.id_platillo
+//               INNER JOIN 
+//                   ingredientes i ON pi.id_ingrediente = i.id_ingrediente
+//               GROUP BY pi.id_ingrediente, i.unidad, i.proveedor, i.nombre, i.producto_clave, i.precio
+//               UNION ALL
+//               SELECT 
+//                   spi.id_ingrediente AS id_ingrediente,
+//                   i.unidad AS unidad,
+//                   i.proveedor AS proveedor,
+//                   i.nombre AS nombre,
+//                   i.producto_clave AS producto_clave,
+//                   i.precio AS precio,
+//                   0 AS consumo_platillos,
+//                   SUM(psi.cantidad * (spi.cantidad / sp.rendimiento)) AS consumo_subplatillos
+//               FROM 
+//                   (
+//                       SELECT 
+//                           SUM(vd.cantidad) AS cantidad,
+//                           vd.clavepos
+//                       FROM 
+//                           ventasdata vd
+//                       INNER JOIN 
+//                           ventaslog vl ON vd.ventaslogid = vl.id
+//                       WHERE 
+//                           vl.id = $1 AND vl.store = $2
+//                       GROUP BY
+//                           vd.clavepos
+//                   ) vd
+//               INNER JOIN 
+//                   platillos p ON vd.clavepos = p.clavepos
+//               INNER JOIN 
+//                   platillos_subplatillos psi ON p.id_platillo = psi.id_platillo
+//               INNER JOIN 
+//                   subplatillos sp ON psi.id_subplatillo = sp.id_subplatillo
+//               INNER JOIN 
+//                   subplatillos_ingredientes spi ON sp.id_subplatillo = spi.id_subplatillo
+//               INNER JOIN 
+//                   ingredientes i ON spi.id_ingrediente = i.id_ingrediente
+//               GROUP BY spi.id_ingrediente, i.unidad, i.proveedor, i.nombre, i.producto_clave, i.precio, psi.cantidad, sp.rendimiento, spi.cantidad
+//           ) t
+//       GROUP BY id_ingrediente, unidad, proveedor, nombre, producto_clave, precio;
+//     `, [id, store]);
 
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'An error occurred while executing the query' });
-  } finally {
-    client.release();
-  }
-});
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: 'An error occurred while executing the query' });
+//   } finally {
+//     client.release();
+//   }
+// });
 
 const { exec } = require('child_process');
 

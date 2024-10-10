@@ -51,6 +51,7 @@
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
 import API_URL from "../../config";
+import { fetchWithAuth } from '/src/utils/fetchWithAuth.js';
 
 export default {
   name: "ConsumoInsumos",
@@ -145,9 +146,9 @@ export default {
 
       for (const store of stores) {
         try {
-          const response = await fetch(
+          const response = await fetchWithAuth(
             `${API_URL}/consumption/${store}?startDate=${this.startDate}&endDate=${this.endDate}`
-          );
+          ,{},false);
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
