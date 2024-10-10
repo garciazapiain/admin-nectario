@@ -121,6 +121,7 @@ import moment from "moment-timezone";
 import "moment/locale/es";
 import { ref } from "vue";
 import API_URL from "../../config";
+import { fetchWithAuth } from '/src/utils/fetchWithAuth.js';
 
 const router = useRouter();
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
@@ -414,7 +415,7 @@ export default {
           this.updateSubmitData(item);
         }
       });
-      fetch(`${API_URL}/ingredientes/no-claves-resetestatus/${store}`, {
+      fetchWithAuth(`${API_URL}/ingredientes/no-claves-resetestatus/${store}`, {
         method: "PUT",
       })
         .then(() => {
@@ -436,9 +437,9 @@ export default {
         this.updateSubmitData(item);
       });
       // Reset all ingredient statuses
-      fetch(`${API_URL}/ingredientes/resetestatus/${store}`, {
+      fetchWithAuth(`${API_URL}/ingredientes/resetestatus/${store}`, {
         method: "PUT",
-      })
+      },false)
         .then(() => {
           // Call submitForm method
           this.submitForm();
@@ -473,13 +474,13 @@ export default {
 
       try {
         // Submit the selected inventory option
-        const response = await fetch(`${API_URL}/submissions/new-submission`, {
+        const response = await fetchWithAuth(`${API_URL}/submissions/new-submission`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(dataToSubmit),
-        });
+        },false);
         const result = await response.json();
         this.submitMessage = {
           type: "success-message",
@@ -524,7 +525,7 @@ export default {
       this.updateSubmitData(ingrediente);
     },
     async updateIngredientStatus(store) {
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `${API_URL}/ingredientes/estatusupdate/${store}`,
         {
           method: "PUT",
@@ -535,7 +536,7 @@ export default {
             ingredientIds: this.changedIngredients,
             newStatus: "No comprado",
           }),
-        }
+        },false
       );
 
       if (!response.ok) {
@@ -561,14 +562,14 @@ export default {
     },
   },
   async mounted() {
-    const response = await fetch(`${API_URL}/ingredientes`);
+    const response = await fetchWithAuth(`${API_URL}/ingredientes`,{},false);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
     this.ingredientes = data;
-    const responseSubmissions = await fetch(`${API_URL}/submissions/all-submissions`);
+    const responseSubmissions = await fetchWithAuth(`${API_URL}/submissions/all-submissions`,{},false);
     if (!responseSubmissions.ok) {
       throw new Error(`HTTP error! status: ${responseSubmissions.status}`);
     }
@@ -601,7 +602,7 @@ export default {
     });
 
     this.originalIngredientes = JSON.parse(JSON.stringify(this.ingredientes));
-    const proveedoresResponse = await fetch(`${API_URL}/proveedores`);
+    const proveedoresResponse = await fetchWithAuth(`${API_URL}/proveedores`,{},false);
     if (proveedoresResponse.ok) {
       let proveedores = await proveedoresResponse.json();
       // Filter out the provider with id 1

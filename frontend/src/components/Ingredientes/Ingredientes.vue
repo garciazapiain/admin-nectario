@@ -126,6 +126,8 @@ const handleClickIngrediente = (idIngrediente) => {
 };
 import { ref } from "vue";
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
+import { fetchWithAuth } from '/src/utils/fetchWithAuth.js';
+
 </script>
 
 <script>
@@ -182,13 +184,13 @@ export default {
         : "";
     },
     async agregarIngrediente() {
-      const response = await fetch(`${API_URL}/ingredientes/`, {
+      const response = await fetchWithAuth(`${API_URL}/ingredientes/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(this.nuevoIngrediente),
-      });
+      },false);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -213,7 +215,7 @@ export default {
     } catch (error) {
       console.error("Error:", error);
     }
-    const response = await fetch(`${API_URL}/ingredientes/demanda`);
+    const response = await fetchWithAuth(`${API_URL}/ingredientes/demanda`,{},false);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -221,7 +223,7 @@ export default {
     this.ingredientes.sort(
       (a, b) => b.total_usado * b.precio - a.total_usado * a.precio
     );
-    const responseProveedores = await fetch(`${API_URL}/proveedores`);
+    const responseProveedores = await fetchWithAuth(`${API_URL}/proveedores`,{},false);
     if (!responseProveedores.ok) {
       throw new Error(`HTTP error! status: ${responseProveedores.status}`);
     }

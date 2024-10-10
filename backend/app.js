@@ -888,27 +888,35 @@ app.post('/api/subplatillos/:idSubPlatillo/ingredientes', authenticateToken, asy
   }
 });
 
-app.get('/api/ingredientes', async (req, res) => {
+//multiple client functionality added and tested
+app.get('/api/ingredientes', authenticateToken, async (req, res) => {
+  const client_id = req.user.client_id; // Get client_id from the authenticated user
   const client = await pool.connect();
+
   try {
     const result = await client.query(`
       SELECT i.*, array_agg(f.nombre) as frecuencias_inventario
       FROM ingredientes i
       LEFT JOIN ingredientes_frecuencia if ON i.id_ingrediente = if.id_ingrediente
       LEFT JOIN frecuencia_inventario f ON if.frecuencia_inventario_id = f.id
+      WHERE i.client_id = $1
       GROUP BY i.id_ingrediente
-    `);
-    res.json(result.rows)
+    `, [client_id]);
+
+    res.json(result.rows);
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching ingredients:', error);
     res.status(500).json({ error: 'Internal server error', message: error.message });
   } finally {
     client.release();
   }
 });
 
-app.get('/api/ingredientes/demanda', async (req, res) => {
+//multiple client functionality added and tested
+app.get('/api/ingredientes/demanda', authenticateToken, async (req, res) => {
+  const client_id = req.user.client_id; // Get the client_id from the authenticated user
   const client = await pool.connect();
+
   try {
     const result = await client.query(`
     SELECT 
@@ -946,6 +954,7 @@ app.get('/api/ingredientes/demanda', async (req, res) => {
       FROM ingredientes i
       LEFT JOIN platillos_ingredientes pi ON i.id_ingrediente = pi.id_ingrediente
       LEFT JOIN platillos p ON pi.id_platillo = p.id_platillo
+      WHERE i.client_id = $1
       GROUP BY i.nombre, i.id_ingrediente, i.unidad, i.precio, i.proveedor, i.proveedor_id, i.producto_clave
   )
   UNION
@@ -970,65 +979,88 @@ app.get('/api/ingredientes/demanda', async (req, res) => {
       LEFT JOIN subplatillos sp ON spi.id_subplatillo = sp.id_subplatillo
       LEFT JOIN platillos_subplatillos psi ON sp.id_subplatillo = psi.id_subplatillo
       LEFT JOIN platillos p ON psi.id_platillo = p.id_platillo
+      WHERE i.client_id = $1
       GROUP BY i.nombre, i.id_ingrediente, i.unidad, i.precio, i.proveedor, i.proveedor_id, i.producto_clave
   )
   ) AS subquery
   GROUP BY nombre, id_ingrediente, unidad, precio, proveedor, proveedor_id, producto_clave
-  `);
-    res.json(result.rows)
+  `, [client_id]);
+
+    res.json(result.rows);
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching ingredientes demanda:', error);
     res.status(500).json({ error: 'Internal server error' });
   } finally {
     client.release();
   }
 });
 
-app.get('/api/ingrediente/:id', async (req, res) => {
+//multiple client functionality added and tested
+app.get('/api/ingrediente/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
+  const client_id = req.user.client_id; // Get the client_id from the authenticated user
   const client = await pool.connect();
+
   try {
     const result = await client.query(`
       SELECT i.*, array_agg(f.nombre) as frecuencias_inventario
       FROM ingredientes i
       LEFT JOIN ingredientes_frecuencia if ON i.id_ingrediente = if.id_ingrediente
       LEFT JOIN frecuencia_inventario f ON if.frecuencia_inventario_id = f.id
-      WHERE i.id_ingrediente = $1
+      WHERE i.id_ingrediente = $1 AND i.client_id = $2
       GROUP BY i.id_ingrediente
-    `, [id]);
+    `, [id, client_id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Ingrediente not found for this client' });
+    }
+
     const platillosResult = await client.query(`
       SELECT p.nombre, p.id_platillo, 'Platillo' AS type
       FROM platillos p
       INNER JOIN platillos_ingredientes pi ON p.id_platillo = pi.id_platillo
-      WHERE pi.id_ingrediente = $1
+      WHERE pi.id_ingrediente = $1 AND p.client_id = $2
       UNION
       SELECT sp.nombre, sp.id_subplatillo, 'Subplatillo' AS type
       FROM subplatillos sp
       INNER JOIN subplatillos_ingredientes si ON sp.id_subplatillo = si.id_subplatillo
-      WHERE si.id_ingrediente = $1
-    `, [id]);
+      WHERE si.id_ingrediente = $1 AND sp.client_id = $2
+    `, [id, client_id]);
+
     const ingrediente = result.rows[0];
     ingrediente.platillos = platillosResult.rows;
     res.json(ingrediente);
+  } catch (error) {
+    console.error('Error fetching ingrediente:', error);
+    res.status(500).json({ error: 'An error occurred while retrieving data from the database' });
   } finally {
     client.release();
   }
 });
 
-app.post('/api/ingredientes', async (req, res) => {
+//multiple client functionality added and tested
+app.post('/api/ingredientes', authenticateToken, async (req, res) => {
   const { nombre, unidad, precio, proveedor, proveedor_id } = req.body;
+  const client_id = req.user.client_id; // Get the client_id from the authenticated user
   const client = await pool.connect();
+
   try {
-    const result = await client.query('INSERT INTO ingredientes (nombre, unidad, precio, proveedor, proveedor_id) VALUES ($1, $2, $3, $4, $5) RETURNING *', [nombre, unidad, precio, proveedor, proveedor_id]);
+    const result = await client.query(`
+      INSERT INTO ingredientes (nombre, unidad, precio, proveedor, proveedor_id, client_id) 
+      VALUES ($1, $2, $3, $4, $5, $6) 
+      RETURNING *
+    `, [nombre, unidad, precio, proveedor, proveedor_id, client_id]);
+
     res.json(result.rows[0]);
   } catch (err) {
-    console.error(err);
+    console.error('Error inserting ingrediente:', err);
     res.status(500).json({ error: 'An error occurred while inserting data into the database' });
   } finally {
     client.release();
   }
 });
 
+// pause multiple client functionality part of compra module
 app.put('/api/ingredientes/individual/estatusupdate/:store', async (req, res) => {
   const { ingredientId, newStatus } = req.body;
   const store = req.params.store;
@@ -1059,6 +1091,7 @@ app.put('/api/ingredientes/individual/estatusupdate/:store', async (req, res) =>
   }
 });
 
+// pause multiple client functionality part of lista peligro and compra inventario module
 app.put('/api/ingredientes/estatusupdate/:store', async (req, res) => {
   const { ingredientIds } = req.body;
   const newStatus = "No Comprado";
@@ -1093,69 +1126,83 @@ app.put('/api/ingredientes/estatusupdate/:store', async (req, res) => {
   }
 });
 
-app.put('/api/ingredientes/resetestatus/:store', async (req, res) => {
+//multiple client functionality added and tested
+app.put('/api/ingredientes/resetestatus/:store', authenticateToken, async (req, res) => {
   const newStatus = "Suficiente producto";
   const store = req.params.store;
+  const client_id = req.user.client_id; // Get client_id from authenticated user
   const client = await pool.connect();
+
   try {
     await client.query('BEGIN');
 
-    // Update all ingredients based on the store
+    // Update ingredients based on the store and the client_id
     let query;
     if (store === 'moral') {
-      query = 'UPDATE ingredientes SET estatus_moral = $1';
+      query = 'UPDATE ingredientes SET estatus_moral = $1 WHERE client_id = $2';
     } else if (store === 'bosques') {
-      query = 'UPDATE ingredientes SET estatus_bosques = $1';
+      query = 'UPDATE ingredientes SET estatus_bosques = $1 WHERE client_id = $2';
     } else {
       throw new Error('Invalid store');
     }
 
-    await client.query(query, [newStatus]);
+    await client.query(query, [newStatus, client_id]);
 
     await client.query('COMMIT');
 
     res.json({ message: 'Successfully reset ingredient status' });
   } catch (err) {
     await client.query('ROLLBACK');
-    console.error(err);
+    console.error('Error resetting ingredient status:', err);
     res.status(500).json({ error: 'An error occurred while updating data in the database' });
   } finally {
     client.release();
   }
 });
 
-app.put('/api/ingredientes/no-claves-resetestatus/:store', async (req, res) => {
+app.put('/api/ingredientes/no-claves-resetestatus/:store', authenticateToken, async (req, res) => {
   const newStatus = "Suficiente producto";
   const store = req.params.store;
+  const client_id = req.user.client_id; // Get client_id from the authenticated user
   const client = await pool.connect();
+
   try {
     await client.query('BEGIN');
 
-    // Update non-key ingredients based on the store, including those where producto_clave is NULL
+    // Update non-key ingredients based on the store and client_id, including those where producto_clave is NULL
     let query;
     if (store === 'moral') {
-      query = 'UPDATE ingredientes SET estatus_moral = $1 WHERE producto_clave = FALSE OR producto_clave IS NULL';
+      query = `
+        UPDATE ingredientes 
+        SET estatus_moral = $1 
+        WHERE client_id = $2 AND (producto_clave = FALSE OR producto_clave IS NULL)
+      `;
     } else if (store === 'bosques') {
-      query = 'UPDATE ingredientes SET estatus_bosques = $1 WHERE producto_clave = FALSE OR producto_clave IS NULL';
+      query = `
+        UPDATE ingredientes 
+        SET estatus_bosques = $1 
+        WHERE client_id = $2 AND (producto_clave = FALSE OR producto_clave IS NULL)
+      `;
     } else {
       throw new Error('Invalid store');
     }
 
-    await client.query(query, [newStatus]);
+    await client.query(query, [newStatus, client_id]);
 
     await client.query('COMMIT');
 
     res.json({ message: 'Successfully reset non-key ingredient status, including those not marked as key' });
   } catch (err) {
     await client.query('ROLLBACK');
-    console.error(err);
+    console.error('Error resetting non-key ingredient status:', err);
     res.status(500).json({ error: 'An error occurred while updating data in the database' });
   } finally {
     client.release();
   }
 });
 
-app.put('/api/ingredientes/:id', async (req, res) => {
+//multiple client functionality added and tested
+app.put('/api/ingredientes/:id', authenticateToken, async (req, res) => {
   const {
     nombre,
     unidad,
@@ -1171,14 +1218,20 @@ app.put('/api/ingredientes/:id', async (req, res) => {
     frecuencias_inventario
   } = req.body;
   const { id } = req.params;
+  const client_id = req.user.client_id; // Get client_id from authenticated user
   const client = await pool.connect();
+  console.log('put request', client_id)
+
   try {
     await client.query('BEGIN');
+
+    // Update ingredientes only if it belongs to the authenticated client
     const updateIngredientesQuery = `
       UPDATE ingredientes 
       SET nombre = $1, unidad = $2, precio = $3, merma = $4, proveedor = $5, proveedor_id = $6, store_route_order = $7, producto_clave = $8, moral_demanda_semanal = $9, bosques_demanda_semanal = $10, orden_inventario = $11 
-      WHERE id_ingrediente = $12 
+      WHERE id_ingrediente = $12 AND client_id = $13
       RETURNING *`;
+
     const result = await client.query(updateIngredientesQuery, [
       nombre,
       unidad,
@@ -1191,8 +1244,13 @@ app.put('/api/ingredientes/:id', async (req, res) => {
       moral_demanda_semanal,
       bosques_demanda_semanal,
       orden_inventario,
-      id // Moved to the last position
+      id, // Ingredient ID
+      client_id // Client ID to ensure ownership
     ]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Ingrediente not found or does not belong to this client' });
+    }
 
     if (frecuencias_inventario) {
       // Check if frecuencias_inventario is not null
@@ -1219,6 +1277,7 @@ app.put('/api/ingredientes/:id', async (req, res) => {
   }
 });
 
+// pause multiple client functionality part of pronostico demanda module
 app.get('/api/pronosticodemandainsumos', async (req, res) => {
   const client = await pool.connect();
   const platillos = [{ id: 9, cantidad: 1 }];
@@ -1260,68 +1319,24 @@ app.get('/api/pronosticodemandainsumos', async (req, res) => {
   }
 });
 
-// app.post('/api/submissions', async (req, res) => {
-//   const { store, timestamp, ingredients } = req.body;
-//   const client = await pool.connect();
-//   try {
-//     // Convert ingredients to JSON string
-//     const compra = JSON.stringify(ingredients);
-
-//     // Insert into submissions table
-//     const result = await client.query('INSERT INTO submissions (store, timestamp, compra) VALUES ($1, $2, $3) RETURNING *', [store, timestamp, compra]);
-
-//     // Delete all but the latest submission for the current date
-//     await client.query(`
-//       WITH ranked_submissions AS (
-//         SELECT id, 
-//                ROW_NUMBER() OVER(PARTITION BY DATE(timestamp) ORDER BY timestamp DESC) as rn
-//         FROM submissions
-//         WHERE store = $1 AND DATE(timestamp) = DATE($2)
-//       )
-//       DELETE FROM submissions
-//       WHERE id IN (
-//         SELECT id FROM ranked_submissions WHERE rn > 1
-//       )
-//     `, [store, timestamp]);
-
-//     res.json(result.rows[0]);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: 'An error occurred while inserting data into the database' });
-//   } finally {
-//     client.release();
-//   }
-// });
-
-// app.get('/api/submissions', async (req, res) => {
-//   const client = await pool.connect();
-//   try {
-//     // Query the submissions table
-//     const result = await client.query('SELECT * FROM submissions');
-
-//     res.json(result.rows);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: 'An error occurred while retrieving data from the database' });
-//   } finally {
-//     client.release();
-//   }
-// });
-
-app.get('/api/proveedores', async (req, res) => {
+//multiple client functionality added and tested
+app.get('/api/proveedores', authenticateToken, async (req, res) => {
+  const client_id = req.user.client_id; // Get the client_id from the authenticated user
   const client = await pool.connect();
+
   try {
-    const result = await client.query('SELECT * FROM proveedores');
+    const result = await client.query('SELECT * FROM proveedores WHERE client_id = $1', [client_id]);
 
     res.json(result.rows);
   } catch (err) {
-    console.error(err);
+    console.error('Error fetching proveedores:', err);
     res.status(500).json({ error: 'An error occurred while retrieving data from the database' });
   } finally {
     client.release();
   }
 });
 
+//no multiple client functionality 
 app.get('/api/unidades', async (req, res) => {
   const client = await pool.connect();
   try {
@@ -1345,6 +1360,7 @@ app.get('/api/unidades', async (req, res) => {
   }
 });
 
+// pause multiple client functionality part of pronostico demanda module
 app.get('/api/pronosticodemanda', async (req, res) => {
   const client = await pool.connect();
   try {
@@ -1361,6 +1377,7 @@ app.get('/api/pronosticodemanda', async (req, res) => {
   }
 });
 
+// pause multiple client functionality part of pronostico demanda module
 app.post('/api/guardarpronosticodemanda', async (req, res) => {
   const { dataplatillos, dataingredientes, nombre } = req.body;
   const client = await pool.connect();
@@ -1381,6 +1398,7 @@ app.post('/api/guardarpronosticodemanda', async (req, res) => {
   }
 });
 
+// pause multiple client funcionality in pruchase_order  
 app.get('/api/purchase_orders', async (req, res) => {
   const client = await pool.connect();
   try {
@@ -1397,6 +1415,7 @@ app.get('/api/purchase_orders', async (req, res) => {
   }
 });
 
+// pause multiple client funcionality in pruchase_order 
 app.delete('/api/purchase_orders/:id', async (req, res) => {
   const client = await pool.connect();
   try {
@@ -1429,6 +1448,7 @@ app.delete('/api/purchase_orders/:id', async (req, res) => {
   }
 });
 
+// pause multiple client funcionality in pruchase_order 
 app.post('/api/purchase_orders', async (req, res) => {
   const { articulosComprados, totalImporte, fecha, folio, emisor, xmldata } = req.body;
 
@@ -1532,115 +1552,116 @@ app.post('/api/purchase_orders', async (req, res) => {
   }
 });
 
-app.post('/api/purchase_orders', async (req, res) => {
-  const { articulosComprados, totalImporte, fecha, folio, emisor, xmldata } = req.body;
+// repeated delete later
+// app.post('/api/purchase_orders', async (req, res) => {
+//   const { articulosComprados, totalImporte, fecha, folio, emisor, xmldata } = req.body;
 
-  function calculateWeekRange(date) {
-    const inputDate = new Date(date);
-    const dayOfWeek = inputDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+//   function calculateWeekRange(date) {
+//     const inputDate = new Date(date);
+//     const dayOfWeek = inputDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
 
-    // Calculate Monday as the start of the week (if it's Sunday, set it to Monday)
-    const startOfWeek = new Date(inputDate);
-    const offset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;  // Set Sunday as the last day (adjust accordingly)
-    startOfWeek.setDate(inputDate.getDate() + offset);
+//     // Calculate Monday as the start of the week (if it's Sunday, set it to Monday)
+//     const startOfWeek = new Date(inputDate);
+//     const offset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;  // Set Sunday as the last day (adjust accordingly)
+//     startOfWeek.setDate(inputDate.getDate() + offset);
 
-    // Calculate Sunday as the end of the week
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);  // Sunday is 6 days after Monday
+//     // Calculate Sunday as the end of the week
+//     const endOfWeek = new Date(startOfWeek);
+//     endOfWeek.setDate(startOfWeek.getDate() + 6);  // Sunday is 6 days after Monday
 
-    return {
-      fecha_inicio: startOfWeek.toISOString().split('T')[0], // Format as YYYY-MM-DD
-      fecha_fin: endOfWeek.toISOString().split('T')[0]       // Format as YYYY-MM-DD
-    };
-  }
+//     return {
+//       fecha_inicio: startOfWeek.toISOString().split('T')[0], // Format as YYYY-MM-DD
+//       fecha_fin: endOfWeek.toISOString().split('T')[0]       // Format as YYYY-MM-DD
+//     };
+//   }
 
-  const client = await pool.connect();
-  try {
-    console.log("Transaction started for new purchase order");
+//   const client = await pool.connect();
+//   try {
+//     console.log("Transaction started for new purchase order");
 
-    await client.query('BEGIN');
+//     await client.query('BEGIN');
 
-    console.log("Inserting new purchase order:", { fecha, totalImporte, folio, emisor });
-    const orderResult = await client.query(
-      'INSERT INTO purchase_orders (fecha, totalImporte, folio, emisor, status, xmldata) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-      [fecha, totalImporte, folio, emisor, 'pendiente', xmldata]
-    );
-    const orderId = orderResult.rows[0].id;
-    console.log("Inserted purchase order with ID:", orderId);
+//     console.log("Inserting new purchase order:", { fecha, totalImporte, folio, emisor });
+//     const orderResult = await client.query(
+//       'INSERT INTO purchase_orders (fecha, totalImporte, folio, emisor, status, xmldata) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+//       [fecha, totalImporte, folio, emisor, 'pendiente', xmldata]
+//     );
+//     const orderId = orderResult.rows[0].id;
+//     console.log("Inserted purchase order with ID:", orderId);
 
-    const { fecha_inicio, fecha_fin } = calculateWeekRange(fecha);
-    console.log(`Calculated week range: ${fecha_inicio} to ${fecha_fin}`);
+//     const { fecha_inicio, fecha_fin } = calculateWeekRange(fecha);
+//     console.log(`Calculated week range: ${fecha_inicio} to ${fecha_fin}`);
 
-    if (articulosComprados && articulosComprados.length > 0) {
-      for (const item of articulosComprados) {
-        console.log("Inserting purchase item:", item);
-        await client.query(
-          'INSERT INTO purchase_history_items (purchase_order_id, id_ingrediente, quantity, price_per_item, total_price) VALUES ($1, $2, $3, $4, $5)',
-          [orderId, item.id_ingrediente, item.quantity, item.price, item.totalPrice]
-        );
+//     if (articulosComprados && articulosComprados.length > 0) {
+//       for (const item of articulosComprados) {
+//         console.log("Inserting purchase item:", item);
+//         await client.query(
+//           'INSERT INTO purchase_history_items (purchase_order_id, id_ingrediente, quantity, price_per_item, total_price) VALUES ($1, $2, $3, $4, $5)',
+//           [orderId, item.id_ingrediente, item.quantity, item.price, item.totalPrice]
+//         );
 
-        console.log(`Checking if an existing entradas_salidas entry exists for ingredient ${item.id_ingrediente} and start date ${fecha_inicio}`);
+//         console.log(`Checking if an existing entradas_salidas entry exists for ingredient ${item.id_ingrediente} and start date ${fecha_inicio}`);
 
-        const existingEntry = await client.query(
-          'SELECT * FROM entradas_salidas WHERE id_ingrediente = $1 AND fecha_inicio = $2',
-          [item.id_ingrediente, fecha_inicio]
-        );
+//         const existingEntry = await client.query(
+//           'SELECT * FROM entradas_salidas WHERE id_ingrediente = $1 AND fecha_inicio = $2',
+//           [item.id_ingrediente, fecha_inicio]
+//         );
 
-        if (existingEntry.rows.length === 0) {
-          console.log("No existing entradas_salidas entry found, inserting a new one");
-          await client.query(
-            'INSERT INTO entradas_salidas (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-            [
-              item.id_ingrediente,
-              fecha_inicio,
-              fecha_fin,
-              parseFloat(item.quantity),
-              parseFloat(item.quantity),
-              0,
-              0
-            ]
-          );
-        } else {
-          console.log("Existing entradas_salidas entry found:", existingEntry.rows[0]);
+//         if (existingEntry.rows.length === 0) {
+//           console.log("No existing entradas_salidas entry found, inserting a new one");
+//           await client.query(
+//             'INSERT INTO entradas_salidas (id_ingrediente, fecha_inicio, fecha_fin, total_quantity, quantity_cedis, quantity_moral, quantity_campestre) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+//             [
+//               item.id_ingrediente,
+//               fecha_inicio,
+//               fecha_fin,
+//               parseFloat(item.quantity),
+//               parseFloat(item.quantity),
+//               0,
+//               0
+//             ]
+//           );
+//         } else {
+//           console.log("Existing entradas_salidas entry found:", existingEntry.rows[0]);
 
-          console.log('Before calculation:', {
-            oldTotalQuantity: existingEntry.rows[0].total_quantity,
-            itemQuantity: item.quantity,
-          });
-          const oldTotalQuantity = Number(existingEntry.rows[0].total_quantity) || 0;
-          const itemQuantity = Number(item.quantity) || 0;
-          const newTotalQuantity = oldTotalQuantity + itemQuantity;
-          console.log('After calculation:', { oldTotalQuantity, itemQuantity, newTotalQuantity });
+//           console.log('Before calculation:', {
+//             oldTotalQuantity: existingEntry.rows[0].total_quantity,
+//             itemQuantity: item.quantity,
+//           });
+//           const oldTotalQuantity = Number(existingEntry.rows[0].total_quantity) || 0;
+//           const itemQuantity = Number(item.quantity) || 0;
+//           const newTotalQuantity = oldTotalQuantity + itemQuantity;
+//           console.log('After calculation:', { oldTotalQuantity, itemQuantity, newTotalQuantity });
 
-          await client.query(
-            'UPDATE entradas_salidas SET total_quantity = $1, quantity_cedis = quantity_cedis::numeric + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
-            [
-              newTotalQuantity,
-              itemQuantity,
-              item.id_ingrediente,
-              fecha_inicio
-            ]
-          );
+//           await client.query(
+//             'UPDATE entradas_salidas SET total_quantity = $1, quantity_cedis = quantity_cedis::numeric + $2 WHERE id_ingrediente = $3 AND fecha_inicio = $4',
+//             [
+//               newTotalQuantity,
+//               itemQuantity,
+//               item.id_ingrediente,
+//               fecha_inicio
+//             ]
+//           );
 
-          console.log("Entradas_salidas_compras updated successfully for ingredient:", item.id_ingrediente);
-        }
-      }
-    }
+//           console.log("Entradas_salidas_compras updated successfully for ingredient:", item.id_ingrediente);
+//         }
+//       }
+//     }
 
-    await client.query('COMMIT');
-    console.log("Transaction committed successfully for purchase order:", orderId);
-    res.json({ message: 'Purchase order created successfully' });
-  } catch (error) {
-    await client.query('ROLLBACK');
-    console.error('Database error:', error);
-    res.status(500).json({ error: 'Database error' });
-  } finally {
-    client.release();
-    console.log("Database connection released");
-  }
-});
+//     await client.query('COMMIT');
+//     console.log("Transaction committed successfully for purchase order:", orderId);
+//     res.json({ message: 'Purchase order created successfully' });
+//   } catch (error) {
+//     await client.query('ROLLBACK');
+//     console.error('Database error:', error);
+//     res.status(500).json({ error: 'Database error' });
+//   } finally {
+//     client.release();
+//     console.log("Database connection released");
+//   }
+// });
 
-
+// pause multiple client funcionality in pruchase_order 
 app.put('/api/purchase_orders/:id', async (req, res) => {
   const { id } = req.params;
   const { fecha, folio, emisor, items, totalimporte, status } = req.body;
@@ -1764,6 +1785,7 @@ app.put('/api/purchase_orders/:id', async (req, res) => {
   }
 });
 
+// pause multiple client funcionality in analisis_consumo
 app.get('/api/purchase_orders/analisis-consumo', async (req, res) => {
   const { startDate, endDate } = req.query;
 
@@ -1794,6 +1816,7 @@ app.get('/api/purchase_orders/analisis-consumo', async (req, res) => {
   }
 });
 
+// pause multiple client funcionality in purchase orders 
 app.get('/api/historial_insumos', async (req, res) => {
   const client = await pool.connect();
   try {
@@ -1829,6 +1852,7 @@ app.get('/api/historial_insumos', async (req, res) => {
   }
 });
 
+// pause multiple client funcionality in purchase orders 
 app.get('/api/historial_insumos/insumo/:id', async (req, res) => {
   const client = await pool.connect();
   try {
@@ -1863,6 +1887,7 @@ app.get('/api/historial_insumos/insumo/:id', async (req, res) => {
   }
 });
 
+// pause multiple client funcionality in purchase orders 
 app.get('/api/historialcompra/compra/:id', async (req, res) => {
   const client = await pool.connect();
   try {
@@ -1899,6 +1924,7 @@ app.get('/api/historialcompra/compra/:id', async (req, res) => {
   }
 });
 
+// pause multiple client funcionality in purchase orders 
 app.post('/api/consumoinsumos/cargarventas', async (req, res) => {
   const { store, startDate, endDate, items } = req.body;
   const client = await pool.connect();
@@ -2026,8 +2052,6 @@ app.get('/api/consumption/:store', async (req, res) => {
   }
 });
 
-
-
 app.get('/api/consumption/:id/:store', async (req, res) => {
   const { id, store } = req.params;
   const client = await pool.connect();
@@ -2124,36 +2148,36 @@ app.get('/api/consumption/:id/:store', async (req, res) => {
   }
 });
 
-
 const { exec } = require('child_process');
 
-app.post('/api/test-playwright', (req, res) => {
-  const vendor = req.body.vendor;
-  let scriptPath = '';
+// delete later
+// app.post('/api/test-playwright', (req, res) => {
+//   const vendor = req.body.vendor;
+//   let scriptPath = '';
 
-  switch (vendor) {
-    case 'heb':
-      scriptPath = 'playwright/facturacion/heb.js';
-      break;
-    case 'costco':
-      scriptPath = 'playwright/facturacion/costco.js';
-      break;
-    default:
-      return res.status(400).send('Invalid vendor');
-  }
+//   switch (vendor) {
+//     case 'heb':
+//       scriptPath = 'playwright/facturacion/heb.js';
+//       break;
+//     case 'costco':
+//       scriptPath = 'playwright/facturacion/costco.js';
+//       break;
+//     default:
+//       return res.status(400).send('Invalid vendor');
+//   }
 
-  exec(`node ${scriptPath}`, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error: ${error.message}`);
-      return res.status(500).send('Error running Playwright script');
-    }
-    if (stderr) {
-      console.error(`stderr: ${stderr}`);
-      return res.status(500).send('Script execution error');
-    }
-    res.send('Playwright script executed successfully');
-  });
-});
+//   exec(`node ${scriptPath}`, (error, stdout, stderr) => {
+//     if (error) {
+//       console.error(`Error: ${error.message}`);
+//       return res.status(500).send('Error running Playwright script');
+//     }
+//     if (stderr) {
+//       console.error(`stderr: ${stderr}`);
+//       return res.status(500).send('Script execution error');
+//     }
+//     res.send('Playwright script executed successfully');
+//   });
+// });
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));

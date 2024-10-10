@@ -1,6 +1,7 @@
 const express = require('express');
 const { connectDb } = require('./db');
 const router = express.Router();
+const { authenticateToken } = require('./middleware.js');
 
 router.post('/new-submission', async (req, res, next) => {
   const { store, timestamp, ingredients, selectedInventarioOption } = req.body;
@@ -132,10 +133,11 @@ router.post('/new-submission', async (req, res, next) => {
   }
 });
 
-router.get('/all-submissions', async (req, res, next) => {
+router.get('/all-submissions', authenticateToken, async (req, res, next) => {
+  const client_id = req.user.client_id;  // Get client_id from authenticated user
   const client = await connectDb();
   try {
-    const result = await client.query('SELECT * FROM submissions');
+    const result = await client.query('SELECT * FROM submissions WHERE client_id = $1', [client_id]);
     res.json(result.rows);
   } catch (err) {
     next(err);

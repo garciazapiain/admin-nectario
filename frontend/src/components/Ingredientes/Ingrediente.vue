@@ -10,6 +10,8 @@ const handleClick = (platillo) => {
 };
 import { ref } from "vue";
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
+import { fetchWithAuth } from '/src/utils/fetchWithAuth.js';
+
 </script>
 <template>
   <div>
@@ -274,13 +276,13 @@ export default {
         this.ingredienteEditado.frecuencias_inventario.map((value) => {
           return map[value] || value;
         });
-      const response = await fetch(`${API_URL}/ingredientes/${id}`, {
+      const response = await fetchWithAuth(`${API_URL}/ingredientes/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(this.ingredienteEditado),
-      });
+      },false);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -293,7 +295,7 @@ export default {
     const id = this.$route.params.id;
     try {
       // Make API call to fetch the platillo data
-      const response = await fetch(`${API_URL}/ingrediente/${id}`);
+      const response = await fetchWithAuth(`${API_URL}/ingrediente/${id}`,{},false);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -304,7 +306,7 @@ export default {
     } catch (error) {
       console.error("Error:", error);
     }
-    const responseProveedores = await fetch(`${API_URL}/proveedores`);
+    const responseProveedores = await fetchWithAuth(`${API_URL}/proveedores`,{},false);
     if (!responseProveedores.ok) {
       throw new Error(`HTTP error! status: ${responseProveedores.status}`);
     }
