@@ -99,7 +99,6 @@ const openModal = (entrada, tipo) => {
 
 // Update the submit function to be triggered only when the user submits data via the modal.
 const handleSubmit = async () => {
-  console.log(currentEntrada.value, movimientoTipo.value)
   if (!currentEntrada.value || !movimientoTipo.value) {
     console.error('Data missing for submission');
     return;
@@ -128,22 +127,30 @@ const handleSubmit = async () => {
 
     if (!response.ok) {
       console.error(`Error: ${response.statusText}`);
+      resultMessage.value = 'Error al hacer movimiento';
+      showResultModal.value = true;
       throw new Error('Failed to update movimiento');
     }
 
     console.log('Movimiento updated successfully');
-    showModal.value = false;
-    fetchEntradasSalidasCompras();  // Refresh data after update
+    resultMessage.value = `Se transfirió exitósamente ${cantidad.value} ${currentEntrada.value.unidad} de ${origen.value} a ${destino.value} para el ingrediente ${currentEntrada.value.nombre}.`;
+    showResultModal.value = true;
+    showModal.value = false; // Close the input modal
+    fetchEntradasSalidasCompras(); // Refresh data after update
   } catch (error) {
     console.error('Failed to update movimiento:', error);
+    resultMessage.value = 'Error al hacer movimiento';
+    showResultModal.value = true;
+    handleCerrar()
   }
 };
-
-
 
 const handleCerrar = async () => {
   showModal.value = false;
 }
+
+const showResultModal = ref(false);
+const resultMessage = ref('');
 
 // Generate weeks on component mount
 generateWeeks();
@@ -152,7 +159,16 @@ generateWeeks();
 <template>
   <div class="p-6">
     <h1 class="text-2xl font-bold mb-4 text-white">Entradas y Salidas</h1>
-
+    <!-- Result Modal -->
+    <div v-if="showResultModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div class="bg-white p-6 rounded-lg shadow-lg w-80">
+        <h3 class="text-xl font-bold mb-4 text-black">{{ resultMessage }}</h3>
+        <div class="flex justify-end">
+          <button @click="showResultModal = false"
+            class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md">Cerrar</button>
+        </div>
+      </div>
+    </div>
     <!-- Week Selection Dropdown -->
     <div class="mb-6">
       <label class="text-white block font-semibold mb-2">Seleccionar por semana</label>
@@ -198,7 +214,8 @@ generateWeeks();
           </td>
           <td class="py-2 px-4">
             <!-- <div>Inventario Inicial: {{ entrada.inventario_inicial_moral }}</div> -->
-            <div>Entradas: {{ Number(entrada.quantity_moral) + Number(entrada.transfers_inventario_inicial_cedis_a_moral) }}</div>
+            <div>Entradas: {{ Number(entrada.quantity_moral) +
+              Number(entrada.transfers_inventario_inicial_cedis_a_moral) }}</div>
             <button @click="openModal(entrada, 'Movimiento')"
               class="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md">
               Movimiento
@@ -206,11 +223,14 @@ generateWeeks();
           </td>
           <td class="py-2 px-4">
             <!-- <div>Inventario Inicial: {{ entrada.inventario_inicial_bosques }}</div> -->
-            <div>Entradas: {{ Number(entrada.quantity_campestre) + Number(entrada.transfers_inventario_inicial_cedis_a_bosques) }}</div>
+            <div>Entradas: {{ Number(entrada.quantity_campestre) +
+              Number(entrada.transfers_inventario_inicial_cedis_a_bosques) }}</div>
             <button @click="openModal(entrada, 'Movimiento')"
               class="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md">Movimiento</button>
           </td>
-          <td class="py-2 px-4">{{ Number(entrada.total_quantity) + Number(entrada.transfers_inventario_inicial_cedis_a_bosques) + Number(entrada.transfers_inventario_inicial_cedis_a_moral) }}</td>
+          <td class="py-2 px-4">{{ Number(entrada.total_quantity) +
+            Number(entrada.transfers_inventario_inicial_cedis_a_bosques) +
+            Number(entrada.transfers_inventario_inicial_cedis_a_moral) }}</td>
         </tr>
       </tbody>
     </table>
@@ -278,5 +298,14 @@ th,
 td {
   border: 1px solid #000;
   padding: 10px;
+}
+.fixed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bg-opacity-50 {
+  background-color: rgba(0, 0, 0, 0.5);
 }
 </style>
