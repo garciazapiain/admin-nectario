@@ -72,11 +72,11 @@ router.put('/movimiento/transfers', async (req, res) => {
     }
 
     // Calculate the sum of all locations
-    const sumOfLocations = updatedCedis + updatedMoral + updatedCampestre;
-    // Ensure the sum of locations matches the total quantity
-    if (sumOfLocations !== totalQuantity) {
-      return res.status(400).json({ error: 'Sum of quantities does not match total_quantity' });
-    }
+    // const sumOfLocations = updatedCedis + updatedMoral + updatedCampestre;
+    // // Ensure the sum of locations matches the total quantity
+    // if (sumOfLocations !== totalQuantity) {
+    //   return res.status(400).json({ error: 'Sum of quantities does not match total_quantity' });
+    // }
 
     // Update the database with the new quantities
     await client.query(
