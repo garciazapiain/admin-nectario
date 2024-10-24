@@ -202,15 +202,20 @@ generateWeeks();
           <td class="py-2 px-4">{{ entrada.unidad }}</td>
           <td class="py-2 px-4">
             <div>Inventario Inicial: {{ entrada.inventario_inicial_cedis }}</div>
-            <button @click="setTransferModal(entrada)"
+
+            <!-- Show 'Transferir Inventario Inicial' button only if inventario_inicial_cedis > 0 -->
+            <button v-if="entrada.inventario_inicial_cedis > 0" @click="setTransferModal(entrada)"
               class="mt-2 bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded-md">
               Transferir Inventario Inicial
             </button>
-            <div>Entradas: {{ entrada.quantity_cedis }}</div>
-            <button @click="openModal(entrada, 'Movimiento')"
+
+            <!-- Show 'Movimiento' button only if inventario_inicial_cedis <= 0 -->
+            <button v-else @click="openModal(entrada, 'Movimiento')"
               class="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md">
               Movimiento
             </button>
+
+            <div>Entradas: {{ entrada.quantity_cedis }}</div>
           </td>
           <td class="py-2 px-4">
             <!-- <div>Inventario Inicial: {{ entrada.inventario_inicial_moral }}</div> -->
@@ -299,6 +304,7 @@ td {
   border: 1px solid #000;
   padding: 10px;
 }
+
 .fixed {
   display: flex;
   align-items: center;
