@@ -25,28 +25,44 @@ const generateWeeks = () => {
   const weekOptions = [];
   const startOfYear = new Date(new Date().getFullYear(), 0, 1);
 
+  // Adjust to the first Monday of the year
   while (startOfYear.getDay() !== 1) {
     startOfYear.setDate(startOfYear.getDate() + 1);
   }
 
   const currentDate = new Date();
 
+  // Loop to generate weeks until the current date
   while (startOfYear <= currentDate) {
     const weekStart = new Date(startOfYear);
     const weekEnd = new Date(startOfYear);
     weekEnd.setDate(weekEnd.getDate() + 6);
 
-    let label = weekStart.getDate() + " al " + weekEnd.getDate() + " de " + weekStart.toLocaleString('es-ES', { month: 'long' });
+    // Get month and day names for start and end dates
+    const weekStartMonth = weekStart.toLocaleString('es-ES', { month: 'long' });
+    const weekEndMonth = weekEnd.toLocaleString('es-ES', { month: 'long' });
 
+    // Generate the label based on whether the week crosses into a new month
+    let label;
+    if (weekStartMonth !== weekEndMonth) {
+      // If start and end are in different months, include both months in the label
+      label = `${weekStart.getDate()} ${weekStartMonth} al ${weekEnd.getDate()} ${weekEndMonth}`;
+    } else {
+      // If within the same month, include the month only once at the end
+      label = `${weekStart.getDate()} al ${weekEnd.getDate()} de ${weekStartMonth}`;
+    }
+
+    // Add the week option to the list
     weekOptions.push({
       value: `${weekStart.toISOString().split('T')[0]}_${weekEnd.toISOString().split('T')[0]}`,
       label: label
     });
 
+    // Move to the next week
     startOfYear.setDate(startOfYear.getDate() + 7);
   }
 
-  weeks.value = weekOptions.reverse();
+  weeks.value = weekOptions.reverse(); // Reverse to show the latest weeks first
 };
 
 // Function to handle week range selection and update
@@ -215,12 +231,12 @@ generateWeeks();
               Movimiento
             </button>
 
-            <div>Entradas: {{ entrada.quantity_cedis }}</div>
+            <div>Entradas: {{ entrada.quantity_cedis.toFixed(2) }}</div>
           </td>
           <td class="py-2 px-4">
             <!-- <div>Inventario Inicial: {{ entrada.inventario_inicial_moral }}</div> -->
             <div>Entradas: {{ Number(entrada.quantity_moral) +
-              Number(entrada.transfers_inventario_inicial_cedis_a_moral) }}</div>
+              Number(entrada.transfers_inventario_inicial_cedis_a_moral).toFixed(2) }}</div>
             <button @click="openModal(entrada, 'Movimiento')"
               class="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md">
               Movimiento
@@ -229,13 +245,13 @@ generateWeeks();
           <td class="py-2 px-4">
             <!-- <div>Inventario Inicial: {{ entrada.inventario_inicial_bosques }}</div> -->
             <div>Entradas: {{ Number(entrada.quantity_campestre) +
-              Number(entrada.transfers_inventario_inicial_cedis_a_bosques) }}</div>
+              Number(entrada.transfers_inventario_inicial_cedis_a_bosques).toFixed(2) }}</div>
             <button @click="openModal(entrada, 'Movimiento')"
               class="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md">Movimiento</button>
           </td>
           <td class="py-2 px-4">{{ Number(entrada.total_quantity) +
             Number(entrada.transfers_inventario_inicial_cedis_a_bosques) +
-            Number(entrada.transfers_inventario_inicial_cedis_a_moral) }}</td>
+            Number(entrada.transfers_inventario_inicial_cedis_a_moral).toFixed(2) }}</td>
         </tr>
       </tbody>
     </table>
