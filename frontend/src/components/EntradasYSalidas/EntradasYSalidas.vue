@@ -231,7 +231,7 @@ generateWeeks();
               Movimiento
             </button>
 
-            <div>Entradas: {{ entrada.quantity_cedis.toFixed(2) }}</div>
+            <div>Entradas: {{ Number(entrada.quantity_cedis || 0).toFixed(2) }}</div>
           </td>
           <td class="py-2 px-4">
             <!-- <div>Inventario Inicial: {{ entrada.inventario_inicial_moral }}</div> -->
