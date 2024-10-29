@@ -236,7 +236,7 @@ generateWeeks();
           <td class="py-2 px-4">
             <!-- <div>Inventario Inicial: {{ entrada.inventario_inicial_moral }}</div> -->
             <div>Entradas: {{ Number(entrada.quantity_moral) +
-              Number(entrada.transfers_inventario_inicial_cedis_a_moral).toFixed(2) }}</div>
+              Number(entrada.transfers_inventario_inicial_cedis_a_moral) }}</div>
             <button @click="openModal(entrada, 'Movimiento')"
               class="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md">
               Movimiento
@@ -245,13 +245,13 @@ generateWeeks();
           <td class="py-2 px-4">
             <!-- <div>Inventario Inicial: {{ entrada.inventario_inicial_bosques }}</div> -->
             <div>Entradas: {{ Number(entrada.quantity_campestre) +
-              Number(entrada.transfers_inventario_inicial_cedis_a_bosques).toFixed(2) }}</div>
+              Number(entrada.transfers_inventario_inicial_cedis_a_bosques) }}</div>
             <button @click="openModal(entrada, 'Movimiento')"
               class="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md">Movimiento</button>
           </td>
           <td class="py-2 px-4">{{ Number(entrada.total_quantity) +
             Number(entrada.transfers_inventario_inicial_cedis_a_bosques) +
-            Number(entrada.transfers_inventario_inicial_cedis_a_moral).toFixed(2) }}</td>
+            Number(entrada.transfers_inventario_inicial_cedis_a_moral) }}</td>
         </tr>
       </tbody>
     </table>
