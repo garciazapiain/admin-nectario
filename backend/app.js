@@ -691,6 +691,27 @@ app.get('/api/ingredientes', async (req, res) => {
   }
 });
 
+app.get('/api/ingredientes-producto-clave', async (req, res) => {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(`
+      SELECT i.*, array_agg(f.nombre) as frecuencias_inventario
+      FROM ingredientes i
+      LEFT JOIN ingredientes_frecuencia if ON i.id_ingrediente = if.id_ingrediente
+      LEFT JOIN frecuencia_inventario f ON if.frecuencia_inventario_id = f.id
+      WHERE i.producto_clave = true
+      GROUP BY i.id_ingrediente
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  } finally {
+    client.release();
+  }
+});
+
+
 app.get('/api/ingredientes/demanda', async (req, res) => {
   const client = await pool.connect();
   try {

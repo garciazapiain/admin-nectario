@@ -3,7 +3,7 @@
     <h1 class="font-bold mb-4">Resumen Existencias Lista Peligro</h1>
     <p class="mb-2">Ultima actualización Moral: {{ lastUpdatedMoral }}</p>
     <p class="mb-4">Ultima actualización Campestre: {{ lastUpdatedCampestre }}</p>
-    <div v-if="isAdmin" class="flex flex-col justify-center items-center w-full">
+    <!-- <div v-if="isAdmin" class="flex flex-col justify-center items-center w-full">
       <h2 class="text-xl font-semibold mb-2">Filtros:</h2>
       <label for="insumos" class="mb-2">Tipo Insumos:</label>
       <select id="insumos" v-model="selectedInsumosTipo" class="filterBar">
@@ -24,7 +24,7 @@
         <option value="inicio_segundo_turno">Inicio segundo turno</option>
         <option value="fin_segundo_turno">Fin segundo turno</option>
       </select>
-    </div>
+    </div> -->
     <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="search-bar w-3/4 p-4 mb-4 border rounded" />
     <div class="w-full flex justify-center">
       <div class="overflow-x-auto">
@@ -97,7 +97,7 @@ export default {
       console.error("HTTP error:", submissionsResponse.status);
     }
     // Fetch the ingredientes data
-    const response = await fetch(`${API_URL}/ingredientes`);
+    const response = await fetch(`${API_URL}/ingredientes-producto-clave`);
     if (response.ok) {
       this.ingredientes = await response.json();
       return this.ingredientes;
