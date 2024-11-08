@@ -148,28 +148,27 @@ router.get('/latest-submissions', async (req, res, next) => {
   const client = await connectDb();
   try {
     const result = await client.query(`
-      SELECT
-        s.id,
-        s.store,
-        s.timestamp,
-        s.compra
-      FROM
-        submissions s
-      INNER JOIN (
+      WITH ranked_submissions AS (
         SELECT
+          id,
           store,
-          MAX(timestamp) AS latest_timestamp
+          timestamp::timestamp AS timestamp_casted,
+          compra,
+          ROW_NUMBER() OVER (PARTITION BY store ORDER BY timestamp::timestamp DESC) AS rank
         FROM
           submissions
         WHERE
           store IN ('moral', 'bosques')
-        GROUP BY
-          store
-      ) sub
-      ON
-        s.store = sub.store AND s.timestamp = sub.latest_timestamp
+      )
+      SELECT
+        id,
+        store,
+        timestamp_casted AS timestamp,
+        compra
+      FROM
+        ranked_submissions
       WHERE
-        s.store IN ('moral', 'bosques')
+        rank = 1;
     `);
     res.json(result.rows);
   } catch (err) {
