@@ -116,15 +116,19 @@ export default {
   computed: {
     lastUpdatedMoral() {
       const lastSubmission = this.lastSubmission("moral");
-      return lastSubmission
-        ? new Date(lastSubmission.timestamp).toLocaleString()
-        : "N/A";
+      if (lastSubmission) {
+        const date = new Date(lastSubmission.timestamp);
+        return date.toLocaleString("en-US", { timeZone: "UTC" });
+      }
+      return "N/A";
     },
     lastUpdatedCampestre() {
       const lastSubmission = this.lastSubmission("bosques");
-      return lastSubmission
-        ? new Date(lastSubmission.timestamp).toLocaleString()
-        : "N/A";
+      if (lastSubmission) {
+        const date = new Date(lastSubmission.timestamp);
+        return date.toLocaleString("en-US", { timeZone: "UTC" });
+      }
+      return null;
     },
     filteredIngredients() {
       let ingredientes = this.ingredientes;
