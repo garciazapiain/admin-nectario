@@ -144,6 +144,41 @@ router.get('/all-submissions', async (req, res, next) => {
   }
 });
 
+router.get('/latest-submissions', async (req, res, next) => {
+  const client = await connectDb();
+  try {
+    const result = await client.query(`
+      SELECT
+        s.id,
+        s.store,
+        s.timestamp,
+        s.compra
+      FROM
+        submissions s
+      INNER JOIN (
+        SELECT
+          store,
+          MAX(timestamp) AS latest_timestamp
+        FROM
+          submissions
+        WHERE
+          store IN ('moral', 'bosques')
+        GROUP BY
+          store
+      ) sub
+      ON
+        s.store = sub.store AND s.timestamp = sub.latest_timestamp
+      WHERE
+        s.store IN ('moral', 'bosques')
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    next(err);
+  } finally {
+    client.release();
+  }
+});
+
 router.get('/inventario-submissions', async (req, res, next) => {
   const client = await connectDb();
   try {
