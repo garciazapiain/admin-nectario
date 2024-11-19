@@ -1741,85 +1741,73 @@ app.get('/api/consumption/:store', async (req, res) => {
 
   try {
     const result = await client.query(`
-        SELECT 
-        id_ingrediente,
-        unidad,
-        proveedor,
-        nombre,
-        producto_clave,
-        precio,
-        ROUND(SUM(COALESCE(consumo_platillos, 0))::numeric, 2) AS consumo_platillos,
-        ROUND(SUM(COALESCE(consumo_subplatillos, 0))::numeric, 2) AS consumo_subplatillos,
-        ROUND((SUM(COALESCE(consumo_platillos, 0)) + SUM(COALESCE(consumo_subplatillos, 0)))::numeric, 2) AS total_consumido
+       SELECT 
+    i.id_ingrediente,
+    i.unidad,
+    i.proveedor,
+    i.nombre,
+    i.producto_clave,
+    i.precio,
+    ROUND(SUM(COALESCE(p.consumo_platillos, 0))::numeric, 2) AS consumo_platillos,
+    ROUND(SUM(COALESCE(sp.consumo_subplatillos, 0))::numeric, 2) AS consumo_subplatillos,
+    ROUND((SUM(COALESCE(p.consumo_platillos, 0)) + SUM(COALESCE(sp.consumo_subplatillos, 0)))::numeric, 2) AS total_consumido
+FROM 
+    ingredientes i
+LEFT JOIN (
+    SELECT 
+        pi.id_ingrediente,
+        SUM(vd.cantidad * pi.cantidad) AS consumo_platillos
     FROM 
         (
             SELECT 
-                pi.id_ingrediente AS id_ingrediente,
-                i.unidad AS unidad,
-                i.proveedor AS proveedor,
-                i.nombre AS nombre,
-                i.producto_clave AS producto_clave,
-                i.precio AS precio,
-                SUM(vd.cantidad * pi.cantidad) AS consumo_platillos,
-                0 AS consumo_subplatillos
+                SUM(vd.cantidad) AS cantidad,
+                vd.clavepos
             FROM 
-                (
-                    SELECT 
-                        SUM(vd.cantidad) AS cantidad,
-                        vd.clavepos
-                    FROM 
-                        ventasdata vd
-                    LEFT JOIN 
-                        ventaslog vl ON vd.ventaslogid = vl.id
-                    WHERE 
-                        vl.startdate = $1 AND vl.enddate = $2 AND vl.store = $3
-                    GROUP BY
-                        vd.clavepos
-                ) vd
-            RIGHT JOIN 
-                platillos p ON vd.clavepos = p.clavepos
-            RIGHT JOIN 
-                platillos_ingredientes pi ON p.id_platillo = pi.id_platillo
-            RIGHT JOIN 
-                ingredientes i ON pi.id_ingrediente = i.id_ingrediente
-            GROUP BY pi.id_ingrediente, i.unidad, i.proveedor, i.nombre, i.producto_clave, i.precio
-            UNION ALL
+                ventasdata vd
+            LEFT JOIN 
+                ventaslog vl ON vd.ventaslogid = vl.id
+            WHERE 
+                vl.startdate = $1 AND vl.enddate = $2 AND vl.store = $3
+            GROUP BY
+                vd.clavepos
+        ) vd
+    RIGHT JOIN 
+        platillos p ON vd.clavepos = p.clavepos
+    RIGHT JOIN 
+        platillos_ingredientes pi ON p.id_platillo = pi.id_platillo
+    GROUP BY pi.id_ingrediente
+) p ON i.id_ingrediente = p.id_ingrediente
+LEFT JOIN (
+    SELECT 
+        spi.id_ingrediente,
+        SUM(psi.cantidad * (spi.cantidad / sp.rendimiento) * vd.cantidad) AS consumo_subplatillos
+    FROM 
+        (
             SELECT 
-                spi.id_ingrediente AS id_ingrediente,
-                i.unidad AS unidad,
-                i.proveedor AS proveedor,
-                i.nombre AS nombre,
-                i.producto_clave AS producto_clave,
-                i.precio AS precio,
-                0 AS consumo_platillos,
-                SUM(psi.cantidad * (spi.cantidad / sp.rendimiento) * vd.cantidad) AS consumo_subplatillos
+                SUM(vd.cantidad) AS cantidad,
+                vd.clavepos
             FROM 
-                (
-                    SELECT 
-                        SUM(vd.cantidad) AS cantidad,
-                        vd.clavepos
-                    FROM 
-                        ventasdata vd
-                    LEFT JOIN 
-                        ventaslog vl ON vd.ventaslogid = vl.id
-                    WHERE 
-                        vl.startdate = $1 AND vl.enddate = $2 AND vl.store = $3
-                    GROUP BY
-                        vd.clavepos
-                ) vd
-            RIGHT JOIN 
-                platillos p ON vd.clavepos = p.clavepos
-            RIGHT JOIN 
-                platillos_subplatillos psi ON p.id_platillo = psi.id_platillo
-            RIGHT JOIN 
-                subplatillos sp ON psi.id_subplatillo = sp.id_subplatillo
-            RIGHT JOIN 
-                subplatillos_ingredientes spi ON sp.id_subplatillo = spi.id_subplatillo
-            RIGHT JOIN 
-                ingredientes i ON spi.id_ingrediente = i.id_ingrediente
-            GROUP BY spi.id_ingrediente, i.unidad, i.proveedor, i.nombre, i.producto_clave, i.precio, psi.cantidad, sp.rendimiento, spi.cantidad
-        ) t
-    GROUP BY id_ingrediente, unidad, proveedor, nombre, producto_clave, precio;`, 
+                ventasdata vd
+            LEFT JOIN 
+                ventaslog vl ON vd.ventaslogid = vl.id
+            WHERE 
+                vl.startdate = $1 AND vl.enddate = $2 AND vl.store = $3
+            GROUP BY
+                vd.clavepos
+        ) vd
+    RIGHT JOIN 
+        platillos p ON vd.clavepos = p.clavepos
+    RIGHT JOIN 
+        platillos_subplatillos psi ON p.id_platillo = psi.id_platillo
+    RIGHT JOIN 
+        subplatillos sp ON psi.id_subplatillo = sp.id_subplatillo
+    RIGHT JOIN 
+        subplatillos_ingredientes spi ON sp.id_subplatillo = spi.id_subplatillo
+    GROUP BY spi.id_ingrediente
+) sp ON i.id_ingrediente = sp.id_ingrediente
+GROUP BY i.id_ingrediente, i.unidad, i.proveedor, i.nombre, i.producto_clave, i.precio
+ORDER BY total_consumido DESC;
+`, 
 [startDate, endDate, store]);
 
     res.json(result.rows);
