@@ -160,6 +160,7 @@ export default {
         { label: "Inventario Inicial", value: "inicial" },
         { label: "Inventario Final", value: "final" }
       ],
+      isReady: false
     };
   },
   created() {
