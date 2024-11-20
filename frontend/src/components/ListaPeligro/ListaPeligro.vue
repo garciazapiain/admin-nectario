@@ -1,92 +1,96 @@
 <template>
-  <div>
-    <div v-if="submitMessage" :class="submitMessage.type">
-      {{ submitMessage.text }}
-    </div>
-    <!-- <button @click="verifyChangeIngredientCount">Check</button> -->
-    <div class="sticky-icon" @click="goDownPage">
-      <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-        class="feather feather-arrow-down">
-        <line x1="12" y1="5" x2="12" y2="19"></line>
-        <polyline points="19 12 12 19 5 12"></polyline>
-      </svg>
-    </div>
-    <h1>Lista Peligro - {{ store === "bosques" ? "Campestre" : store === "moral" ? "Moral" : "CEDIS" }}</h1>
-    <div class="update-info">
-      <p class="update-text">
-        Última actualización:
-        <span class="timestamp">{{ lastUpdate() }}</span>
-      </p>
-    </div>
-    <div class="filtros-container">
-      <h2>Filtros:</h2>
-      <label for="insumos">Tipo Insumos:</label>
-      <select class="filterBar" id="insumos" v-model="selectedInsumosTipo">
-        <option value="Lista Peligro">Lista peligro</option>
-        <!-- <option value="Transferencias">Transferencias</option> -->
-        <option value="Todos">Todos</option>
-      </select>
-      <label for="proveedores">Proveedores:</label>
-      <select class="filterBar" id="proveedores" v-model="selectedProveedor">
-        <option value="">Todos</option>
-        <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">
-          {{ proveedor.nombre }}
-        </option>
-      </select>
-      <!-- <label for="frecuencias_inventario">Frecuencia Inventario:</label>
+  <div v-if="!isReady" class="loading-message">
+    Loading, please wait...
+  </div>
+  <div v-else>
+    <div>
+      <div v-if="submitMessage" :class="submitMessage.type">
+        {{ submitMessage.text }}
+      </div>
+      <!-- <button @click="verifyChangeIngredientCount">Check</button> -->
+      <div class="sticky-icon" @click="goDownPage">
+        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="feather feather-arrow-down">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <polyline points="19 12 12 19 5 12"></polyline>
+        </svg>
+      </div>
+      <h1>Lista Peligro - {{ store === "bosques" ? "Campestre" : store === "moral" ? "Moral" : "CEDIS" }}</h1>
+      <div class="update-info">
+        <p class="update-text">
+          Última actualización:
+          <span class="timestamp">{{ lastUpdate() }}</span>
+        </p>
+      </div>
+      <div class="filtros-container">
+        <h2>Filtros:</h2>
+        <label for="insumos">Tipo Insumos:</label>
+        <select class="filterBar" id="insumos" v-model="selectedInsumosTipo">
+          <option value="Lista Peligro">Lista peligro</option>
+          <!-- <option value="Transferencias">Transferencias</option> -->
+          <option value="Todos">Todos</option>
+        </select>
+        <label for="proveedores">Proveedores:</label>
+        <select class="filterBar" id="proveedores" v-model="selectedProveedor">
+          <option value="">Todos</option>
+          <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">
+            {{ proveedor.nombre }}
+          </option>
+        </select>
+        <!-- <label for="frecuencias_inventario">Frecuencia Inventario:</label>
       <select class="filterBar" id="frecuencias_inventario" v-model="selectedFrecuencia">
         <option value="">Todos</option>
         <option value="inicio_primer_turno">Inicio primer turno</option>
         <option value="inicio_segundo_turno">Inicio segundo turno</option>
         <option value="fin_segundo_turno">Fin segundo turno</option>
       </select> -->
-    </div>
-    <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="search-bar" />
-    <div class="checkbox-container" v-if="isAdmin">
-      <input type="checkbox" id="inventarioCheckbox" v-model="selectedInventarioOption" class="checkbox-input" />
-      <label for="inventarioCheckbox" class="checkbox-label">
-        <span class="checkbox-custom"></span> Inventario semanal
-      </label>
-    </div>
-    <!-- ... -->
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Unidad</th>
-            <th>Cantidad</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(ingrediente, index) in filteredIngredients" :key="index">
-            <td class="text-white" style="font-size: 20px">{{ ingrediente.nombre }}</td>
-            <td class="text-white" style="font-size: 20px">{{ ingrediente.unidad }}</td>
-            <td class="text-white">
-              <div class="input-row">
-                <input v-model.number="ingrediente.cantidad_inventario" min="0"
-                  @change="updateSubmitData(ingrediente)" />
-              </div>
-              <div class="button-row-parent">
-                <div class="button-row">
-                  <div class="button-container">
-                    <button class="button-increase-decrease" @click="decreaseQuantity(ingrediente)">
-                      -
+      </div>
+      <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="search-bar" />
+      <div class="checkbox-container" v-if="isAdmin">
+        <input type="checkbox" id="inventarioCheckbox" v-model="selectedInventarioOption" class="checkbox-input" />
+        <label for="inventarioCheckbox" class="checkbox-label">
+          <span class="checkbox-custom"></span> Inventario semanal
+        </label>
+      </div>
+      <!-- ... -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Unidad</th>
+              <th>Cantidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(ingrediente, index) in filteredIngredients" :key="index">
+              <td class="text-white" style="font-size: 20px">{{ ingrediente.nombre }}</td>
+              <td class="text-white" style="font-size: 20px">{{ ingrediente.unidad }}</td>
+              <td class="text-white">
+                <div class="input-row">
+                  <input v-model.number="ingrediente.cantidad_inventario" min="0"
+                    @change="updateSubmitData(ingrediente)" />
+                </div>
+                <div class="button-row-parent">
+                  <div class="button-row">
+                    <div class="button-container">
+                      <button class="button-increase-decrease" @click="decreaseQuantity(ingrediente)">
+                        -
+                      </button>
+                    </div>
+                    <div class="button-container">
+                      <button class="button-increase-decrease" @click="increaseQuantity(ingrediente)">
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  <div v-if="!ingrediente.producto_clave">
+                    <button class="button-suficiente" @click="setSufficient(ingrediente)">
+                      Suficiente
                     </button>
                   </div>
-                  <div class="button-container">
-                    <button class="button-increase-decrease" @click="increaseQuantity(ingrediente)">
-                      +
-                    </button>
-                  </div>
-                </div>
-                <div v-if="!ingrediente.producto_clave">
-                  <button class="button-suficiente" @click="setSufficient(ingrediente)">
-                    Suficiente
-                  </button>
-                </div>
-                <!-- <div class="">
+                  <!-- <div class="">
                   <button
                     class="button-casiNoHay"
                     @click="setCasiNoHay(ingrediente)"
@@ -94,23 +98,24 @@
                     Casi no hay
                   </button>
                 </div> -->
-                <div class="">
-                  <button class="button-agotado" @click="setAgotado(ingrediente)">
-                    Agotado
-                  </button>
+                  <div class="">
+                    <button class="button-agotado" @click="setAgotado(ingrediente)">
+                      Agotado
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="sticky-submit-wrapper">
-      <button v-if="isAdmin" class="button-resetear" @click="confirmReset">
-        Resetear
-      </button>
-      <button class="button-actualizar" @click="submitForm">Actualizar</button>
-      <button v-if="isAdmin" class="button-whatsapp" @click="sendWhatsAppMessage">Whatsapp</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sticky-submit-wrapper">
+        <button v-if="isAdmin" class="button-resetear" @click="confirmReset">
+          Resetear
+        </button>
+        <button class="button-actualizar" @click="submitForm">Actualizar</button>
+        <button v-if="isAdmin" class="button-whatsapp" @click="sendWhatsAppMessage">Whatsapp</button>
+      </div>
     </div>
   </div>
 </template>
@@ -846,5 +851,12 @@ input {
   border-left: 2px solid white;
   border-bottom: 2px solid white;
   transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.loading-message {
+  text-align: center;
+  font-size: 18px;
+  padding: 20px;
+  color: #666;
 }
 </style>
