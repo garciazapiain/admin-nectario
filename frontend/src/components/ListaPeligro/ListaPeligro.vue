@@ -566,55 +566,64 @@ export default {
     },
   },
   async mounted() {
-    const response = await fetch(`${API_URL}/ingredientes`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    this.ingredientes = data;
-    const responseSubmissions = await fetch(`${API_URL}/submissions/all-submissions`);
-    if (!responseSubmissions.ok) {
-      throw new Error(`HTTP error! status: ${responseSubmissions.status}`);
-    }
-    this.submissions = await responseSubmissions.json();
-
-    const storeSubmissions = this.submissions.filter(
-      (submission) => submission.store === this.store
-    );
-    let latestSubmission = null;
-    if (storeSubmissions.length > 0) {
-      latestSubmission = storeSubmissions.reduce((latest, current) =>
-        new Date(latest.timestamp) > new Date(current.timestamp)
-          ? latest
-          : current
-      );
-    }
-
-    this.ingredientes.forEach((ingrediente) => {
-      if (latestSubmission && latestSubmission.compra) {
-        const ingredientData = latestSubmission.compra.find(
-          (i) => i.id_ingrediente === ingrediente.id_ingrediente
-        );
-        ingrediente.cantidad_inventario = ingredientData
-          ? ingredientData.cantidad_inventario
-          : 0;
-      } else {
-        ingrediente.cantidad_inventario = 0; // Initialize cantidad for each ingredient
+    try {
+      const response = await fetch(`${API_URL}/ingredientes`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-      this.updateSubmitData(ingrediente); // Initialize submitData
-    });
 
-    this.originalIngredientes = JSON.parse(JSON.stringify(this.ingredientes));
-    const proveedoresResponse = await fetch(`${API_URL}/proveedores`);
-    if (proveedoresResponse.ok) {
-      let proveedores = await proveedoresResponse.json();
-      // Filter out the provider with id 1
-      this.proveedores = proveedores.filter((proveedor) => proveedor.id !== 1);
-    } else {
-      console.error("HTTP error:", proveedoresResponse.status);
+      const data = await response.json();
+      this.ingredientes = data;
+
+      const responseSubmissions = await fetch(`${API_URL}/submissions/all-submissions`);
+      if (!responseSubmissions.ok) {
+        throw new Error(`HTTP error! status: ${responseSubmissions.status}`);
+      }
+
+      this.submissions = await responseSubmissions.json();
+
+      const storeSubmissions = this.submissions.filter(
+        (submission) => submission.store === this.store
+      );
+      let latestSubmission = null;
+      if (storeSubmissions.length > 0) {
+        latestSubmission = storeSubmissions.reduce((latest, current) =>
+          new Date(latest.timestamp) > new Date(current.timestamp)
+            ? latest
+            : current
+        );
+      }
+
+      this.ingredientes.forEach((ingrediente) => {
+        if (latestSubmission && latestSubmission.compra) {
+          const ingredientData = latestSubmission.compra.find(
+            (i) => i.id_ingrediente === ingrediente.id_ingrediente
+          );
+          ingrediente.cantidad_inventario = ingredientData
+            ? ingredientData.cantidad_inventario
+            : 0;
+        } else {
+          ingrediente.cantidad_inventario = 0; // Initialize cantidad for each ingredient
+        }
+        this.updateSubmitData(ingrediente); // Initialize submitData
+      });
+
+      this.originalIngredientes = JSON.parse(JSON.stringify(this.ingredientes));
+
+      const proveedoresResponse = await fetch(`${API_URL}/proveedores`);
+      if (proveedoresResponse.ok) {
+        let proveedores = await proveedoresResponse.json();
+        this.proveedores = proveedores.filter((proveedor) => proveedor.id !== 1);
+      } else {
+        console.error("HTTP error:", proveedoresResponse.status);
+      }
+
+      // Set `isReady` to true after all data is fetched and processed
+      this.isReady = true;
+    } catch (error) {
+      console.error("Error during data loading:", error);
     }
-  },
+  }
 };
 </script>
 
