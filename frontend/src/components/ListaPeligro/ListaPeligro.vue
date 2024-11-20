@@ -1,6 +1,6 @@
 <template>
   <div v-if="!isReady" class="loading-message">
-    Loading, please wait...
+    Cargando página...
   </div>
   <div v-else>
     <div>
