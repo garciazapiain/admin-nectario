@@ -23,47 +23,33 @@ const currentEntrada = ref(null); // Tracks which row's action is being performe
 // Function to generate weeks
 const generateWeeks = () => {
   const weekOptions = [];
-  const startOfYear = new Date(new Date().getFullYear(), 0, 1);
+  const today = new Date();
+  const startOfWeek = new Date(today);
+  const endOfWeek = new Date(today);
 
-  // Adjust to the first Monday of the year
-  while (startOfYear.getDay() !== 1) {
-    startOfYear.setDate(startOfYear.getDate() + 1);
-  }
+  // Adjust to the current week's Monday
+  startOfWeek.setDate(today.getDate() - today.getDay() + 1); // Move to Monday
+  endOfWeek.setDate(startOfWeek.getDate() + 6); // Sunday of the same week
 
-  const currentDate = new Date();
+  // Format the week label
+  const weekStartMonth = startOfWeek.toLocaleString('es-ES', { month: 'long' });
+  const weekEndMonth = endOfWeek.toLocaleString('es-ES', { month: 'long' });
+  const label =
+    weekStartMonth !== weekEndMonth
+      ? `${startOfWeek.getDate()} ${weekStartMonth} al ${endOfWeek.getDate()} ${weekEndMonth}`
+      : `${startOfWeek.getDate()} al ${endOfWeek.getDate()} de ${weekStartMonth}`;
 
-  // Loop to generate weeks until the current date
-  while (startOfYear <= currentDate) {
-    const weekStart = new Date(startOfYear);
-    const weekEnd = new Date(startOfYear);
-    weekEnd.setDate(weekEnd.getDate() + 6);
+  // Add the current week as the only option
+  weekOptions.push({
+    value: `${startOfWeek.toISOString().split('T')[0]}_${endOfWeek.toISOString().split('T')[0]}`,
+    label: label,
+  });
 
-    // Get month and day names for start and end dates
-    const weekStartMonth = weekStart.toLocaleString('es-ES', { month: 'long' });
-    const weekEndMonth = weekEnd.toLocaleString('es-ES', { month: 'long' });
-
-    // Generate the label based on whether the week crosses into a new month
-    let label;
-    if (weekStartMonth !== weekEndMonth) {
-      // If start and end are in different months, include both months in the label
-      label = `${weekStart.getDate()} ${weekStartMonth} al ${weekEnd.getDate()} ${weekEndMonth}`;
-    } else {
-      // If within the same month, include the month only once at the end
-      label = `${weekStart.getDate()} al ${weekEnd.getDate()} de ${weekStartMonth}`;
-    }
-
-    // Add the week option to the list
-    weekOptions.push({
-      value: `${weekStart.toISOString().split('T')[0]}_${weekEnd.toISOString().split('T')[0]}`,
-      label: label
-    });
-
-    // Move to the next week
-    startOfYear.setDate(startOfYear.getDate() + 7);
-  }
-
-  weeks.value = weekOptions.reverse(); // Reverse to show the latest weeks first
+  weeks.value = weekOptions;
+  selectedWeek.value = weekOptions[0].value; // Set the current week as default
+  updateDateRange(); // Update the start and end date based on the selected week
 };
+
 
 // Function to handle week range selection and update
 const updateDateRange = () => {
