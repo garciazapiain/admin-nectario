@@ -47,7 +47,7 @@
                     <th>Consumo Real</th>
                     <th>Consumo Teórico</th>
                     <th>Diferencia %</th>
-                    <th>Diferencia $</th>
+                    <th v-if="isAdmin">Diferencia $</th>
                 </tr>
             </thead>
             <tbody>
@@ -71,7 +71,7 @@
                     <td :style="{ color: getPercentageDifferenceColor(item.id_ingrediente) }">
                         {{ calculatePercentageDifference(item.id_ingrediente) }}%
                     </td>
-                    <td>
+                    <td v-if="isAdmin">
                         {{ calculateDollarDifference(item.id_ingrediente).toFixed(2) }}
                     </td>
                 </tr>
