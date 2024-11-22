@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Análisis de Consumo</h1>
+        <h1>Análisis de Inventario</h1>
         <!-- Week Selection -->
         <div>
             <h2>Seleccionar por semana</h2>
