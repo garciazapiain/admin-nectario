@@ -77,17 +77,20 @@ const updateDateRange = () => {
 // Fetch "Entradas y Salidas" data for the selected week range
 const fetchEntradasSalidasCompras = async () => {
   try {
-    const response = await fetch(`${API_URL}/entradas_salidas/compras?startDate=${startDate.value}&endDate=${endDate.value}`);
+    const response = await fetch(
+      `${API_URL}/entradas_salidas/compras?startDate=${startDate.value}&endDate=${endDate.value}`
+    );
 
     if (!response.ok) {
       console.error(`Error: ${response.statusText}`);
-      throw new Error('Failed to fetch');
+      throw new Error("Failed to fetch");
     }
 
     const data = await response.json();
-    entradasSalidas.value = data;
+    // Sort alphabetically by 'nombre' before updating the reactive variable
+    entradasSalidas.value = data.sort((a, b) => a.nombre.localeCompare(b.nombre));
   } catch (error) {
-    console.error('Failed to fetch Entradas y Salidas de compras:', error);
+    console.error("Failed to fetch Entradas y Salidas de compras:", error);
   }
 };
 
@@ -116,13 +119,14 @@ const openModal = (entrada, tipo) => {
 // Update the submit function to be triggered only when the user submits data via the modal.
 const handleSubmit = async () => {
   if (!currentEntrada.value || !movimientoTipo.value) {
-    console.error('Data missing for submission');
+    console.error("Data missing for submission");
     return;
   }
 
-  const apiRoute = movimientoTipo.value === 'inventario_inicial_cedis_transfer'
-    ? `${API_URL}/entradas_salidas/movimiento/inventario_inicial_cedis_transfer`
-    : `${API_URL}/entradas_salidas/movimiento/transfers`;
+  const apiRoute =
+    movimientoTipo.value === "inventario_inicial_cedis_transfer"
+      ? `${API_URL}/entradas_salidas/movimiento/inventario_inicial_cedis_transfer`
+      : `${API_URL}/entradas_salidas/movimiento/transfers`;
 
   const payload = {
     id_ingrediente: currentEntrada.value.id_ingrediente,
@@ -136,28 +140,30 @@ const handleSubmit = async () => {
 
   try {
     const response = await fetch(apiRoute, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
       console.error(`Error: ${response.statusText}`);
-      resultMessage.value = 'Error al hacer movimiento';
+      resultMessage.value = "Error al hacer movimiento";
       showResultModal.value = true;
-      throw new Error('Failed to update movimiento');
+      throw new Error("Failed to update movimiento");
     }
 
-    console.log('Movimiento updated successfully');
+    console.log("Movimiento updated successfully");
     resultMessage.value = `Se transfirió exitósamente ${cantidad.value} ${currentEntrada.value.unidad} de ${origen.value} a ${destino.value} para el ingrediente ${currentEntrada.value.nombre}.`;
     showResultModal.value = true;
     showModal.value = false; // Close the input modal
-    fetchEntradasSalidasCompras(); // Refresh data after update
+
+    // Refresh data after update and sort alphabetically
+    await fetchEntradasSalidasCompras();
+    entradasSalidas.value.sort((a, b) => a.nombre.localeCompare(b.nombre));
   } catch (error) {
-    console.error('Failed to update movimiento:', error);
-    resultMessage.value = 'Error al hacer movimiento';
+    console.error("Failed to update movimiento:", error);
+    resultMessage.value = "Error al hacer movimiento";
     showResultModal.value = true;
-    handleCerrar()
   }
 };
 
