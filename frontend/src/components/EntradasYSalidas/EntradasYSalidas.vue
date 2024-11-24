@@ -71,7 +71,7 @@ const calculateWeekRange = () => {
 
   // Find the current week's Monday
   const startOfWeek = new Date(today);
-  startOfWeek.setDate(today.getDate() - today.getDay() + 1); // Adjust to Monday (start of the week)
+  startOfWeek.setDate(today.getDate() - today.getDay()); // Adjust to Monday (start of the week)
 
   // Find the current week's Sunday
   const endOfWeek = new Date(startOfWeek);
