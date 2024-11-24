@@ -253,7 +253,7 @@ generateWeeks();
           <th class="py-2 px-4 text-left">CEDIS</th>
           <th class="py-2 px-4 text-left">Moral</th>
           <th class="py-2 px-4 text-left">Campestre</th>
-          <th class="py-2 px-4 text-left">Total</th>
+          <!-- <th class="py-2 px-4 text-left">Total</th> -->
         </tr>
       </thead>
       <tbody>
@@ -293,9 +293,9 @@ generateWeeks();
             <button @click="openModal(entrada, 'Movimiento')"
               class="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md">Movimiento</button>
           </td>
-          <td class="py-2 px-4">{{ Number(entrada.total_quantity) +
+          <!-- <td class="py-2 px-4">{{ Number(entrada.total_quantity) +
             Number(entrada.transfers_inventario_inicial_cedis_a_bosques) +
-            Number(entrada.transfers_inventario_inicial_cedis_a_moral) }}</td>
+            Number(entrada.transfers_inventario_inicial_cedis_a_moral) }}</td> -->
         </tr>
       </tbody>
     </table>
