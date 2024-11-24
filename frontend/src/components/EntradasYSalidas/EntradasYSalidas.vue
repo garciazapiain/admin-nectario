@@ -62,6 +62,7 @@ const updateDateRange = () => {
 const formatDateToLocal = (date) => {
   const adjustedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60 * 1000);
   adjustedDate.setDate(adjustedDate.getDate() + 1); // Adjust one day forward
+  console.log('adjusted date', adjustedDate.toISOString().split('T')[0])
   return adjustedDate.toISOString().split('T')[0];
 };
 
