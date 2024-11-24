@@ -28,7 +28,7 @@ const generateWeeks = () => {
   const endOfWeek = new Date(today);
 
   // Adjust to the current week's Monday
-  startOfWeek.setDate(today.getDate() - today.getDay()); // Move to Monday
+  startOfWeek.setDate(today.getDate() - today.getDay() + 1); // Move to Monday
   endOfWeek.setDate(startOfWeek.getDate() + 6); // Sunday of the same week
 
   // Format the week label
