@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import API_URL from "../../config";
+import { reactive } from "vue";
 
 // Local storage admin check (Optional if needed for admin-specific logic)
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
@@ -9,8 +10,6 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 const entradasSalidas = ref([]);
 const weeks = ref([]);
 const selectedWeek = ref(null);
-const startDate = ref(null);
-const endDate = ref(null);
 const today = ref(new Date().toISOString().split('T')[0]);
 
 // Modal visibility and form data
@@ -59,6 +58,38 @@ const updateDateRange = () => {
     endDate.value = end;
   }
 };
+
+const formatDateToLocal = (date) => {
+  const offset = date.getTimezoneOffset();
+  const localDate = new Date(date.getTime() - offset * 60 * 1000);
+  return localDate.toISOString().split('T')[0]; // Convert to YYYY-MM-DD
+};
+
+// Calculate the current week's Monday and Sunday
+const calculateWeekRange = () => {
+  const today = new Date();
+
+  // Find the current week's Monday
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - today.getDay() + 1); // Adjust to Monday (start of the week)
+
+  // Find the current week's Sunday
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6); // Adjust to Sunday (end of the week)
+
+  return {
+    startDate: formatDateToLocal(startOfWeek),
+    endDate: formatDateToLocal(endOfWeek),
+  };
+};
+
+// Assign dates explicitly based on week range
+const weekRange = calculateWeekRange();
+const startDate = reactive({ value: weekRange.startDate });
+const endDate = reactive({ value: weekRange.endDate });
+
+// Logging for debug
+console.log("Start Date:", startDate.value, "End Date:", endDate.value);
 
 // Fetch "Entradas y Salidas" data for the selected week range
 const fetchEntradasSalidasCompras = async () => {
