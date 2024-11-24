@@ -156,14 +156,24 @@ const handleSubmit = async () => {
       ? `${API_URL}/entradas_salidas/movimiento/inventario_inicial_cedis_transfer`
       : `${API_URL}/entradas_salidas/movimiento/transfers`;
 
+  // Adjust startDate and endDate by subtracting one day
+  const adjustedStart = new Date(new Date(startDate.value).setDate(new Date(startDate.value).getDate() - 1))
+    .toISOString()
+    .split("T")[0];
+  const adjustedEnd = new Date(new Date(endDate.value).setDate(new Date(endDate.value).getDate() - 1))
+    .toISOString()
+    .split("T")[0];
+
+  console.log("Submitting with adjusted dates:", adjustedStart, adjustedEnd); // Debugging
+
   const payload = {
     id_ingrediente: currentEntrada.value.id_ingrediente,
     movimientoTipo: movimientoTipo.value,
     origen: origen.value,
     destino: destino.value,
     cantidad: cantidad.value,
-    startDate: startDate.value,
-    endDate: endDate.value,
+    startDate: adjustedStart, // Use adjusted date
+    endDate: adjustedEnd, // Use adjusted date
   };
 
   try {
