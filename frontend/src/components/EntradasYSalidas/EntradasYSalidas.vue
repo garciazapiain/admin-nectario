@@ -62,14 +62,14 @@ const updateDateRange = () => {
 const formatDateToLocal = (date) => {
   const offset = date.getTimezoneOffset();
   const localDate = new Date(date.getTime() - offset * 60 * 1000);
-  console.log(localDate)
+  console.log('local date ' , localDate)
   return localDate.toISOString().split('T')[0]; // Convert to YYYY-MM-DD
 };
 
 // Calculate the current week's Monday and Sunday
 const calculateWeekRange = () => {
   const today = new Date();
-  console.log(today)
+  console.log('today ', today)
 
   // Find the current week's Monday
   const startOfWeek = new Date(today);
