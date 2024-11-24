@@ -106,7 +106,7 @@ const fetchEntradasSalidasCompras = async () => {
   console.log("Making API call with adjusted dates:", adjustedStart, adjustedEnd); // Debugging
   try {
     const response = await fetch(
-      `${API_URL}/entradas_salidas/compras?startDate=${startDate.value}&endDate=${endDate.value}`
+      `${API_URL}/entradas_salidas/compras?startDate=${adjustedStart}&endDate=${adjustedEnd}`
     );
 
     if (!response.ok) {
