@@ -95,6 +95,11 @@ console.log("Start Date:", startDate.value, "End Date:", endDate.value);
 
 // Fetch "Entradas y Salidas" data for the selected week range
 const fetchEntradasSalidasCompras = async () => {
+    // Use local variables to ensure correct values
+    const start = startDate.value;
+    const end = endDate.value;
+
+    console.log("Making API call with:", start, end); // Debugging
   try {
     const response = await fetch(
       `${API_URL}/entradas_salidas/compras?startDate=${startDate.value}&endDate=${endDate.value}`
