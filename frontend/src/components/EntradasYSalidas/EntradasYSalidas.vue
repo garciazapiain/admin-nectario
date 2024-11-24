@@ -60,10 +60,9 @@ const updateDateRange = () => {
 };
 
 const formatDateToLocal = (date) => {
-  const offset = date.getTimezoneOffset();
-  const localDate = new Date(date.getTime() - offset * 60 * 1000);
-  console.log('local date ' , localDate)
-  return localDate.toISOString().split('T')[0]; // Convert to YYYY-MM-DD
+  const adjustedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60 * 1000);
+  adjustedDate.setDate(adjustedDate.getDate() + 1); // Adjust one day forward
+  return adjustedDate.toISOString().split('T')[0];
 };
 
 // Calculate the current week's Monday and Sunday
