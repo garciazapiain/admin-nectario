@@ -14,7 +14,10 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 <template>
   <div>
     <h1>{{ ingrediente.nombre }}</h1>
-    <h2>Info del insumo: <button v-if="isAdmin" @click="showModal = true">Editar</button></h2>
+    <h2>
+      Info del insumo:
+      <button v-if="isAdmin" @click="showModal = true">Editar</button>
+    </h2>
     <div v-if="showModal" class="modal">
       <form @submit.prevent="editIngrediente" class="grid grid-cols-2 gap-4 edit-form">
         <div class="form-group">
@@ -63,12 +66,12 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
           <input id="orden_inventario" type="number" step="0.1" v-model.number="ingredienteEditado.orden_inventario" />
         </div>
         <div class="form-group">
-          <label for="store_route_order">Moral Demanda Semanal:</label>
+          <label for="moral_demanda_semanal">Moral Demanda Semanal:</label>
           <input id="moral_demanda_semanal" type="number" step="0.01"
             v-model.number="ingredienteEditado.moral_demanda_semanal" />
         </div>
         <div class="form-group">
-          <label for="store_route_order">Campestre Demanda Semanal:</label>
+          <label for="bosques_demanda_semanal">Campestre Demanda Semanal:</label>
           <input id="bosques_demanda_semanal" type="number" step="0.01"
             v-model.number="ingredienteEditado.bosques_demanda_semanal" />
         </div>
@@ -81,6 +84,14 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
             <option value="3">Fin segundo turno</option>
             <option value="4">No inventarear</option>
           </select>
+        </div>
+        <div class="form-group">
+          <label for="image">Actualizar Imagen:</label>
+          <input id="image" type="file" @change="handleFileUpload" />
+        </div>
+        <div v-if="ingredienteEditado.image_url">
+          <label>Imagen Actual:</label>
+          <img :src="ingredienteEditado.image_url" alt="Ingrediente Imagen" width="200" />
         </div>
         <div class="grid grid-cols-2 gap-4 form-actions">
           <button type="submit">Guardar</button>
@@ -120,63 +131,19 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
         </tr>
         <tr>
           <td><strong>Moral Demanda Semanal:</strong></td>
-          <td>
-            {{ ingrediente.moral_demanda_semanal }}
-            <span v-if="ingrediente.moral_demanda_semanal">{{
-              ingrediente.unidad
-              }}</span>
-          </td>
+          <td>{{ ingrediente.moral_demanda_semanal }} <span v-if="ingrediente.moral_demanda_semanal">{{
+            ingrediente.unidad }}</span></td>
         </tr>
         <tr>
           <td><strong>Campestre Demanda Semanal:</strong></td>
-          <td>
-            {{ ingrediente.bosques_demanda_semanal }}
-            <span v-if="ingrediente.bosques_demanda_semanal">{{
-              ingrediente.unidad
-              }}</span>
-          </td>
+          <td>{{ ingrediente.bosques_demanda_semanal }} <span v-if="ingrediente.bosques_demanda_semanal">{{
+            ingrediente.unidad }}</span></td>
         </tr>
         <tr>
+          <td><strong>Imagen:</strong></td>
           <td>
-            <strong>Moral Demanda
-              <input type="number" v-model="inputDaysMoral" /> dias:</strong>
-          </td>
-          <td>
-            {{
-              calculateDemandDays(
-                ingrediente.moral_demanda_semanal,
-                "moral"
-              ).toFixed(1)
-            }}
-            <span v-if="ingrediente.moral_demanda_semanal">{{
-              ingrediente.unidad
-              }}</span>
-          </td>
-        </tr>
-        <tr>
-          <td><strong>Campestre Demanda Semanal:</strong></td>
-          <td>
-            {{ ingrediente.bosques_demanda_semanal }}
-            <span v-if="ingrediente.bosques_demanda_semanal">{{
-              ingrediente.unidad
-              }}</span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong>Campestre Demanda
-              <input type="number" v-model="inputDaysBosques" /> dias:</strong>
-          </td>
-          <td>
-            {{
-              calculateDemandDays(
-                ingrediente.bosques_demanda_semanal,
-                "bosques"
-              ).toFixed(1)
-            }}
-            <span v-if="ingrediente.bosques_demanda_semanal">{{
-              ingrediente.unidad
-              }}</span>
+            <img v-if="ingrediente.image_url" :src="ingrediente.image_url" alt="Ingrediente Imagen" width="200" />
+            <span v-else>No hay imagen disponible</span>
           </td>
         </tr>
         <tr>
@@ -184,8 +151,7 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
           <td>
             <span v-for="(frecuencia, index) in ingrediente.frecuencias_inventario" :key="index">
               {{ displayFrecuencia(frecuencia) }}
-              <span v-if="index < ingrediente.frecuencias_inventario.length - 1">,
-              </span>
+              <span v-if="index < ingrediente.frecuencias_inventario.length - 1">, </span>
             </span>
           </td>
         </tr>
@@ -222,6 +188,7 @@ export default {
       unidades: [],
       inputDaysBosques: 1,
       inputDaysMoral: 1,
+      selectedImage: null, // Add this line to define selectedImage
     };
   },
   computed: {
@@ -262,30 +229,69 @@ export default {
         this.ingredienteEditado.proveedor_id = selectedProveedor.id;
       }
     },
+    handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        this.selectedImage = file; // Set the selected image
+        console.log("Selected image:", this.selectedImage); // Debug log
+      } else {
+        console.warn("No file selected.");
+      }
+    },
     async editIngrediente() {
       const id = this.$route.params.id;
-      let map = {
+
+      // Map frecuencias_inventario to numeric values
+      const map = {
         inicio_primer_turno: 1,
         inicio_segundo_turno: 2,
         fin_segundo_turno: 3,
         no_inventarear: 4,
       };
       this.ingredienteEditado.frecuencias_inventario =
-        this.ingredienteEditado.frecuencias_inventario.map((value) => {
-          return map[value] || value;
+        this.ingredienteEditado.frecuencias_inventario.map((value) => map[value] || value);
+
+      // Handle image upload if a file is selected
+      let imageUrl = this.ingredienteEditado.image_url; // Default to the existing image URL
+
+      if (this.selectedImage) {
+        const formData = new FormData();
+        formData.append("image", this.selectedImage);
+        formData.append("id_ingrediente", id);
+
+        const imageResponse = await fetch(`${API_URL}/ingredient_image/upload`, {
+          method: "POST",
+          body: formData,
         });
+
+        if (!imageResponse.ok) {
+          throw new Error(`Image upload failed: ${imageResponse.status}`);
+        }
+
+        const imageResult = await imageResponse.json();
+        imageUrl = imageResult.image_url; // Get the new uploaded image URL
+      }
+
+      // Update ingrediente data
+      const updatedData = {
+        ...this.ingredienteEditado,
+        image_url: imageUrl, // Include the new or existing image URL
+      };
+
       const response = await fetch(`${API_URL}/ingredientes/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(this.ingredienteEditado),
+        body: JSON.stringify(updatedData),
       });
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`Error updating ingrediente: ${response.status}`);
       }
+
       this.showModal = false;
-      location.reload();
+      location.reload(); // Reload the page to reflect the updated data
     },
   },
   async mounted() {
