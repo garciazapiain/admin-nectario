@@ -93,5 +93,21 @@ router.put('/:id_ingrediente', async (req, res) => {
     }
   });
     
+  // DELETE all planeacion_compra records
+router.delete('/', async (req, res) => {
+    const client = await connectDb();
+  
+    try {
+      const query = 'DELETE FROM planeacion_compra';
+      await client.query(query);
+      res.status(200).json({ message: 'All records deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting all planeacion_compra records:', error);
+      res.status(500).json({ error: 'Error deleting records' });
+    } finally {
+      client.release();
+    }
+  });
+  
 
 module.exports = router;

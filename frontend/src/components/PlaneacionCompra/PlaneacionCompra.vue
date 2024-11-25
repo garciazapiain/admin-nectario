@@ -42,6 +42,9 @@
           <!-- Submit Button -->
           <button class="button-submit" @click="submitPlaneacionCompra">Guardar Planeación</button>
         </div>
+        <button class="button-clear" @click="clearPlaneacionCompra">
+          Limpiar Planeación de Compra
+        </button>
       </table>
     </div>
 
@@ -251,6 +254,35 @@ const submitPlaneacionCompra = async () => {
   }
 };
 
+/**
+ * Clear all data from the planeacion_compra table
+ */
+const clearPlaneacionCompra = async () => {
+  const confirmClear = confirm("¿Estás seguro de que deseas eliminar toda la planeación de compra?");
+
+  if (!confirmClear) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/planeacion_compra`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error clearing planeacion_compra: ${response.status}`);
+    }
+
+    console.log("Planeación de compra cleared successfully");
+    planeacionCompra.value = []; // Clear local state
+    alert("Planeación de compra eliminada con éxito.");
+  } catch (error) {
+    console.error("Error clearing planeacion_compra:", error);
+    alert("Error al eliminar la planeación de compra.");
+  }
+};
+
+
 // Fetch initial data on component mount
 const fetchInitialData = async () => {
   await Promise.all([fetchIngredients(), fetchPlaneacionCompra(), fetchProveedores()]);
@@ -307,5 +339,22 @@ fetchInitialData();
 
 .button-submit:hover {
   background-color: #45a049;
+}
+
+.button-clear {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #dc3545;
+  /* Red for warning */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.button-clear:hover {
+  background-color: #b22222;
+  /* Darker red */
 }
 </style>
