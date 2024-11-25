@@ -157,10 +157,10 @@ const handleSubmit = async () => {
       : `${API_URL}/entradas_salidas/movimiento/transfers`;
 
   // Adjust startDate and endDate by subtracting one day
-  const adjustedStart = new Date(new Date(startDate.value).setDate(new Date(startDate.value).getDate() - 1))
+  const adjustedStart = new Date(new Date(startDate.value).setDate(new Date(startDate.value).getDate()))
     .toISOString()
     .split("T")[0];
-  const adjustedEnd = new Date(new Date(endDate.value).setDate(new Date(endDate.value).getDate() - 1))
+  const adjustedEnd = new Date(new Date(endDate.value).setDate(new Date(endDate.value).getDate()))
     .toISOString()
     .split("T")[0];
 
