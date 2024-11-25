@@ -24,6 +24,8 @@ import InventariosHome from './components/Inventarios/Home.vue';
 import AnalisisConsumo from './components/AnalisisConsumo/AnalisisConsumo.vue';
 import AgregarCompra from './components/HistorialCompra/AgregarCompra.vue';
 import EntradasYSalidas from './components/EntradasYSalidas/EntradasYSalidas.vue';
+import PlaneacionCompra from './components/PlaneacionCompra/PlaneacionCompra.vue';
+import CompraManejo from './components/CompraManejo/CompraManejo.vue';
 
 export default [
     { path: '/', component: Home },
@@ -51,5 +53,8 @@ export default [
     { path: '/consumoinsumos/cargarventa', component: CargarVenta },
     { path: '/facturacion', component: Facturacion },
     { path: '/analisis-consumo', component: AnalisisConsumo },
-    { path: '/entradasysalidas', component: EntradasYSalidas }
+    { path: '/entradasysalidas', component: EntradasYSalidas },
+    { path: '/planeacioncompra', component: PlaneacionCompra },
+    { path: '/planeacioncompra', component: PlaneacionCompra },
+    { path: '/compradeldia', component: CompraManejo }
 ];

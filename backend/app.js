@@ -8,6 +8,7 @@ const { Pool } = require('pg');
 const authRoutes = require('./api/auth');
 const submissionRoutes = require('./api/submissions');
 const entradasSalidasRouter = require('./api/entradas_salidas');
+const planeacionCompraRouter = require('./api/planeacion_compra');
 
 // const retrieveInbox = require('./api/retrieve_inbox');
 
@@ -26,7 +27,8 @@ const pool = new Pool({
 
 app.use('/api/auth', authRoutes);
 app.use('/api/submissions', submissionRoutes);
-app.use('/api/entradas_salidas', entradasSalidasRouter)
+app.use('/api/entradas_salidas', entradasSalidasRouter);
+app.use('/api/planeacion_compra', planeacionCompraRouter);
 // app.use('/api/retrieveinbox', retrieveInbox);
 
 app.get('/api/platillos', async (req, res) => {

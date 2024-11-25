@@ -24,7 +24,9 @@ onMounted(() => {
       <button class="button" @click="() => navigateTo('/existenciasresumen')">Resumen Existencias</button>
     </div>
     <div>
-      <button class="button" v-if="isAdmin" @click="() => navigateTo('/compra')">Compra del dia</button>
+      <button class="button" v-if="isAdmin" @click="() => navigateTo('/planeacioncompra')">Planeacion Compra</button>
+      <button class="button" v-if="isAdmin" @click="() => navigateTo('/compradeldia')">Compra</button>
+      <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/compra')">Compra del dia</button> -->
       <button class="button" @click="() => navigateTo('/platillos')">Platillos</button>
       <button class="button" @click="() => navigateTo('/subplatillos')">Subplatillos</button>
       <button class="button" @click="() => navigateTo('/ingredientes')">Insumos</button>
