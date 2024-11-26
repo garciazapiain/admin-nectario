@@ -161,6 +161,7 @@ const addToPlaneacion = (ingrediente) => {
       proveedor: ingrediente.proveedor || "", // Default if missing
       surtirMoral: ingrediente.surtirMoral || "", // Default if missing
       surtirCampestre: ingrediente.surtirCampestre || "", // Default if missing
+      image_url: ingrediente.image_url
     });
 
     console.log("Added new ingredient:", ingrediente);
@@ -216,6 +217,7 @@ const submitPlaneacionCompra = async () => {
             proveedor: item.proveedor,
             surtirMoral: item.surtirMoral,
             surtirCampestre: item.surtirCampestre,
+            image_url: item.image_url
           }),
         });
 
