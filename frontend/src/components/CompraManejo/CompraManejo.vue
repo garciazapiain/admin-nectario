@@ -10,17 +10,26 @@
         <table class="table">
           <thead>
             <tr>
+              <th></th>
               <th>Nombre</th>
               <th>Surtir Moral</th>
               <th>Surtir Bosques</th>
+              <th>Ver foto</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="ingrediente in ingredientes" :key="ingrediente.id_ingrediente" @click="showPopup(ingrediente)"
-              class="clickable-row">
-              <td>{{ ingrediente.nombre }}</td>
-              <td>{{ ingrediente.surtir_moral }}</td>
-              <td>{{ ingrediente.surtir_campestre }}</td>
+            <tr v-for="ingrediente in ingredientes" :key="ingrediente.id_ingrediente">
+              <td>
+                <input type="checkbox" :checked="ingrediente.ya_comprado" @change="toggleYaComprado(ingrediente)" />
+              </td>
+              <td :class="{ 'line-through text-gray-500': ingrediente.ya_comprado }">{{ ingrediente.nombre }}</td>
+              <td :class="{ 'line-through text-gray-500': ingrediente.ya_comprado }">{{ ingrediente.surtir_moral }}</td>
+              <td :class="{ 'line-through text-gray-500': ingrediente.ya_comprado }">{{ ingrediente.surtir_campestre }}
+              </td>
+              <td class="clickable-row" v-if="ingrediente.image_url" @click="showPopup(ingrediente)">
+                <span class="bg-blue-800 p-2 text-white cursor-pointer">Ver foto</span>
+              </td>
+              <td v-else></td>
             </tr>
           </tbody>
         </table>
@@ -91,6 +100,28 @@ const showPopup = (ingrediente) => {
 const closePopup = () => {
   popupVisible.value = false;
 };
+
+const toggleYaComprado = async (ingrediente) => {
+  try {
+    // Toggle the current value
+    const newValue = !ingrediente.ya_comprado;
+    const response = await fetch(`${API_URL}/planeacion_compra/${ingrediente.id_ingrediente}/toggle-comprado`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ya_comprado: newValue }),
+    });
+
+    if (!response.ok) throw new Error(`Error ${response.status}: Failed to update ya_comprado`);
+
+    // Update the local state
+    ingrediente.ya_comprado = newValue;
+  } catch (error) {
+    console.error("Error updating ya_comprado:", error);
+  }
+};
+
 
 // Fetch data on component mount
 onMounted(() => {
