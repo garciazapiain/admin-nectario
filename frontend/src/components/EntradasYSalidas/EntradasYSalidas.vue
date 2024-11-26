@@ -96,10 +96,10 @@ console.log("Start Date:", startDate.value, "End Date:", endDate.value);
 // Fetch "Entradas y Salidas" data for the selected week range
 const fetchEntradasSalidasCompras = async () => {
   // Adjust start and end dates by subtracting one day
-  const adjustedStart = new Date(new Date(startDate.value).setDate(new Date(startDate.value).getDate()))
+  const adjustedStart = new Date(new Date(startDate.value).setDate(new Date(startDate.value).getDate()-1))
     .toISOString()
     .split("T")[0];
-  const adjustedEnd = new Date(new Date(endDate.value).setDate(new Date(endDate.value).getDate()))
+  const adjustedEnd = new Date(new Date(endDate.value).setDate(new Date(endDate.value).getDate()-1))
     .toISOString()
     .split("T")[0];
 
@@ -157,10 +157,10 @@ const handleSubmit = async () => {
       : `${API_URL}/entradas_salidas/movimiento/transfers`;
 
   // Adjust startDate and endDate by subtracting one day
-  const adjustedStart = new Date(new Date(startDate.value).setDate(new Date(startDate.value).getDate()))
+  const adjustedStart = new Date(new Date(startDate.value).setDate(new Date(startDate.value).getDate()-1))
     .toISOString()
     .split("T")[0];
-  const adjustedEnd = new Date(new Date(endDate.value).setDate(new Date(endDate.value).getDate()))
+  const adjustedEnd = new Date(new Date(endDate.value).setDate(new Date(endDate.value).getDate()-1))
     .toISOString()
     .split("T")[0];
 
