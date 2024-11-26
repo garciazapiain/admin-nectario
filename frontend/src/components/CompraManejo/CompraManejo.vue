@@ -1,11 +1,11 @@
 <template>
   <div>
-    <h1>Gestión de Planeación de Compra</h1>
+    <h1 className="mb-10">Gestión de Planeación de Compra</h1>
     <div v-if="!isLoaded" class="loading-message">Cargando datos...</div>
     <div v-else>
       <div v-for="(ingredientes, proveedor) in groupedByProveedor" :key="proveedor">
         <!-- Headline for each proveedor -->
-        <h2>{{ proveedor }}</h2>
+        <h1 className="flex justify-start pl-3 bg-white text-black"> {{ proveedor }}</h1>
         <!-- Table for each proveedor -->
         <table class="table">
           <thead>
