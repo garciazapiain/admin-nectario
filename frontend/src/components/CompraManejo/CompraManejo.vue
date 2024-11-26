@@ -14,7 +14,7 @@
               <th>Nombre</th>
               <th>Surtir Moral</th>
               <th>Surtir Bosques</th>
-              <th>Ver foto</th>
+              <th>Foto</th>
             </tr>
           </thead>
           <tbody>
