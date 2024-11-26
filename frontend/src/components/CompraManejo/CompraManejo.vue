@@ -4,9 +4,7 @@
     <div v-if="!isLoaded" class="loading-message">Cargando datos...</div>
     <div v-else>
       <div v-for="(ingredientes, proveedor) in groupedByProveedor" :key="proveedor">
-        <!-- Headline for each proveedor -->
         <h1 className="flex justify-start pl-3 bg-white text-black"> {{ proveedor }}</h1>
-        <!-- Table for each proveedor -->
         <table class="table">
           <thead>
             <tr>
@@ -18,7 +16,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="ingrediente in ingredientes" :key="ingrediente.id_ingrediente">
+            <tr v-for="ingrediente in sortedIngredientes(ingredientes)" :key="ingrediente.id_ingrediente">
               <td>
                 <input type="checkbox" :checked="ingrediente.ya_comprado" @change="toggleYaComprado(ingrediente)" />
               </td>
@@ -99,6 +97,14 @@ const showPopup = (ingrediente) => {
 // Close popup manually
 const closePopup = () => {
   popupVisible.value = false;
+};
+
+const sortedIngredientes = (ingredientes) => {
+  return ingredientes.slice().sort((a, b) => {
+    if (a.ya_comprado && !b.ya_comprado) return 1; // Move `ya_comprado: true` to the bottom
+    if (!a.ya_comprado && b.ya_comprado) return -1; // Keep `ya_comprado: false` at the top
+    return 0; // Maintain order for items with the same status
+  });
 };
 
 const toggleYaComprado = async (ingrediente) => {
