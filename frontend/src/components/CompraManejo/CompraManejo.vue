@@ -14,7 +14,7 @@
               <th>Nombre</th>
               <th>Surtir Moral</th>
               <th>Surtir Bosques</th>
-              <th>Foto</th>
+              <th>Ver Foto</th>
             </tr>
           </thead>
           <tbody>
@@ -27,7 +27,7 @@
               <td :class="{ 'line-through text-gray-500': ingrediente.ya_comprado }">{{ ingrediente.surtir_campestre }}
               </td>
               <td class="clickable-row" v-if="ingrediente.image_url" @click="showPopup(ingrediente)">
-                <span class="bg-blue-800 p-2 text-white cursor-pointer">Ver foto</span>
+                <span class="bg-blue-800 p-2 text-white cursor-pointer">Foto</span>
               </td>
               <td v-else></td>
             </tr>
