@@ -3,11 +3,13 @@
     <h1 className="mb-10">Gestión de Planeación de Compra</h1>
     <div v-if="!isLoaded" class="loading-message">Cargando datos...</div>
     <div v-else>
-      <div v-for="(ingredientes, proveedor) in groupedByProveedor" :key="proveedor">
-        <h1 className="flex justify-start pl-3 bg-white text-black"> {{ proveedor }}</h1>
+      <div v-for="(ingredientes, proveedor) in groupedByProveedor" :key="proveedor" class="dropzone" @dragover.prevent
+        @drop="() => handleDrop(proveedor)">
+        <h1 class="flex justify-start pl-3 bg-white text-black"> {{ proveedor }}</h1>
         <table class="table">
           <thead>
             <tr>
+              <th></th>
               <th></th>
               <th>Nombre</th>
               <th>Surtir Moral</th>
@@ -16,7 +18,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="ingrediente in sortedIngredientes(ingredientes)" :key="ingrediente.id_ingrediente">
+            <tr v-for="ingrediente in getSortedIngredientes(ingredientes)" :key="ingrediente.id_ingrediente"
+              draggable="true" @dragstart="startDrag(ingrediente)">
+              <td>
+                <span class="cursor-move">☰</span>
+              </td>
               <td>
                 <input type="checkbox" :checked="ingrediente.ya_comprado" @change="toggleYaComprado(ingrediente)" />
               </td>
@@ -57,6 +63,7 @@ const planeacionCompra = ref([]);
 const isLoaded = ref(false);
 const popupVisible = ref(false);
 const popupImage = ref(null);
+let draggedItem = null;
 
 // Fetch data from the API
 const fetchPlaneacionCompra = async () => {
@@ -99,13 +106,54 @@ const closePopup = () => {
   popupVisible.value = false;
 };
 
-const sortedIngredientes = (ingredientes) => {
+// Handle dragging logic
+const startDrag = (ingrediente) => {
+  draggedItem = ingrediente;
+};
+
+const handleDrop = async (targetProveedor) => {
+  if (draggedItem && draggedItem.proveedor !== targetProveedor) {
+    try {
+      const updatedData = {
+        ...draggedItem,
+        proveedor: targetProveedor, // Update the proveedor to the new table's group
+      };
+
+      const response = await fetch(`${API_URL}/planeacion_compra/${draggedItem.id_ingrediente}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      if (!response.ok) throw new Error(`Error ${response.status}: Failed to update proveedor`);
+
+      // Reflect the change locally
+      draggedItem.proveedor = targetProveedor;
+
+      // Refresh data
+      planeacionCompra.value = planeacionCompra.value.filter(
+        (item) => item.id_ingrediente !== draggedItem.id_ingrediente
+      );
+      planeacionCompra.value.push(draggedItem);
+
+      draggedItem = null;
+    } catch (error) {
+      console.error("Error updating proveedor:", error);
+    }
+  }
+};
+
+// Rename `sortedIngredientes` to `getSortedIngredientes`
+const getSortedIngredientes = (ingredientes) => {
   return ingredientes.slice().sort((a, b) => {
     if (a.ya_comprado && !b.ya_comprado) return 1; // Move `ya_comprado: true` to the bottom
     if (!a.ya_comprado && b.ya_comprado) return -1; // Keep `ya_comprado: false` at the top
     return 0; // Maintain order for items with the same status
   });
 };
+
 
 const toggleYaComprado = async (ingrediente) => {
   try {
@@ -117,84 +165,17 @@ const toggleYaComprado = async (ingrediente) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ ya_comprado: newValue }),
-    });
-
+    })
     if (!response.ok) throw new Error(`Error ${response.status}: Failed to update ya_comprado`);
-
     // Update the local state
     ingrediente.ya_comprado = newValue;
   } catch (error) {
     console.error("Error updating ya_comprado:", error);
   }
-};
-
+}
 
 // Fetch data on component mount
 onMounted(() => {
   fetchPlaneacionCompra();
 });
 </script>
-
-<style scoped>
-.loading-message {
-  font-size: 18px;
-  color: gray;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-}
-
-.table th,
-.table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.clickable-row {
-  cursor: pointer;
-}
-
-.popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.popup {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  position: relative;
-}
-
-.popup img {
-  max-width: 100%;
-  max-height: 400px;
-  object-fit: contain;
-}
-
-.popup p {
-  font-size: 16px;
-  color: gray;
-}
-
-.popup-image {
-  max-width: 300px;
-  max-height: 300px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-</style>
