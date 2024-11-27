@@ -12,7 +12,7 @@
     <!-- Main grouped view -->
     <div v-else-if="!showSummary">
       <div v-for="(ingredientes, proveedor) in groupedByProveedor" :key="proveedor" class="dropzone" @dragover.prevent
-        @drop="() => handleDrop(proveedor)">
+        @drop="(event) => handleDrop(proveedor, event)" @touchend="(event) => handleDrop(proveedor, event)">
         <h1 class="flex justify-start pl-3 bg-white text-black"> {{ proveedor }}</h1>
         <table class="table">
           <thead>
@@ -27,7 +27,8 @@
           </thead>
           <tbody>
             <tr v-for="ingrediente in getSortedIngredientes(ingredientes)" :key="ingrediente.id_ingrediente"
-              draggable="true" @dragstart="startDrag(ingrediente)">
+              draggable="true" @dragstart="(event) => startDrag(ingrediente, event)"
+              @touchstart="(event) => startDrag(ingrediente, event)">
               <td>
                 <span class="cursor-move">☰</span>
               </td>
@@ -170,11 +171,21 @@ const closePopup = () => {
 };
 
 // Handle dragging logic
-const startDrag = (ingrediente) => {
+const startDrag = (ingrediente, event) => {
   draggedItem = ingrediente;
+
+  // For touch devices, prevent the default action
+  if (event.type === "touchstart") {
+    event.preventDefault();
+  }
 };
 
-const handleDrop = async (targetProveedor) => {
+const handleDrop = async (targetProveedor, event) => {
+  // Prevent the default action for touch devices
+  if (event.type === "touchend") {
+    event.preventDefault();
+  }
+
   if (draggedItem && draggedItem.proveedor !== targetProveedor) {
     try {
       const updatedData = {
@@ -188,10 +199,11 @@ const handleDrop = async (targetProveedor) => {
         },
         body: JSON.stringify(updatedData),
       });
+
       if (!response.ok) throw new Error(`Error ${response.status}: Failed to update proveedor`);
+
       // Reflect the change locally
       draggedItem.proveedor = targetProveedor;
-      // Refresh data
       planeacionCompra.value = planeacionCompra.value.filter(
         (item) => item.id_ingrediente !== draggedItem.id_ingrediente
       );
@@ -315,6 +327,7 @@ onMounted(() => {
   align-items: center;
   z-index: 1000;
 }
+
 .popup {
   background-color: white;
   padding: 20px;
@@ -323,20 +336,22 @@ onMounted(() => {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   position: relative;
 }
+
 .popup img {
   max-width: 100%;
   max-height: 400px;
   object-fit: contain;
 }
+
 .popup p {
   font-size: 16px;
   color: gray;
 }
+
 .popup-image {
   max-width: 300px;
   max-height: 300px;
   object-fit: cover;
   border-radius: 8px;
 }
-
 </style>
