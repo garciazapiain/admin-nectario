@@ -15,6 +15,7 @@
             <th>Surtir Moral</th>
             <th>Surtir Campestre</th>
             <th>Acciones</th>
+            <th>Pronóstico demanda</th>
           </tr>
         </thead>
         <tbody>
@@ -35,6 +36,9 @@
             </td>
             <td>
               <button class="button-remove" @click="removeFromPlaneacion(index)">Eliminar</button>
+            </td>
+            <td class="cursor-pointer">
+              <button v-if="item.moral_demanda_semanal || item.bosques_demanda_semanal" class="bg-blue-600" @click="openPopup(item)">Pronóstico</button>
             </td>
           </tr>
         </tbody>
@@ -75,18 +79,22 @@
         </tbody>
       </table>
     </div>
+    <PopupInsumo v-if="isPopupVisible" :ingrediente="selectedIngredient" @close="closePopup" />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, watch } from "vue";
 import API_URL from "../../config";
+import PopupInsumo from "../Existencias/PopupInsumo.vue";
 
 const isReady = ref(false);
 const ingredientes = ref([]);
 const planeacionCompra = ref([]);
 const searchTerm = ref("");
 const proveedores = ref([]); // List of providers
+const isPopupVisible = ref(false); // Controls popup visibility
+const selectedIngredient = ref(null); // Stores the selected ingredient for the popup
 
 /**
  * Fetch all ingredients from the API on component mount
@@ -118,6 +126,8 @@ const fetchPlaneacionCompra = async () => {
       proveedor: item.proveedor,
       surtirMoral: item.surtir_moral || "", // Use existing value or default to empty string
       surtirCampestre: item.surtir_campestre || "", // Use existing value or default to empty string
+      moral_demanda_semanal: item.moral_demanda_semanal,
+      bosques_demanda_semanal: item.bosques_demanda_semanal
     }));
     console.log("PlaneacionCompra loaded:", planeacionCompra.value);
   } catch (error) {
@@ -161,7 +171,9 @@ const addToPlaneacion = (ingrediente) => {
       proveedor: ingrediente.proveedor || "", // Default if missing
       surtirMoral: ingrediente.surtirMoral || "", // Default if missing
       surtirCampestre: ingrediente.surtirCampestre || "", // Default if missing
-      image_url: ingrediente.image_url
+      image_url: ingrediente.image_url,
+      moral_demanda_semanal: Number(ingrediente.moral_demanda_semanal),
+      bosques_demanda_semanal: Number(ingrediente.bosques_demanda_semanal)
     });
 
     console.log("Added new ingredient:", ingrediente);
@@ -217,7 +229,9 @@ const submitPlaneacionCompra = async () => {
             proveedor: item.proveedor,
             surtirMoral: item.surtirMoral,
             surtirCampestre: item.surtirCampestre,
-            image_url: item.image_url
+            image_url: item.image_url,
+            moral_demanda_semanal: item.demandaMoral,
+            bosques_demanda_semanal: item.demandaBosques
           }),
         });
 
@@ -282,6 +296,17 @@ const clearPlaneacionCompra = async () => {
     console.error("Error clearing planeacion_compra:", error);
     alert("Error al eliminar la planeación de compra.");
   }
+};
+
+const openPopup = (ingrediente) => {
+  console.log(ingrediente)
+  selectedIngredient.value = ingrediente;
+  isPopupVisible.value = true;
+};
+
+const closePopup = () => {
+  isPopupVisible.value = false;
+  selectedIngredient.value = null;
 };
 
 

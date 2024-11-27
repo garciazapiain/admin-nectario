@@ -20,17 +20,17 @@ router.get('/', async (req, res) => {
 
 // POST a new planeacion_compra record
 router.post('/', async (req, res) => {
-  const { id_ingrediente, nombre, proveedor, surtirMoral, surtirCampestre, image_url } = req.body;
+  const { id_ingrediente, nombre, proveedor, surtirMoral, surtirCampestre, image_url, moral_demanda_semanal, bosques_demanda_semanal } = req.body;
 
   const client = await connectDb();
 
   try {
     const query = `
-      INSERT INTO planeacion_compra (id_ingrediente, nombre, proveedor, surtir_moral, surtir_campestre, image_url)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO planeacion_compra (id_ingrediente, nombre, proveedor, surtir_moral, surtir_campestre, image_url, moral_demanda_semanal, bosques_demanda_semanal)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING *;
     `;
-    const values = [id_ingrediente, nombre, proveedor, surtirMoral, surtirCampestre, image_url];
+    const values = [id_ingrediente, nombre, proveedor, surtirMoral, surtirCampestre, image_url, moral_demanda_semanal, bosques_demanda_semanal];
     const result = await client.query(query, values);
 
     res.status(201).json(result.rows[0]); // Return the created record
