@@ -1752,6 +1752,7 @@ app.get('/api/consumption/:store', async (req, res) => {
     i.nombre,
     i.producto_clave,
     i.precio,
+    i.merma,
     ROUND(SUM(COALESCE(p.consumo_platillos, 0))::numeric, 2) AS consumo_platillos,
     ROUND(SUM(COALESCE(sp.consumo_subplatillos, 0))::numeric, 2) AS consumo_subplatillos,
     ROUND((SUM(COALESCE(p.consumo_platillos, 0)) + SUM(COALESCE(sp.consumo_subplatillos, 0)))::numeric, 2) AS total_consumido
@@ -1809,7 +1810,7 @@ LEFT JOIN (
         subplatillos_ingredientes spi ON sp.id_subplatillo = spi.id_subplatillo
     GROUP BY spi.id_ingrediente
 ) sp ON i.id_ingrediente = sp.id_ingrediente
-GROUP BY i.id_ingrediente, i.unidad, i.proveedor, i.nombre, i.producto_clave, i.precio
+GROUP BY i.id_ingrediente, i.unidad, i.proveedor, i.nombre, i.producto_clave, i.precio, i.merma
 ORDER BY total_consumido DESC;
 `, 
 [startDate, endDate, store]);

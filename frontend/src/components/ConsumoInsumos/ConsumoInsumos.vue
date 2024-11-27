@@ -3,7 +3,6 @@
     <h1>Consumo de insumos</h1>
     <input type="date" v-model="startDate" :max="today" />
     <input type="date" v-model="endDate" :max="today" />
-    <button @click="fetchConsumptionData">Obtener data</button>
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     <div>
       <h2>Seleccionar por semana</h2>
@@ -20,7 +19,8 @@
           <th>Proveedor</th>
           <th>Consumido (Moral)</th>
           <th>Consumido (Bosques)</th>
-          <th>Total consumido</th>
+          <th>Total consumido sin merma</th>
+          <th>Total consumido real</th>
           <th>Precio / unidad</th>
           <th>$ Total</th>
         </tr>
@@ -33,15 +33,17 @@
           <td>{{ item.total_consumido_moral.toFixed(2) }}</td>
           <td>{{ item.total_consumido_bosques.toFixed(2) }}</td>
           <td>{{ item.total_consumido_total.toFixed(2) }}</td>
+          <td>{{ (item.total_consumido_total / (1 - Number(item.merma))).toFixed(2) }}</td>
           <td>$ {{ item.precio }}</td>
-          <td>$ {{ item.total_consumido_dinero.toFixed(2) }}</td>
+          <td>$ {{ ((item.total_consumido_total / (1 - Number(item.merma))) * item.precio).toFixed(2) }}</td>
         </tr>
       </tbody>
     </table>
     <div class="button-container">
-      <button @click="exportToExcel" v-if="filteredConsumptionData.length > 0">Export to Excel</button>
+      <button className="bg-blue-800" @click="fetchConsumptionData">Obtener data</button>
+      <button className="bg-green-400" @click="exportToExcel" v-if="filteredConsumptionData.length > 0">Exportar a Excel</button>
       <router-link :to="cargarVentasRoute">
-        <button>Cargar ventas</button>
+        <button className="bg-green-400">Cargar ventas</button>
       </router-link>
     </div>
   </div>
@@ -176,6 +178,7 @@ export default {
             unidad: ingredient.unidad,
             proveedor: ingredient.proveedor,
             producto_clave: ingredient.producto_clave,
+            merma: ingredient.merma,
             total_consumido_moral: total_consumido_moral,
             total_consumido_bosques: total_consumido_bosques,
             total_consumido_total: total_consumido_total,
@@ -210,13 +213,9 @@ export default {
 button {
   padding: 10px 20px;
   border: none;
-  background-color: #007bff;
   color: white;
   cursor: pointer;
   border-radius: 5px;
 }
 
-button:hover {
-  background-color: #0056b3;
-}
 </style>
