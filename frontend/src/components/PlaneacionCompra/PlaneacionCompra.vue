@@ -183,8 +183,27 @@ const addToPlaneacion = (ingrediente) => {
 /**
  * Remove an ingredient from the planeacionCompra array
  */
-const removeFromPlaneacion = (index) => {
-  planeacionCompra.value.splice(index, 1);
+ const removeFromPlaneacion = async (index) => {
+  const itemToRemove = planeacionCompra.value[index];
+
+  try {
+    const response = await fetch(`${API_URL}/planeacion_compra/${itemToRemove.id_ingrediente}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: Failed to delete item`);
+    }
+
+    const result = await response.json();
+    console.log('Item deleted:', result);
+
+    // Remove item from local state
+    planeacionCompra.value.splice(index, 1);
+  } catch (error) {
+    console.error('Error deleting item:', error);
+    alert('Error al eliminar el elemento.');
+  }
 };
 
 /**
