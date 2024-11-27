@@ -41,7 +41,8 @@
     </table>
     <div class="button-container">
       <button className="bg-blue-800" @click="fetchConsumptionData">Obtener data</button>
-      <button className="bg-green-400" @click="exportToExcel" v-if="filteredConsumptionData.length > 0">Exportar a Excel</button>
+      <button className="bg-green-400" @click="exportToExcel" v-if="filteredConsumptionData.length > 0">Exportar a
+        Excel</button>
       <router-link :to="cargarVentasRoute">
         <button className="bg-green-400">Cargar ventas</button>
       </router-link>
@@ -122,14 +123,30 @@ export default {
       }
     },
     exportToExcel() {
-      const ws = XLSX.utils.json_to_sheet(this.filteredConsumptionData);
+      // Prepare data for export including the adjusted columns
+      const dataForExport = this.filteredConsumptionData.map(item => ({
+        "Insumo": item.nombre,
+        "Unidad": item.unidad,
+        "Proveedor": item.proveedor,
+        "Consumido (Moral)": item.total_consumido_moral.toFixed(2),
+        "Consumido (Bosques)": item.total_consumido_bosques.toFixed(2),
+        "Total consumido sin merma": item.total_consumido_total.toFixed(2),
+        "Total consumido real": (item.total_consumido_total / (1 - Number(item.merma))).toFixed(2),
+        "Precio / unidad": `$ ${item.precio}`,
+        "$ Total": `$ ${((item.total_consumido_total / (1 - Number(item.merma))) * item.precio).toFixed(2)}`
+      }));
+
+      // Create the worksheet and workbook
+      const ws = XLSX.utils.json_to_sheet(dataForExport);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+
+      // Write the workbook and trigger download
+      const wbout = XLSX.write(wb, { bookType: "xlsx", type: "binary" });
       const buf = new ArrayBuffer(wbout.length);
       const view = new Uint8Array(buf);
       for (let i = 0; i < wbout.length; i++) view[i] = wbout.charCodeAt(i) & 0xFF;
-      saveAs(new Blob([buf], { type: "application/octet-stream" }), 'data.xlsx');
+      saveAs(new Blob([buf], { type: "application/octet-stream" }), "consumo_insumos.xlsx");
     },
     async fetchConsumptionData() {
       this.errorMessage = null; // Reset the error message before fetching data
@@ -217,5 +234,4 @@ button {
   cursor: pointer;
   border-radius: 5px;
 }
-
 </style>
