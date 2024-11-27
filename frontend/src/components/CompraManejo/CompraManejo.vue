@@ -174,14 +174,17 @@ const closePopup = () => {
 const startDrag = (ingrediente, event) => {
   draggedItem = ingrediente;
 
-  // For touch devices, prevent the default action
+  // For touch devices
   if (event.type === "touchstart") {
-    event.preventDefault();
+    event.preventDefault(); // Prevent scrolling
+    const touch = event.touches[0];
+    draggedItem.touchX = touch.clientX;
+    draggedItem.touchY = touch.clientY;
   }
 };
 
 const handleDrop = async (targetProveedor, event) => {
-  // Prevent the default action for touch devices
+  // Prevent default for touch and drag events
   if (event.type === "touchend") {
     event.preventDefault();
   }
@@ -190,7 +193,7 @@ const handleDrop = async (targetProveedor, event) => {
     try {
       const updatedData = {
         ...draggedItem,
-        proveedor: targetProveedor, // Update the proveedor to the new table's group
+        proveedor: targetProveedor,
       };
       const response = await fetch(`${API_URL}/planeacion_compra/${draggedItem.id_ingrediente}`, {
         method: "PUT",
