@@ -11,8 +11,8 @@
 
     <!-- Main grouped view -->
     <div v-else-if="!showSummary">
-      <div v-for="(ingredientes, proveedor) in groupedByProveedor" :key="proveedor" class="dropzone"
-        @dragover.prevent @drop="() => handleDrop(proveedor)">
+      <div v-for="(ingredientes, proveedor) in groupedByProveedor" :key="proveedor" class="dropzone" @dragover.prevent
+        @drop="() => handleDrop(proveedor)">
         <h1 class="flex justify-start pl-3 bg-white text-black"> {{ proveedor }}</h1>
         <table class="table">
           <thead>
@@ -55,12 +55,18 @@
       <table class="table">
         <thead>
           <tr>
+            <th>Entregado</th>
             <th>Nombre</th>
             <th>Cantidad</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="ingrediente in moralOrders" :key="ingrediente.id_ingrediente">
+          <tr v-for="ingrediente in moralOrders" :key="ingrediente.id_ingrediente"
+            :class="{ 'line-through text-gray-500': ingrediente.ya_entregado_moral }">
+            <td>
+              <input type="checkbox" :checked="ingrediente.ya_entregado_moral"
+                @change="toggleEntregado(ingrediente, 'moral')" />
+            </td>
             <td>{{ ingrediente.nombre }}</td>
             <td>{{ ingrediente.surtir_moral }}</td>
           </tr>
@@ -72,18 +78,38 @@
       <table class="table">
         <thead>
           <tr>
+            <th>Entregado</th>
             <th>Nombre</th>
             <th>Cantidad</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="ingrediente in bosquesOrders" :key="ingrediente.id_ingrediente">
+          <tr v-for="ingrediente in bosquesOrders" :key="ingrediente.id_ingrediente"
+            :class="{ 'line-through text-gray-500': ingrediente.ya_entregado_bosques }">
+            <td>
+              <input type="checkbox" :checked="ingrediente.ya_entregado_bosques"
+                @change="toggleEntregado(ingrediente, 'bosques')" />
+            </td>
             <td>{{ ingrediente.nombre }}</td>
             <td>{{ ingrediente.surtir_campestre }}</td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <!-- Popup component -->
+    <div v-if="popupVisible" class="popup-overlay">
+      <div class="popup">
+        <div v-if="popupImage">
+          <img :src="popupImage" alt="Ingrediente Imagen" class="popup-image" />
+          <button @click="closePopup" class="close-button">Cerrar</button>
+        </div>
+        <div v-else>
+          <p>Falta foto para este producto.</p>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -126,14 +152,69 @@ const groupedByProveedor = computed(() => {
   }, {});
 });
 
-// Filtered orders for Moral
+const showPopup = (ingrediente) => {
+  console.log(ingrediente)
+  if (ingrediente.image_url) {
+    popupImage.value = ingrediente.image_url;
+  } else {
+    popupImage.value = null;
+    setTimeout(() => {
+      popupVisible.value = false;
+    }, 1000);
+  }
+  popupVisible.value = true;
+};
+
+const closePopup = () => {
+  popupVisible.value = false;
+};
+
+// Handle dragging logic
+const startDrag = (ingrediente) => {
+  draggedItem = ingrediente;
+};
+
+const handleDrop = async (targetProveedor) => {
+  if (draggedItem && draggedItem.proveedor !== targetProveedor) {
+    try {
+      const updatedData = {
+        ...draggedItem,
+        proveedor: targetProveedor, // Update the proveedor to the new table's group
+      };
+      const response = await fetch(`${API_URL}/planeacion_compra/${draggedItem.id_ingrediente}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      });
+      if (!response.ok) throw new Error(`Error ${response.status}: Failed to update proveedor`);
+      // Reflect the change locally
+      draggedItem.proveedor = targetProveedor;
+      // Refresh data
+      planeacionCompra.value = planeacionCompra.value.filter(
+        (item) => item.id_ingrediente !== draggedItem.id_ingrediente
+      );
+      planeacionCompra.value.push(draggedItem);
+      draggedItem = null;
+    } catch (error) {
+      console.error("Error updating proveedor:", error);
+    }
+  }
+};
+
+// Filtered and sorted orders for Moral
 const moralOrders = computed(() =>
-  planeacionCompra.value.filter((ingrediente) => ingrediente.surtir_moral && ingrediente.surtir_moral !== "0")
+  planeacionCompra.value
+    .filter((ingrediente) => ingrediente.surtir_moral && ingrediente.surtir_moral !== "0")
+    .sort((a, b) => (a.ya_entregado_moral === b.ya_entregado_moral ? 0 : a.ya_entregado_moral ? 1 : -1))
 );
 
-// Filtered orders for Bosques
+// Filtered and sorted orders for Bosques
 const bosquesOrders = computed(() =>
-  planeacionCompra.value.filter((ingrediente) => ingrediente.surtir_campestre && ingrediente.surtir_campestre !== "0")
+  planeacionCompra.value
+    .filter((ingrediente) => ingrediente.surtir_campestre && ingrediente.surtir_campestre !== "0")
+    .sort((a, b) => (a.ya_entregado_bosques === b.ya_entregado_bosques ? 0 : a.ya_entregado_bosques ? 1 : -1))
 );
 
 // Utility function to sort ingredientes
@@ -144,6 +225,50 @@ const getSortedIngredientes = (ingredientes) => {
     return 0; // Maintain order for items with the same status
   });
 };
+
+const toggleYaComprado = async (ingrediente) => {
+  try {
+    // Toggle the current value
+    const newValue = !ingrediente.ya_comprado;
+    const response = await fetch(`${API_URL}/planeacion_compra/${ingrediente.id_ingrediente}/toggle-comprado`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ya_comprado: newValue }),
+    })
+    if (!response.ok) throw new Error(`Error ${response.status}: Failed to update ya_comprado`);
+    // Update the local state
+    ingrediente.ya_comprado = newValue;
+  } catch (error) {
+    console.error("Error updating ya_comprado:", error);
+  }
+}
+
+// Function to toggle ya_entregado for a specific store
+const toggleEntregado = async (ingrediente, store) => {
+  try {
+    // Determine the column to update
+    const column =
+      store === "moral" ? "ya_entregado_moral" : "ya_entregado_bosques";
+
+    // Toggle the value locally
+    ingrediente[column] = !ingrediente[column];
+
+    // Update the API
+    const response = await fetch(`${API_URL}/planeacion_compra/${ingrediente.id_ingrediente}/toggle-entregado`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ [column]: ingrediente[column] }),
+    });
+
+    if (!response.ok) throw new Error(`Failed to update ${column}`);
+  } catch (error) {
+    console.error("Error toggling ya_entregado:", error);
+    alert("Error al actualizar el estado de entrega.");
+  }
+};
+
 
 // Other existing functions: handleDrop, startDrag, toggleYaComprado, etc.
 onMounted(() => {
@@ -177,4 +302,41 @@ onMounted(() => {
 .cursor-move {
   cursor: move;
 }
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.popup {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+.popup img {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+}
+.popup p {
+  font-size: 16px;
+  color: gray;
+}
+.popup-image {
+  max-width: 300px;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
 </style>

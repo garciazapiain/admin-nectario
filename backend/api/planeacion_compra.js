@@ -98,6 +98,36 @@ router.put('/:id_ingrediente/toggle-comprado', async (req, res) => {
   }
 });
 
+router.put('/:id_ingrediente/toggle-entregado', async (req, res) => {
+  const { id_ingrediente } = req.params;
+  const { ya_entregado_moral, ya_entregado_bosques } = req.body;
+
+  const client = await connectDb();
+
+  try {
+    const query = `
+      UPDATE planeacion_compra
+      SET ya_entregado_moral = COALESCE($1, ya_entregado_moral),
+          ya_entregado_bosques = COALESCE($2, ya_entregado_bosques)
+      WHERE id_ingrediente = $3
+      RETURNING *;
+    `;
+    const values = [ya_entregado_moral, ya_entregado_bosques, id_ingrediente];
+    const result = await client.query(query, values);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Record not found' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error updating ya_entregado:", error);
+    res.status(500).json({ error: "Error updating data" });
+  } finally {
+    client.release();
+  }
+});
+
 
 // PUT to update a specific planeacion_compra record
 router.put('/:id_ingrediente', async (req, res) => {
