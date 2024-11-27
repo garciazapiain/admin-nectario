@@ -170,12 +170,15 @@ const closePopup = () => {
   popupVisible.value = false;
 };
 
-// Handle dragging logic
+const enableMobileDrag = false; // Flag to toggle mobile implementation
+
 const startDrag = (ingrediente, event) => {
   draggedItem = ingrediente;
 
   // For touch devices
   if (event.type === "touchstart") {
+    console.log("Mobile drag detected, but it's currently disabled.");
+    if (!enableMobileDrag) return; // Skip execution for mobile drag
     event.preventDefault(); // Prevent scrolling
     const touch = event.touches[0];
     draggedItem.touchX = touch.clientX;
@@ -186,9 +189,22 @@ const startDrag = (ingrediente, event) => {
 const handleDrop = async (targetProveedor, event) => {
   // Prevent default for touch and drag events
   if (event.type === "touchend") {
+    console.log("Mobile drop detected, but it's currently disabled.");
+    if (!enableMobileDrag) return; // Skip execution for mobile drop
     event.preventDefault();
+    const touch = event.changedTouches[0];
+    const touchX = touch.clientX;
+    const touchY = touch.clientY;
+
+    // Check if the drop occurred within the target drop zone
+    const dropZone = event.target.closest(".dropzone");
+    if (!dropZone) {
+      console.warn("Touch did not occur within a valid drop zone.");
+      return;
+    }
   }
 
+  // Existing desktop drag-and-drop logic
   if (draggedItem && draggedItem.proveedor !== targetProveedor) {
     try {
       const updatedData = {
