@@ -159,6 +159,28 @@ router.put('/:id_ingrediente', async (req, res) => {
   }
 });
 
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  const client = await connectDb();
+
+  try {
+    const query = `DELETE FROM planeacion_compra WHERE id_ingrediente = $1 RETURNING *;`;
+    const result = await client.query(query, [id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+
+    res.status(200).json({ message: 'Item successfully deleted', item: result.rows[0] });
+  } catch (error) {
+    console.error('Error deleting item:', error);
+    res.status(500).json({ error: 'Error deleting item' });
+  } finally {
+    client.release();
+  }
+});
+
 // DELETE all planeacion_compra records
 router.delete('/', async (req, res) => {
   const client = await connectDb();
