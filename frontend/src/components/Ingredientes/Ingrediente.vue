@@ -86,12 +86,27 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
           </select>
         </div>
         <div class="form-group">
-          <label for="image">Actualizar Imagen:</label>
-          <input id="image" type="file" @change="handleFileUpload" />
+          <label for="image">Actualizar Imagen Opción A:</label>
+          <input id="image" type="file" @change="handleFileUpload('image_url', $event)" />
+        </div>
+        <div class="form-group">
+          <label for="image_2">Actualizar Imagen Opción B:</label>
+          <input id="image_2" type="file" @change="handleFileUpload('image_url_2', $event)" />
         </div>
         <div v-if="ingredienteEditado.image_url">
-          <label>Imagen Actual:</label>
-          <img :src="ingredienteEditado.image_url" alt="Ingrediente Imagen" width="200" />
+          <label>Imagen Opción A:</label>
+          <img :src="ingredienteEditado.image_url" alt="Ingrediente Imagen Opcion A" width="200" />
+        </div>
+        <div v-else>
+          <span>No hay imagen disponible para Opción A</span>
+        </div>
+
+        <div v-if="ingredienteEditado.image_url_2">
+          <label>Imagen Opción B:</label>
+          <img :src="ingredienteEditado.image_url_2" alt="Ingrediente Imagen Opcion B" width="200" />
+        </div>
+        <div v-else>
+          <span>No hay imagen disponible para Opción B</span>
         </div>
         <div class="grid grid-cols-2 gap-4 form-actions">
           <button type="submit">Guardar</button>
@@ -140,9 +155,18 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
             ingrediente.unidad }}</span></td>
         </tr>
         <tr>
-          <td><strong>Imagen:</strong></td>
+          <td><strong>Imagen Opción A:</strong></td>
           <td>
-            <img v-if="ingrediente.image_url" :src="ingrediente.image_url" alt="Ingrediente Imagen" width="200" />
+            <img v-if="ingrediente.image_url" :src="ingrediente.image_url" alt="Ingrediente Imagen Opcion A"
+              width="200" />
+            <span v-else>No hay imagen disponible</span>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Imagen Opción B:</strong></td>
+          <td>
+            <img v-if="ingrediente.image_url_2" :src="ingrediente.image_url_2" alt="Ingrediente Imagen Opcion B"
+              width="200" />
             <span v-else>No hay imagen disponible</span>
           </td>
         </tr>
@@ -189,6 +213,7 @@ export default {
       inputDaysBosques: 1,
       inputDaysMoral: 1,
       selectedImage: null, // Add this line to define selectedImage
+      selectedImage2: null
     };
   },
   computed: {
@@ -229,11 +254,37 @@ export default {
         this.ingredienteEditado.proveedor_id = selectedProveedor.id;
       }
     },
-    handleFileUpload(event) {
+    handleFileUpload(type, event) {
       const file = event.target.files[0];
       if (file) {
-        this.selectedImage = file; // Set the selected image
-        console.log("Selected image:", this.selectedImage); // Debug log
+        console.log("Uploading:", type, file);
+
+        const formData = new FormData();
+        formData.append("image", file);
+        formData.append("id_ingrediente", this.ingredienteEditado.id_ingrediente);
+        formData.append("image_type", type); // Specify which image is being uploaded
+
+        fetch(`${API_URL}/ingredient_image/upload`, {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`Image upload failed: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log("Image uploaded:", data);
+            if (type === "image_url") {
+              this.ingredienteEditado.image_url = data.image_url;
+            } else if (type === "image_url_2") {
+              this.ingredienteEditado.image_url_2 = data.image_url;
+            }
+          })
+          .catch((error) => {
+            console.error("Error during image upload:", error);
+          });
       } else {
         console.warn("No file selected.");
       }
@@ -241,19 +292,10 @@ export default {
     async editIngrediente() {
       const id = this.$route.params.id;
 
-      // Map frecuencias_inventario to numeric values
-      const map = {
-        inicio_primer_turno: 1,
-        inicio_segundo_turno: 2,
-        fin_segundo_turno: 3,
-        no_inventarear: 4,
-      };
-      this.ingredienteEditado.frecuencias_inventario =
-        this.ingredienteEditado.frecuencias_inventario.map((value) => map[value] || value);
+      let imageUrl = this.ingredienteEditado.image_url; // Default to existing image_url
+      let imageUrl2 = this.ingredienteEditado.image_url_2; // Default to existing image_url_2
 
-      // Handle image upload if a file is selected
-      let imageUrl = this.ingredienteEditado.image_url; // Default to the existing image URL
-
+      // Upload first image if selected
       if (this.selectedImage) {
         const formData = new FormData();
         formData.append("image", this.selectedImage);
@@ -269,13 +311,33 @@ export default {
         }
 
         const imageResult = await imageResponse.json();
-        imageUrl = imageResult.image_url; // Get the new uploaded image URL
+        imageUrl = imageResult.image_url; // Get new uploaded image URL
+      }
+
+      // Upload second image if selected
+      if (this.selectedImage2) {
+        const formData = new FormData();
+        formData.append("image", this.selectedImage2);
+        formData.append("id_ingrediente", id);
+
+        const imageResponse2 = await fetch(`${API_URL}/ingredient_image/upload`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!imageResponse2.ok) {
+          throw new Error(`Second image upload failed: ${imageResponse2.status}`);
+        }
+
+        const imageResult2 = await imageResponse2.json();
+        imageUrl2 = imageResult2.image_url; // Get new uploaded second image URL
       }
 
       // Update ingrediente data
       const updatedData = {
         ...this.ingredienteEditado,
-        image_url: imageUrl, // Include the new or existing image URL
+        image_url: imageUrl,
+        image_url_2: imageUrl2,
       };
 
       const response = await fetch(`${API_URL}/ingredientes/${id}`, {
@@ -291,7 +353,7 @@ export default {
       }
 
       this.showModal = false;
-      location.reload(); // Reload the page to reflect the updated data
+      location.reload(); // Reload to reflect updated data
     },
   },
   async mounted() {

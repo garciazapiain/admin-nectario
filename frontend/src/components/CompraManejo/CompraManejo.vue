@@ -39,8 +39,8 @@
               <td :class="{ 'line-through text-gray-500': ingrediente.ya_comprado }">{{ ingrediente.surtir_moral }}</td>
               <td :class="{ 'line-through text-gray-500': ingrediente.ya_comprado }">{{ ingrediente.surtir_campestre }}
               </td>
-              <td class="clickable-row" v-if="ingrediente.image_url" @click="showPopup(ingrediente)">
-                <span class="bg-blue-800 p-2 text-white cursor-pointer">Foto</span>
+              <td class="clickable-row" v-if="ingrediente.image_url || ingrediente.image_url_2">
+                <span class="bg-blue-800 p-2 text-white cursor-pointer" @click="showPopup(ingrediente)">Foto</span>
               </td>
               <td v-else></td>
             </tr>
@@ -98,15 +98,32 @@
       </table>
     </div>
 
-    <!-- Popup component -->
+    <!-- Popup Component -->
     <div v-if="popupVisible" class="popup-overlay">
       <div class="popup">
-        <div v-if="popupImage">
-          <img :src="popupImage" alt="Ingrediente Imagen" class="popup-image" />
-          <button @click="closePopup" class="close-button">Cerrar</button>
-        </div>
-        <div v-else>
-          <p>Falta foto para este producto.</p>
+        <button class="close-button" @click="closePopup">X</button>
+        <div class="slideshow-container">
+          <div class="image-container">
+            <!-- First Image -->
+            <template v-if="currentImageIndex === 0">
+              <h1 className="text-black">Opción A</h1>
+              <img v-if="selectedPopupIngrediente?.image_url" :src="selectedPopupIngrediente.image_url"
+                alt="Opción A" />
+            </template>
+
+            <!-- Second Image -->
+            <template v-if="currentImageIndex === 1 && selectedPopupIngrediente?.image_url_2">
+              <h1 className="text-black">Opción B</h1>
+              <img :src="selectedPopupIngrediente.image_url_2" alt="Opción B" />
+            </template>
+          </div>
+
+          <!-- Navigation Buttons -->
+          <div v-if="selectedPopupIngrediente?.image_url && selectedPopupIngrediente?.image_url_2"
+            class="navigation-buttons">
+            <button @click="prevImage">◀</button>
+            <button @click="nextImage">▶</button>
+          </div>
         </div>
       </div>
     </div>
@@ -122,8 +139,10 @@ const planeacionCompra = ref([]);
 const isLoaded = ref(false);
 const showSummary = ref(false); // State to toggle views
 const popupVisible = ref(false);
-const popupImage = ref(null);
 let draggedItem = null;
+const selectedPopupIngrediente = ref(null); // Stores the selected ingredient for the popup
+const currentImageIndex = ref(0); // Tracks the current image index in the slideshow
+
 
 // Fetch data from the API
 const fetchPlaneacionCompra = async () => {
@@ -154,20 +173,29 @@ const groupedByProveedor = computed(() => {
 });
 
 const showPopup = (ingrediente) => {
-  console.log(ingrediente)
-  if (ingrediente.image_url) {
-    popupImage.value = ingrediente.image_url;
-  } else {
-    popupImage.value = null;
-    setTimeout(() => {
-      popupVisible.value = false;
-    }, 1000);
-  }
+  selectedPopupIngrediente.value = ingrediente;
+  currentImageIndex.value = 0; // Start with the first image
   popupVisible.value = true;
 };
 
 const closePopup = () => {
   popupVisible.value = false;
+  selectedPopupIngrediente.value = null;
+};
+
+const nextImage = () => {
+  if (
+    currentImageIndex.value === 0 &&
+    selectedPopupIngrediente.value?.image_url_2
+  ) {
+    currentImageIndex.value = 1;
+  }
+};
+
+const prevImage = () => {
+  if (currentImageIndex.value === 1) {
+    currentImageIndex.value = 0;
+  }
 };
 
 const enableMobileDrag = false; // Flag to toggle mobile implementation
@@ -307,6 +335,37 @@ onMounted(() => {
 });
 </script>
 
+<script>
+export default {
+  props: {
+    ingrediente: {
+      type: Object,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      currentImageIndex: 0, // Default to the first image
+    };
+  },
+  methods: {
+    nextImage() {
+      // Go to the next image only if it's the second one and exists
+      if (this.currentImageIndex < 1 && this.ingrediente.image_url_2) {
+        this.currentImageIndex++;
+      }
+    },
+    prevImage() {
+      // Go back to the first image if currently on the second
+      if (this.currentImageIndex > 0) {
+        this.currentImageIndex--;
+      }
+    },
+  },
+};
+</script>
+
+
 <style scoped>
 .loading-message {
   font-size: 18px;
@@ -373,4 +432,26 @@ onMounted(() => {
   object-fit: cover;
   border-radius: 8px;
 }
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.navigation-buttons button {
+  padding: 5px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.navigation-buttons button:hover {
+  background-color: #45a049;
+}
+
 </style>

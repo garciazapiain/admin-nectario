@@ -172,6 +172,7 @@ const addToPlaneacion = (ingrediente) => {
       surtirMoral: ingrediente.surtirMoral || "", // Default if missing
       surtirCampestre: ingrediente.surtirCampestre || "", // Default if missing
       image_url: ingrediente.image_url,
+      image_url_2: ingrediente.image_url_2,
       moral_demanda_semanal: Number(ingrediente.moral_demanda_semanal),
       bosques_demanda_semanal: Number(ingrediente.bosques_demanda_semanal)
     });
@@ -249,6 +250,7 @@ const submitPlaneacionCompra = async () => {
             surtirMoral: item.surtirMoral,
             surtirCampestre: item.surtirCampestre,
             image_url: item.image_url,
+            image_url_2: item.image_url_2,
             moral_demanda_semanal: item.demandaMoral,
             bosques_demanda_semanal: item.demandaBosques
           }),
