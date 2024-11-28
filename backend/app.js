@@ -977,7 +977,8 @@ app.put('/api/ingredientes/:id', async (req, res) => {
     moral_demanda_semanal,
     bosques_demanda_semanal,
     orden_inventario,
-    frecuencias_inventario
+    frecuencias_inventario,
+    proveedor_opcion_b
   } = req.body;
   const { id } = req.params;
   const client = await pool.connect();
@@ -985,8 +986,8 @@ app.put('/api/ingredientes/:id', async (req, res) => {
     await client.query('BEGIN');
     const updateIngredientesQuery = `
       UPDATE ingredientes 
-      SET nombre = $1, unidad = $2, precio = $3, merma = $4, proveedor = $5, proveedor_id = $6, store_route_order = $7, producto_clave = $8, moral_demanda_semanal = $9, bosques_demanda_semanal = $10, orden_inventario = $11 
-      WHERE id_ingrediente = $12 
+      SET nombre = $1, unidad = $2, precio = $3, merma = $4, proveedor = $5, proveedor_id = $6, store_route_order = $7, producto_clave = $8, moral_demanda_semanal = $9, bosques_demanda_semanal = $10, orden_inventario = $11, proveedor_opcion_b = $12 
+      WHERE id_ingrediente = $13 
       RETURNING *`;
     const result = await client.query(updateIngredientesQuery, [
       nombre,
@@ -1000,6 +1001,7 @@ app.put('/api/ingredientes/:id', async (req, res) => {
       moral_demanda_semanal,
       bosques_demanda_semanal,
       orden_inventario,
+      proveedor_opcion_b,
       id // Moved to the last position
     ]);
 

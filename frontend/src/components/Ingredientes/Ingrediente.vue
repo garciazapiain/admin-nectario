@@ -34,6 +34,9 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
           </select>
         </div>
         <div class="form-group">
+          <input v-model="ingredienteEditado.proveedor_opcion_b" placeholder="Proveedor Opción B" class="input-field" />
+        </div>
+        <div class="form-group">
           <label for="unidad">Unidad:</label>
           <select id="unidad" v-model="ingredienteEditado.unidad">
             <option disabled value="">Selecciona una unidad</option>
@@ -119,6 +122,10 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
         <tr>
           <td><strong>Proveedor:</strong></td>
           <td>{{ ingrediente.proveedor }}</td>
+        </tr>
+        <tr>
+          <td><strong>Proveedor B (Opciones B):</strong></td>
+          <td>{{ ingrediente.proveedor_opcion_b }}</td>
         </tr>
         <tr>
           <td><strong>Unidad:</strong></td>

@@ -106,23 +106,31 @@
           <div class="image-container">
             <!-- First Image -->
             <template v-if="currentImageIndex === 0">
-              <h1 className="text-black">Opción A</h1>
+              <h1 class="text-black">Opción A</h1>
               <img v-if="selectedPopupIngrediente?.image_url" :src="selectedPopupIngrediente.image_url"
                 alt="Opción A" />
             </template>
 
             <!-- Second Image -->
             <template v-if="currentImageIndex === 1 && selectedPopupIngrediente?.image_url_2">
-              <h1 className="text-black">Opción B</h1>
+              <h1 class="text-black">Opción B {{ selectedPopupIngrediente?.proveedor_opcion_b }}</h1>
               <img :src="selectedPopupIngrediente.image_url_2" alt="Opción B" />
             </template>
           </div>
 
           <!-- Navigation Buttons -->
-          <div v-if="selectedPopupIngrediente?.image_url && selectedPopupIngrediente?.image_url_2"
-            class="navigation-buttons">
-            <button @click="prevImage">◀</button>
-            <button @click="nextImage">▶</button>
+          <div class="navigation-buttons">
+            <!-- Previous Button -->
+            <button :disabled="currentImageIndex === 0" @click="prevImage"
+              :class="{ 'disabled-button': currentImageIndex === 0 }">
+              ◀
+            </button>
+
+            <!-- Next Button -->
+            <button :disabled="currentImageIndex === 1 || !selectedPopupIngrediente.image_url_2" @click="nextImage"
+              :class="{ 'disabled-button': currentImageIndex === 1 || !selectedPopupIngrediente.image_url_2 }">
+              ▶
+            </button>
           </div>
         </div>
       </div>
@@ -450,8 +458,14 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-.navigation-buttons button:hover {
+.navigation-buttons button:hover:not(.disabled-button) {
   background-color: #45a049;
+}
+
+.navigation-buttons button.disabled-button {
+  background-color: #cccccc;
+  /* Light gray for disabled state */
+  cursor: not-allowed;
 }
 
 </style>

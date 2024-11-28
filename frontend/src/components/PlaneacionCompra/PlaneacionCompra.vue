@@ -127,7 +127,8 @@ const fetchPlaneacionCompra = async () => {
       surtirMoral: item.surtir_moral || "", // Use existing value or default to empty string
       surtirCampestre: item.surtir_campestre || "", // Use existing value or default to empty string
       moral_demanda_semanal: item.moral_demanda_semanal,
-      bosques_demanda_semanal: item.bosques_demanda_semanal
+      bosques_demanda_semanal: item.bosques_demanda_semanal,
+      proveedor_opcion_b: item.proveedor_opcion_b
     }));
     console.log("PlaneacionCompra loaded:", planeacionCompra.value);
   } catch (error) {
@@ -174,7 +175,8 @@ const addToPlaneacion = (ingrediente) => {
       image_url: ingrediente.image_url,
       image_url_2: ingrediente.image_url_2,
       moral_demanda_semanal: Number(ingrediente.moral_demanda_semanal),
-      bosques_demanda_semanal: Number(ingrediente.bosques_demanda_semanal)
+      bosques_demanda_semanal: Number(ingrediente.bosques_demanda_semanal),
+      proveedor_opcion_b: ingrediente.proveedor_opcion_b
     });
 
     console.log("Added new ingredient:", ingrediente);
@@ -252,7 +254,8 @@ const submitPlaneacionCompra = async () => {
             image_url: item.image_url,
             image_url_2: item.image_url_2,
             moral_demanda_semanal: item.demandaMoral,
-            bosques_demanda_semanal: item.demandaBosques
+            bosques_demanda_semanal: item.demandaBosques,
+            proveedor_opcion_b: item.proveedor_opcion_b
           }),
         });
 
