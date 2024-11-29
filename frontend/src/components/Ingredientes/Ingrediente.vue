@@ -78,7 +78,7 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
           <input id="bosques_demanda_semanal" type="number" step="0.01"
             v-model.number="ingredienteEditado.bosques_demanda_semanal" />
         </div>
-        <div class="form-group">
+        <!-- <div class="form-group">
           <label for="frecuencias_inventario">Frecuencias de Inventario:</label>
           <select id="frecuencias_inventario" v-model="ingredienteEditado.frecuencias_inventario" multiple>
             <option disabled value="">Selecciona una frecuencia</option>
@@ -87,7 +87,7 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
             <option value="3">Fin segundo turno</option>
             <option value="4">No inventarear</option>
           </select>
-        </div>
+        </div> -->
         <div class="form-group">
           <label for="image">Actualizar Imagen Opción A:</label>
           <input id="image" type="file" @change="handleFileUpload('image_url', $event)" />
@@ -177,7 +177,7 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
             <span v-else>No hay imagen disponible</span>
           </td>
         </tr>
-        <tr>
+        <!-- <tr>
           <td><strong>Frecuencias de Inventario:</strong></td>
           <td>
             <span v-for="(frecuencia, index) in ingrediente.frecuencias_inventario" :key="index">
@@ -185,7 +185,7 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
               <span v-if="index < ingrediente.frecuencias_inventario.length - 1">, </span>
             </span>
           </td>
-        </tr>
+        </tr> -->
       </tbody>
     </table>
     <h2>Platillos/Subplatillos donde se usa el insumo:</h2>

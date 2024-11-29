@@ -39,7 +39,7 @@
               <td :class="{ 'line-through text-gray-500': ingrediente.ya_comprado }">{{ ingrediente.surtir_moral }}</td>
               <td :class="{ 'line-through text-gray-500': ingrediente.ya_comprado }">{{ ingrediente.surtir_campestre }}
               </td>
-              <td class="clickable-row" v-if="ingrediente.image_url || ingrediente.image_url_2">
+              <td class="clickable-row" v-if="ingrediente.image_url || ingrediente.image_url_2 || ingrediente.proveedor_opcion_b">
                 <span class="bg-blue-800 p-2 text-white cursor-pointer" @click="showPopup(ingrediente)">Foto</span>
               </td>
               <td v-else></td>
