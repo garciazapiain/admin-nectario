@@ -977,7 +977,6 @@ app.put('/api/ingredientes/:id', async (req, res) => {
     moral_demanda_semanal,
     bosques_demanda_semanal,
     orden_inventario,
-    frecuencias_inventario,
     proveedor_opcion_b
   } = req.body;
   const { id } = req.params;
@@ -1005,19 +1004,19 @@ app.put('/api/ingredientes/:id', async (req, res) => {
       id // Moved to the last position
     ]);
 
-    if (frecuencias_inventario) {
-      // Check if frecuencias_inventario is not null
-      const deleteFrecuenciasQuery = 'DELETE FROM ingredientes_frecuencia WHERE id_ingrediente = $1';
-      await client.query(deleteFrecuenciasQuery, [id]);
+    // if (frecuencias_inventario) {
+    //   // Check if frecuencias_inventario is not null
+    //   const deleteFrecuenciasQuery = 'DELETE FROM ingredientes_frecuencia WHERE id_ingrediente = $1';
+    //   await client.query(deleteFrecuenciasQuery, [id]);
 
-      const insertFrecuenciasQuery = 'INSERT INTO ingredientes_frecuencia (id_ingrediente, frecuencia_inventario_id) VALUES ($1, $2)';
-      for (let frecuencia of frecuencias_inventario) {
-        if (frecuencia) {
-          // Check if frecuencia is not null
-          await client.query(insertFrecuenciasQuery, [id, frecuencia]);
-        }
-      }
-    }
+    //   const insertFrecuenciasQuery = 'INSERT INTO ingredientes_frecuencia (id_ingrediente, frecuencia_inventario_id) VALUES ($1, $2)';
+    //   for (let frecuencia of frecuencias_inventario) {
+    //     if (frecuencia) {
+    //       // Check if frecuencia is not null
+    //       await client.query(insertFrecuenciasQuery, [id, frecuencia]);
+    //     }
+    //   }
+    // }
 
     await client.query('COMMIT');
     res.json(result.rows[0]);
