@@ -39,7 +39,8 @@
               <td :class="{ 'line-through text-gray-500': ingrediente.ya_comprado }">{{ ingrediente.surtir_moral }}</td>
               <td :class="{ 'line-through text-gray-500': ingrediente.ya_comprado }">{{ ingrediente.surtir_campestre }}
               </td>
-              <td class="clickable-row" v-if="ingrediente.image_url || ingrediente.image_url_2 || ingrediente.proveedor_opcion_b">
+              <td class="clickable-row"
+                v-if="ingrediente.image_url || ingrediente.image_url_2 || ingrediente.proveedor_opcion_b">
                 <span class="bg-blue-800 p-2 text-white cursor-pointer" @click="showPopup(ingrediente)">Foto</span>
               </td>
               <td v-else></td>
@@ -109,12 +110,20 @@
               <h1 class="text-black">Opción A</h1>
               <img v-if="selectedPopupIngrediente?.image_url" :src="selectedPopupIngrediente.image_url"
                 alt="Opción A" />
+              <p v-else>No image available for Opción A</p>
             </template>
 
-            <!-- Second Image -->
-            <template v-if="currentImageIndex === 1 && selectedPopupIngrediente?.image_url_2">
-              <h1 class="text-black">Opción B {{ selectedPopupIngrediente?.proveedor_opcion_b }}</h1>
-              <img :src="selectedPopupIngrediente.image_url_2" alt="Opción B" />
+            <!-- Second Slide -->
+            <template v-if="currentImageIndex === 1">
+              <h1 class="text-black">
+                Opción B
+                <span v-if="selectedPopupIngrediente?.proveedor_opcion_b">
+                  ({{ selectedPopupIngrediente.proveedor_opcion_b }})
+                </span>
+              </h1>
+              <img v-if="selectedPopupIngrediente?.image_url_2" :src="selectedPopupIngrediente.image_url_2"
+                alt="Opción B" />
+              <p v-else>No image available for Opción B</p>
             </template>
           </div>
 
@@ -127,8 +136,10 @@
             </button>
 
             <!-- Next Button -->
-            <button :disabled="currentImageIndex === 1 || !selectedPopupIngrediente.image_url_2" @click="nextImage"
-              :class="{ 'disabled-button': currentImageIndex === 1 || !selectedPopupIngrediente.image_url_2 }">
+            <button
+              :disabled="currentImageIndex === 1 && !selectedPopupIngrediente?.image_url_2 && !selectedPopupIngrediente?.proveedor_opcion_b"
+              @click="nextImage"
+              :class="{ 'disabled-button': currentImageIndex === 1 && !selectedPopupIngrediente?.image_url_2 && !selectedPopupIngrediente?.proveedor_opcion_b }">
               ▶
             </button>
           </div>
@@ -194,7 +205,7 @@ const closePopup = () => {
 const nextImage = () => {
   if (
     currentImageIndex.value === 0 &&
-    selectedPopupIngrediente.value?.image_url_2
+    (selectedPopupIngrediente.value?.image_url_2 || selectedPopupIngrediente.value?.proveedor_opcion_b)
   ) {
     currentImageIndex.value = 1;
   }
@@ -467,5 +478,4 @@ export default {
   /* Light gray for disabled state */
   cursor: not-allowed;
 }
-
 </style>
