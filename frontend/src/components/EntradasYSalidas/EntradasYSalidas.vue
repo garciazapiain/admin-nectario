@@ -23,30 +23,43 @@ const currentEntrada = ref(null); // Tracks which row's action is being performe
 const generateWeeks = () => {
   const weekOptions = [];
   const today = new Date();
-  const startOfWeek = new Date(today);
-  const endOfWeek = new Date(today);
 
-  // Adjust to the current week's Monday
-  startOfWeek.setDate(today.getDate() - today.getDay() + 1); // Move to Monday
-  endOfWeek.setDate(startOfWeek.getDate() + 6); // Sunday of the same week
+  // Calculate the current week
+  const currentStartOfWeek = new Date(today);
+  currentStartOfWeek.setDate(today.getDate() - today.getDay() + 1); // Monday
+  const currentEndOfWeek = new Date(currentStartOfWeek);
+  currentEndOfWeek.setDate(currentStartOfWeek.getDate() + 6); // Sunday
 
-  // Format the week label
-  const weekStartMonth = startOfWeek.toLocaleString('es-ES', { month: 'long' });
-  const weekEndMonth = endOfWeek.toLocaleString('es-ES', { month: 'long' });
-  const label =
-    weekStartMonth !== weekEndMonth
-      ? `${startOfWeek.getDate()} ${weekStartMonth} al ${endOfWeek.getDate()} ${weekEndMonth}`
-      : `${startOfWeek.getDate()} al ${endOfWeek.getDate()} de ${weekStartMonth}`;
-
-  // Add the current week as the only option
+  // Add the current week to the options
   weekOptions.push({
-    value: `${startOfWeek.toISOString().split('T')[0]}_${endOfWeek.toISOString().split('T')[0]}`,
-    label: label,
+    value: `${currentStartOfWeek.toISOString().split('T')[0]}_${currentEndOfWeek.toISOString().split('T')[0]}`,
+    label: `Semana actual: ${formatWeekLabel(currentStartOfWeek, currentEndOfWeek)}`,
+  });
+
+  // Calculate the previous week
+  const previousStartOfWeek = new Date(currentStartOfWeek);
+  previousStartOfWeek.setDate(currentStartOfWeek.getDate() - 7); // Previous Monday
+  const previousEndOfWeek = new Date(previousStartOfWeek);
+  previousEndOfWeek.setDate(previousStartOfWeek.getDate() + 6); // Previous Sunday
+
+  // Add the previous week to the options
+  weekOptions.push({
+    value: `${previousStartOfWeek.toISOString().split('T')[0]}_${previousEndOfWeek.toISOString().split('T')[0]}`,
+    label: `Semana pasada: ${formatWeekLabel(previousStartOfWeek, previousEndOfWeek)}`,
   });
 
   weeks.value = weekOptions;
-  selectedWeek.value = weekOptions[0].value; // Set the current week as default
+  selectedWeek.value = weekOptions[0].value; // Default to the current week
   updateDateRange(); // Update the start and end date based on the selected week
+};
+
+const formatWeekLabel = (startOfWeek, endOfWeek) => {
+  const startMonth = startOfWeek.toLocaleString("es-ES", { month: "long" });
+  const endMonth = endOfWeek.toLocaleString("es-ES", { month: "long" });
+
+  return startMonth !== endMonth
+    ? `${startOfWeek.getDate()} ${startMonth} al ${endOfWeek.getDate()} ${endMonth}`
+    : `${startOfWeek.getDate()} al ${endOfWeek.getDate()} de ${startMonth}`;
 };
 
 
