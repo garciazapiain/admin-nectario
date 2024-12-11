@@ -2,7 +2,10 @@
   <div>
     <h1>Registro de Compras</h1>
     <!-- <button @click="scrollToInput">Scroll to Input File Section</button> -->
-    <button @click="retrieveInbox">Retrieve Inbox</button>
+    <!-- <button @click="retrieveInbox">Retrieve Inbox</button> -->
+    <router-link to="/historialcompra/registrar-compra-manualmente">
+      <button>Agregar compra manualmente</button>
+    </router-link>
     <table v-if="purchaseOrders.length">
       <tr>
         <th>id</th>
@@ -91,9 +94,6 @@
     <p class="error-message">{{ errorMessageSubmit }}</p>
     <router-link to="/historialcompra/insumos">
       <button>Vista por Insumo</button>
-    </router-link>
-    <router-link to="/historialcompra/registrar-compra-manualmente">
-      <button>Agregar compra manualmente</button>
     </router-link>
   </div>
 </template>
