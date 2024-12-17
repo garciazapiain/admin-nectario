@@ -6,64 +6,71 @@
     <h1>Planeación de Compras</h1>
     <!-- Selected Ingredients (Planeación de Compra) -->
     <div class="planeacion-container">
-      <h2>Ingredientes Seleccionados</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Proveedor</th>
-            <th>Surtir Moral</th>
-            <th>Surtir Campestre</th>
-            <th>Acciones</th>
-            <th>Pronóstico demanda</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, index) in planeacionCompra" :key="index">
-            <td>{{ item.nombre }}</td>
-            <td>
-              <select v-model="item.proveedor" class="editable-dropdown">
-                <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">
-                  {{ proveedor.nombre }}
-                </option>
-              </select>
-            </td>
-            <td>
-              <input type="string" v-model="item.surtirMoral" class="editable-input" />
-            </td>
-            <td>
-              <input type="string" v-model="item.surtirCampestre" class="editable-input" />
-            </td>
-            <td>
-              <button class="button-remove" @click="removeFromPlaneacion(index)">Eliminar</button>
-            </td>
-            <td class="cursor-pointer">
-              <button v-if="item.moral_demanda_semanal || item.bosques_demanda_semanal" class="bg-blue-600" @click="openPopup(item)">Pronóstico</button>
-            </td>
-          </tr>
-        </tbody>
+      <h2 class="text-xl">Ingredientes Seleccionados</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Ingrediente</th>
+              <th v-if="isAdmin">Proveedor</th>
+              <th v-if="userName === 'moral' || isAdmin">Surtir Moral</th>
+              <th v-if="userName === 'campestre' || isAdmin">Surtir Campestre</th>
+              <th>Eliminar</th>
+              <th v-if="isAdmin">Pronóstico Demanda</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in planeacionCompra" :key="index">
+              <td>{{ item.nombre }}</td>
+              <td v-if="isAdmin" data-label="Proveedor">
+                <select v-model="item.proveedor" class="editable-dropdown">
+                  <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">
+                    {{ proveedor.nombre }}
+                  </option>
+                </select>
+              </td>
+              <td v-if="userName === 'moral' || isAdmin" data-label="Cantidad Moral">
+                <input type="text" v-model="item.surtirMoral" class="editable-input" />
+              </td>
+              <td v-if="userName === 'campestre' || isAdmin" data-label="Cantidad Campestre">
+                <input type="text" v-model="item.surtirCampestre" class="editable-input" />
+              </td>
+              <td data-label="">
+                <button class="button-remove" @click="removeFromPlaneacion(index)">Eliminar</button>
+              </td>
+              <td v-if="isAdmin" data-label="Pronóstico Demanda">
+                <button v-if="item.moral_demanda_semanal || item.bosques_demanda_semanal" class="bg-blue-600"
+                  @click="openPopup(item)">
+                  Pronóstico
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
         <div>
           <!-- Submit Button -->
           <button class="button-submit" @click="submitPlaneacionCompra">Guardar Planeación</button>
         </div>
-        <button class="button-clear" @click="clearPlaneacionCompra">
+        <button v-if="isAdmin" class="button-clear" @click="clearPlaneacionCompra">
           Limpiar Planeación de Compra
         </button>
-      </table>
+      </div>
     </div>
 
     <!-- Search Bar -->
-    <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="search-bar" />
+    <!-- Search Bar -->
+    <div class="search-container">
+      <input v-model="searchTerm" placeholder="🔍 Buscar ingrediente..." class="search-bar" />
+    </div>
 
     <!-- List of All Ingredients -->
     <div class="ingredients-container">
-      <h2>Lista de Ingredientes</h2>
       <table>
         <thead>
           <tr>
             <th>Nombre</th>
             <th>Unidad</th>
-            <th>Proveedor</th>
+            <th v-if="isAdmin">Proveedor</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -71,7 +78,7 @@
           <tr v-for="ingrediente in filteredIngredients" :key="ingrediente.id_ingrediente">
             <td>{{ ingrediente.nombre }}</td>
             <td>{{ ingrediente.unidad }}</td>
-            <td>{{ ingrediente.proveedor }}</td>
+            <td v-if="isAdmin">{{ ingrediente.proveedor }}</td>
             <td>
               <button class="button-add" @click="addToPlaneacion(ingrediente)">Agregar</button>
             </td>
@@ -95,6 +102,8 @@ const searchTerm = ref("");
 const proveedores = ref([]); // List of providers
 const isPopupVisible = ref(false); // Controls popup visibility
 const selectedIngredient = ref(null); // Stores the selected ingredient for the popup
+const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
+const userName = ref(localStorage.getItem("userName"))
 
 /**
  * Fetch all ingredients from the API on component mount
@@ -186,7 +195,7 @@ const addToPlaneacion = (ingrediente) => {
 /**
  * Remove an ingredient from the planeacionCompra array
  */
- const removeFromPlaneacion = async (index) => {
+const removeFromPlaneacion = async (index) => {
   const itemToRemove = planeacionCompra.value[index];
 
   try {
@@ -344,10 +353,23 @@ fetchInitialData();
 </script>
 
 <style scoped>
-.planeacion-container table {
+.table-container {
+  /* Horizontal scrolling */
+  -webkit-overflow-scrolling: touch;
+  /* Smooth scroll on iOS */
+}
+
+table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+}
+
+th,
+td {
+  white-space: nowrap;
+  /* Prevent wrapping for larger screens */
+  text-align: center;
+  padding: 8px;
 }
 
 .planeacion-container th,
@@ -358,9 +380,10 @@ fetchInitialData();
 }
 
 .editable-input {
-  width: 60px;
+  width: 200px;
   text-align: center;
   padding: 5px;
+  height: 2rem;
 }
 
 .button-remove {
@@ -407,5 +430,84 @@ fetchInitialData();
 .button-clear:hover {
   background-color: #b22222;
   /* Darker red */
+}
+
+@media (max-width: 768px) {
+
+  /* Make table columns stack vertically */
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+
+  thead {
+    display: none;
+    /* Hide table headers on small screens */
+  }
+
+  tr {
+    border-bottom: 1px solid #ddd;
+    /* Add borders for separation */
+    margin-bottom: 10px;
+  }
+
+  td {
+    text-align: left;
+    justify-content: space-between;
+    padding: 6px;
+    border: none;
+    font-size: 1.5rem;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    padding-right: 10px;
+  }
+
+  /* Buttons */
+  .button-remove,
+  .button-submit,
+  .button-clear {
+    width: 30%;
+    margin: 5px 0;
+    font-size: 1.5rem;
+  }
+}
+
+/* Search Container */
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+/* Styled Search Bar */
+.search-bar {
+  width: 100%;
+  max-width: 400px;
+  /* Limit search bar width on larger screens */
+  padding: 10px 15px;
+  font-size: 22px;
+  height: 3rem;
+  border: 2px solid #ddd;
+  border-radius: 25px;
+  /* Rounded corners */
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover and Focus Effects */
+.search-bar:hover,
+.search-bar:focus {
+  border-color: #4caf50;
+  /* Highlight border */
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+  /* Subtle green glow */
 }
 </style>
