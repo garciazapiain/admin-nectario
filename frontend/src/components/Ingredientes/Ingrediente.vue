@@ -66,7 +66,8 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
         </div>
         <div class="form-group">
           <label for="orden_inventario">Orden toma de Inventario:</label>
-          <input id="orden_inventario" type="number" step="0.1" v-model.number="ingredienteEditado.orden_inventario" />
+          <input id="orden_inventario" type="number" step="0.1" :value="ingredienteEditado.orden_inventario"
+            @input="updateOrdenInventario($event.target.value)" />
         </div>
         <div class="form-group">
           <label for="moral_demanda_semanal">Moral Demanda Semanal:</label>
@@ -259,6 +260,13 @@ export default {
       if (selectedProveedor) {
         this.ingredienteEditado.proveedor = selectedProveedor.nombre;
         this.ingredienteEditado.proveedor_id = selectedProveedor.id;
+      }
+    },
+    updateOrdenInventario(value) {
+      if (value === "" || value === null) {
+        this.ingredienteEditado.orden_inventario = null; // Allow null values
+      } else {
+        this.ingredienteEditado.orden_inventario = parseFloat(value); // Convert to a number
       }
     },
     handleFileUpload(type, event) {
