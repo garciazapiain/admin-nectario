@@ -250,8 +250,8 @@ const filteredIngredients = computed(() => {
     );
   }
 
-  // Filter logic
-  return filtered.filter((ingrediente) => {
+  // Filter logic for existing items
+  filtered = filtered.filter((ingrediente) => {
     const existingItem = planeacionCompra.value.find(
       (item) => item.id_ingrediente === ingrediente.id_ingrediente
     );
@@ -274,6 +274,12 @@ const filteredIngredients = computed(() => {
     // Default fallback
     return false;
   });
+
+  // Filter out items where `orden_inventario` is null
+  filtered = filtered.filter((ingrediente) => ingrediente.orden_inventario !== null);
+
+  // Sort by `orden_inventario` in ascending order
+  return filtered.sort((a, b) => a.orden_inventario - b.orden_inventario);
 });
 
 const markAsModified = (item) => {
