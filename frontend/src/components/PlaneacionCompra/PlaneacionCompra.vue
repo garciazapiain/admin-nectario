@@ -51,12 +51,12 @@
         <div class="button-container">
           <!-- Guardar Planeación -->
           <button class="button-submit" @click="submitPlaneacionCompra">
-            <i class="fa fa-save"></i> Guardar Planeación
+            <i class="fa fa-save"></i> Guardar
           </button>
 
           <!-- Exportar a WhatsApp -->
           <button class="button-whatsapp" @click="exportToWhatsApp">
-            <i class="fa fa-whatsapp"></i> Exportar a WhatsApp
+            <i class="fa fa-whatsapp"></i> WhatsApp
           </button>
         </div>
         <button v-if="isAdmin" class="button-clear" @click="clearPlaneacionCompra">
@@ -588,7 +588,7 @@ td {
   .button-whatsapp {
     width: 30%;
     margin: 5px 0;
-    font-size: 1rem;
+    font-size: 1.3rem;
   }
 }
 
