@@ -20,23 +20,94 @@ router.get('/', async (req, res) => {
 
 // POST a new planeacion_compra record
 router.post('/', async (req, res) => {
-  const { id_ingrediente, nombre, proveedor, surtirMoral, surtirCampestre, image_url, image_url_2, moral_demanda_semanal, bosques_demanda_semanal, proveedor_opcion_b } = req.body;
+  const {
+    id_ingrediente,
+    nombre,
+    proveedor,
+    surtirMoral,
+    surtirCampestre,
+    image_url,
+    image_url_2,
+    moral_demanda_semanal,
+    bosques_demanda_semanal,
+    proveedor_opcion_b,
+    userName
+  } = req.body;
 
   const client = await connectDb();
 
   try {
-    const query = `
-      INSERT INTO planeacion_compra (id_ingrediente, nombre, proveedor, surtir_moral, surtir_campestre, image_url, image_url_2, moral_demanda_semanal, bosques_demanda_semanal, proveedor_opcion_b)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+    // Step 1: Check if the record already exists
+    const checkQuery = `SELECT * FROM planeacion_compra WHERE id_ingrediente = $1;`;
+    const checkResult = await client.query(checkQuery, [id_ingrediente]);
+
+    if (checkResult.rows.length > 0) {
+      // Step 2: Explicitly Update Flags
+      const updateQuery = `
+      UPDATE planeacion_compra
+      SET 
+        surtir_moral = $1,
+        surtir_campestre = $2,
+        added_moral = $3::BOOLEAN OR added_moral,
+        added_campestre = $4::BOOLEAN OR added_campestre,
+        updated_at = NOW()
+      WHERE id_ingrediente = $5
+      RETURNING *;
+      `;
+
+      const values = [
+        surtirMoral || existingRecord.surtir_moral,
+        surtirCampestre || existingRecord.surtir_campestre,
+        userName === "moral",    // This will force added_moral = TRUE
+        userName === "campestre",// This will force added_campestre = TRUE
+        id_ingrediente
+      ];
+
+      const updateResult = await client.query(updateQuery, values);
+      return res.status(200).json({ message: "Record updated successfully", row: updateResult.rows[0] });
+    }
+
+    // Step 3: Insert New Record
+    const insertQuery = `
+      INSERT INTO planeacion_compra (
+        id_ingrediente, 
+        nombre, 
+        proveedor, 
+        surtir_moral, 
+        surtir_campestre, 
+        added_moral, 
+        added_campestre, 
+        image_url, 
+        image_url_2, 
+        moral_demanda_semanal, 
+        bosques_demanda_semanal, 
+        proveedor_opcion_b, 
+        created_at, 
+        updated_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW(), NOW())
       RETURNING *;
     `;
-    const values = [id_ingrediente, nombre, proveedor, surtirMoral, surtirCampestre, image_url, image_url_2, moral_demanda_semanal, bosques_demanda_semanal, proveedor_opcion_b];
-    const result = await client.query(query, values);
 
-    res.status(201).json(result.rows[0]); // Return the created record
+    const values = [
+      id_ingrediente,
+      nombre,
+      proveedor || "",
+      surtirMoral || "",
+      surtirCampestre || "",
+      userName === "moral",      // Force true for moral
+      userName === "campestre",  // Force true for campestre
+      image_url || null,
+      image_url_2 || null,
+      moral_demanda_semanal || 0,
+      bosques_demanda_semanal || 0,
+      proveedor_opcion_b || ""
+    ];
+
+    const insertResult = await client.query(insertQuery, values);
+    res.status(201).json({ message: "Record inserted successfully", row: insertResult.rows[0] });
   } catch (error) {
-    console.error('Error inserting data into planeacion_compra:', error);
-    res.status(500).json({ error: 'Error inserting data' });
+    console.error('Error handling POST in planeacion_compra:', error);
+    res.status(500).json({ error: 'Error processing request' });
   } finally {
     client.release();
   }
@@ -128,54 +199,113 @@ router.put('/:id_ingrediente/toggle-entregado', async (req, res) => {
   }
 });
 
-
 // PUT to update a specific planeacion_compra record
 router.put('/:id_ingrediente', async (req, res) => {
   const { id_ingrediente } = req.params;
-  const { nombre, proveedor, surtirMoral, surtirCampestre } = req.body;
+  const { nombre, proveedor, surtirMoral, surtirCampestre, userName } = req.body;
 
   const client = await connectDb();
 
   try {
-    const query = `
-        UPDATE planeacion_compra
-        SET nombre = $1, proveedor = $2, surtir_moral = $3, surtir_campestre = $4, updated_at = NOW()
-        WHERE id_ingrediente = $5
-        RETURNING *;
-      `;
-    const values = [nombre, proveedor, surtirMoral, surtirCampestre, id_ingrediente];
-    const result = await client.query(query, values);
+    // Fetch existing record to avoid overwriting unrelated fields
+    const checkQuery = 'SELECT * FROM planeacion_compra WHERE id_ingrediente = $1';
+    const checkResult = await client.query(checkQuery, [id_ingrediente]);
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Record not found for update' });
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ error: "Record not found for update" });
     }
 
-    res.json(result.rows[0]);
+    const existingRecord = checkResult.rows[0];
+
+    // Conditional update logic for moral/campestre flags
+    const updatedAddedMoral = userName === "moral" ? true : existingRecord.added_moral;
+    const updatedAddedCampestre = userName === "campestre" ? true : existingRecord.added_campestre;
+
+    const query = `
+      UPDATE planeacion_compra
+      SET 
+        nombre = $1, 
+        proveedor = $2, 
+        surtir_moral = COALESCE($3, surtir_moral), 
+        surtir_campestre = COALESCE($4, surtir_campestre),
+        added_moral = $5,
+        added_campestre = $6,
+        updated_at = NOW()
+      WHERE id_ingrediente = $7
+      RETURNING *;
+    `;
+
+    const values = [
+      nombre || existingRecord.nombre,
+      proveedor || existingRecord.proveedor,
+      surtirMoral || existingRecord.surtir_moral,
+      surtirCampestre || existingRecord.surtir_campestre,
+      updatedAddedMoral,
+      updatedAddedCampestre,
+      id_ingrediente
+    ];
+
+    const result = await client.query(query, values);
+    res.json({ message: "Record updated successfully", row: result.rows[0] });
   } catch (error) {
-    console.error('Error updating planeacion_compra:', error);
-    res.status(500).json({ error: 'Error updating data' });
+    console.error("Error updating planeacion_compra:", error);
+    res.status(500).json({ error: "Error updating data" });
   } finally {
     client.release();
   }
 });
 
 router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params; // Ingredient ID
+  const { userName } = req.body; // Username (moral or campestre) passed from the frontend
+
+  if (!userName) {
+    return res.status(400).json({ error: 'Missing userName in request' });
+  }
 
   const client = await connectDb();
 
   try {
-    const query = `DELETE FROM planeacion_compra WHERE id_ingrediente = $1 RETURNING *;`;
-    const result = await client.query(query, [id]);
+    // Fetch the ingredient to check current state
+    const fetchQuery = `SELECT * FROM planeacion_compra WHERE id_ingrediente = $1`;
+    const fetchResult = await client.query(fetchQuery, [id]);
 
-    if (result.rowCount === 0) {
+    if (fetchResult.rowCount === 0) {
       return res.status(404).json({ error: 'Item not found' });
     }
 
-    res.status(200).json({ message: 'Item successfully deleted', item: result.rows[0] });
+    const item = fetchResult.rows[0];
+
+    // Logic based on userName
+    if (userName === 'moral' && item.added_campestre) {
+      // Update `added_moral` to false if `added_campestre` is true
+      const updateQuery = `
+        UPDATE planeacion_compra
+        SET added_moral = false, updated_at = NOW()
+        WHERE id_ingrediente = $1
+        RETURNING *;
+      `;
+      const updateResult = await client.query(updateQuery, [id]);
+      return res.status(200).json({ message: 'Updated item for moral', item: updateResult.rows[0] });
+    } else if (userName === 'campestre' && item.added_moral) {
+      // Update `added_campestre` to false if `added_moral` is true
+      const updateQuery = `
+        UPDATE planeacion_compra
+        SET added_campestre = false, updated_at = NOW()
+        WHERE id_ingrediente = $1
+        RETURNING *;
+      `;
+      const updateResult = await client.query(updateQuery, [id]);
+      return res.status(200).json({ message: 'Updated item for campestre', item: updateResult.rows[0] });
+    } else {
+      // If no other store has it marked, delete the record
+      const deleteQuery = `DELETE FROM planeacion_compra WHERE id_ingrediente = $1 RETURNING *;`;
+      const deleteResult = await client.query(deleteQuery, [id]);
+      return res.status(200).json({ message: 'Item successfully deleted', item: deleteResult.rows[0] });
+    }
   } catch (error) {
-    console.error('Error deleting item:', error);
-    res.status(500).json({ error: 'Error deleting item' });
+    console.error('Error processing deletion:', error);
+    res.status(500).json({ error: 'Error processing deletion' });
   } finally {
     client.release();
   }

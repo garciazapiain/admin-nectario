@@ -20,7 +20,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in planeacionCompra" :key="index">
+            <tr v-for="(item, index) in filteredPlaneacionCompra" :key="index">
               <td>{{ item.nombre }}</td>
               <td v-if="isAdmin" data-label="Proveedor">
                 <select v-model="item.proveedor" class="editable-dropdown">
@@ -30,10 +30,11 @@
                 </select>
               </td>
               <td v-if="userName === 'moral' || isAdmin" data-label="Cantidad Moral">
-                <input type="text" v-model="item.surtirMoral" class="editable-input" />
+                <input type="text" v-model="item.surtirMoral" @input="markAsModified(item)" class="editable-input" />
               </td>
               <td v-if="userName === 'campestre' || isAdmin" data-label="Cantidad Campestre">
-                <input type="text" v-model="item.surtirCampestre" class="editable-input" />
+                <input type="text" v-model="item.surtirCampestre" @input="markAsModified(item)"
+                  class="editable-input" />
               </td>
               <td data-label="">
                 <button class="button-remove" @click="removeFromPlaneacion(index)">Eliminar</button>
@@ -47,22 +48,26 @@
             </tr>
           </tbody>
         </table>
-        <div>
-          <!-- Submit Button -->
-          <button class="button-submit" @click="submitPlaneacionCompra">Guardar Planeación</button>
+        <div class="button-container">
+          <!-- Guardar Planeación -->
+          <button class="button-submit" @click="submitPlaneacionCompra">
+            <i class="fa fa-save"></i> Guardar Planeación
+          </button>
+
+          <!-- Exportar a WhatsApp -->
+          <button class="button-whatsapp" @click="exportToWhatsApp">
+            <i class="fa fa-whatsapp"></i> Exportar a WhatsApp
+          </button>
         </div>
         <button v-if="isAdmin" class="button-clear" @click="clearPlaneacionCompra">
           Limpiar Planeación de Compra
         </button>
       </div>
     </div>
-
-    <!-- Search Bar -->
     <!-- Search Bar -->
     <div class="search-container">
       <input v-model="searchTerm" placeholder="🔍 Buscar ingrediente..." class="search-bar" />
     </div>
-
     <!-- List of All Ingredients -->
     <div class="ingredients-container">
       <table>
@@ -137,7 +142,11 @@ const fetchPlaneacionCompra = async () => {
       surtirCampestre: item.surtir_campestre || "", // Use existing value or default to empty string
       moral_demanda_semanal: item.moral_demanda_semanal,
       bosques_demanda_semanal: item.bosques_demanda_semanal,
-      proveedor_opcion_b: item.proveedor_opcion_b
+      proveedor_opcion_b: item.proveedor_opcion_b,
+      image_url: item.image_url,
+      image_url_2: item.image_url_2,
+      added_moral: item.added_moral,
+      added_campestre: item.added_campestre
     }));
     console.log("PlaneacionCompra loaded:", planeacionCompra.value);
   } catch (error) {
@@ -162,33 +171,35 @@ const fetchProveedores = async () => {
  * Add an ingredient to the planeacionCompra array
  */
 const addToPlaneacion = (ingrediente) => {
-  // Use `id_ingrediente` for strict comparison to ensure correct match
   const existingItem = planeacionCompra.value.find(
-    (item) => item.id_ingrediente == ingrediente.id_ingrediente
+    (item) => item.id_ingrediente === ingrediente.id_ingrediente
   );
 
   if (existingItem) {
-    // Update the existing entry with new values
+    // Update only the relevant added flags
+    existingItem.isModified = true; // Mark as modified
     existingItem.proveedor = ingrediente.proveedor || existingItem.proveedor;
-    existingItem.surtirMoral = ingrediente.surtirMoral || existingItem.surtirMoral;
-    existingItem.surtirCampestre = ingrediente.surtirCampestre || existingItem.surtirCampestre;
-
+    existingItem.surtirMoral = userName.value === 'moral' ? "x" : existingItem.surtirMoral;
+    existingItem.surtirCampestre = userName.value === 'campestre' ? "x" : existingItem.surtirCampestre;
+    existingItem.added_moral = userName.value === 'moral' ? true : existingItem.added_moral;
+    existingItem.added_campestre = userName.value === 'campestre' ? true : existingItem.added_campestre;
   } else {
-    // Add a new entry if it doesn't exist
+    // Add a new entry
     planeacionCompra.value.push({
       id_ingrediente: ingrediente.id_ingrediente,
       nombre: ingrediente.nombre,
-      proveedor: ingrediente.proveedor || "", // Default if missing
-      surtirMoral: ingrediente.surtirMoral || "", // Default if missing
-      surtirCampestre: ingrediente.surtirCampestre || "", // Default if missing
+      proveedor: ingrediente.proveedor || "",
+      surtirMoral: userName.value === 'moral' ? "x" : "",
+      surtirCampestre: userName.value === 'campestre' ? "x" : "",
       image_url: ingrediente.image_url,
       image_url_2: ingrediente.image_url_2,
       moral_demanda_semanal: Number(ingrediente.moral_demanda_semanal),
       bosques_demanda_semanal: Number(ingrediente.bosques_demanda_semanal),
-      proveedor_opcion_b: ingrediente.proveedor_opcion_b
+      proveedor_opcion_b: ingrediente.proveedor_opcion_b,
+      added_moral: userName.value === 'moral',
+      added_campestre: userName.value === 'campestre',
+      isModified: true, // Mark as newly added
     });
-
-    console.log("Added new ingredient:", ingrediente);
   }
 };
 
@@ -201,6 +212,12 @@ const removeFromPlaneacion = async (index) => {
   try {
     const response = await fetch(`${API_URL}/planeacion_compra/${itemToRemove.id_ingrediente}`, {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userName: userName.value, // Pass the current userName (moral or campestre)
+      }),
     });
 
     if (!response.ok) {
@@ -208,22 +225,24 @@ const removeFromPlaneacion = async (index) => {
     }
 
     const result = await response.json();
-    console.log('Item deleted:', result);
-
-    // Remove item from local state
-    planeacionCompra.value.splice(index, 1);
+    // Remove item from local state if fully deleted
+    if (result.message === 'Item successfully deleted') {
+      planeacionCompra.value.splice(index, 1);
+    } else {
+      // Update local state for updated items
+      planeacionCompra.value[index] = result.item;
+    }
   } catch (error) {
     console.error('Error deleting item:', error);
     alert('Error al eliminar el elemento.');
   }
 };
 
-/**
- * Computed property for filtering ingredients based on searchTerm
- */
+// Exclude ingredients already in planeacionCompra with added flags as true
 const filteredIngredients = computed(() => {
   // Filter ingredients based on the search term
   let filtered = ingredientes.value;
+
   if (searchTerm.value) {
     const term = searchTerm.value.toLowerCase();
     filtered = filtered.filter((ingrediente) =>
@@ -231,76 +250,132 @@ const filteredIngredients = computed(() => {
     );
   }
 
-  // Exclude ingredients already in planeacionCompra
-  return filtered.filter(
-    (ingrediente) =>
-      !planeacionCompra.value.some(
-        (item) => item.id_ingrediente === ingrediente.id_ingrediente
-      )
-  );
+  // Filter logic
+  return filtered.filter((ingrediente) => {
+    const existingItem = planeacionCompra.value.find(
+      (item) => item.id_ingrediente === ingrediente.id_ingrediente
+    );
+
+    // Admins: Ignore added_moral and added_campestre flags
+    if (isAdmin.value) {
+      return !existingItem || (existingItem.added_campestre === false);
+    }
+
+    // Moral User: Filter out items already added by moral
+    if (userName.value === 'moral') {
+      return !existingItem || !existingItem.added_moral;
+    }
+
+    // Campestre User: Filter out items already added by campestre
+    if (userName.value === 'campestre') {
+      return !existingItem || !existingItem.added_campestre;
+    }
+
+    // Default fallback
+    return false;
+  });
 });
+
+const markAsModified = (item) => {
+  item.isModified = true;
+};
 
 /**
  * Submit Planeacion Compra to the API
  */
 const submitPlaneacionCompra = async () => {
   try {
-    for (const item of planeacionCompra.value) {
-      // Check if the ingredient already exists in the backend
+    const itemsToSubmit = planeacionCompra.value.filter((item) => item.isModified);
+
+    for (const item of itemsToSubmit) {
+      const payload = {
+        id_ingrediente: item.id_ingrediente,
+        nombre: item.nombre,
+        proveedor: item.proveedor,
+        surtirMoral: item.surtirMoral || null, // Explicitly include these fields
+        surtirCampestre: item.surtirCampestre || null,
+        image_url: item.image_url,
+        image_url_2: item.image_url_2,
+        moral_demanda_semanal: item.demandaMoral,
+        bosques_demanda_semanal: item.demandaBosques,
+        proveedor_opcion_b: item.proveedor_opcion_b,
+        added_moral: item.added_moral,
+        added_campestre: item.added_campestre,
+        userName: userName.value,
+      };
+
       const checkResponse = await fetch(`${API_URL}/planeacion_compra/${item.id_ingrediente}`);
 
       if (checkResponse.status === 404) {
-        // If not found, create a new record using POST
-        const createResponse = await fetch(`${API_URL}/planeacion_compra`, {
+        await fetch(`${API_URL}/planeacion_compra`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id_ingrediente: item.id_ingrediente,
-            nombre: item.nombre,
-            proveedor: item.proveedor,
-            surtirMoral: item.surtirMoral,
-            surtirCampestre: item.surtirCampestre,
-            image_url: item.image_url,
-            image_url_2: item.image_url_2,
-            moral_demanda_semanal: item.demandaMoral,
-            bosques_demanda_semanal: item.demandaBosques,
-            proveedor_opcion_b: item.proveedor_opcion_b
-          }),
+          body: JSON.stringify(payload),
         });
-
-        if (!createResponse.ok) {
-          throw new Error(`Error creating record: ${createResponse.status}`);
-        }
-
-        console.log("Record created:", await createResponse.json());
-      } else if (checkResponse.ok) {
-        // If found, update the record using PUT
-        const updateResponse = await fetch(`${API_URL}/planeacion_compra/${item.id_ingrediente}`, {
+      } else {
+        await fetch(`${API_URL}/planeacion_compra/${item.id_ingrediente}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            nombre: item.nombre,
-            proveedor: item.proveedor,
-            surtirMoral: item.surtirMoral,
-            surtirCampestre: item.surtirCampestre,
-          }),
+          body: JSON.stringify(payload),
         });
-
-        if (!updateResponse.ok) {
-          throw new Error(`Error updating record: ${updateResponse.status}`);
-        }
-
-        console.log("Record updated:", await updateResponse.json());
-      } else {
-        throw new Error(`Unexpected error: ${checkResponse.status}`);
       }
     }
 
     alert("Planeación de compra guardada con éxito!");
+
+    // Reset isModified flags
+    planeacionCompra.value = planeacionCompra.value.map((item) => ({
+      ...item,
+      isModified: false,
+    }));
   } catch (error) {
-    console.error("Error during submission:", error);
-    alert("Error al guardar la planeación de compra.");
+    console.error("Error submitting planeación:", error);
   }
+};
+
+const filteredPlaneacionCompra = computed(() => {
+  if (isAdmin.value) {
+    // Admin can see all records
+    return planeacionCompra.value;
+  }
+
+  // Filter based on userName
+  return planeacionCompra.value.filter((item) => {
+    if (userName.value === 'moral') {
+      return item.added_moral; // Only show records with added_moral = true
+    } else if (userName.value === 'campestre') {
+      return item.added_campestre; // Only show records with added_campestre = true
+    }
+    return false; // Default case if userName doesn't match
+  });
+});
+
+const exportToWhatsApp = () => {
+  // Construct the WhatsApp message
+  let message = `Planeación de Compras (${userName.value.toUpperCase()}):\n\n`;
+
+  planeacionCompra.value.forEach((item) => {
+    const surtir = userName.value === "moral" ? item.surtirMoral : item.surtirCampestre;
+    if (surtir) {
+      message += `Ingrediente: ${item.nombre}\nCantidad: ${surtir}\n\n`;
+    }
+  });
+
+  if (message.trim() === "") {
+    alert("No hay datos para exportar.");
+    return;
+  }
+
+  // Append the summary link
+  message += "Resumen disponible en: https://admin-nectario-7e327f081e09.herokuapp.com/compradeldia";
+
+  // Encode the message for WhatsApp
+  const encodedMessage = encodeURIComponent(message);
+  const phoneNumber = "+420774187964";
+  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+  // Open WhatsApp Web with the message
+  window.open(whatsappUrl, "_blank");
 };
 
 /**
@@ -401,18 +476,38 @@ td {
 }
 
 .button-submit {
-  padding: 10px 20px;
+  padding: 15px 25px;
   font-size: 16px;
-  cursor: pointer;
-  background-color: #4caf50;
+  background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
+  border-radius: 5px;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .button-submit:hover {
-  background-color: #45a049;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.5);
+}
+
+.button-whatsapp {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #25d366;
+  color: white;
+  border: 2px solid #25d366;
+  border-radius: 5px;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.button-whatsapp:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(37, 211, 102, 0.5);
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 20px;
 }
 
 .button-clear {
@@ -430,6 +525,23 @@ td {
 .button-clear:hover {
   background-color: #b22222;
   /* Darker red */
+}
+
+.button-whatsapp {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #25d366;
+  /* WhatsApp green */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.button-whatsapp:hover {
+  background-color: #1da851;
+  /* Darker WhatsApp green */
 }
 
 @media (max-width: 768px) {
@@ -472,10 +584,11 @@ td {
   /* Buttons */
   .button-remove,
   .button-submit,
-  .button-clear {
+  .button-clear,
+  .button-whatsapp {
     width: 30%;
     margin: 5px 0;
-    font-size: 1.5rem;
+    font-size: 1rem;
   }
 }
 
