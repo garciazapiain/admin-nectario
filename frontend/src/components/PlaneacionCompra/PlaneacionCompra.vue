@@ -21,7 +21,7 @@
           </thead>
           <tbody>
             <tr v-for="(item, index) in filteredPlaneacionCompra" :key="index">
-              <td>{{ item.nombre }}</td>
+              <td className="text-lg">{{ item.nombre }}</td>
               <td v-if="isAdmin" data-label="Proveedor">
                 <select v-model="item.proveedor" class="editable-dropdown">
                   <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">
@@ -459,7 +459,6 @@ td {
   text-align: center;
   padding: 5px;
   height: 2rem;
-  font-size: 1.5rem;
 }
 
 .button-remove {
@@ -575,6 +574,7 @@ td {
     display: flex;
     justify-content: space-between;
     padding: 0.5rem 0;
+    font-size: 1rem;
   }
 
   td::before {
@@ -586,7 +586,7 @@ td {
 
   .editable-input {
     width: 100%; /* Ensure input spans the available width */
-    font-size: 1rem;
+    font-size: 1.5rem;
   }
 
   .button-remove {
