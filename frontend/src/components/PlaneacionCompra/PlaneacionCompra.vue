@@ -3,7 +3,7 @@
     Cargando página...
   </div>
   <div v-else>
-    <h1>Planeación de Compras</h1>
+    <h1>Planeación de Compras{{ userName === 'moral' ? ' - Moral' : userName === 'campestre' ? ' - Campestre' : '' }}</h1>
     <!-- Selected Ingredients (Planeación de Compra) -->
     <div class="planeacion-container">
       <h2 class="text-xl">Ingredientes Seleccionados</h2>
