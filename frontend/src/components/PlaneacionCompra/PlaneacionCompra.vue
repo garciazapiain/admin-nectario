@@ -455,10 +455,11 @@ td {
 }
 
 .editable-input {
-  width: 200px;
+  width: 120px;
   text-align: center;
   padding: 5px;
   height: 2rem;
+  font-size: 1.5rem;
 }
 
 .button-remove {
