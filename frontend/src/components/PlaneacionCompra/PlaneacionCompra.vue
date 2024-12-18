@@ -29,10 +29,10 @@
                   </option>
                 </select>
               </td>
-              <td v-if="userName === 'moral' || isAdmin" data-label="Cantidad Moral">
+              <td class="cantidad-text" v-if="userName === 'moral' || isAdmin" data-label="Cantidad Moral">
                 <input type="text" v-model="item.surtirMoral" @input="markAsModified(item)" class="editable-input" />
               </td>
-              <td v-if="userName === 'campestre' || isAdmin" data-label="Cantidad Campestre">
+              <td class="cantidad-text" v-if="userName === 'campestre' || isAdmin" data-label="Cantidad Campestre">
                 <input type="text" v-model="item.surtirCampestre" @input="markAsModified(item)"
                   class="editable-input" />
               </td>
@@ -454,6 +454,10 @@ td {
   text-align: left;
 }
 
+.cantidad-text{
+  font-size: .5rem;
+}
+
 .editable-input {
   width: 120px;
   text-align: center;
@@ -574,7 +578,7 @@ td {
     display: flex;
     justify-content: space-between;
     padding: 0.5rem 0;
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
 
   td::before {
@@ -585,7 +589,6 @@ td {
   }
 
   .editable-input {
-    width: 100%; /* Ensure input spans the available width */
     font-size: 1.5rem;
   }
 
