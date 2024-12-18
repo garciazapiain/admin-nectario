@@ -545,9 +545,12 @@ td {
   /* Darker WhatsApp green */
 }
 
-@media (max-width: 768px) {
+.planeacion-container {
+  padding: 0.5rem;
+}
 
-  /* Make table columns stack vertically */
+/* Table Adjustments for Mobile */
+@media (max-width: 768px) {
   table,
   thead,
   tbody,
@@ -555,42 +558,45 @@ td {
   td,
   tr {
     display: block;
+    width: 100%;
   }
 
   thead {
-    display: none;
-    /* Hide table headers on small screens */
+    display: none; /* Hide table headers */
   }
 
   tr {
+    margin-bottom: 1rem;
     border-bottom: 1px solid #ddd;
-    /* Add borders for separation */
-    margin-bottom: 10px;
+    padding-bottom: 1rem;
   }
 
   td {
-    text-align: left;
+    display: flex;
     justify-content: space-between;
-    padding: 6px;
-    border: none;
-    font-size: 1.5rem;
+    padding: 0.5rem 0;
   }
 
   td::before {
-    content: attr(data-label);
+    content: attr(data-label); /* Add labels for data */
     font-weight: bold;
-    padding-right: 10px;
+    text-transform: uppercase;
+    flex: 1;
   }
 
-  /* Buttons */
-  .button-remove,
-  .button-submit,
-  .button-clear,
-  .button-whatsapp {
-    width: 30%;
-    margin: 5px 0;
-    font-size: 1.3rem;
+  .editable-input {
+    width: 100%; /* Ensure input spans the available width */
+    font-size: 1rem;
   }
+
+  .button-remove {
+    font-size: 1rem;
+    padding: 0.5rem;
+  }
+}
+
+.ingredients-container table tr td {
+  padding: 1rem;
 }
 
 /* Search Container */
