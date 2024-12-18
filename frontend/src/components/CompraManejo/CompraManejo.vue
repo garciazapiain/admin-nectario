@@ -30,7 +30,7 @@
               draggable="true" @dragstart="(event) => startDrag(ingrediente, event)"
               @touchstart="(event) => startDrag(ingrediente, event)">
               <td>
-                <span class="cursor-move">☰</span>
+                <span class="cursor-pointer" @click="openProveedorPopup(ingrediente)">☰</span>
               </td>
               <td>
                 <input type="checkbox" :checked="ingrediente.ya_comprado" @change="toggleYaComprado(ingrediente)" />
@@ -45,6 +45,22 @@
               </td>
               <td v-else></td>
             </tr>
+            <div v-if="proveedorPopupVisible" class="popup-overlay">
+              <div class="popup">
+                <h2 class="text-black">Cambiar Proveedor</h2>
+                <select v-model="selectedProveedor" class="mb-5">
+                  <option disabled value="">Selecciona un proveedor</option>
+                  <option v-for="proveedor in allProveedores" :key="proveedor.id" :value="proveedor.nombre">
+                    {{ proveedor.nombre }}
+                  </option>
+                </select>
+                <div class="flex justify-around">
+                  <button class="bg-green-500 text-white py-2 px-4 rounded"
+                    @click="confirmProveedorChange">Confirmar</button>
+                  <button class="bg-red-500 text-white py-2 px-4 rounded" @click="closeProveedorPopup">Cancelar</button>
+                </div>
+              </div>
+            </div>
           </tbody>
         </table>
       </div>
@@ -347,11 +363,79 @@ const toggleEntregado = async (ingrediente, store) => {
   }
 };
 
+const allProveedores = ref([]); // Holds all available proveedores
+const proveedorPopupVisible = ref(false);
+const selectedProveedor = ref(""); // Holds the selected proveedor id
+const currentEditingIngrediente = ref(null); // Holds the ingrediente being edited
 
-// Other existing functions: handleDrop, startDrag, toggleYaComprado, etc.
+// Fetch all proveedores from the API
+const fetchProveedores = async () => {
+  try {
+    const response = await fetch(`${API_URL}/proveedores`);
+    if (!response.ok) throw new Error(`Error ${response.status}: Failed to fetch proveedores`);
+    allProveedores.value = await response.json();
+  } catch (error) {
+    console.error("Error fetching proveedores:", error);
+  }
+  console.log(allProveedores.value)
+};
+
+// Open the popup and set the current editing ingrediente
+const openProveedorPopup = (ingrediente) => {
+  currentEditingIngrediente.value = ingrediente;
+  selectedProveedor.value = ingrediente.proveedor; // Default to the current proveedor
+  proveedorPopupVisible.value = true;
+};
+
+// Close the popup
+const closeProveedorPopup = () => {
+  proveedorPopupVisible.value = false;
+  currentEditingIngrediente.value = null;
+  selectedProveedor.value = "";
+};
+
+// Confirm the change and update the proveedor
+const confirmProveedorChange = async () => {
+  if (!selectedProveedor.value || !currentEditingIngrediente.value) {
+    alert("Selecciona un proveedor válido.");
+    return;
+  }
+
+  try {
+    // Update the ingrediente's proveedor via API
+    const updatedData = {
+      ...currentEditingIngrediente.value,
+      proveedor: selectedProveedor.value,
+    };
+
+    const response = await fetch(
+      `${API_URL}/planeacion_compra/${currentEditingIngrediente.value.id_ingrediente}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData),
+      }
+    );
+
+    if (!response.ok) throw new Error("Error al actualizar el proveedor.");
+
+    // Update local state
+    currentEditingIngrediente.value.proveedor = selectedProveedor.value;
+
+    // Close the popup
+    closeProveedorPopup();
+  } catch (error) {
+    console.error("Error al cambiar el proveedor:", error);
+    alert("Error al cambiar el proveedor.");
+  }
+};
+
+// Fetch data when the component is mounted
 onMounted(() => {
   fetchPlaneacionCompra();
+  fetchProveedores(); // Fetch all proveedores
 });
+
 </script>
 
 <script>
