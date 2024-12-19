@@ -357,6 +357,7 @@ const filteredPlaneacionCompra = computed(() => {
 });
 
 const exportToWhatsApp = () => {
+  submitPlaneacionCompra()
   // Construct the WhatsApp message
   let message = `Planeación de Compras (${userName.value.toUpperCase()}):\n\n`;
 
