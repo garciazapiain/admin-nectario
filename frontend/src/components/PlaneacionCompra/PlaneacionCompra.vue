@@ -3,7 +3,8 @@
     Cargando página...
   </div>
   <div v-else>
-    <h1>Planeación de Compras{{ userName === 'moral' ? ' - Moral' : userName === 'campestre' ? ' - Campestre' : '' }}</h1>
+    <h1>Planeación de Compras{{ userName === 'moral' ? ' - Moral' : userName === 'campestre' ? ' - Campestre' : '' }}
+    </h1>
     <!-- Selected Ingredients (Planeación de Compra) -->
     <div class="planeacion-container">
       <h2 class="text-xl">Ingredientes Seleccionados</h2>
@@ -85,7 +86,13 @@
             <td>{{ ingrediente.unidad }}</td>
             <td v-if="isAdmin">{{ ingrediente.proveedor }}</td>
             <td>
-              <button class="button-add" @click="addToPlaneacion(ingrediente)">Agregar</button>
+              <div>
+                <input v-if="userName === 'moral' || isAdmin" type="text" placeholder="Cantidad Moral"
+                  v-model="ingrediente.tempSurtirMoral" class="editable-input" />
+                <input v-if="userName === 'campestre' || isAdmin" type="text" placeholder="Cantidad Campestre"
+                  v-model="ingrediente.tempSurtirCampestre" class="editable-input" />
+                <button class="button-add" @click="addToPlaneacion(ingrediente)">Agregar</button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -175,33 +182,39 @@ const addToPlaneacion = (ingrediente) => {
     (item) => item.id_ingrediente === ingrediente.id_ingrediente
   );
 
+  const surtirMoralValue = ingrediente.tempSurtirMoral || ""; // Default to empty string if not provided
+  const surtirCampestreValue = ingrediente.tempSurtirCampestre || ""; // Default to empty string if not provided
+
   if (existingItem) {
-    // Update only the relevant added flags
-    existingItem.isModified = true; // Mark as modified
+    existingItem.isModified = true;
     existingItem.proveedor = ingrediente.proveedor || existingItem.proveedor;
-    existingItem.surtirMoral = userName.value === 'moral' ? "x" : existingItem.surtirMoral;
-    existingItem.surtirCampestre = userName.value === 'campestre' ? "x" : existingItem.surtirCampestre;
-    existingItem.added_moral = userName.value === 'moral' ? true : existingItem.added_moral;
-    existingItem.added_campestre = userName.value === 'campestre' ? true : existingItem.added_campestre;
+    existingItem.surtirMoral = surtirMoralValue || existingItem.surtirMoral;
+    existingItem.surtirCampestre = surtirCampestreValue || existingItem.surtirCampestre;
+    existingItem.added_moral = userName.value === 'moral' || isAdmin.value;
+    existingItem.added_campestre = userName.value === 'campestre' || isAdmin.value;
   } else {
-    // Add a new entry
     planeacionCompra.value.push({
       id_ingrediente: ingrediente.id_ingrediente,
       nombre: ingrediente.nombre,
       proveedor: ingrediente.proveedor || "",
-      surtirMoral: userName.value === 'moral' ? "x" : "",
-      surtirCampestre: userName.value === 'campestre' ? "x" : "",
+      surtirMoral: surtirMoralValue,
+      surtirCampestre: surtirCampestreValue,
       image_url: ingrediente.image_url,
       image_url_2: ingrediente.image_url_2,
       moral_demanda_semanal: Number(ingrediente.moral_demanda_semanal),
       bosques_demanda_semanal: Number(ingrediente.bosques_demanda_semanal),
       proveedor_opcion_b: ingrediente.proveedor_opcion_b,
-      added_moral: userName.value === 'moral',
-      added_campestre: userName.value === 'campestre',
-      isModified: true, // Mark as newly added
+      added_moral: userName.value === 'moral' || isAdmin.value,
+      added_campestre: userName.value === 'campestre' || isAdmin.value,
+      isModified: true,
     });
   }
+
+  // Clear temporary fields after adding
+  ingrediente.tempSurtirMoral = "";
+  ingrediente.tempSurtirCampestre = "";
 };
+
 
 /**
  * Remove an ingredient from the planeacionCompra array
@@ -454,6 +467,12 @@ td {
   padding: 8px;
 }
 
+td div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .planeacion-container th,
 .planeacion-container td {
   border: 1px solid #ddd;
@@ -461,7 +480,7 @@ td {
   text-align: left;
 }
 
-.cantidad-text{
+.cantidad-text {
   font-size: .5rem;
 }
 
@@ -470,6 +489,7 @@ td {
   text-align: center;
   padding: 5px;
   height: 2rem;
+  margin-bottom: 5px;
 }
 
 .button-remove {
@@ -561,6 +581,7 @@ td {
 
 /* Table Adjustments for Mobile */
 @media (max-width: 768px) {
+
   table,
   thead,
   tbody,
@@ -572,7 +593,8 @@ td {
   }
 
   thead {
-    display: none; /* Hide table headers */
+    display: none;
+    /* Hide table headers */
   }
 
   tr {
@@ -589,7 +611,8 @@ td {
   }
 
   td::before {
-    content: attr(data-label); /* Add labels for data */
+    content: attr(data-label);
+    /* Add labels for data */
     font-weight: bold;
     text-transform: uppercase;
     flex: 1;
