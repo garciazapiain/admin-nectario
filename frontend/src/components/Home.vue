@@ -25,13 +25,13 @@ onMounted(() => {
       <button class="button" @click="() => navigateTo('/existenciasresumen')">Resumen Existencias</button>
     </div>
     <div>
-      <button v-if="userName === 'moral' || userName==='campestre' || isAdmin" class="button"  @click="() => navigateTo('/planeacioncompra')">Lista Compra</button>
+      <button v-if="userName === 'moral' || userName==='campestre' || isAdmin" class="button"  @click="() => navigateTo('/planeacioncompra')">Pedido</button>
       <button class="button" v-if="isAdmin" @click="() => navigateTo('/compradeldia')">Compra</button>
       <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/compra')">Compra del dia</button> -->
       <button class="button" @click="() => navigateTo('/platillos')">Platillos</button>
       <button class="button" @click="() => navigateTo('/subplatillos')">Subplatillos</button>
       <button class="button" @click="() => navigateTo('/ingredientes')">Insumos</button>
-      <button class="button" @click="() => navigateTo('/entradasysalidas')">Entradas y Salidas</button>
+      <!-- <button class="button" @click="() => navigateTo('/entradasysalidas')">Entradas y Salidas</button> -->
       <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/inventarios')">
       Inventarios
     </button> -->
@@ -49,9 +49,9 @@ onMounted(() => {
       <button class="button" @click="() => navigateTo('/consumoinsumos')">
         Consumo Teórico Insumos
       </button>
-      <button class="button" v-if="isAdmin" @click="() => navigateTo('/analisis-consumo')">
+      <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/analisis-consumo')">
         Análisis de Consumo
-      </button>
+      </button> -->
     </div>
   </div>
 </template>
