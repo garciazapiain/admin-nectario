@@ -18,8 +18,6 @@ import CompraAnalisis from './components/HistorialCompra/CompraAnalisis.vue';
 import ConsumoInsumos from './components/ConsumoInsumos/ConsumoInsumos.vue';
 import CargarVenta from './components/ConsumoInsumos/CargarVentas.vue';
 import Facturacion from './components/Facturacion/Facturacion.vue';
-import TomaInventario from './components/Inventarios/TomaInventario.vue';
-import InventariosHome from './components/Inventarios/Home.vue';
 import AnalisisConsumo from './components/AnalisisConsumo/AnalisisConsumo.vue';
 import AgregarCompra from './components/HistorialCompra/AgregarCompra.vue';
 import PlaneacionCompra from './components/PlaneacionCompra/PlaneacionCompra.vue';
@@ -37,8 +35,6 @@ export default [
     { path: '/ingrediente/:id', component: Ingrediente },
     { path: '/listapeligro', component: ListaPeligroHome },
     { path: '/listapeligro/:store', component: ListaPeligro, props: true },
-    { path: '/inventarios', component: InventariosHome },
-    { path: '/inventarios/:store', component: TomaInventario, props: true },
     { path: '/existenciasresumen', component: ResumenExistencias },
     { path: '/pronosticodemandainsumos', component: PronosticoDemandaInsumos },
     { path: '/historialcompra', component: HistorialCompra },
