@@ -16,7 +16,6 @@ import InsumoAnalisis from './components/HistorialCompra/InsumoAnalisis.vue';
 import CompraAnalisis from './components/HistorialCompra/CompraAnalisis.vue';
 import ConsumoInsumos from './components/ConsumoInsumos/ConsumoInsumos.vue';
 import CargarVenta from './components/ConsumoInsumos/CargarVentas.vue';
-import AnalisisConsumo from './components/AnalisisConsumo/AnalisisConsumo.vue';
 import AgregarCompra from './components/HistorialCompra/AgregarCompra.vue';
 import PlaneacionCompra from './components/PlaneacionCompra/PlaneacionCompra.vue';
 import CompraManejo from './components/CompraManejo/CompraManejo.vue';
@@ -41,7 +40,6 @@ export default [
     { path: '/historialcompra/registrar-compra-manualmente', component: AgregarCompra },
     { path: '/consumoinsumos', component: ConsumoInsumos },
     { path: '/consumoinsumos/cargarventa', component: CargarVenta },
-    { path: '/analisis-consumo', component: AnalisisConsumo },
     { path: '/planeacioncompra', component: PlaneacionCompra },
     { path: '/compradeldia', component: CompraManejo }
 ];

@@ -38,9 +38,6 @@ onMounted(() => {
       <button class="button" @click="() => navigateTo('/consumoinsumos')">
         Consumo Teórico Insumos
       </button>
-      <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/analisis-consumo')">
-        Análisis de Consumo
-      </button> -->
     </div>
   </div>
 </template>
