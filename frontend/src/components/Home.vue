@@ -30,7 +30,6 @@ onMounted(() => {
       <button class="button" @click="() => navigateTo('/platillos')">Platillos</button>
       <button class="button" @click="() => navigateTo('/subplatillos')">Subplatillos</button>
       <button class="button" @click="() => navigateTo('/ingredientes')">Insumos</button>
-      <!-- <button class="button" @click="() => navigateTo('/entradasysalidas')">Entradas y Salidas</button> -->
       <!-- <button class="button" v-if="isAdmin" @click="() => navigateTo('/inventarios')">
       Inventarios
     </button> -->

@@ -7,7 +7,6 @@ const path = require('path'); // Add this line
 const { Pool } = require('pg');
 const authRoutes = require('./api/auth');
 const submissionRoutes = require('./api/submissions');
-const entradasSalidasRouter = require('./api/entradas_salidas');
 const planeacionCompraRouter = require('./api/planeacion_compra');
 const ingredientImageUploadRouter = require('./api/ingredient_image');
 
@@ -28,7 +27,6 @@ const pool = new Pool({
 
 app.use('/api/auth', authRoutes);
 app.use('/api/submissions', submissionRoutes);
-app.use('/api/entradas_salidas', entradasSalidasRouter);
 app.use('/api/planeacion_compra', planeacionCompraRouter);
 app.use('/api/ingredient_image', ingredientImageUploadRouter);
 // app.use('/api/retrieveinbox', retrieveInbox);
