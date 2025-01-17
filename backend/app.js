@@ -838,36 +838,6 @@ app.post('/api/ingredientes', async (req, res) => {
   }
 });
 
-app.put('/api/ingredientes/individual/estatusupdate/:store', async (req, res) => {
-  const { ingredientId, newStatus } = req.body;
-  const store = req.params.store;
-  const client = await pool.connect();
-  try {
-    await client.query('BEGIN');
-
-    // Update the ingredient based on the store
-    let query;
-    if (store === 'moral') {
-      query = 'UPDATE ingredientes SET estatus_moral = $1 WHERE id_ingrediente = $2';
-    } else if (store === 'bosques') {
-      query = 'UPDATE ingredientes SET estatus_bosques = $1 WHERE id_ingrediente = $2';
-    } else {
-      throw new Error('Invalid store');
-    }
-    await client.query(query, [newStatus, ingredientId]);
-
-    await client.query('COMMIT');
-
-    res.json({ message: 'Successfully updated ingredient status' });
-  } catch (err) {
-    await client.query('ROLLBACK');
-    console.error(err);
-    res.status(500).json({ error: 'An error occurred while updating data in the database' });
-  } finally {
-    client.release();
-  }
-});
-
 app.put('/api/ingredientes/estatusupdate/:store', async (req, res) => {
   const { ingredientIds } = req.body;
   const newStatus = "No Comprado";

@@ -42,7 +42,6 @@ export default [
     { path: '/inventarios', component: InventariosHome },
     { path: '/inventarios/:store', component: TomaInventario, props: true },
     { path: '/existenciasresumen', component: ResumenExistencias },
-    { path: '/compra', component: Compra },
     { path: '/pronosticodemandainsumos', component: PronosticoDemandaInsumos },
     { path: '/historialcompra', component: HistorialCompra },
     { path: '/historialcompra/insumos', component: InsumosHistorial },
