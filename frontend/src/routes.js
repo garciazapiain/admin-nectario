@@ -10,7 +10,6 @@ import Ingrediente from './components/Ingredientes/Ingrediente.vue';
 import ListaPeligroHome from './components/ListaPeligro/Home.vue';
 import ListaPeligro from './components/ListaPeligro/ListaPeligro.vue';
 import ResumenExistencias from './components/Existencias/ResumenExistencias.vue';
-import PronosticoDemandaInsumos from './components/PronosticoDemandaInsumos/PronosticoDemandaInsumos.vue';
 import HistorialCompra from './components/HistorialCompra/HistorialCompra.vue';
 import InsumosHistorial from './components/HistorialCompra/InsumosHistorial.vue';
 import InsumoAnalisis from './components/HistorialCompra/InsumoAnalisis.vue';
@@ -36,7 +35,6 @@ export default [
     { path: '/listapeligro', component: ListaPeligroHome },
     { path: '/listapeligro/:store', component: ListaPeligro, props: true },
     { path: '/existenciasresumen', component: ResumenExistencias },
-    { path: '/pronosticodemandainsumos', component: PronosticoDemandaInsumos },
     { path: '/historialcompra', component: HistorialCompra },
     { path: '/historialcompra/insumos', component: InsumosHistorial },
     { path: '/historialcompra/insumos/:id', component: InsumoAnalisis },

@@ -997,47 +997,6 @@ app.put('/api/ingredientes/:id', async (req, res) => {
   }
 });
 
-app.get('/api/pronosticodemandainsumos', async (req, res) => {
-  const client = await pool.connect();
-  const platillos = [{ id: 9, cantidad: 1 }];
-
-  try {
-    let params = [];
-    let placeholders = '';
-
-    for (let i = 0; i < platillos.length; i++) {
-      params.push(platillos[i].id, platillos[i].cantidad);
-      placeholders += `($${2 * i + 1}, $${2 * i + 2}),`;
-    }
-    placeholders = placeholders.slice(0, -1);
-    const result = await client.query(`
-    SELECT 
-      i.nombre, 
-      i.id_ingrediente, 
-      i.unidad, 
-      i.precio,
-      i.proveedor, 
-      i.proveedor_id,
-      i.producto_clave,
-      SUM(pi.cantidad * v.cantidad::numeric) AS cantidad_platillo,
-      COALESCE(SUM(si.cantidad * ps.cantidad * v.cantidad::numeric), 0) AS cantidad_subplatillo
-    FROM ingredientes i
-    LEFT JOIN platillos_ingredientes pi ON i.id_ingrediente = pi.id_ingrediente
-    LEFT JOIN platillos_subplatillos ps ON pi.id_platillo = ps.id_platillo
-    LEFT JOIN subplatillos_ingredientes si ON i.id_ingrediente = si.id_ingrediente
-    INNER JOIN (VALUES ${placeholders}) AS v(id_platillo, cantidad) ON (pi.id_platillo = v.id_platillo::integer OR ps.id_subplatillo = v.id_platillo::integer)
-    GROUP BY i.nombre, i.id_ingrediente, i.unidad, i.precio, i.proveedor, i.proveedor_id, i.producto_clave
-  `, params);
-
-    res.json(result.rows);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
-  } finally {
-    client.release();
-  }
-});
-
 // app.post('/api/submissions', async (req, res) => {
 //   const { store, timestamp, ingredients } = req.body;
 //   const client = await pool.connect();
@@ -1118,42 +1077,6 @@ app.get('/api/unidades', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'An error occurred while retrieving data from the database' });
-  } finally {
-    client.release();
-  }
-});
-
-app.get('/api/pronosticodemanda', async (req, res) => {
-  const client = await pool.connect();
-  try {
-    // Select all rows from pronosticodemanda table
-    const result = await client.query('SELECT * FROM pronosticodemanda');
-
-    // Send the result rows as the response
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'An error occurred while fetching data from the database' });
-  } finally {
-    client.release();
-  }
-});
-
-app.post('/api/guardarpronosticodemanda', async (req, res) => {
-  const { dataplatillos, dataingredientes, nombre } = req.body;
-  const client = await pool.connect();
-  try {
-    // Convert dataplatillos and dataingredientes to JSON string
-    const platillos = JSON.stringify(dataplatillos);
-    const ingredientes = JSON.stringify(dataingredientes);
-
-    // Insert into pronosticodemanda table
-    const result = await client.query('INSERT INTO pronosticodemanda (nombre, dataplatillos, dataingredientes) VALUES ($1, $2, $3) RETURNING *', [nombre, platillos, ingredientes]);
-
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'An error occurred while inserting data into the database' });
   } finally {
     client.release();
   }
