@@ -1,7 +1,5 @@
 require('dotenv').config();
 const express = require('express');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 const cors = require('cors');
 const path = require('path'); // Add this line
 const { Pool } = require('pg');
@@ -9,8 +7,6 @@ const authRoutes = require('./api/auth');
 const submissionRoutes = require('./api/submissions');
 const planeacionCompraRouter = require('./api/planeacion_compra');
 const ingredientImageUploadRouter = require('./api/ingredient_image');
-
-// const retrieveInbox = require('./api/retrieve_inbox');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -29,7 +25,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/submissions', submissionRoutes);
 app.use('/api/planeacion_compra', planeacionCompraRouter);
 app.use('/api/ingredient_image', ingredientImageUploadRouter);
-// app.use('/api/retrieveinbox', retrieveInbox);
 
 app.get('/api/platillos', async (req, res) => {
   const client = await pool.connect();
@@ -972,20 +967,6 @@ app.put('/api/ingredientes/:id', async (req, res) => {
       id // Moved to the last position
     ]);
 
-    // if (frecuencias_inventario) {
-    //   // Check if frecuencias_inventario is not null
-    //   const deleteFrecuenciasQuery = 'DELETE FROM ingredientes_frecuencia WHERE id_ingrediente = $1';
-    //   await client.query(deleteFrecuenciasQuery, [id]);
-
-    //   const insertFrecuenciasQuery = 'INSERT INTO ingredientes_frecuencia (id_ingrediente, frecuencia_inventario_id) VALUES ($1, $2)';
-    //   for (let frecuencia of frecuencias_inventario) {
-    //     if (frecuencia) {
-    //       // Check if frecuencia is not null
-    //       await client.query(insertFrecuenciasQuery, [id, frecuencia]);
-    //     }
-    //   }
-    // }
-
     await client.query('COMMIT');
     res.json(result.rows[0]);
   } catch (err) {
@@ -996,54 +977,6 @@ app.put('/api/ingredientes/:id', async (req, res) => {
     client.release();
   }
 });
-
-// app.post('/api/submissions', async (req, res) => {
-//   const { store, timestamp, ingredients } = req.body;
-//   const client = await pool.connect();
-//   try {
-//     // Convert ingredients to JSON string
-//     const compra = JSON.stringify(ingredients);
-
-//     // Insert into submissions table
-//     const result = await client.query('INSERT INTO submissions (store, timestamp, compra) VALUES ($1, $2, $3) RETURNING *', [store, timestamp, compra]);
-
-//     // Delete all but the latest submission for the current date
-//     await client.query(`
-//       WITH ranked_submissions AS (
-//         SELECT id, 
-//                ROW_NUMBER() OVER(PARTITION BY DATE(timestamp) ORDER BY timestamp DESC) as rn
-//         FROM submissions
-//         WHERE store = $1 AND DATE(timestamp) = DATE($2)
-//       )
-//       DELETE FROM submissions
-//       WHERE id IN (
-//         SELECT id FROM ranked_submissions WHERE rn > 1
-//       )
-//     `, [store, timestamp]);
-
-//     res.json(result.rows[0]);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: 'An error occurred while inserting data into the database' });
-//   } finally {
-//     client.release();
-//   }
-// });
-
-// app.get('/api/submissions', async (req, res) => {
-//   const client = await pool.connect();
-//   try {
-//     // Query the submissions table
-//     const result = await client.query('SELECT * FROM submissions');
-
-//     res.json(result.rows);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: 'An error occurred while retrieving data from the database' });
-//   } finally {
-//     client.release();
-//   }
-// });
 
 app.get('/api/proveedores', async (req, res) => {
   const client = await pool.connect();
