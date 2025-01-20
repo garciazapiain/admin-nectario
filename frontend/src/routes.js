@@ -25,7 +25,7 @@ export default [
     { path: '/login', component: Login },
     { path: '/register', component: Register },
     { path: '/platillos', component: Platillos },
-    { path: '/platillo/:id', component: Platillo },
+    { path: '/platillos/:id', component: Platillo },
     { path: '/subplatillos', component: Subplatillos },
     { path: '/subplatillo/:id', component: Subplatillo },
     { path: '/ingredientes', component: Ingredientes },

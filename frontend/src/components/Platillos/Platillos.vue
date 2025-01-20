@@ -10,7 +10,7 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 
 const router = useRouter();
 const handleClickPlatillo = (idPlatillo) => {
-  router.push(`/platillo/${idPlatillo}`);
+  router.push(`/platillos/${idPlatillo}`);
 };
 </script>
 
@@ -117,7 +117,7 @@ export default {
           : "http://localhost:3000/api";
 
       const response = await fetch(
-        `${API_URL}/platillos/${idPlatillo}`,
+        `${API_URL}/platillos/${idPlatillo}/update-with-excel-import`,
         {
           method: "PUT",
           headers: {
@@ -152,7 +152,12 @@ export default {
           : "http://localhost:3000/api";
 
       // Check if the clavepos already exists
-      const checkResponse = await fetch(`${API_URL}/platillos/check?clavepos=${this.editValueClavePos}`);
+
+      console.log(`${API_URL}/platillos/check-clave-pos?clavepos=${this.editValueClavePos}`);
+
+      const encodedClavepos = encodeURIComponent(this.editValueClavePos);
+      const checkResponse = await fetch(`${API_URL}/platillos/check-clave-pos?clavepos=${encodedClavepos}`);
+
       const existingPlatillo = await checkResponse.json();
 
       if (existingPlatillo.length > 0 && existingPlatillo[0].id_platillo !== platillo.id_platillo) {
@@ -224,7 +229,7 @@ export default {
       // Get the newly created platillo from the response
       const newPlatillo = await response.json();
       // Redirect to the new platillo route
-      this.$router.push(`/platillo/${newPlatillo.id_platillo}`);
+      this.$router.push(`/platillos/${newPlatillo.id_platillo}`);
     },
     exportToExcel() {
       const data = this.filteredPlatillos.map(platillo => {
@@ -338,7 +343,7 @@ export default {
 
       // Fetch ingredients and calculate costs
       for (const platillo of this.platillos) {
-        const ingredientsResponse = await fetch(`${API_URL}/platillo/${platillo.id_platillo}`);
+        const ingredientsResponse = await fetch(`${API_URL}/platillos/${platillo.id_platillo}`);
         if (ingredientsResponse.ok) {
           try {
             const ingredientsData = await ingredientsResponse.json();

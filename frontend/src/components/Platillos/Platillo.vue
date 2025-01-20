@@ -230,7 +230,7 @@ export default {
       const id = this.$route.params.id;
       try {
         const response = await fetch(
-          `${API_URL}/platillo/${id}`
+          `${API_URL}/platillos/${id}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -419,7 +419,7 @@ export default {
       }
 
       try {
-        const response = await fetch(`${API_URL}/platillo/${idPlatillo}`, {
+        const response = await fetch(`${API_URL}/platillos/${idPlatillo}`, {
           method: "DELETE",
         });
 

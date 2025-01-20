@@ -3,7 +3,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const handleClick = (platillo) => {
   if (platillo.type === "Platillo") {
-    window.open(`/platillo/${platillo.id_platillo}`, '_blank');
+    window.open(`/platillos/${platillo.id_platillo}`, '_blank');
   } else {
     window.open(`/subplatillo/${platillo.id_platillo}`, '_blank');
   }
