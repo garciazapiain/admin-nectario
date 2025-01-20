@@ -10,13 +10,8 @@ import Ingrediente from './components/Ingredientes/Ingrediente.vue';
 import ListaPeligroHome from './components/ListaPeligro/Home.vue';
 import ListaPeligro from './components/ListaPeligro/ListaPeligro.vue';
 import ResumenExistencias from './components/Existencias/ResumenExistencias.vue';
-import HistorialCompra from './components/HistorialCompra/HistorialCompra.vue';
-import InsumosHistorial from './components/HistorialCompra/InsumosHistorial.vue';
-import InsumoAnalisis from './components/HistorialCompra/InsumoAnalisis.vue';
-import CompraAnalisis from './components/HistorialCompra/CompraAnalisis.vue';
 import ConsumoInsumos from './components/ConsumoInsumos/ConsumoInsumos.vue';
 import CargarVenta from './components/ConsumoInsumos/CargarVentas.vue';
-import AgregarCompra from './components/HistorialCompra/AgregarCompra.vue';
 import PlaneacionCompra from './components/PlaneacionCompra/PlaneacionCompra.vue';
 import CompraManejo from './components/CompraManejo/CompraManejo.vue';
 
@@ -33,11 +28,6 @@ export default [
     { path: '/listapeligro', component: ListaPeligroHome },
     { path: '/listapeligro/:store', component: ListaPeligro, props: true },
     { path: '/existenciasresumen', component: ResumenExistencias },
-    { path: '/historialcompra', component: HistorialCompra },
-    { path: '/historialcompra/insumos', component: InsumosHistorial },
-    { path: '/historialcompra/insumos/:id', component: InsumoAnalisis },
-    { path: '/historialcompra/compra/:id', component: CompraAnalisis },
-    { path: '/historialcompra/registrar-compra-manualmente', component: AgregarCompra },
     { path: '/consumoinsumos', component: ConsumoInsumos },
     { path: '/consumoinsumos/cargarventa', component: CargarVenta },
     { path: '/planeacioncompra', component: PlaneacionCompra },
