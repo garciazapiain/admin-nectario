@@ -345,7 +345,6 @@ router.put('/:idPlatillo/ingredientes/:idIngrediente', async (req, res) => {
 
 // remove ingredient from a dish
 router.delete('/:idPlatillo/ingredientes/:idIngrediente', async (req, res) => {
-    console.log('DELETION2');
     const { idPlatillo, idIngrediente } = req.params;
     const client = await connectDb();
 
@@ -387,7 +386,6 @@ router.delete('/:idPlatillo/ingredientes/:idIngrediente', async (req, res) => {
 
 // add subdish to a dish
 router.post('/:idPlatillo/subplatillos', async (req, res) => {
-    console.log('SUB ADDED2');
     const { idPlatillo } = req.params;
     const { id_subplatillo, cantidad } = req.body;
     const client = await connectDb();
