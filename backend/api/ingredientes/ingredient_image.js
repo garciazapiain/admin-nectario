@@ -6,7 +6,6 @@ const router = express.Router();
 
 // POST an image and update the ingredientes table
 router.post('/upload', upload.single('image'), async (req, res) => {
-  console.log('hey fucker')
   const { id_ingrediente, image_type } = req.body;
   const imageUrl = req.file.path;
 

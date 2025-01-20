@@ -320,7 +320,6 @@ router.post('/:idPlatillo/ingredientes', async (req, res) => {
 
 // edit ingredient quantity in a dish
 router.put('/:idPlatillo/ingredientes/:idIngrediente', async (req, res) => {
-    console.log('hey fucker')
     const { idPlatillo, idIngrediente } = req.params; // Extract route parameters
     const { cantidad } = req.body; // Extract the quantity from the request body
     const client = await connectDb(); // Connect to the database
