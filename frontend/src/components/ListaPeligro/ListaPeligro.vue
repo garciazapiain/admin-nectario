@@ -7,7 +7,6 @@
       <div v-if="submitMessage" :class="submitMessage.type">
         {{ submitMessage.text }}
       </div>
-      <!-- <button @click="verifyChangeIngredientCount">Check</button> -->
       <div class="sticky-icon" @click="goDownPage">
         <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -130,7 +129,7 @@ import API_URL from "../../config";
 const router = useRouter();
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 const handleClickIngrediente = (idIngrediente) => {
-  router.push(`/ingrediente/${idIngrediente}`);
+  router.push(`/ingredientes/${idIngrediente}`);
 };
 </script>
 
@@ -322,28 +321,6 @@ export default {
         behavior: "smooth",
       });
     },
-    verifyChangeIngredientCount() {
-      const originalIngredientesArray = Object.values(
-        this.originalIngredientes
-      );
-      const ingredientesArray = Object.values(this.ingredientes);
-
-      this.changedIngredients = ingredientesArray
-        .filter((ingrediente) => {
-          const originalIngrediente = originalIngredientesArray.find(
-            (original) => original.id_ingrediente === ingrediente.id_ingrediente
-          );
-          const isChanged =
-            originalIngrediente &&
-            ingrediente.cantidad_inventario !==
-            originalIngrediente.cantidad_inventario;
-          return isChanged;
-        })
-        .map((ingrediente) => ingrediente.id_ingrediente);
-      if (this.changedIngredients.length > 0) {
-        this.updateIngredientStatus(this.store);
-      }
-    },
     increaseQuantity(ingrediente) {
       if (typeof ingrediente.cantidad_inventario === "string") {
         ingrediente.cantidad_inventario = 0.5;
@@ -500,7 +477,6 @@ export default {
           text: "Error al actualizar el inventario",
         };
       }
-      this.verifyChangeIngredientCount();
     },
     lastUpdate() {
       const storeSubmissions = this.submissions.filter(
@@ -528,27 +504,6 @@ export default {
     setAgotado(ingrediente) {
       ingrediente.cantidad_inventario = 0;
       this.updateSubmitData(ingrediente);
-    },
-    async updateIngredientStatus(store) {
-      const response = await fetch(
-        `${API_URL}/ingredientes/estatusupdate/${store}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ingredientIds: this.changedIngredients,
-            newStatus: "No comprado",
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        console.error("Failed to update ingredient status", response);
-      } else {
-        console.log("Successfully updated ingredient status");
-      }
     },
     lastSubmission(store) {
       const storeSubmissions = this.submissions.filter(

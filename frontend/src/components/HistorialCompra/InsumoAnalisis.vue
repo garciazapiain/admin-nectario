@@ -93,7 +93,7 @@ export default {
 
       this.averagePrice = (totalPriceSum / totalQuantitySum).toFixed(2);
 
-      const priceResponse = await fetch(`${API_URL}/ingrediente/${this.id}`);
+      const priceResponse = await fetch(`${API_URL}/ingredientes/${this.id}`);
       if (!priceResponse.ok) {
         throw new Error(`HTTP error! status: ${priceResponse.status}`);
       }

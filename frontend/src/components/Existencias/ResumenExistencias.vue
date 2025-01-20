@@ -97,7 +97,7 @@ export default {
       console.error("HTTP error:", submissionsResponse.status);
     }
     // Fetch the ingredientes data
-    const response = await fetch(`${API_URL}/ingredientes-producto-clave`);
+    const response = await fetch(`${API_URL}/ingredientes/producto-clave`);
     if (response.ok) {
       this.ingredientes = await response.json();
       return this.ingredientes;

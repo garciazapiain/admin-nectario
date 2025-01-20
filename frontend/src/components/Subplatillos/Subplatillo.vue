@@ -31,7 +31,7 @@ const existingIngredientIds = computed(() => {
 
 // Function to handle ingredient clicks
 const handleClickIngrediente = (idIngrediente) => {
-  router.push(`/ingrediente/${idIngrediente}`);
+  router.push(`/ingredientes/${idIngrediente}`);
 };
 
 // Function to open the ingredient editing mode

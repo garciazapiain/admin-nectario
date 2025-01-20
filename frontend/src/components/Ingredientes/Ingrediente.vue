@@ -376,7 +376,7 @@ export default {
     const id = this.$route.params.id;
     try {
       // Make API call to fetch the platillo data
-      const response = await fetch(`${API_URL}/ingrediente/${id}`);
+      const response = await fetch(`${API_URL}/ingredientes/${id}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

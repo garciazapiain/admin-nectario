@@ -320,7 +320,7 @@ export default {
         const id = idStr.replace("sub_", "");
         this.$router.push(`/subplatillos/${id}`);
       } else {
-        this.$router.push(`/ingrediente/${idStr}`);
+        this.$router.push(`/ingredientes/${idStr}`);
       }
     },
     handleOpenEditIngredient(index) {

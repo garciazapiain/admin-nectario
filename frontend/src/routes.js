@@ -29,7 +29,7 @@ export default [
     { path: '/subplatillos', component: Subplatillos },
     { path: '/subplatillos/:id', component: Subplatillo },
     { path: '/ingredientes', component: Ingredientes },
-    { path: '/ingrediente/:id', component: Ingrediente },
+    { path: '/ingredientes/:id', component: Ingrediente },
     { path: '/listapeligro', component: ListaPeligroHome },
     { path: '/listapeligro/:store', component: ListaPeligro, props: true },
     { path: '/existenciasresumen', component: ResumenExistencias },

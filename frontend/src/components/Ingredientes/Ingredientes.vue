@@ -122,7 +122,7 @@
 import { useRouter } from "vue-router";
 const router = useRouter();
 const handleClickIngrediente = (idIngrediente) => {
-  router.push(`/ingrediente/${idIngrediente}`);
+  router.push(`/ingredientes/${idIngrediente}`);
 };
 import { ref } from "vue";
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
