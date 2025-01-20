@@ -8,6 +8,7 @@ const submissionRoutes = require('./api/submissions');
 const planeacionCompraRouter = require('./api/planeacion_compra');
 const ingredientImageUploadRouter = require('./api/ingredient_image');
 const platillosRouter = require('./api/platillos');
+const subPlatillosRouter = require('./api/subplatillos');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -27,206 +28,7 @@ app.use('/api/submissions', submissionRoutes);
 app.use('/api/planeacion_compra', planeacionCompraRouter);
 app.use('/api/ingredient_image', ingredientImageUploadRouter);
 app.use('/api/platillos', platillosRouter);
-
-app.get('/api/subplatillos', async (req, res) => {
-  const client = await pool.connect();
-  try {
-    const result = await client.query('SELECT * FROM subplatillos');
-    res.json(result.rows);
-  } finally {
-    client.release();
-  }
-});
-
-app.put('/api/subplatillos/:idSubPlatillo/ingredientes/:idIngrediente', async (req, res) => {
-  const { idSubPlatillo, idIngrediente } = req.params;
-  const { cantidad } = req.body;
-  const client = await pool.connect();
-
-  try {
-    const result = await client.query(
-      'UPDATE subplatillos_ingredientes SET cantidad = $1 WHERE id_subplatillo = $2 AND id_ingrediente = $3 RETURNING *',
-      [cantidad, idSubPlatillo, idIngrediente]
-    );
-
-    if (result.rows.length > 0) {
-      res.json(result.rows[0]);
-    } else {
-      res.status(404).json({ error: 'Resource not found' });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'An error occurred while updating data in the database' });
-  } finally {
-    client.release();
-  }
-});
-
-// Toggle recetaBloqueada state
-app.put('/api/subplatillos/:id/toggleRecetaBloqueada', async (req, res) => {
-  const { id } = req.params;
-  const client = await pool.connect();
-
-  try {
-    // Retrieve the current receta_bloqueada state
-    const currentStateResult = await client.query(
-      'SELECT receta_bloqueada FROM subplatillos WHERE id_subplatillo = $1',
-      [id]
-    );
-
-    const currentState = currentStateResult.rows[0].receta_bloqueada;
-
-    // Toggle the state
-    const newState = !currentState;
-
-    // Update the receta_bloqueada state in the database
-    const result = await client.query(
-      'UPDATE subplatillos SET receta_bloqueada = $1 WHERE id_subplatillo = $2 RETURNING receta_bloqueada',
-      [newState, id]
-    );
-
-    res.json({ receta_bloqueada: result.rows[0].receta_bloqueada });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'An error occurred while toggling the receta_bloqueada state.' });
-  } finally {
-    client.release();
-  }
-});
-
-app.delete('/api/subplatillos/:idSubPlatillo/ingredientes/:idIngrediente', async (req, res) => {
-  const { idSubPlatillo, idIngrediente } = req.params;
-  const client = await pool.connect();
-
-  try {
-    const result = await client.query(
-      'DELETE FROM subplatillos_ingredientes WHERE id_subplatillo = $1 AND id_ingrediente = $2 RETURNING *',
-      [idSubPlatillo, idIngrediente]
-    );
-
-    if (result.rows.length > 0) {
-      res.json({ message: 'Ingredient deleted successfully', data: result.rows[0] });
-    } else {
-      res.status(404).json({ error: 'Resource not found' });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'An error occurred while deleting data in the database' });
-  } finally {
-    client.release();
-  }
-});
-
-app.put('/api/subplatillos/:id', async (req, res) => {
-  const { nombre, rendimiento } = req.body; // Destructure both fields from the request body
-  const { id } = req.params; // Get the id from the route parameters
-  const client = await pool.connect();
-
-  try {
-    // Construct the dynamic update query based on which fields are provided
-    const fieldsToUpdate = [];
-    const values = [];
-    let queryIndex = 1;
-
-    if (nombre) {
-      fieldsToUpdate.push(`nombre = $${queryIndex}`);
-      values.push(nombre);
-      queryIndex++;
-    }
-
-    if (rendimiento) {
-      fieldsToUpdate.push(`rendimiento = $${queryIndex}`);
-      values.push(rendimiento);
-      queryIndex++;
-    }
-
-    // Ensure at least one field is being updated
-    if (fieldsToUpdate.length === 0) {
-      return res.status(400).json({ error: 'No fields provided for update' });
-    }
-
-    const query = `
-      UPDATE subplatillos 
-      SET ${fieldsToUpdate.join(', ')} 
-      WHERE id_subplatillo = $${queryIndex}
-      RETURNING nombre, rendimiento
-    `;
-
-    values.push(id); // Add the ID as the last parameter for the WHERE clause
-
-    const result = await client.query(query, values);
-
-    if (result.rows.length > 0) {
-      res.json(result.rows[0]); // Return the updated fields
-    } else {
-      res.status(404).json({ error: 'Subplatillo not found' });
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'An error occurred' });
-  } finally {
-    client.release();
-  }
-});
-
-app.post('/api/subplatillos', async (req, res) => {
-  const { nombre, unidad, rendimiento } = req.body;
-  const client = await pool.connect();
-  try {
-    // Select the maximum id_subplatillo and add 1 to it for the new ID
-    const result = await client.query(`
-      INSERT INTO subplatillos (id_subplatillo, nombre, unidad, rendimiento)
-      VALUES (
-        (SELECT COALESCE(MAX(id_subplatillo), 0) + 1 FROM subplatillos), $1, $2, $3
-      ) RETURNING *`, [nombre, unidad, rendimiento]);
-
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'An error occurred while inserting data into the database' });
-  } finally {
-    client.release();
-  }
-});
-
-app.get('/api/subplatillo/:id', async (req, res) => {
-  const { id } = req.params;
-  const client = await pool.connect();
-  try {
-    const result = await client.query('SELECT * FROM subplatillos WHERE id_subplatillo = $1', [id]);
-    const ingredientsResult = await client.query(`
-      SELECT i.nombre, i.id_ingrediente, i.unidad, i.precio, si.cantidad 
-      FROM ingredientes i
-      INNER JOIN subplatillos_ingredientes si ON i.id_ingrediente = si.id_ingrediente
-      WHERE si.id_subplatillo = $1
-    `, [id]);
-    const subplatillo = result.rows[0];
-    subplatillo.ingredients = ingredientsResult.rows;
-    res.json(subplatillo);
-  } finally {
-    client.release();
-  }
-});
-
-app.post('/api/subplatillos/:idSubPlatillo/ingredientes', async (req, res) => {
-  const { idSubPlatillo } = req.params;
-  const { id_ingrediente, cantidad } = req.body;
-  const client = await pool.connect();
-
-  try {
-    const result = await client.query(
-      'INSERT INTO subplatillos_ingredientes (id_subplatillo, id_ingrediente, cantidad) VALUES ($1, $2, $3) RETURNING *',
-      [idSubPlatillo, id_ingrediente, cantidad]
-    );
-
-    res.json(result.rows[0]);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'An error occurred while inserting data into the database' });
-  } finally {
-    client.release();
-  }
-});
+app.use('/api/subplatillos', subPlatillosRouter);
 
 app.get('/api/ingredientes', async (req, res) => {
   const client = await pool.connect();
@@ -266,7 +68,6 @@ app.get('/api/ingredientes-producto-clave', async (req, res) => {
     client.release();
   }
 });
-
 
 app.get('/api/ingredientes/demanda', async (req, res) => {
   const client = await pool.connect();

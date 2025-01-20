@@ -5,7 +5,7 @@ const handleClick = (platillo) => {
   if (platillo.type === "Platillo") {
     window.open(`/platillos/${platillo.id_platillo}`, '_blank');
   } else {
-    window.open(`/subplatillo/${platillo.id_platillo}`, '_blank');
+    window.open(`/subplatillos/${platillo.id_platillo}`, '_blank');
   }
 };
 import { ref } from "vue";

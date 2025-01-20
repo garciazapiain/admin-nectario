@@ -27,7 +27,7 @@ export default [
     { path: '/platillos', component: Platillos },
     { path: '/platillos/:id', component: Platillo },
     { path: '/subplatillos', component: Subplatillos },
-    { path: '/subplatillo/:id', component: Subplatillo },
+    { path: '/subplatillos/:id', component: Subplatillo },
     { path: '/ingredientes', component: Ingredientes },
     { path: '/ingrediente/:id', component: Ingrediente },
     { path: '/listapeligro', component: ListaPeligroHome },

@@ -318,7 +318,7 @@ export default {
       const idStr = String(idIngrediente);
       if (idStr.startsWith("sub_")) {
         const id = idStr.replace("sub_", "");
-        this.$router.push(`/subplatillo/${id}`);
+        this.$router.push(`/subplatillos/${id}`);
       } else {
         this.$router.push(`/ingrediente/${idStr}`);
       }

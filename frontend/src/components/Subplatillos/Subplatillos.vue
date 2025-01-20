@@ -2,7 +2,7 @@
 import { useRouter } from "vue-router";
 const router = useRouter();
 const handleClickSubPlatillo = (idSubplatillo) => {
-  router.push(`/subplatillo/${idSubplatillo}`);
+  router.push(`/subplatillos/${idSubplatillo}`);
 };
 </script>
 

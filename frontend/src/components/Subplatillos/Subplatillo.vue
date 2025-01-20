@@ -153,7 +153,7 @@ const handleSaveRendimiento = async () => {
 const fetchData = async () => {
   const id = router.currentRoute.value.params.id;
   try {
-    const response = await fetch(`${API_URL}/subplatillo/${id}`);
+    const response = await fetch(`${API_URL}/subplatillos/${id}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
