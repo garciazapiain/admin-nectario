@@ -32,9 +32,6 @@ onMounted(() => {
       <button class="button" @click="() => navigateTo('/ingredientes')">Insumos</button>
     </div>
     <div>
-      <button class="button" v-if="isAdmin" @click="() => navigateTo('/historialcompra')">
-        Historial Compras
-      </button>
       <button class="button" @click="() => navigateTo('/consumoinsumos')">
         Consumo Teórico Insumos
       </button>
