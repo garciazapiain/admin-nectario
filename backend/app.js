@@ -1304,12 +1304,10 @@ app.get('/api/consumption/:id/:store', async (req, res) => {
   }
 });
 
-const { exec } = require('child_process');
-
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
 });
 
 app.listen(port, () => {
+  console.log('Server running on port', port);
 });
-// app.listen(3000, () => console.log('Server listening on port 3000'));
