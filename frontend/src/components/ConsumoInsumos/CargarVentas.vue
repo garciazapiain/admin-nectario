@@ -110,7 +110,7 @@ export default {
           "Please fill all fields and upload an Excel file before logging data."
         );
       } else {
-        const response = await fetch(`${API_URL}/consumoinsumos/cargarventas`, {
+        const response = await fetch(`${API_URL}/consumption/cargarventas`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
