@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const path = require('path'); // Add this line
-const { Pool } = require('pg');
+
+const path = require('path');
 const authRoutes = require('./api/auth');
 const submissionRoutes = require('./api/submissions');
 const planeacionCompraRouter = require('./api/planeacion_compra');
@@ -16,16 +16,10 @@ const unidadesRouter = require('./api/unidades');
 
 const app = express();
 const port = process.env.PORT || 3000;
+
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
-
-const isProduction = process.env.NODE_ENV === 'production';
-
-const pool = new Pool({
-  connectionString: isProduction ? process.env.DATABASE_URL : 'postgresql://juangarciazapiain:123@localhost:5432/inventarios',
-  ssl: isProduction ? { rejectUnauthorized: false } : false,
-});
 
 app.use('/api/auth', authRoutes);
 app.use('/api/submissions', submissionRoutes);
