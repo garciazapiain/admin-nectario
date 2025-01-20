@@ -240,7 +240,6 @@ const startDrag = (ingrediente, event) => {
 
   // For touch devices
   if (event.type === "touchstart") {
-    console.log("Mobile drag detected, but it's currently disabled.");
     if (!enableMobileDrag) return; // Skip execution for mobile drag
     event.preventDefault(); // Prevent scrolling
     const touch = event.touches[0];
@@ -252,7 +251,6 @@ const startDrag = (ingrediente, event) => {
 const handleDrop = async (targetProveedor, event) => {
   // Prevent default for touch and drag events
   if (event.type === "touchend") {
-    console.log("Mobile drop detected, but it's currently disabled.");
     if (!enableMobileDrag) return; // Skip execution for mobile drop
     event.preventDefault();
     const touch = event.changedTouches[0];
@@ -377,7 +375,6 @@ const fetchProveedores = async () => {
   } catch (error) {
     console.error("Error fetching proveedores:", error);
   }
-  console.log(allProveedores.value)
 };
 
 // Open the popup and set the current editing ingrediente

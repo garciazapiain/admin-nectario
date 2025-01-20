@@ -284,23 +284,17 @@ export default {
 
       // Filter out ingredients with "Suficiente"
       const filteredIngredientes = this.ingredientes.filter(ingrediente => {
-        console.log(`Checking ingredient: ${ingrediente.nombre} with cantidad_inventario: ${ingrediente.cantidad_inventario}`);
         return ingrediente.cantidad_inventario !== "Suficiente";
       });
 
-      // Log the filtered ingredients
-      console.log("Filtered Ingredients after filter:", filteredIngredientes);
-
       // Check if there are any ingredients to send
       if (filteredIngredientes.length === 0) {
-        console.log("No ingredients to send.");
         alert("No ingredients to send.");
         return;
       }
 
       // Map the filtered ingredients to the desired format
       const messageParts = filteredIngredientes.map(ingrediente => {
-        console.log(`Processing ingredient: ${ingrediente.nombre} ${ingrediente.cantidad_inventario} ${ingrediente.unidad}`);
         return `${ingrediente.nombre} ${ingrediente.cantidad_inventario} ${ingrediente.unidad}`;
       });
 
@@ -371,7 +365,6 @@ export default {
           producto_clave: ingrediente.producto_clave,
         });
       }
-      // console.log(this.submitData); // Log submitData every time it gets updated
     },
     confirmReset() {
       const resetOption = window.prompt('Type "1" to reset all products or "2" to reset only non-key products:', "1");
@@ -383,16 +376,14 @@ export default {
         this.resetNonKeyProducts(this.store);
       } else {
         // If user cancels or inputs an invalid option
-        console.log("Reset cancelled or invalid option entered.");
+        alert("Reset cancelled or invalid option entered.");
       }
     },
     // Dummy function for resetting only non-key products
     resetNonKeyProducts(store) {
       this.submitData.forEach((item) => {
         // Check if producto_clave is not true (handles both false and undefined/null cases)
-        console.log("Checking item:", item, item.producto_clave)
         if (!item.producto_clave) {
-          console.log(item.nombre, item.producto_clave, "is not a key product")
           item.cantidad_inventario = "Suficiente";
           this.updateSubmitData(item);
         }
@@ -468,8 +459,6 @@ export default {
           type: "success-message",
           text: "Inventario actualizado con éxito",
         };
-
-        console.log(result);
       } catch (error) {
         console.error("Error:", error);
         this.submitMessage = {

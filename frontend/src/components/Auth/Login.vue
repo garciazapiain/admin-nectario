@@ -50,7 +50,6 @@ export default {
           const data = await response.json();
           if (data.accessToken) {
             localStorage.setItem("jwt", data.accessToken);
-            console.log(data)
             localStorage.setItem("isAdmin", data.isAdmin);
             localStorage.setItem("userName", data.name);
             this.router.push("/"); // Redirect to home page

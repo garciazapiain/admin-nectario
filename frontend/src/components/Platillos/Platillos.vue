@@ -151,10 +151,6 @@ export default {
           ? "https://admin-nectario-7e327f081e09.herokuapp.com/api"
           : "http://localhost:3000/api";
 
-      // Check if the clavepos already exists
-
-      console.log(`${API_URL}/platillos/check-clave-pos?clavepos=${this.editValueClavePos}`);
-
       const encodedClavepos = encodeURIComponent(this.editValueClavePos);
       const checkResponse = await fetch(`${API_URL}/platillos/check-clave-pos?clavepos=${encodedClavepos}`);
 

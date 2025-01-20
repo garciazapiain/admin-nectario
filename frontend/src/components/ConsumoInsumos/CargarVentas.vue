@@ -126,7 +126,7 @@ export default {
         if (!response.ok) {
           console.error("HTTP error", response.status);
         } else {
-          console.log("Data successfully inserted");
+          alert("Data successfully inserted");
         }
       }
     },

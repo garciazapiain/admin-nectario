@@ -209,7 +209,6 @@ export default {
     totalCost() {
       let total = 0;
       this.aggregatedIngredients.forEach((ingrediente) => {
-        // console.log(total);
         total += ingrediente.precio * ingrediente.cantidad;
       });
       return total;
@@ -355,7 +354,6 @@ export default {
 
         const data = await response.json();
         this.fetchData();
-        console.log(`Cantidad nueva: ${data.cantidad}`);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -379,7 +377,6 @@ export default {
         }
 
         const data = await response.json();
-        console.log(data.message);
         this.fetchData(); // Refresh the data after a successful delete
       } catch (error) {
         console.error("Error:", error);
@@ -402,7 +399,6 @@ export default {
         }
 
         const data = await response.json();
-        console.log(data.message);
         location.reload();
       } catch (error) {
         console.error("Error:", error);
@@ -428,7 +424,6 @@ export default {
         }
 
         const data = await response.json();
-        console.log(data.message);
         // Instead of reloading, use Vue Router to redirect or reload component data
         this.$router.push('/platillos'); // Use the correct path for your platillo list page
       } catch (error) {

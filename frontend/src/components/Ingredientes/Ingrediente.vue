@@ -272,8 +272,6 @@ export default {
     handleFileUpload(type, event) {
       const file = event.target.files[0];
       if (file) {
-        console.log("Uploading:", type, file);
-
         const formData = new FormData();
         formData.append("image", file);
         formData.append("id_ingrediente", this.ingredienteEditado.id_ingrediente);
@@ -290,7 +288,6 @@ export default {
             return response.json();
           })
           .then((data) => {
-            console.log("Image uploaded:", data);
             if (type === "image_url") {
               this.ingredienteEditado.image_url = data.image_url;
             } else if (type === "image_url_2") {

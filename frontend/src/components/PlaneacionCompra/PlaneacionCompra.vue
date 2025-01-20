@@ -155,7 +155,6 @@ const fetchPlaneacionCompra = async () => {
       added_moral: item.added_moral,
       added_campestre: item.added_campestre
     }));
-    console.log("PlaneacionCompra loaded:", planeacionCompra.value);
   } catch (error) {
     console.error("Error fetching planeacion_compra:", error);
   }
@@ -417,7 +416,6 @@ const clearPlaneacionCompra = async () => {
       throw new Error(`Error clearing planeacion_compra: ${response.status}`);
     }
 
-    console.log("Planeación de compra cleared successfully");
     planeacionCompra.value = []; // Clear local state
     alert("Planeación de compra eliminada con éxito.");
   } catch (error) {
@@ -427,7 +425,6 @@ const clearPlaneacionCompra = async () => {
 };
 
 const openPopup = (ingrediente) => {
-  console.log(ingrediente)
   selectedIngredient.value = ingrediente;
   isPopupVisible.value = true;
 };
