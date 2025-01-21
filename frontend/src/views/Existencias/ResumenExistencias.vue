@@ -3,28 +3,6 @@
     <h1 class="font-bold mb-4">Resumen Existencias Lista Peligro</h1>
     <p class="mb-2">Ultima actualización Moral: {{ lastUpdatedMoral }}</p>
     <p class="mb-4">Ultima actualización Campestre: {{ lastUpdatedCampestre }}</p>
-    <!-- <div v-if="isAdmin" class="flex flex-col justify-center items-center w-full">
-      <h2 class="text-xl font-semibold mb-2">Filtros:</h2>
-      <label for="insumos" class="mb-2">Tipo Insumos:</label>
-      <select id="insumos" v-model="selectedInsumosTipo" class="filterBar">
-        <option value="Lista Peligro">Lista peligro</option>
-        <option value="Todos">Todos</option>
-      </select>
-      <label for="proveedores" class="mb-2">Proveedores:</label>
-      <select id="proveedores" v-model="selectedProveedor" class="filterBar">
-        <option value="">Todos</option>
-        <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">
-          {{ proveedor.nombre }}
-        </option>
-      </select>
-      <label for="frecuencias_inventario" class="mb-2">Frecuencia Inventario:</label>
-      <select id="frecuencias_inventario" v-model="selectedFrecuencia" class="filterBar">
-        <option value="">Todos</option>
-        <option value="inicio_primer_turno">Inicio primer turno</option>
-        <option value="inicio_segundo_turno">Inicio segundo turno</option>
-        <option value="fin_segundo_turno">Fin segundo turno</option>
-      </select>
-    </div> -->
     <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="search-bar w-3/4 p-4 mb-4 border rounded" />
     <div class="w-full flex justify-center">
       <div class="overflow-x-auto">

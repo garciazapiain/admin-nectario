@@ -1,19 +1,19 @@
-import Home from './components/Home.vue';
-import Login from './components/Auth/Login.vue';
-import Register from './components/Auth/Register.vue';
-import Platillos from './components/Platillos/Platillos.vue';
-import Platillo from './components/Platillos/Platillo.vue';
-import Subplatillos from './components/Subplatillos/Subplatillos.vue';
-import Subplatillo from './components/Subplatillos/Subplatillo.vue';
-import Ingredientes from './components/Ingredientes/Ingredientes.vue';
-import Ingrediente from './components/Ingredientes/Ingrediente.vue';
-import ListaPeligroHome from './components/ListaPeligro/Home.vue';
-import ListaPeligro from './components/ListaPeligro/ListaPeligro.vue';
-import ResumenExistencias from './components/Existencias/ResumenExistencias.vue';
-import ConsumoInsumos from './components/ConsumoInsumos/ConsumoInsumos.vue';
-import CargarVenta from './components/ConsumoInsumos/CargarVentas.vue';
-import PlaneacionCompra from './components/PlaneacionCompra/PlaneacionCompra.vue';
-import CompraManejo from './components/CompraManejo/CompraManejo.vue';
+import Home from './views/Home.vue';
+import Login from './views/Auth/Login.vue';
+import Register from './views/Auth/Register.vue';
+import Platillos from './views/Platillos/Platillos.vue';
+import Platillo from './views/Platillos/Platillo.vue';
+import Subplatillos from './views/Subplatillos/Subplatillos.vue';
+import Subplatillo from './views/Subplatillos/Subplatillo.vue';
+import Ingredientes from './views/Ingredientes/Ingredientes.vue';
+import Ingrediente from './views/Ingredientes/Ingrediente.vue';
+import ListaPeligroHome from './views/ListaPeligro/Home.vue';
+import ListaPeligro from './views/ListaPeligro/ListaPeligro.vue';
+import ResumenExistencias from './views/Existencias/ResumenExistencias.vue';
+import ConsumoInsumos from './views/ConsumoInsumos/ConsumoInsumos.vue';
+import CargarVenta from './views/ConsumoInsumos/CargarVentas.vue';
+import PlaneacionCompra from './views/PlaneacionCompra/PlaneacionCompra.vue';
+import CompraManejo from './views/CompraManejo/CompraManejo.vue';
 
 export default [
     { path: '/', component: Home },
