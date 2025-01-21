@@ -47,7 +47,7 @@
                 <h2 class="text-black">Cambiar Proveedor</h2>
                 <select v-model="selectedProveedor" class="mb-5">
                   <option disabled value="">Selecciona un proveedor</option>
-                  <option v-for="proveedor in allProveedores" :key="proveedor.id" :value="proveedor.nombre">
+                  <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">
                     {{ proveedor.nombre }}
                   </option>
                 </select>
@@ -164,43 +164,24 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import API_URL from "../../config";
+import useProveedores from '../../composables/shared/useProveedores';
+import useDragAndDrop from '../../composables/CompraManejo/useDragAndDrop';
+import usePlaneacionCompra from '../../composables/CompraManejo/usePlaneacionCompra';
+import usePlaneacionComputed from '../../composables/CompraManejo/usePlaneacionComputed';
 
-const planeacionCompra = ref([]);
-const isLoaded = ref(false);
 const showSummary = ref(false); // State to toggle views
 const popupVisible = ref(false);
-let draggedItem = null;
 const selectedPopupIngrediente = ref(null); // Stores the selected ingredient for the popup
 const currentImageIndex = ref(0); // Tracks the current image index in the slideshow
 
-
-// Fetch data from the API
-const fetchPlaneacionCompra = async () => {
-  try {
-    const response = await fetch(`${API_URL}/planeacion_compra`);
-    if (!response.ok) throw new Error(`Error ${response.status}: Failed to fetch data`);
-    planeacionCompra.value = await response.json();
-    isLoaded.value = true;
-  } catch (error) {
-    console.error("Error fetching planeacion_compra:", error);
-  }
-};
+const {planeacionCompra, fetchPlaneacionCompra, isLoaded} = usePlaneacionCompra()
 
 // Toggle between main view and summary view
 const toggleView = () => {
   showSummary.value = !showSummary.value;
 };
 
-// Computed property to group by proveedor
-const groupedByProveedor = computed(() => {
-  return planeacionCompra.value.reduce((grouped, ingrediente) => {
-    if (!grouped[ingrediente.proveedor]) {
-      grouped[ingrediente.proveedor] = [];
-    }
-    grouped[ingrediente.proveedor].push(ingrediente);
-    return grouped;
-  }, {});
-});
+const {groupedByProveedor, moralOrders, bosquesOrders} = usePlaneacionComputed(planeacionCompra)
 
 const showPopup = (ingrediente) => {
   selectedPopupIngrediente.value = ingrediente;
@@ -228,65 +209,7 @@ const prevImage = () => {
   }
 };
 
-const startDrag = (ingrediente, event) => {
-  draggedItem = ingrediente;
-};
-
-const handleDrop = async (targetProveedor, event) => {
-  // Prevent default for touch and drag events
-  if (event.type === "touchend") {
-    event.preventDefault();
-    // Check if the drop occurred within the target drop zone
-    const dropZone = event.target.closest(".dropzone");
-    if (!dropZone) {
-      console.warn("Touch did not occur within a valid drop zone.");
-      return;
-    }
-  }
-
-  // Existing desktop drag-and-drop logic
-  if (draggedItem && draggedItem.proveedor !== targetProveedor) {
-    try {
-      const updatedData = {
-        ...draggedItem,
-        proveedor: targetProveedor,
-      };
-      const response = await fetch(`${API_URL}/planeacion_compra/${draggedItem.id_ingrediente}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedData),
-      });
-
-      if (!response.ok) throw new Error(`Error ${response.status}: Failed to update proveedor`);
-
-      // Reflect the change locally
-      draggedItem.proveedor = targetProveedor;
-      planeacionCompra.value = planeacionCompra.value.filter(
-        (item) => item.id_ingrediente !== draggedItem.id_ingrediente
-      );
-      planeacionCompra.value.push(draggedItem);
-      draggedItem = null;
-    } catch (error) {
-      console.error("Error updating proveedor:", error);
-    }
-  }
-};
-
-// Filtered and sorted orders for Moral
-const moralOrders = computed(() =>
-  planeacionCompra.value
-    .filter((ingrediente) => ingrediente.surtir_moral && ingrediente.surtir_moral !== "0")
-    .sort((a, b) => (a.ya_entregado_moral === b.ya_entregado_moral ? 0 : a.ya_entregado_moral ? 1 : -1))
-);
-
-// Filtered and sorted orders for Bosques
-const bosquesOrders = computed(() =>
-  planeacionCompra.value
-    .filter((ingrediente) => ingrediente.surtir_campestre && ingrediente.surtir_campestre !== "0")
-    .sort((a, b) => (a.ya_entregado_bosques === b.ya_entregado_bosques ? 0 : a.ya_entregado_bosques ? 1 : -1))
-);
+const { startDrag, handleDrop } = useDragAndDrop();
 
 // Utility function to sort ingredientes
 const getSortedIngredientes = (ingredientes) => {
@@ -340,21 +263,12 @@ const toggleEntregado = async (ingrediente, store) => {
   }
 };
 
-const allProveedores = ref([]); // Holds all available proveedores
 const proveedorPopupVisible = ref(false);
 const selectedProveedor = ref(""); // Holds the selected proveedor id
 const currentEditingIngrediente = ref(null); // Holds the ingrediente being edited
 
 // Fetch all proveedores from the API
-const fetchProveedores = async () => {
-  try {
-    const response = await fetch(`${API_URL}/proveedores`);
-    if (!response.ok) throw new Error(`Error ${response.status}: Failed to fetch proveedores`);
-    allProveedores.value = await response.json();
-  } catch (error) {
-    console.error("Error fetching proveedores:", error);
-  }
-};
+const { proveedores, fetchProveedores } = useProveedores();
 
 // Open the popup and set the current editing ingrediente
 const openProveedorPopup = (ingrediente) => {
