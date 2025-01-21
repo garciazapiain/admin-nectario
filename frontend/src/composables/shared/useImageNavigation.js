@@ -5,7 +5,6 @@ export default function useImageNavigation() {
 
   // Navigate to the next image
   const nextImage = (hasNext) => {
-    console.log('hey ', currentImageIndex)
     if (hasNext) {
       currentImageIndex.value += 1;
     }
@@ -13,7 +12,6 @@ export default function useImageNavigation() {
 
   // Navigate to the previous image
   const prevImage = (hasPrev) => {
-    console.log('hey ', currentImageIndex)
     if (hasPrev) {
       currentImageIndex.value -= 1;
     }
