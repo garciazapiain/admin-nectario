@@ -1,14 +1,11 @@
 <template>
   <div>
     <h1 class="mb-10">Gestión de Planeación de Compra</h1>
-
     <!-- Button to toggle views -->
     <button @click="toggleView" class="mb-5 bg-blue-500 text-white py-2 px-4 rounded">
       {{ showSummary ? "Regresar a Proveedores" : "Ver Órdenes de Moral y Bosques" }}
     </button>
-
     <div v-if="!isLoaded" class="loading-message">Cargando datos...</div>
-
     <!-- Main grouped view -->
     <div v-else-if="!showSummary">
       <div v-for="(ingredientes, proveedor) in groupedByProveedor" :key="proveedor" class="dropzone" @dragover.prevent
@@ -65,7 +62,6 @@
         </table>
       </div>
     </div>
-
     <!-- Summary view -->
     <div v-else>
       <!-- Moral Table -->
@@ -90,7 +86,6 @@
           </tr>
         </tbody>
       </table>
-
       <!-- Bosques Table -->
       <h1 class="mb-5 bg-gray-200 text-black p-3">Órdenes Campestre</h1>
       <table class="table">
@@ -233,30 +228,14 @@ const prevImage = () => {
   }
 };
 
-const enableMobileDrag = false; // Flag to toggle mobile implementation
-
 const startDrag = (ingrediente, event) => {
   draggedItem = ingrediente;
-
-  // For touch devices
-  if (event.type === "touchstart") {
-    if (!enableMobileDrag) return; // Skip execution for mobile drag
-    event.preventDefault(); // Prevent scrolling
-    const touch = event.touches[0];
-    draggedItem.touchX = touch.clientX;
-    draggedItem.touchY = touch.clientY;
-  }
 };
 
 const handleDrop = async (targetProveedor, event) => {
   // Prevent default for touch and drag events
   if (event.type === "touchend") {
-    if (!enableMobileDrag) return; // Skip execution for mobile drop
     event.preventDefault();
-    const touch = event.changedTouches[0];
-    const touchX = touch.clientX;
-    const touchY = touch.clientY;
-
     // Check if the drop occurred within the target drop zone
     const dropZone = event.target.closest(".dropzone");
     if (!dropZone) {
