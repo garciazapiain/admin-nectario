@@ -16,53 +16,23 @@
   </div>
 </template>
 
-<script>
-import { useRouter } from "vue-router";
-import API_URL from "../../config";
+<script setup>
+import { ref } from "vue";
+import { useAuth } from "../../composables/Auth/useAuth";
+import { useFormValidation } from "../../composables/shared/useFormValidation";
 
-export default {
-  data() {
-    return {
-      username: "",
-      password: "",
-      errorMessage: "",
-    };
-  },
-  setup() {
-    const router = useRouter();
-    return { router };
-  },
-  methods: {
-    async submitForm() {
-      try {
-        const response = await fetch(`${API_URL}/auth/login`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: this.username,
-            password: this.password,
-          }),
-        });
+const { login, errorMessage } = useAuth();
+const { validateForm } = useFormValidation();
 
-        if (response.ok) {
-          const data = await response.json();
-          if (data.accessToken) {
-            localStorage.setItem("jwt", data.accessToken);
-            localStorage.setItem("isAdmin", data.isAdmin);
-            localStorage.setItem("userName", data.name);
-            this.router.push("/"); // Redirect to home page
-          } else {
-            this.errorMessage = "Login falló";// Login failed
-          }
-        } else {
-          this.errorMessage = "Occurió un error";// An error occurred
-        }
-      } catch (error) {
-        this.errorMessage = "Occurió un error";// An error occurred
-      }
-    },
-  },
+const username = ref("");
+const password = ref("");
+
+const submitForm = () => {
+  const error = validateForm({ username: username.value, password: password.value });
+  if (error) {
+    errorMessage.value = error;
+    return;
+  }
+  login(username.value, password.value);
 };
 </script>
