@@ -1,12 +1,12 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import API_URL from "../../config";
-import { useErrorHandler } from "./useErrorHandler"; // Handles error messages
 import { useLocalStorage } from "../shared/useLocalStorage"; // Manages localStorage
+import useErrorHandling from "../shared/useErrorHandling";
 
 export function useAuth() {
   const router = useRouter();
-  const { errorMessage, setError, clearError } = useErrorHandler();
+  const { errorMessage, setError, clearError } = useErrorHandling();
   const { setItem } = useLocalStorage();
 
   const login = async (username, password) => {
