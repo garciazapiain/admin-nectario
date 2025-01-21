@@ -111,9 +111,6 @@ import API_URL from "../../config";
 
 const router = useRouter();
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
-const handleClickIngrediente = (idIngrediente) => {
-  router.push(`/ingredientes/${idIngrediente}`);
-};
 </script>
 
 <script>
@@ -125,9 +122,7 @@ export default {
       ingredientes: [],
       originalIngredientes: [],
       searchTerm: "",
-      proveedor: "",
       proveedores: [], // For the select dropdown
-      selectedFrecuencia: "",
       submitData: [], // new state for data to be submitted
       submissions: [], // Add this line
       isScrollingDown: false,
@@ -135,20 +130,10 @@ export default {
       submitMessage: null,
       selectedInsumosTipo: "Lista Peligro",
       selectedProveedor: "",
-      selectedInsumos: "Todos",
       sucural: "",
       selectedInventarioOption: null,
-      inventarioOptions: [
-        { label: "Inventario Inicial", value: "inicial" },
-        { label: "Inventario Final", value: "final" }
-      ],
       isReady: false
     };
-  },
-  created() {
-    let pathArray = window.location.pathname.split("/");
-    this.sucursal =
-      pathArray[pathArray.length - 1] === "moral" ? "moral" : "bosques";
   },
   computed: {
     filteredIngredients() {
@@ -157,20 +142,6 @@ export default {
         const term = this.searchTerm.toLowerCase();
         ingredients = ingredients.filter((ingrediente) =>
           ingrediente.nombre.toLowerCase().includes(term)
-        );
-      }
-      if (this.selectedInsumos === "Urgente") {
-        ingredients = ingredients.filter((ingredient) => {
-          const storeInventory = this.getInventory(
-            this.store,
-            ingredient.id_ingrediente
-          );
-          return storeInventory !== "Suficiente";
-        });
-      }
-      if (this.proveedor) {
-        ingredients = ingredients.filter(
-          (ingrediente) => ingrediente.proveedor === this.proveedor
         );
       }
       // Exclude ingredients with proveedor_id === 1
@@ -190,16 +161,10 @@ export default {
           (ingrediente) => ingrediente.proveedor === this.selectedProveedor
         );
       }
-      // Filter ingredients based on selectedFrecuencia
       ingredients = ingredients.filter(
         (ingrediente) =>
           !ingrediente.frecuencias_inventario.includes("no_inventarear")
       );
-      if (this.selectedFrecuencia) {
-        ingredients = ingredients.filter((ingrediente) =>
-          ingrediente.frecuencias_inventario.includes(this.selectedFrecuencia)
-        );
-      }
       if (this.selectedInsumosTipo == "Transferencias") {
         ingredients = ingredients.filter((ingredient) => {
           // Check the selected store first
@@ -253,15 +218,6 @@ export default {
     },
   },
   methods: {
-    toggleSelection(value) {
-      // If the selected value is clicked again, set it to null (deselect)
-      if (this.selectedInventarioOption === value) {
-        this.selectedInventarioOption = null;
-      } else {
-        // Otherwise, set it to the selected value
-        this.selectedInventarioOption = value;
-      }
-    },
     sendWhatsAppMessage() {
       const phoneNumber = '+420774187964'; // The phone number you want to send the message to
 
@@ -467,10 +423,6 @@ export default {
     },
     setSufficient(ingrediente) {
       ingrediente.cantidad_inventario = "Suficiente";
-      this.updateSubmitData(ingrediente);
-    },
-    setCasiNoHay(ingrediente) {
-      ingrediente.cantidad_inventario = "Casi no hay";
       this.updateSubmitData(ingrediente);
     },
     setAgotado(ingrediente) {
