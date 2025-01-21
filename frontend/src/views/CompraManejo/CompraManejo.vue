@@ -42,19 +42,19 @@
               </td>
               <td v-else></td>
             </tr>
-            <div v-if="proveedorPopupVisible" class="popup-overlay">
+            <div v-if="isDropdownVisible" class="popup-overlay">
               <div class="popup">
                 <h2 class="text-black">Cambiar Proveedor</h2>
-                <select v-model="selectedProveedor" class="mb-5">
+                <select v-model="selectedValue" class="mb-5">
                   <option disabled value="">Selecciona un proveedor</option>
                   <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">
                     {{ proveedor.nombre }}
                   </option>
                 </select>
                 <div class="flex justify-around">
-                  <button class="bg-green-500 text-white py-2 px-4 rounded"
-                    @click="confirmProveedorChange">Confirmar</button>
-                  <button class="bg-red-500 text-white py-2 px-4 rounded" @click="closeProveedorPopup">Cancelar</button>
+                  <button @click="confirmProveedorChange(currentEditingIngrediente, selectedValue, closeDropdown)"
+                    class="bg-green-500 text-white py-2 px-4 rounded">Confirmar</button>
+                  <button class="bg-red-500 text-white py-2 px-4 rounded" @click="closeDropdown">Cancelar</button>
                 </div>
               </div>
             </div>
@@ -113,7 +113,7 @@
     <!-- Popup Component -->
     <div v-if="popupVisible" class="popup-overlay">
       <div class="popup">
-        <button class="close-button" @click="closePopup">X</button>
+        <button class="close-button" @click="closePopupAndResetImage">X</button>
         <div class="slideshow-container">
           <div class="image-container">
             <!-- First Image -->
@@ -141,16 +141,14 @@
           <!-- Navigation Buttons -->
           <div class="navigation-buttons">
             <!-- Previous Button -->
-            <button :disabled="currentImageIndex === 0" @click="prevImage"
+            <button :disabled="currentImageIndex == 0" @click="prevImage(currentImageIndex === 1)"
               :class="{ 'disabled-button': currentImageIndex === 0 }">
               ◀
             </button>
-
             <!-- Next Button -->
-            <button
-              :disabled="currentImageIndex === 1 && !selectedPopupIngrediente?.image_url_2 && !selectedPopupIngrediente?.proveedor_opcion_b"
-              @click="nextImage"
-              :class="{ 'disabled-button': currentImageIndex === 1 && !selectedPopupIngrediente?.image_url_2 && !selectedPopupIngrediente?.proveedor_opcion_b }">
+            <button :disabled="currentImageIndex == 1"
+              @click="nextImage(currentImageIndex === 0 && (selectedPopupIngrediente?.image_url_2 || selectedPopupIngrediente?.proveedor_opcion_b))"
+              :class="{ 'disabled-button': currentImageIndex == 1 }">
               ▶
             </button>
           </div>
@@ -162,170 +160,80 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import API_URL from "../../config";
 import useProveedores from '../../composables/shared/useProveedores';
+import usePopup from '../../composables/shared/usePopup';
 import useDragAndDrop from '../../composables/CompraManejo/useDragAndDrop';
 import usePlaneacionCompra from '../../composables/CompraManejo/usePlaneacionCompra';
 import usePlaneacionComputed from '../../composables/CompraManejo/usePlaneacionComputed';
+import useImageNavigation from '../../composables/shared/useImageNavigation';
+import useToggleApi from '../../composables/shared/useToggleApi';
+import useDropdown from "../../composables/shared/useDropdown";
+import useSorting from "../../composables/shared/useSorting";
+import usePlaneacionActions from "../../composables/CompraManejo/usePlaneacionActions";
 
+/* ====== Section A: Core Declarations and State ====== */
+
+// 1. Core Data Management
+const { planeacionCompra, fetchPlaneacionCompra, isLoaded } = usePlaneacionCompra()
+const { proveedores, fetchProveedores } = useProveedores();
+
+// 2. Computed Properties
+const { groupedByProveedor, moralOrders, bosquesOrders } = usePlaneacionComputed(planeacionCompra)
+
+// 3. View Toggles
 const showSummary = ref(false); // State to toggle views
-const popupVisible = ref(false);
-const selectedPopupIngrediente = ref(null); // Stores the selected ingredient for the popup
-const currentImageIndex = ref(0); // Tracks the current image index in the slideshow
+const { popupVisible, selectedItem: selectedPopupIngrediente, showPopup, closePopup } = usePopup();
+const { isDropdownVisible, selectedValue, toggleDropdown, selectOption, closeDropdown } = useDropdown();
 
-const {planeacionCompra, fetchPlaneacionCompra, isLoaded} = usePlaneacionCompra()
+// 4. Navigation and Drag-and-Drop
+const {
+  currentImageIndex,
+  nextImage,
+  prevImage,
+  resetImageIndex,
+} = useImageNavigation();
+const { startDrag, handleDrop } = useDragAndDrop();
 
-// Toggle between main view and summary view
+// 5. Sorting and Utilities
+const { sortItems, defaultComparator } = useSorting();
+const getSortedIngredientes = (ingredientes) => {
+  return sortItems(ingredientes, defaultComparator);
+};
+const { isLoading, toggleApiState } = useToggleApi(API_URL);
+
+// 6. Helper Functions
 const toggleView = () => {
   showSummary.value = !showSummary.value;
 };
 
-const {groupedByProveedor, moralOrders, bosquesOrders} = usePlaneacionComputed(planeacionCompra)
+/* ====== Section B: Functions for Component Logic ====== */
 
-const showPopup = (ingrediente) => {
-  selectedPopupIngrediente.value = ingrediente;
-  currentImageIndex.value = 0; // Start with the first image
-  popupVisible.value = true;
-};
-
-const closePopup = () => {
-  popupVisible.value = false;
-  selectedPopupIngrediente.value = null;
-};
-
-const nextImage = () => {
-  if (
-    currentImageIndex.value === 0 &&
-    (selectedPopupIngrediente.value?.image_url_2 || selectedPopupIngrediente.value?.proveedor_opcion_b)
-  ) {
-    currentImageIndex.value = 1;
-  }
-};
-
-const prevImage = () => {
-  if (currentImageIndex.value === 1) {
-    currentImageIndex.value = 0;
-  }
-};
-
-const { startDrag, handleDrop } = useDragAndDrop();
-
-// Utility function to sort ingredientes
-const getSortedIngredientes = (ingredientes) => {
-  return ingredientes.slice().sort((a, b) => {
-    if (a.ya_comprado && !b.ya_comprado) return 1; // Move `ya_comprado: true` to the bottom
-    if (!a.ya_comprado && b.ya_comprado) return -1; // Keep `ya_comprado: false` at the top
-    return 0; // Maintain order for items with the same status
-  });
-};
-
-const toggleYaComprado = async (ingrediente) => {
-  try {
-    // Toggle the current value
-    const newValue = !ingrediente.ya_comprado;
-    const response = await fetch(`${API_URL}/planeacion_compra/${ingrediente.id_ingrediente}/toggle-comprado`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ya_comprado: newValue }),
-    })
-    if (!response.ok) throw new Error(`Error ${response.status}: Failed to update ya_comprado`);
-    // Update the local state
-    ingrediente.ya_comprado = newValue;
-  } catch (error) {
-    console.error("Error updating ya_comprado:", error);
-  }
-}
-
-// Function to toggle ya_entregado for a specific store
-const toggleEntregado = async (ingrediente, store) => {
-  try {
-    // Determine the column to update
-    const column =
-      store === "moral" ? "ya_entregado_moral" : "ya_entregado_bosques";
-
-    // Toggle the value locally
-    ingrediente[column] = !ingrediente[column];
-
-    // Update the API
-    const response = await fetch(`${API_URL}/planeacion_compra/${ingrediente.id_ingrediente}/toggle-entregado`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ [column]: ingrediente[column] }),
-    });
-
-    if (!response.ok) throw new Error(`Failed to update ${column}`);
-  } catch (error) {
-    console.error("Error toggling ya_entregado:", error);
-    alert("Error al actualizar el estado de entrega.");
-  }
-};
-
-const proveedorPopupVisible = ref(false);
-const selectedProveedor = ref(""); // Holds the selected proveedor id
-const currentEditingIngrediente = ref(null); // Holds the ingrediente being edited
-
-// Fetch all proveedores from the API
-const { proveedores, fetchProveedores } = useProveedores();
-
-// Open the popup and set the current editing ingrediente
-const openProveedorPopup = (ingrediente) => {
-  currentEditingIngrediente.value = ingrediente;
-  selectedProveedor.value = ingrediente.proveedor; // Default to the current proveedor
-  proveedorPopupVisible.value = true;
-};
-
-// Close the popup
-const closeProveedorPopup = () => {
-  proveedorPopupVisible.value = false;
-  currentEditingIngrediente.value = null;
-  selectedProveedor.value = "";
-};
-
-// Confirm the change and update the proveedor
-const confirmProveedorChange = async () => {
-  if (!selectedProveedor.value || !currentEditingIngrediente.value) {
-    alert("Selecciona un proveedor válido.");
-    return;
-  }
-
-  try {
-    // Update the ingrediente's proveedor via API
-    const updatedData = {
-      ...currentEditingIngrediente.value,
-      proveedor: selectedProveedor.value,
-    };
-
-    const response = await fetch(
-      `${API_URL}/planeacion_compra/${currentEditingIngrediente.value.id_ingrediente}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedData),
-      }
-    );
-
-    if (!response.ok) throw new Error("Error al actualizar el proveedor.");
-
-    // Update local state
-    currentEditingIngrediente.value.proveedor = selectedProveedor.value;
-
-    // Close the popup
-    closeProveedorPopup();
-  } catch (error) {
-    console.error("Error al cambiar el proveedor:", error);
-    alert("Error al cambiar el proveedor.");
-  }
-};
-
-// Fetch data when the component is mounted
+// 1. Initialization and Lifecycle
 onMounted(() => {
   fetchPlaneacionCompra();
-  fetchProveedores(); // Fetch all proveedores
+  fetchProveedores();
 });
 
+// 2. State and Reactive Variables
+const currentEditingIngrediente = ref(null); // Holds the ingrediente being edited
+
+// 3. Utility/Helper Functions
+const closePopupAndResetImage = () => {
+  closePopup(); // Close the popup
+  resetImageIndex(); // Reset the image index
+};
+
+// 4. API Interaction and State Modifiers
+const { toggleYaComprado, toggleEntregado, confirmProveedorChange } = usePlaneacionActions(API_URL);
+
+// 5. Popup/Dropdown and Interaction Logic
+const openProveedorPopup = (ingrediente) => {
+  currentEditingIngrediente.value = ingrediente;
+  selectedValue.value = ingrediente.proveedor; // Default to the current proveedor
+  toggleDropdown(); // Show the dropdown
+};
 </script>
 
 <script>

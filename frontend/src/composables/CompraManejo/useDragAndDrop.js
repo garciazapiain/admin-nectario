@@ -4,12 +4,10 @@ export default function useDragAndDrop(planeacionCompra) {
   let draggedItem = null;
 
   const startDrag = (ingrediente) => {
-    console.log("startDrag", ingrediente);
     draggedItem = ingrediente;
   };
 
   const handleDrop = async (targetProveedor) => {
-    console.log("handleDrop", targetProveedor);
     if (draggedItem && draggedItem.proveedor !== targetProveedor) {
       try {
         const updatedData = { ...draggedItem, proveedor: targetProveedor };
