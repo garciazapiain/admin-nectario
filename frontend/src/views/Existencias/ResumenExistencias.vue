@@ -6,7 +6,8 @@
     <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="search-bar w-3/4 p-4 mb-4 border rounded" />
     <div class="w-full flex justify-center">
       <div class="overflow-x-auto">
-        <table class="min-w-full border-collapse">
+        <p v-if="isLoading">Loading....</p>
+        <table v-else class="min-w-full border-collapse">
           <thead>
             <tr class="bg-gray-200">
               <th class="border p-2">Insumo</th>
@@ -24,12 +25,12 @@
               </td>
               <td class="border p-2 text-white">{{ ingrediente.unidad }}</td>
               <td
-                :class="['border p-2', getInventory('moral', ingrediente.id_ingrediente) < ingrediente.moral_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
-                {{ getInventory("moral", ingrediente.id_ingrediente) }}
+                :class="['border p-2', getInventory('moral', ingrediente.id_ingrediente, submissions) < ingrediente.moral_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
+                {{ getInventory("moral", ingrediente.id_ingrediente, submissions) }}
               </td>
               <td
-                :class="['border p-2', getInventory('bosques', ingrediente.id_ingrediente) < ingrediente.bosques_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
-                {{ getInventory("bosques", ingrediente.id_ingrediente) }}
+                :class="['border p-2', getInventory('bosques', ingrediente.id_ingrediente, submissions) < ingrediente.bosques_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
+                {{ getInventory("bosques", ingrediente.id_ingrediente, submissions) }}
               </td>
               <td v-if="isAdmin" class="border p-2 max-w-3 text-white">{{ shouldTransfer(ingrediente) }}</td>
             </tr>
@@ -42,221 +43,73 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
-</script>
-<script>
+import { ref, computed, onMounted } from "vue";
+import useSubmissions from "../../composables/shared/useSubmissions";
+import useIngredients from "../../composables/shared/useIngredients";
+import useInventory from "../../composables/ExistenciasYListaPeligro/useInventory";
 import PopupInsumo from "./PopupInsumo.vue";
-import API_URL from "../../config";
-export default {
-  name: "ResumenExistencias",
-  components: {
-    PopupInsumo,
-  },
-  data() {
-    return {
-      submissions: [],
-      ingredientes: [], // You need to fetch the ingredientes data
-      proveedor: "",
-      proveedores: [], // For the select dropdown
-      selectedInsumosTipo: "Lista Peligro",
-      selectedProveedor: "",
-      selectedFrecuencia: "",
-      searchTerm: "",
-      isPopupVisible: false,
-      selectedIngredient: null,
-    };
-  },
-  async created() {
-    const submissionsResponse = await fetch(`${API_URL}/submissions/latest-submissions`);
-    if (submissionsResponse.ok) {
-      this.submissions = await submissionsResponse.json();
-    } else {
-      console.error("HTTP error:", submissionsResponse.status);
-    }
-    // Fetch the ingredientes data
-    const response = await fetch(`${API_URL}/ingredientes/producto-clave`);
-    if (response.ok) {
-      this.ingredientes = await response.json();
-      return this.ingredientes;
-    } else {
-      console.error("HTTP error:", response.status);
-    }
-    const proveedoresResponse = await fetch(`${API_URL}/proveedores`);
-    if (proveedoresResponse.ok) {
-      let proveedores = await proveedoresResponse.json();
-      // Filter out the provider with id 1
-      this.proveedores = proveedores.filter((proveedor) => proveedor.id !== 1);
-    } else {
-      console.error("HTTP error:", proveedoresResponse.status);
-    }
-  },
-  computed: {
-    lastUpdatedMoral() {
-      const lastSubmission = this.lastSubmission("moral");
-      if (lastSubmission) {
-        const date = new Date(lastSubmission.timestamp);
-        return date.toLocaleString("en-US", { timeZone: "UTC" });
-      }
-      return "N/A";
-    },
-    lastUpdatedCampestre() {
-      const lastSubmission = this.lastSubmission("bosques");
-      if (lastSubmission) {
-        const date = new Date(lastSubmission.timestamp);
-        return date.toLocaleString("en-US", { timeZone: "UTC" });
-      }
-      return null;
-    },
-    filteredIngredients() {
-      let ingredientes = this.ingredientes;
-      if (this.searchTerm) {
-        const term = this.searchTerm.toLowerCase();
-        ingredientes = ingredientes.filter((ingrediente) =>
-          ingrediente.nombre.toLowerCase().includes(term)
-        );
-      }
-      if (this.proveedor) {
-        ingredientes = ingredientes.filter(
-          (ingrediente) => ingrediente.proveedor === this.proveedor
-        );
-      }
-      // Exclude ingredientes with proveedor_id === 1
-      ingredientes = ingredientes.filter(
-        (ingrediente) =>
-          ingrediente.proveedor_id !== 1 && ingrediente.proveedor_id !== 31
-      );
-      // Filter ingredientes based on selectedInsumos
-      if (this.selectedInsumosTipo === "Lista Peligro") {
-        ingredientes = ingredientes.filter((ingrediente) => {
-          return ingrediente.producto_clave;
-        });
-      }
-      // Filter ingredientes based on selectedProveedor
-      if (this.selectedProveedor) {
-        ingredientes = ingredientes.filter(
-          (ingrediente) => ingrediente.proveedor === this.selectedProveedor
-        );
-      }
-      // Filter ingredientes based on selectedFrecuencia
-      ingredientes = ingredientes.filter(
-        (ingrediente) =>
-          !ingrediente.frecuencias_inventario.includes("no_inventarear")
-      );
-      if (this.selectedFrecuencia) {
-        ingredientes = ingredientes.filter((ingrediente) =>
-          ingrediente.frecuencias_inventario.includes(this.selectedFrecuencia)
-        );
-      }
-      ingredientes.sort((a, b) => {
-        if (this.selectedInsumosTipo === "Lista Peligro") {
-          // Sort by producto_clave first (true values come first)
-          if (a.producto_clave !== b.producto_clave) {
-            return b.producto_clave - a.producto_clave;
-          }
-          // If producto_clave is the same, sort alphabetically by nombre
-          return a.nombre.localeCompare(b.nombre);
-        } else {
-          // Sort by orden_inventario, nulls last
-          if (a.orden_inventario === null) return 1;
-          if (b.orden_inventario === null) return -1;
-          return a.orden_inventario - b.orden_inventario;
-        }
-      });
-      ingredientes = ingredientes.filter((ingrediente) => {
-        // Only apply the filter to ingredientes where producto_clave is not true
-        if (!ingrediente.producto_clave) {
-          const moralInventory = this.getInventory(
-            "moral",
-            ingrediente.id_ingrediente
-          );
-          const bosquesInventory = this.getInventory(
-            "bosques",
-            ingrediente.id_ingrediente
-          );
-          return (
-            moralInventory !== "Suficiente" || bosquesInventory !== "Suficiente"
-          );
-        }
-        // If producto_clave is true, include the ingrediente in the list
-        return true;
-      });
-      return ingredientes;
-    },
-  },
-  methods: {
-    closePopup() {
-      this.isPopupVisible = false;
-    },
-    ingredienteClicked(ingrediente) {
-      this.selectedIngredient = ingrediente;
-      this.isPopupVisible = true;
-    },
-    getInventory(storeName, ingredientId) {
-      const submission = this.lastSubmission(storeName);
-      if (!submission) {
-        return "N/A";
-      }
-      const ingrediente = submission.compra.find(
-        (ing) => ing.id_ingrediente === ingredientId
-      );
-      return ingrediente ? ingrediente.cantidad_inventario : "N/A";
-    },
-    shouldTransfer(ingrediente) {
-      const moralInventory = this.getInventory("moral", ingrediente.id_ingrediente);
-      const bosquesInventory = this.getInventory("bosques", ingrediente.id_ingrediente);
-      if (
-        moralInventory < ingrediente.moral_demanda_semanal / 7 ||
-        bosquesInventory < ingrediente.bosques_demanda_semanal / 7
-      ) {
-        const moralDemand = ingrediente.moral_demanda_semanal;
-        const bosquesDemand = ingrediente.bosques_demanda_semanal;
-        const totalDemand = Number(moralDemand) + Number(bosquesDemand);
-        const totalInventory = moralInventory + bosquesInventory;
-        const bothInventoriesLow = moralInventory < ingrediente.moral_demanda_semanal / 7 && bosquesInventory < ingrediente.bosques_demanda_semanal / 7;
-        const percentMoral = moralDemand / totalDemand;
-        const percentBosques = bosquesDemand / totalDemand;
-        const unitsToFixed1 = ["KG", "CAJA", "POMO", "TUBO", "BOTE", "BOLSA"];
-        let adjustMoral = Math.round(percentMoral * totalInventory);
-        let adjustBosques = Math.round(percentBosques * totalInventory);
-        if (!unitsToFixed1.includes(ingrediente.unidad)) {
-          // If unidad is NOT one of the excluded ones, apply Math.round
-          adjustMoral = Math.round(percentMoral * totalInventory);
-          adjustBosques = Math.round(percentBosques * totalInventory);
-        } else {
-          // If unidad is one of the excluded ones, do not apply Math.round
-          adjustMoral = percentMoral * totalInventory;
-          adjustBosques = percentBosques * totalInventory;
-        }
-        // Ensure the sum of adjustments equals total inventory exactly
-        const adjustmentDifference = totalInventory - (adjustMoral + adjustBosques);
-        adjustMoral += adjustmentDifference; // Adjust one of the values to compensate for rounding
-        const toFixedValue = unitsToFixed1.includes(ingrediente.unidad) ? 1 : 0;
-        const inventoryAlreadyBalanced = (Number(percentMoral * totalInventory).toFixed(1)) == Number(moralInventory) && (Number(percentBosques * totalInventory).toFixed(1)) == Number(bosquesInventory);
-        const adjustMoralMessage = adjustMoral > 0 ? `Ajuste Moral: ${adjustMoral.toFixed(toFixedValue)},` : "";
-        const adjustBosquesMessage = adjustBosques > 0 ? `Ajuste Campestre: ${adjustBosques.toFixed(toFixedValue)}` : "";
-        return `${bothInventoriesLow ? "RESURTIR URGENTE, POR EL MOMENTO:\n" : ""}${inventoryAlreadyBalanced ? "Inventario ya balanceado" : `${adjustMoralMessage}\n${adjustBosquesMessage}`}`;
-      } else {
-        return ""; // Return empty string if no adjustment needed
-      }
-    },
-    lastSubmission(store) {
-      const storeSubmissions = this.submissions.filter(
-        (submission) => submission.store === store
-      );
+import useAdminState from "../../composables/shared/useAdminState";
 
-      if (storeSubmissions.length > 0) {
-        return storeSubmissions.reduce((latest, current) =>
-          new Date(latest.timestamp) > new Date(current.timestamp)
-            ? latest
-            : current
-        );
-      } else {
-        return null;
-      }
-    },
-  },
+/* ====== Section A: Core Declarations and State ====== */
+
+// Core Data Management
+const { isAdmin } = useAdminState();
+const { submissions, fetchSubmissions, lastSubmission } = useSubmissions();
+const {
+  ingredientes,
+  proveedores,
+  searchTerm,
+  selectedProveedor,
+  selectedFrecuencia,
+  selectedInsumosTipo,
+  fetchIngredientes,
+  fetchProveedores,
+  filteredIngredients,
+} = useIngredients();
+const { getInventory, shouldTransfer } = useInventory();
+
+// Computed Properties
+const lastUpdatedMoral = computed(() =>
+  lastSubmission("moral")
+    ? new Date(lastSubmission("moral").timestamp).toLocaleString("en-US", {
+        timeZone: "UTC",
+      })
+    : "N/A"
+);
+
+const lastUpdatedCampestre = computed(() =>
+  lastSubmission("bosques")
+    ? new Date(lastSubmission("bosques").timestamp).toLocaleString("en-US", {
+        timeZone: "UTC",
+      })
+    : "N/A"
+);
+
+// State and Reactive Variables
+const isPopupVisible = ref(false);
+const selectedIngredient = ref(null);
+const isLoading = ref(true);
+
+/* ====== Section B: Functions for Component Logic ====== */
+
+// Initialization and Lifecycle
+onMounted(async () => {
+  await Promise.all([fetchSubmissions(), fetchIngredientes(), fetchProveedores()]);
+  isLoading.value = false; // Set loading to false after all fetches complete
+});
+
+
+// Popup/Dropdown and Interaction Logic
+const ingredienteClicked = (ingrediente) => {
+  selectedIngredient.value = ingrediente;
+  isPopupVisible.value = true;
 };
+
+const closePopup = () => {
+  isPopupVisible.value = false;
+};
+
+
 </script>
 
 <style scoped>
