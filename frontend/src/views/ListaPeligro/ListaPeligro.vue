@@ -27,7 +27,6 @@
         <label for="insumos">Tipo Insumos:</label>
         <select class="filterBar" id="insumos" v-model="selectedInsumosTipo">
           <option value="Lista Peligro">Lista peligro</option>
-          <!-- <option value="Transferencias">Transferencias</option> -->
           <option value="Todos">Todos</option>
         </select>
         <label for="proveedores">Proveedores:</label>
@@ -37,13 +36,6 @@
             {{ proveedor.nombre }}
           </option>
         </select>
-        <!-- <label for="frecuencias_inventario">Frecuencia Inventario:</label>
-      <select class="filterBar" id="frecuencias_inventario" v-model="selectedFrecuencia">
-        <option value="">Todos</option>
-        <option value="inicio_primer_turno">Inicio primer turno</option>
-        <option value="inicio_segundo_turno">Inicio segundo turno</option>
-        <option value="fin_segundo_turno">Fin segundo turno</option>
-      </select> -->
       </div>
       <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="search-bar" />
       <div class="checkbox-container" v-if="isAdmin">
@@ -52,7 +44,6 @@
           <span class="checkbox-custom"></span> Inventario semanal
         </label>
       </div>
-      <!-- ... -->
       <div class="table-container">
         <table>
           <thead>
@@ -89,14 +80,6 @@
                       Suficiente
                     </button>
                   </div>
-                  <!-- <div class="">
-                  <button
-                    class="button-casiNoHay"
-                    @click="setCasiNoHay(ingrediente)"
-                  >
-                    Casi no hay
-                  </button>
-                </div> -->
                   <div class="">
                     <button class="button-agotado" @click="setAgotado(ingrediente)">
                       Agotado
