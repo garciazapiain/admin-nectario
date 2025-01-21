@@ -18,12 +18,19 @@ const handleLogout = () => {
 const isCurrentPath = (path) => {
   return router.currentRoute.value.path === path;
 };
+
+// Check if the current route matches the given path or if it's excluded
+const shouldShowButtons = () => {
+  const excludedPaths = ["/login", "/register"];
+  return !excludedPaths.includes(router.currentRoute.value.path);
+};
+
 </script>
 
 <template>
   <div class="flex flex-col items-center justify-center w-full">
     <!-- Header Section -->
-    <div class="buttonsTop w-full justify-evenly">
+    <div v-if="shouldShowButtons()" class="buttonsTop w-full justify-evenly">
       <div class="buttonWrapper">
         <!-- Show "Página Principal" button on all routes except '/' -->
         <button
