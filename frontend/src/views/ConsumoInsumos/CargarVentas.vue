@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Cargar Ventas</h1>
-    <input type="file" @change="onFileChange" />
+    <input type="file" @change="handleFileChange" />
     <div v-if="items.length">
       <label for="store">Store:</label>
       <select id="store" v-model="store">
@@ -37,101 +37,49 @@
   </div>
 </template>
 
-<script>
-import * as XLSX from "xlsx";
+<script setup>
+import useDateRange from "../../composables/ConsumoInsumos/useDateRange";
+import useFileUpload from "../../composables/ConsumoInsumos/useFileUpload";
+import useApi from "../../composables/shared/useApi";
 import API_URL from "../../config";
+import { ref } from "vue";
 
-export default {
-  name: "CargarVentas",
-  data() {
-    return {
-      items: [],
-      store: "",
-      startDate: "",
-      endDate: "",
-      today: new Date().toISOString().split('T')[0],
-      selectedWeek: null,
-      weeks: []
-    };
-  },
-  methods: {
-    onFileChange(e) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: "array" });
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, {
-          header: ["clavepos", "descripcion", "cantidad"],
-        });
-        this.items = jsonData.slice(1); // Skip the first row
-        this.generateWeeks(); // Generate weeks after data is loaded
-      };
-      reader.readAsArrayBuffer(file);
-    },
-    generateWeeks() {
-      const weeks = [];
-      const startDate = new Date(new Date().getFullYear(), 0, 1);
-      while (startDate.getDay() !== 1) {
-        startDate.setDate(startDate.getDate() + 1);
-      }
-      const endDate = new Date(this.today);
-      while (startDate <= endDate) {
-        const weekStart = new Date(startDate);
-        const weekEnd = new Date(startDate);
-        weekEnd.setDate(weekEnd.getDate() + 6);
-        if (weekEnd > endDate) {
-          weekEnd.setDate(endDate.getDate());
-        }
-        weeks.push({
-          value: `${weekStart.toISOString().split('T')[0]}_${weekEnd.toISOString().split('T')[0]}`,
-          label: `${weekStart.getDate()} al ${weekEnd.getDate()} de ${weekStart.toLocaleString('es-ES', { month: 'long' })}`
-        });
-        startDate.setDate(startDate.getDate() + 7);
-      }
-      this.weeks = weeks.reverse();
-    },
-    updateDateRange() {
-      if (this.selectedWeek) {
-        const [start, end] = this.selectedWeek.split('_');
-        this.startDate = start;
-        this.endDate = end;
-      }
-    },
-    async saveSalesData() {
-      if (
-        !this.store ||
-        !this.startDate ||
-        !this.endDate ||
-        !this.items.length
-      ) {
-        alert(
-          "Please fill all fields and upload an Excel file before logging data."
-        );
-      } else {
-        const response = await fetch(`${API_URL}/consumption/cargarventas`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            store: this.store,
-            startDate: this.startDate,
-            endDate: this.endDate,
-            items: this.items,
-          }),
-        });
+// Composables
+const { weeks, startDate, endDate, selectedWeek, generateWeeks, updateDateRange } = useDateRange()
+const { items, parseExcelFile } = useFileUpload();
+const { postData } = useApi(API_URL);
 
-        if (!response.ok) {
-          console.error("HTTP error", response.status);
-        } else {
-          alert("Data successfully inserted");
-        }
-      }
-    },
-  },
+// Reactive variables
+const store = ref("");
+const today = new Date().toISOString().split("T")[0];
+
+// Methods
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    parseExcelFile(file); // Call composable function to parse Excel file
+  }
 };
+
+const saveSalesData = async () => {
+  if (!store.value || !startDate.value || !endDate.value || !items.value.length) {
+    alert("Please fill all fields and upload an Excel file before logging data.");
+    return;
+  }
+
+  const payload = {
+    store: store.value,
+    startDate: startDate.value,
+    endDate: endDate.value,
+    items: items.value,
+  };
+
+  const response = await postData("/consumption/cargarventas", payload);
+
+  if (response) alert("Data successfully inserted");
+};
+
+generateWeeks();
 </script>
 
 <style scoped>

@@ -50,175 +50,113 @@
   </div>
 </template>
 
-<script>
-import { saveAs } from 'file-saver';
-import * as XLSX from 'xlsx';
+<script setup>
+import { ref, computed } from "vue";
+import useDateRange from "../../composables/ConsumoInsumos/useDateRange";
+import useApi from "../../composables/shared/useApi";
+import useExportToExcel from "../../composables/shared/useExportToExcel";
 import API_URL from "../../config";
+import { useRouter } from "vue-router";
 
-export default {
-  name: "ConsumoInsumos",
-  data() {
-    return {
-      startDate: null,
-      endDate: null,
-      consumptionData: [],
-      errorMessage: null,
-      today: new Date().toISOString().split('T')[0],
-      selectedWeek: null,
-      weeks: []
-    };
-  },
-  computed: {
-    cargarVentasRoute() {
-      return this.$route.path + "/cargarventa";
-    },
-    filteredConsumptionData() {
-      return this.consumptionData.sort((a, b) => b.total_consumido_dinero - a.total_consumido_dinero);
-    },
-  },
-  methods: {
-    generateWeeks() {
-      const weeks = [];
-      const startDate = new Date(new Date().getFullYear(), 0, 1);
-      while (startDate.getDay() !== 1) {
-        startDate.setDate(startDate.getDate() + 1);
-      }
-      const endDate = new Date(this.today);
+const router = useRouter();
 
-      while (startDate <= endDate) {
-        const weekStart = new Date(startDate);
-        const weekEnd = new Date(startDate);
-        weekEnd.setDate(weekEnd.getDate() + 6);
+// Composables
+const { weeks, startDate, endDate, selectedWeek, generateWeeks, updateDateRange } = useDateRange();
+const { getData } = useApi(API_URL);
+const { exportDataToExcel } = useExportToExcel();
 
-        // If the week ends after today, adjust it to end on today
-        let isIncompleteWeek = false;
-        if (weekEnd > endDate) {
-          weekEnd.setDate(endDate.getDate());
-          isIncompleteWeek = true;
-        }
+// Reactive data
+const consumptionData = ref([]);
+const errorMessage = ref(null);
 
-        let label;
-        if (weekStart.getMonth() !== weekEnd.getMonth()) {
-          label = `${weekStart.getDate()} de ${weekStart.toLocaleString('es-ES', { month: 'long' })} al ${weekEnd.getDate()} de ${weekEnd.toLocaleString('es-ES', { month: 'long' })}`;
-        } else {
-          label = `${weekStart.getDate()} al ${weekEnd.getDate()} de ${weekStart.toLocaleString('es-ES', { month: 'long' })}`;
-        }
+// Computed properties
+const today = new Date().toISOString().split("T")[0];
+const cargarVentasRoute = computed(() => `${router.currentRoute.value.path}/cargarventa`);
+const filteredConsumptionData = computed(() =>
+  consumptionData.value.sort((a, b) => b.total_consumido_dinero - a.total_consumido_dinero)
+);
 
-        weeks.push({
-          value: `${weekStart.toISOString().split('T')[0]}_${weekEnd.toISOString().split('T')[0]}`,
-          label: label,
-          disabled: isIncompleteWeek // Mark this week as disabled if it's incomplete
-        });
+// Methods
+const fetchConsumptionData = async () => {
+  errorMessage.value = null;
 
-        startDate.setDate(startDate.getDate() + 7);
-      }
+  if (!startDate.value || !endDate.value) {
+    errorMessage.value = "Ambas fechas deben ser seleccionadas.";
+    setTimeout(() => (errorMessage.value = null), 5000);
+    return;
+  }
 
-      this.weeks = weeks.reverse();
-    },
-    updateDateRange() {
-      if (this.selectedWeek) {
-        const [start, end] = this.selectedWeek.split('_');
-        this.startDate = start;
-        this.endDate = end;
-      }
-    },
-    exportToExcel() {
-      // Prepare data for export including the adjusted columns
-      const dataForExport = this.filteredConsumptionData.map(item => ({
-        "Insumo": item.nombre,
-        "Unidad": item.unidad,
-        "Proveedor": item.proveedor,
-        "Consumido (Moral)": item.total_consumido_moral.toFixed(2),
-        "Consumido (Bosques)": item.total_consumido_bosques.toFixed(2),
-        "Total consumido sin merma": item.total_consumido_total.toFixed(2),
-        "Total consumido real": (item.total_consumido_total / (1 - Number(item.merma))).toFixed(2),
-        "Precio / unidad": `$ ${item.precio}`,
-        "$ Total": `$ ${((item.total_consumido_total / (1 - Number(item.merma))) * item.precio).toFixed(2)}`
-      }));
+  const stores = ["moral", "bosques"];
+  const results = {};
 
-      // Create the worksheet and workbook
-      const ws = XLSX.utils.json_to_sheet(dataForExport);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+  for (const store of stores) {
+    const response = await getData(`/consumption/${store}`, {
+      startDate: startDate.value,
+      endDate: endDate.value,
+    });
+    if (response) results[store] = response;
+  }
 
-      // Write the workbook and trigger download
-      const wbout = XLSX.write(wb, { bookType: "xlsx", type: "binary" });
-      const buf = new ArrayBuffer(wbout.length);
-      const view = new Uint8Array(buf);
-      for (let i = 0; i < wbout.length; i++) view[i] = wbout.charCodeAt(i) & 0xFF;
-      saveAs(new Blob([buf], { type: "application/octet-stream" }), "consumo_insumos.xlsx");
-    },
-    async fetchConsumptionData() {
-      this.errorMessage = null; // Reset the error message before fetching data
+  consumptionData.value = processConsumptionData(results);
 
-      if (!this.startDate || !this.endDate) {
-        this.errorMessage = "Ambas fechas deben ser seleccionadas.";
-        setTimeout(() => {
-          this.errorMessage = null;
-        }, 5000);
-        return;
-      }
-
-      const stores = ["moral", "bosques"];
-      const results = {};
-
-      for (const store of stores) {
-        try {
-          const response = await fetch(
-            `${API_URL}/consumption/${store}?startDate=${this.startDate}&endDate=${this.endDate}`
-          );
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          const data = await response.json();
-          results[store] = data; // Store the data for each store in the results object
-        } catch (error) {
-          console.error("Fetch error:", error);
-        }
-      }
-
-      const combinedData = [];
-      if (results.moral && results.bosques) {
-        for (const ingredient of results.moral) {
-          const sameIngredientInBosques = results.bosques.find(
-            (i) => i.id_ingrediente === ingredient.id_ingrediente
-          );
-          const total_consumido_moral = parseFloat(ingredient.total_consumido);
-          const total_consumido_bosques = sameIngredientInBosques
-            ? parseFloat(sameIngredientInBosques.total_consumido)
-            : 0;
-          const total_consumido_total = total_consumido_moral + total_consumido_bosques;
-          combinedData.push({
-            id_ingrediente: ingredient.id_ingrediente,
-            nombre: ingredient.nombre,
-            precio: ingredient.precio,
-            unidad: ingredient.unidad,
-            proveedor: ingredient.proveedor,
-            producto_clave: ingredient.producto_clave,
-            merma: ingredient.merma,
-            total_consumido_moral: total_consumido_moral,
-            total_consumido_bosques: total_consumido_bosques,
-            total_consumido_total: total_consumido_total,
-            total_consumido_dinero: total_consumido_total * ingredient.precio,
-          });
-        }
-      }
-
-      this.consumptionData = combinedData;
-      if (this.consumptionData.length === 0) {
-        this.errorMessage = "No se encontró data en esas fechas.";
-        setTimeout(() => {
-          this.errorMessage = null;
-        }, 5000);
-      }
-    },
-  },
-  mounted() {
-    this.generateWeeks();
+  if (consumptionData.value.length === 0) {
+    errorMessage.value = "No se encontró data en esas fechas.";
+    setTimeout(() => {
+      errorMessage.value = null;
+    }, 5000);
   }
 };
-</script>
 
+const processConsumptionData = (results) => {
+  const combinedData = [];
+  if (results.moral && results.bosques) {
+    for (const ingredient of results.moral) {
+      const sameIngredientInBosques = results.bosques.find(
+        (i) => i.id_ingrediente === ingredient.id_ingrediente
+      );
+      const total_consumido_moral = parseFloat(ingredient.total_consumido);
+      const total_consumido_bosques = sameIngredientInBosques
+        ? parseFloat(sameIngredientInBosques.total_consumido)
+        : 0;
+      const total_consumido_total = total_consumido_moral + total_consumido_bosques;
+
+      combinedData.push({
+        id_ingrediente: ingredient.id_ingrediente,
+        nombre: ingredient.nombre,
+        precio: ingredient.precio,
+        unidad: ingredient.unidad,
+        proveedor: ingredient.proveedor,
+        producto_clave: ingredient.producto_clave,
+        merma: ingredient.merma,
+        total_consumido_moral,
+        total_consumido_bosques,
+        total_consumido_total,
+        total_consumido_dinero: total_consumido_total * ingredient.precio,
+      });
+    }
+  }
+  return combinedData;
+};
+
+const exportToExcel = () => {
+  const dataForExport = filteredConsumptionData.value.map((item) => ({
+    Insumo: item.nombre,
+    Unidad: item.unidad,
+    Proveedor: item.proveedor,
+    "Consumido (Moral)": item.total_consumido_moral.toFixed(2),
+    "Consumido (Bosques)": item.total_consumido_bosques.toFixed(2),
+    "Total consumido sin merma": item.total_consumido_total.toFixed(2),
+    "Total consumido real": (item.total_consumido_total / (1 - Number(item.merma))).toFixed(2),
+    "Precio / unidad": `$ ${item.precio}`,
+    "$ Total": `$ ${((item.total_consumido_total / (1 - Number(item.merma))) * item.precio).toFixed(2)}`,
+  }));
+
+  exportDataToExcel(dataForExport, "consumo_insumos.xlsx");
+};
+
+// Initialization
+generateWeeks();
+</script>
 
 <style scoped>
 .button-container {
