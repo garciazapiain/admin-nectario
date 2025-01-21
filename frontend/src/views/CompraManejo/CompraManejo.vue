@@ -11,7 +11,8 @@
 
     <!-- Main grouped view -->
     <div v-else-if="!showSummary">
-      <div v-for="(ingredientes, proveedor) in groupedByProveedor" :key="proveedor">
+      <div v-for="(ingredientes, proveedor) in groupedByProveedor" :key="proveedor" class="dropzone" @dragover.prevent
+        @drop="(event) => handleDrop(proveedor, event)" @touchend="(event) => handleDrop(proveedor, event)">
         <h1 class="flex justify-start pl-3 bg-white text-black"> {{ proveedor }}</h1>
         <table class="table">
           <thead>
@@ -25,7 +26,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="ingrediente in getSortedIngredientes(ingredientes)" :key="ingrediente.id_ingrediente">
+            <tr v-for="ingrediente in getSortedIngredientes(ingredientes)" :key="ingrediente.id_ingrediente"
+              draggable="true" @dragstart="(event) => startDrag(ingrediente, event)"
+              @touchstart="(event) => startDrag(ingrediente, event)">
               <td>
                 <span class="cursor-pointer" @click="openProveedorPopup(ingrediente)">☰</span>
               </td>
@@ -171,8 +174,10 @@ const planeacionCompra = ref([]);
 const isLoaded = ref(false);
 const showSummary = ref(false); // State to toggle views
 const popupVisible = ref(false);
+let draggedItem = null;
 const selectedPopupIngrediente = ref(null); // Stores the selected ingredient for the popup
 const currentImageIndex = ref(0); // Tracks the current image index in the slideshow
+
 
 // Fetch data from the API
 const fetchPlaneacionCompra = async () => {
@@ -225,6 +230,68 @@ const nextImage = () => {
 const prevImage = () => {
   if (currentImageIndex.value === 1) {
     currentImageIndex.value = 0;
+  }
+};
+
+const enableMobileDrag = false; // Flag to toggle mobile implementation
+
+const startDrag = (ingrediente, event) => {
+  draggedItem = ingrediente;
+
+  // For touch devices
+  if (event.type === "touchstart") {
+    if (!enableMobileDrag) return; // Skip execution for mobile drag
+    event.preventDefault(); // Prevent scrolling
+    const touch = event.touches[0];
+    draggedItem.touchX = touch.clientX;
+    draggedItem.touchY = touch.clientY;
+  }
+};
+
+const handleDrop = async (targetProveedor, event) => {
+  // Prevent default for touch and drag events
+  if (event.type === "touchend") {
+    if (!enableMobileDrag) return; // Skip execution for mobile drop
+    event.preventDefault();
+    const touch = event.changedTouches[0];
+    const touchX = touch.clientX;
+    const touchY = touch.clientY;
+
+    // Check if the drop occurred within the target drop zone
+    const dropZone = event.target.closest(".dropzone");
+    if (!dropZone) {
+      console.warn("Touch did not occur within a valid drop zone.");
+      return;
+    }
+  }
+
+  // Existing desktop drag-and-drop logic
+  if (draggedItem && draggedItem.proveedor !== targetProveedor) {
+    try {
+      const updatedData = {
+        ...draggedItem,
+        proveedor: targetProveedor,
+      };
+      const response = await fetch(`${API_URL}/planeacion_compra/${draggedItem.id_ingrediente}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      if (!response.ok) throw new Error(`Error ${response.status}: Failed to update proveedor`);
+
+      // Reflect the change locally
+      draggedItem.proveedor = targetProveedor;
+      planeacionCompra.value = planeacionCompra.value.filter(
+        (item) => item.id_ingrediente !== draggedItem.id_ingrediente
+      );
+      planeacionCompra.value.push(draggedItem);
+      draggedItem = null;
+    } catch (error) {
+      console.error("Error updating proveedor:", error);
+    }
   }
 };
 
