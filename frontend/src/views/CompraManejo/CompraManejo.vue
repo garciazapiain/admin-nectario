@@ -175,19 +175,19 @@ import usePlaneacionActions from "../../composables/CompraManejo/usePlaneacionAc
 
 /* ====== Section A: Core Declarations and State ====== */
 
-// 1. Core Data Management
+// Core Data Management
 const { planeacionCompra, fetchPlaneacionCompra, isLoaded } = usePlaneacionCompra()
 const { proveedores, fetchProveedores } = useProveedores();
 
-// 2. Computed Properties
+// Computed Properties
 const { groupedByProveedor, moralOrders, bosquesOrders } = usePlaneacionComputed(planeacionCompra)
 
-// 3. View Toggles
+// View Toggles
 const showSummary = ref(false); // State to toggle views
 const { popupVisible, selectedItem: selectedPopupIngrediente, showPopup, closePopup } = usePopup();
 const { isDropdownVisible, selectedValue, toggleDropdown, selectOption, closeDropdown } = useDropdown();
 
-// 4. Navigation and Drag-and-Drop
+// Navigation and Drag-and-Drop
 const {
   currentImageIndex,
   nextImage,
@@ -196,39 +196,39 @@ const {
 } = useImageNavigation();
 const { startDrag, handleDrop } = useDragAndDrop();
 
-// 5. Sorting and Utilities
+// Sorting and Utilities
 const { sortItems, defaultComparator } = useSorting();
 const getSortedIngredientes = (ingredientes) => {
   return sortItems(ingredientes, defaultComparator);
 };
 const { isLoading, toggleApiState } = useToggleApi(API_URL);
 
-// 6. Helper Functions
+// Helper Functions
 const toggleView = () => {
   showSummary.value = !showSummary.value;
 };
 
 /* ====== Section B: Functions for Component Logic ====== */
 
-// 1. Initialization and Lifecycle
+// Initialization and Lifecycle
 onMounted(() => {
   fetchPlaneacionCompra();
   fetchProveedores();
 });
 
-// 2. State and Reactive Variables
+// State and Reactive Variables
 const currentEditingIngrediente = ref(null); // Holds the ingrediente being edited
 
-// 3. Utility/Helper Functions
+// Utility/Helper Functions
 const closePopupAndResetImage = () => {
   closePopup(); // Close the popup
   resetImageIndex(); // Reset the image index
 };
 
-// 4. API Interaction and State Modifiers
+// API Interaction and State Modifiers
 const { toggleYaComprado, toggleEntregado, confirmProveedorChange } = usePlaneacionActions(API_URL);
 
-// 5. Popup/Dropdown and Interaction Logic
+// Popup/Dropdown and Interaction Logic
 const openProveedorPopup = (ingrediente) => {
   currentEditingIngrediente.value = ingrediente;
   selectedValue.value = ingrediente.proveedor; // Default to the current proveedor

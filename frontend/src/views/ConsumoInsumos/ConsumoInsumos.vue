@@ -58,25 +58,31 @@ import useExportToExcel from "../../composables/shared/useExportToExcel";
 import API_URL from "../../config";
 import { useRouter } from "vue-router";
 
-const router = useRouter();
+/* ====== Section A: Core Declarations and State ====== */
 
-// Composables
+// Core Data Management
 const { weeks, startDate, endDate, selectedWeek, generateWeeks, updateDateRange } = useDateRange();
 const { getData } = useApi(API_URL);
 const { exportDataToExcel } = useExportToExcel();
 
-// Reactive data
-const consumptionData = ref([]);
-const errorMessage = ref(null);
-
 // Computed properties
+const router = useRouter();
 const today = new Date().toISOString().split("T")[0];
 const cargarVentasRoute = computed(() => `${router.currentRoute.value.path}/cargarventa`);
 const filteredConsumptionData = computed(() =>
   consumptionData.value.sort((a, b) => b.total_consumido_dinero - a.total_consumido_dinero)
 );
 
-// Methods
+// Reactive data
+const consumptionData = ref([]);
+const errorMessage = ref(null);
+
+/* ====== Section B: Functions for Component Logic ====== */
+
+// Initialization and Lifecycle
+generateWeeks();
+
+// API Interaction and State Modifiers
 const fetchConsumptionData = async () => {
   errorMessage.value = null;
 
@@ -107,6 +113,7 @@ const fetchConsumptionData = async () => {
   }
 };
 
+// Utility/Helper Functions
 const processConsumptionData = (results) => {
   const combinedData = [];
   if (results.moral && results.bosques) {
@@ -154,8 +161,6 @@ const exportToExcel = () => {
   exportDataToExcel(dataForExport, "consumo_insumos.xlsx");
 };
 
-// Initialization
-generateWeeks();
 </script>
 
 <style scoped>

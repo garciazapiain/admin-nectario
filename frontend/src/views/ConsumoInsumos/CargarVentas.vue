@@ -44,16 +44,25 @@ import useApi from "../../composables/shared/useApi";
 import API_URL from "../../config";
 import { ref } from "vue";
 
-// Composables
+/* ====== Section A: Core Declarations and State ====== */
+
+// Core Data Management
 const { weeks, startDate, endDate, selectedWeek, generateWeeks, updateDateRange } = useDateRange()
 const { items, parseExcelFile } = useFileUpload();
 const { postData } = useApi(API_URL);
 
-// Reactive variables
-const store = ref("");
+// Helper Functions
 const today = new Date().toISOString().split("T")[0];
 
-// Methods
+/* ====== Section B: Functions for Component Logic ====== */
+
+// Initialization and Lifecycle
+generateWeeks();
+
+// State and Reactive Variables
+const store = ref("");
+
+// Utility/Helper Functions
 const handleFileChange = (event) => {
   const file = event.target.files[0];
   if (file) {
@@ -61,6 +70,7 @@ const handleFileChange = (event) => {
   }
 };
 
+// API Interaction and State Modifiers
 const saveSalesData = async () => {
   if (!store.value || !startDate.value || !endDate.value || !items.value.length) {
     alert("Please fill all fields and upload an Excel file before logging data.");
@@ -79,7 +89,6 @@ const saveSalesData = async () => {
   if (response) alert("Data successfully inserted");
 };
 
-generateWeeks();
 </script>
 
 <style scoped>
