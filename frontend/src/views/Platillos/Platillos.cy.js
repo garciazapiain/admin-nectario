@@ -10,18 +10,14 @@ describe('Platillos Component', () => {
 
     it('renders the Platillos component', () => {
         cy.get('h1').should('contain', 'Platillos');
-        cy.get('input[placeholder="Buscar"]').should('exist');
         cy.get('table').should('exist');
         cy.get('form').should('exist');
     });
 
     it('filters platillos based on search input', () => {
-        // Type a search term into the search input field
-        cy.get('input[placeholder="Buscar"]').type('CHILAQUILES');
-
-        // Check that each table row contains the search term
-        cy.get('tbody tr').each(($row) => {
-            cy.wrap($row).should('contain', 'CHILAQUILES');
+        cy.get('[data-test-id="search-input"]').type('CHILAQUILES'); // replace 'test' with an actual ingredient name
+        cy.get('table tbody tr').each(($el) => {
+            cy.wrap($el).should('contain', 'CHILAQUILES'); // replace 'test' with the same ingredient name
         });
     });
 });

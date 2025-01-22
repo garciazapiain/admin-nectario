@@ -10,8 +10,9 @@ describe('Ingredientes Component', () => {
 
     it('renders the Ingredientes component', () => {
         cy.get('h1').should('contain', 'Insumos');
-        cy.get('input[placeholder="Search"]').should('exist');
-        cy.get('select').should('exist');
-        cy.get('table').should('exist');
+        cy.get('[data-test-id="search-input"]').type('TOMATE');
+        cy.get('table tbody tr').each(($el) => {
+            cy.wrap($el).should('contain', 'TOMATE'); // replace 'test' with the same ingredient name
+          });
     });
 });

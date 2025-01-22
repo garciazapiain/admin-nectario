@@ -9,6 +9,7 @@
           @input="$emit('update:modelValue', $event.target.value)"
           :placeholder="placeholder" 
           class="w-full h-10 px-10 py-2 text-lg border-2 border-gray-300 rounded-full outline-none transition-all duration-300 focus:border-green-500 focus:ring-2 focus:ring-green-300"
+          data-test-id="search-input" 
         />
       </div>
     </div>

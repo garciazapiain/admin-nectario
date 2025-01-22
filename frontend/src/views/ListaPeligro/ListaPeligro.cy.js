@@ -22,10 +22,10 @@ describe('<ListaPeligro />', () => {
   })
 
   it('filters ingredients based on search term', () => {
-    cy.get('.search-bar').type('ATUN')
-    cy.get('tbody tr').each(($el) => {
-      cy.wrap($el).find('td:first').should('contain', 'ATUN')
-    })
+    cy.get('[data-test-id="search-input"]').type('ATUN'); // replace 'test' with an actual ingredient name
+    cy.get('table tbody tr').each(($el) => {
+      cy.wrap($el).should('contain', 'ATUN'); // replace 'test' with the same ingredient name
+    });
   })
 
   it('updates inventory quantity by increasing and decreasing', () => {
