@@ -2,9 +2,9 @@
   <div>
     <h1 class="mb-10">Gestión de Planeación de Compra</h1>
     <!-- Button to toggle views -->
-    <button @click="toggleView" class="mb-5 bg-blue-500 text-white py-2 px-4 rounded">
+    <BaseButton @click="toggleView" bgColor="bg-blue-800" textColor="text-white" fontSize="text-lg">
       {{ showSummary ? "Regresar a Proveedores" : "Ver Órdenes de Moral y Bosques" }}
-    </button>
+    </BaseButton>
     <div v-if="!isLoaded" class="loading-message">Cargando datos...</div>
     <!-- Main grouped view -->
     <div v-else-if="!showSummary">
@@ -162,6 +162,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import API_URL from "../../config";
+import BaseButton from "../../components/BaseButton.vue";
 import useProveedores from '../../composables/shared/useProveedores';
 import usePopup from '../../composables/shared/usePopup';
 import useDragAndDrop from '../../composables/CompraManejo/useDragAndDrop';
