@@ -61,7 +61,7 @@ export default function useIngredients() {
         ingrediente.frecuencias_inventario.includes(selectedFrecuencia.value)
       );
     }
-
+    console.log(result.sort((a, b) => a.nombre.localeCompare(b.nombre)))
     return result.sort((a, b) => a.nombre.localeCompare(b.nombre));
   });
 
