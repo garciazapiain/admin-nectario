@@ -15,7 +15,7 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdm
     <!-- Title and Lock/Unlock Icons with Tooltip -->
     <div v-if="isEditingName">
       <input type="text" v-model="newName" />
-      <button @click="handleSaveName">Guardar</button>
+      <BaseButton bgColor="bg-green-500" textColor="text-white" fontSize="text-base" @click="handleSaveName">Guardar</BaseButton>
     </div>
     <div v-if="!isEditingName" class="flex sm:flex-row items-center mt-2">
       <h1 class="text-4xl mb-2 mr-4 sm:mb-0">{{ platillo.nombre }}</h1>
@@ -44,10 +44,10 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdm
 
     <!-- Edit, Duplicate, and Delete Buttons -->
     <div class="platilloButtonContainer flex flex-col sm:flex-row items-center mt-2">
-      <button v-if="isAdmin || !recetaBloqueada" class="mb-2 sm:mb-0 sm:mr-2" @click="isEditingName = true">Editar
-        nombre</button>
-      <button v-if="isAdmin" class="mb-2 sm:mb-0 sm:mr-2" @click="handleDuplicatePlatillo">Duplicar Platillo</button>
-      <button v-if="isAdmin" class="bg-red-500 mb-2 sm:mb-0" @click="handleDeletePlatillo">Borrar</button>
+      <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" v-if="isAdmin || !recetaBloqueada" @click="isEditingName = true">Editar
+        nombre</BaseButton>
+      <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" v-if="isAdmin" @click="handleDuplicatePlatillo">Duplicar Platillo</BaseButton>
+      <BaseButton bgColor="bg-red-600" textColor="text-white" fontSize="text-base" v-if="isAdmin" @click="handleDeletePlatillo">Borrar</BaseButton>
     </div>
 
     <!-- <input type="checkbox" id="includeSubplatillos" v-model="includeSubplatillos" />
@@ -148,6 +148,8 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdm
 </template>
 
 <script>
+import BaseButton from "../../components/BaseButton.vue";
+
 export default {
   data() {
     return {

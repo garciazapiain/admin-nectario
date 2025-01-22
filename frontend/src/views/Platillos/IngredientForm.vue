@@ -1,4 +1,3 @@
-// This component is to add ingredients in platillos/subplatillos component
 <template>
   <div>
     <h2>AGREGAR INGREDIENTES</h2>
@@ -9,7 +8,7 @@
       class="search-input"
     />
     <form @submit.prevent="addIngredient">
-      <button class="button" type="submit">AGREGAR INGREDIENTES</button>
+      <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" type="submit">AGREGAR</BaseButton>
       <table>
         <thead>
           <tr>
@@ -57,7 +56,13 @@
   </div>
 </template>
 
+<script setup>
+import BaseButton from "../../components/BaseButton.vue";
+
+</script>
+
 <script>
+
 export default {
   props: ["ingredientes", "existingIngredientIds", "postUrl"],
   data() {
@@ -137,12 +142,5 @@ export default {
 }
 .mensaje-exitoso {
   color: green;
-}
-.button {
-  width: fit-content;
-  margin: 10px 0;
-  padding: 1rem;
-  color: white;
-  background-color: black;
 }
 </style>

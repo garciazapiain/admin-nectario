@@ -112,7 +112,7 @@
             {{ proveedor.nombre }}
           </option>
         </select>
-        <button type="submit" class="submit-button py-2.5 px-5 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-700">Agregar Insumo</button>
+        <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" type="submit">Agregar Insumo</BaseButton>
       </form>
     </div>
   </div>
@@ -120,6 +120,7 @@
 
 <script setup>
 import { useRouter } from "vue-router";
+import BaseButton from "../../components/BaseButton.vue";
 const router = useRouter();
 const handleClickIngrediente = (idIngrediente) => {
   router.push(`/ingredientes/${idIngrediente}`);

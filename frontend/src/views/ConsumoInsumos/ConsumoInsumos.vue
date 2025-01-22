@@ -40,11 +40,11 @@
       </tbody>
     </table>
     <div class="button-container">
-      <button className="bg-blue-800" @click="fetchConsumptionData">Obtener data</button>
-      <button className="bg-green-400" @click="exportToExcel" v-if="filteredConsumptionData.length > 0">Exportar a
-        Excel</button>
+      <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" @click="fetchConsumptionData">Obtener data</BaseButton>
+      <BaseButton  bgColor="bg-green-600" textColor="text-white" fontSize="text-base" v-if="filteredConsumptionData.length > 0">Exportar a
+        Excel</BaseButton>
       <router-link :to="cargarVentasRoute">
-        <button className="bg-green-400">Cargar ventas</button>
+        <BaseButton  bgColor="bg-green-600" textColor="text-white" fontSize="text-base">Cargar ventas</BaseButton>
       </router-link>
     </div>
   </div>
@@ -52,6 +52,7 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import BaseButton from "../../components/BaseButton.vue"
 import useDateRange from "../../composables/ConsumoInsumos/useDateRange";
 import useApi from "../../composables/shared/useApi";
 import useExportToExcel from "../../composables/shared/useExportToExcel";
@@ -170,11 +171,4 @@ const exportToExcel = () => {
   /* Adjust the gap as needed */
 }
 
-button {
-  padding: 10px 20px;
-  border: none;
-  color: white;
-  cursor: pointer;
-  border-radius: 5px;
-}
 </style>

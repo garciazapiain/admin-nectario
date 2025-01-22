@@ -1,5 +1,6 @@
 <script setup>
 import { useRouter } from "vue-router";
+import BaseButton from "../../components/BaseButton.vue";
 const router = useRouter();
 const handleClick = (platillo) => {
   if (platillo.type === "Platillo") {
@@ -16,7 +17,7 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
     <h1>{{ ingrediente.nombre }}</h1>
     <h2>
       Info del insumo:
-      <button v-if="isAdmin" @click="showModal = true">Editar</button>
+      <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" v-if="isAdmin" @click="showModal = true">Editar</BaseButton>
     </h2>
     <div v-if="showModal" class="modal">
       <form @submit.prevent="editIngrediente" class="grid grid-cols-2 gap-4 edit-form">

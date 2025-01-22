@@ -3,7 +3,7 @@
     <h2>AGREGAR SUB-PLATILLO</h2>
     <input v-model="searchTerm" type="text" placeholder="BUSCAR SUB-PLATILLO" class="search-input" />
     <form @submit.prevent="addSubPlatillo">
-      <button class="button" type="submit">AGREGAR SUB-PLATILLO</button>
+      <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" type="submit">AGREGAR</BaseButton>
       <table>
         <thead>
           <tr>
@@ -38,6 +38,10 @@
     </form>
   </div>
 </template>
+
+<script setup>
+  import BaseButton from "../../components/BaseButton.vue";
+</script>
 
 <script>
 import API_URL from "../../config";
@@ -124,9 +128,4 @@ export default {
   color: green;
 }
 
-.button {
-  width: fit-content;
-  margin: 10px 0;
-  padding: 1rem;
-}
 </style>

@@ -3,6 +3,7 @@ import { useRouter } from "vue-router";
 import { ref, computed } from "vue";
 import API_URL from "../../config";  // Import the API URL configuration
 import IngredientForm from "../Platillos/IngredientForm.vue";
+import BaseButton from "../../components/BaseButton.vue";
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faLock, faUnlock } from '@fortawesome/free-solid-svg-icons'
 import { library } from "@fortawesome/fontawesome-svg-core"; // Import the library function
@@ -221,7 +222,7 @@ fetchIngredientes();
     <!-- Title and Lock/Unlock Icons with Tooltip -->
     <div v-if="isEditingName">
       <input type="text" v-model="newName" />
-      <button @click="handleSaveName">Guardar</button>
+      <BaseButton bgColor="bg-green-800" textColor="text-white" fontSize="text-base" @click="handleSaveName">Guardar</BaseButton>
     </div>
     <div v-if="!isEditingName" class="flex sm:flex-row items-center mt-2">
       <h1 class="text-4xl mr-4 mb-2 sm:mb-0">{{ subplatillo.nombre }}</h1>
@@ -252,8 +253,8 @@ fetchIngredientes();
 
     <!-- Edit Name Button -->
     <div class="flex justify-center mt-2">
-      <button v-if="isAdmin || !recetaBloqueada" @click="isEditingName = true" class="mb-2 sm:mb-0">Editar
-        nombre</button>
+      <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" v-if="isAdmin || !recetaBloqueada" @click="isEditingName = true">Editar
+        nombre</BaseButton>
     </div>
 
     <!-- Ingredients Table -->
@@ -280,18 +281,18 @@ fetchIngredientes();
                   <input type="number" min=".001" v-model="editValue" step=".25" />
                   <button @click="resetEditValue">X</button>
                 </div>
-                <button @click="handleSaveEditIngredient">Guardar</button>
+                <BaseButton bgColor="bg-green-800" textColor="text-white" fontSize="text-base" @click="handleSaveEditIngredient">Guardar</BaseButton>
               </div>
               <div v-else>
                 {{ ingrediente.cantidad }}
-                <button v-if="isAdmin || !recetaBloqueada" @click="handleOpenEditIngredient(index)">Editar</button>
+                <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base"  v-if="isAdmin || !recetaBloqueada" @click="handleOpenEditIngredient(index)">Editar</BaseButton>
               </div>
             </td>
             <td>
               ${{ (ingrediente.precio * ingrediente.cantidad).toFixed(2) }}
             </td>
             <td v-if="isAdmin || !recetaBloqueada">
-              <button @click="handleDeleteIngredient(ingrediente)">Borrar</button>
+              <BaseButton bgColor="bg-red-600" textColor="text-white" fontSize="text-base" @click="handleDeleteIngredient(ingrediente)">Borrar</BaseButton>
             </td>
           </tr>
         </tbody>
@@ -305,13 +306,13 @@ fetchIngredientes();
     <div class="text-lg mt-4 text-left">
       <div v-if="isEditingRendimiento">
         <input type="number" v-model="newRendimiento" step="0.01" min="0" />
-        <button @click="handleSaveRendimiento">Guardar</button>
+        <BaseButton bgColor="bg-green-800" textColor="text-white" fontSize="text-base" @click="handleSaveRendimiento">Guardar</BaseButton>
         <button @click="isEditingRendimiento = false">X</button>
       </div>
       <div class="text-left text-lg" v-else>
         <p class="text-left text-lg">RENDIMIENTO: {{ subplatillo.rendimiento }} {{ subplatillo.unidad }}</p>
-        <button class="text-left text-lg" v-if="isAdmin || !recetaBloqueada" @click="isEditingRendimiento = true">Editar
-          rendimiento</button>
+        <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" v-if="isAdmin || !recetaBloqueada" @click="isEditingRendimiento = true">Editar
+          rendimiento</BaseButton>
       </div>
     </div>
 

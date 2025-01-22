@@ -17,11 +17,11 @@ const handleClickPlatillo = (idPlatillo) => {
 <template>
   <div>
     <h1>Platillos</h1>
-    <button class="m-4" @click="exportToExcel">Exportar a Excel</button>
+    <BaseButton bgColor="bg-blue-600" textColor="text-white" fontSize="text-base" @click="exportToExcel">Exportar a Excel</BaseButton>
     <input v-if="isAdmin" type="file" @change="importFromExcel" />
     <!-- New Button to Show Cost Calculation -->
-    <button class="m-4" @click="calculateCosts">Sacar costo de venta</button>
-    <button class="m-4 bg-green-600" @click="scrollToBottomAgregarPlatillo">Agregar platillo</button>
+    <BaseButton bgColor="bg-blue-600" textColor="text-white" fontSize="text-base" @click="calculateCosts">Sacar costo de venta</BaseButton>
+    <BaseButton bgColor="bg-green-700" textColor="text-white" fontSize="text-base" @click="scrollToBottomAgregarPlatillo">Agregar platillo</BaseButton>
     <!-- Spinner -->
     <div v-if="showCostsLoading" class="spinner">
       <p>Cargando costos de venta...</p>
@@ -47,14 +47,14 @@ const handleClickPlatillo = (idPlatillo) => {
           <td>
             <div class="editRow" v-if="editIndexClavePos !== index">
               {{ platillo.clavepos }}
-              <button v-if="isAdmin" @click="editIndexClavePos = index">
+              <BaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" v-if="isAdmin" @click="editIndexClavePos = index">
                 Editar
-              </button>
+              </BaseButton>
             </div>
             <div v-else>
               <input type="number" min="0" v-model="editValueClavePos" />
-              <button @click="saveEditClavePos(platillo)">Guardar</button>
-              <button @click="editIndexClavePos = -1">Cancelar</button>
+              <BaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="saveEditClavePos(platillo)">Guardar</BaseButton>
+              <BaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="editIndexClavePos = -1">Cancelar</BaseButton>
             </div>
           </td>
           <!-- Conditionally render "Costo total" based on showCosts state -->
@@ -62,14 +62,14 @@ const handleClickPlatillo = (idPlatillo) => {
           <td>
             <div class="editRow" v-if="editIndexPrecio !== index">
               {{ platillo.precio_piso !== null ? `$${platillo.precio_piso.toFixed(2)}` : '' }}
-              <button v-if="isAdmin" @click="editIndexPrecio = index">
+              <BaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" v-if="isAdmin" @click="editIndexPrecio = index">
                 Editar
-              </button>
+              </BaseButton>
             </div>
             <div v-else>
               <input type="number" min="0" v-model="editValuePrecio" />
-              <button @click="saveEditPrecio(platillo)">Guardar</button>
-              <button @click="editIndexPrecio = -1">Cancelar</button>
+              <BaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="saveEditPrecio(platillo)">Guardar</BaseButton>
+              <BaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="editIndexPrecio = -1">Cancelar</BaseButton>
             </div>
           </td>
           <!-- Conditionally render "% Costo" based on showCosts state -->
@@ -84,13 +84,14 @@ const handleClickPlatillo = (idPlatillo) => {
     <!-- Add Platillo Form -->
     <form id="agregarPlatilloForm" @submit.prevent="agregarPlatillo">
       <input class="h-8" v-model="nuevoPlatillo.nombre" placeholder="Nombre de platillo" required />
-      <button class="bg-green-600" type="submit">Agregar Platillo</button>
+      <BaseButton bgColor="bg-green-800" textColor="text-white" fontSize="text-lg" type="submit">Agregar Platillo</BaseButton>
     </form>
   </div>
 </template>
 
 <script>
 import * as XLSX from 'xlsx'; // Import XLSX
+import BaseButton from "../../components/BaseButton.vue";
 
 export default {
   name: "Platillos",
@@ -420,20 +421,13 @@ export default {
 </script>
 
 <style scoped>
-.button {
-  background-color: black;
-  color: white;
-}
 
 .editRow {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   font-size: 1.5rem;
-}
-
-.editRow button {
-  margin-top: 5px;
-  font-size: 0.8rem;
 }
 
 .spinner {

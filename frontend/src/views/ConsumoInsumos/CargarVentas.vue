@@ -16,7 +16,7 @@
       <select v-model="selectedWeek" @change="updateDateRange">
         <option v-for="week in weeks" :key="week.value" :value="week.value">{{ week.label }}</option>
       </select>
-      <button @click="saveSalesData">Guardar Data</button>
+      <BaseButton bgColor="bg-green-600" textColor="text-white" fontSize="text-base" @click="saveSalesData">Guardar Data</BaseButton>
     </div>
     <table v-if="items.length">
       <thead>
@@ -38,6 +38,7 @@
 </template>
 
 <script setup>
+import BaseButton from "../../components/BaseButton.vue"
 import useDateRange from "../../composables/ConsumoInsumos/useDateRange";
 import useFileUpload from "../../composables/ConsumoInsumos/useFileUpload";
 import useApi from "../../composables/shared/useApi";

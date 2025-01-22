@@ -1,5 +1,7 @@
 <script setup>
 import { useRouter } from "vue-router";
+import BaseButton from "../../components/BaseButton.vue";
+
 const router = useRouter();
 const handleClickSubPlatillo = (idSubplatillo) => {
   router.push(`/subplatillos/${idSubplatillo}`);
@@ -11,7 +13,7 @@ const handleClickSubPlatillo = (idSubplatillo) => {
     <h1>Subplatillos</h1>
     <div class="flex m-4">
       <input class="h-8 w-4/6" v-model="searchTerm" placeholder="Buscar" />
-      <button class="bg-green-600" @click="scrollToBottomAgregarSubPlatillo">Agregar Subplatillo</button>
+      <BaseButton bgColor="bg-green-700" textColor="text-white" fontSize="text-base" @click="scrollToBottomAgregarSubPlatillo">Agregar Subplatillo</BaseButton>
     </div>
     <table>
       <thead>
@@ -39,7 +41,7 @@ const handleClickSubPlatillo = (idSubplatillo) => {
         </option>
       </select>
       <input v-model="nuevoSubPlatillo.rendimiento" placeholder="Rendimiento" type="number" min="0.01" step="0.01" required />
-      <button class="bg-green-600" type="submit">Agregar Subplatillo</button>
+      <BaseButton bgColor="bg-green-700" textColor="text-white" fontSize="text-base" type="submit">Agregar Subplatillo</BaseButton>
     </form>
   </div>
 </template>
