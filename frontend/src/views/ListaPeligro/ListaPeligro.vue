@@ -455,24 +455,24 @@ export default {
       const data = await response.json();
       this.ingredientes = data;
 
-      const responseSubmissions = await fetch(`${API_URL}/submissions/all-submissions`);
+      const responseSubmissions = await fetch(`${API_URL}/submissions/latest-submissions`);
       if (!responseSubmissions.ok) {
         throw new Error(`HTTP error! status: ${responseSubmissions.status}`);
       }
 
-      this.submissions = await responseSubmissions.json();
+      const latestSubmissions = await responseSubmissions.json();
 
-      const storeSubmissions = this.submissions.filter(
+      // Find the latest submission for the current store (if necessary)
+      const latestSubmission = latestSubmissions.find(
         (submission) => submission.store === this.store
       );
-      let latestSubmission = null;
-      if (storeSubmissions.length > 0) {
-        latestSubmission = storeSubmissions.reduce((latest, current) =>
-          new Date(latest.timestamp) > new Date(current.timestamp)
-            ? latest
-            : current
-        );
+
+      if (!latestSubmission) {
+        console.log(`No latest submission found for store: ${this.store}`);
+      } else {
+        console.log(`Latest submission for store ${this.store}:`, latestSubmission);
       }
+
 
       this.ingredientes.forEach((ingrediente) => {
         if (latestSubmission && latestSubmission.compra) {
