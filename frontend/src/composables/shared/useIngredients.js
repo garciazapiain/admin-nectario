@@ -62,7 +62,7 @@ export default function useIngredients() {
       );
     }
 
-    return result;
+    return result.sort((a, b) => a.nombre.localeCompare(b.nombre));
   });
 
   return {

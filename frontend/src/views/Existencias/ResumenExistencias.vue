@@ -14,7 +14,7 @@
               <th class="border p-2">Unidad</th>
               <th class="border p-2">Moral</th>
               <th class="border p-2">Camp</th>
-              <th v-if="isAdmin" class="border p-2">Sugerencias para Transf.</th>
+              <!-- <th v-if="isAdmin" class="border p-2">Sugerencias para Transf.</th> -->
             </tr>
           </thead>
           <tbody>
@@ -32,7 +32,7 @@
                 :class="['border p-2', getInventory('bosques', ingrediente.id_ingrediente, submissions) < ingrediente.bosques_demanda_semanal / 7 ? 'text-red-500' : 'text-white']">
                 {{ getInventory("bosques", ingrediente.id_ingrediente, submissions) }}
               </td>
-              <td v-if="isAdmin" class="border p-2 max-w-3 text-white">{{ shouldTransfer(ingrediente) }}</td>
+              <!-- <td v-if="isAdmin" class="border p-2 max-w-3 text-white">{{ shouldTransfer(ingrediente, submissions) }}</td> -->
             </tr>
           </tbody>
         </table>
@@ -66,7 +66,7 @@ const {
   fetchProveedores,
   filteredIngredients,
 } = useIngredients();
-const { getInventory, shouldTransfer } = useInventory();
+const { getInventory } = useInventory();
 
 // Computed Properties
 const lastUpdatedMoral = computed(() =>
