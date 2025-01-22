@@ -105,7 +105,7 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import API_URL from "../../config";
-import PopupInsumo from "../Existencias/PopupInsumo.vue";
+import PopupInsumo from "../../components/PopupInsumo.vue";
 import ButtonBase from "../../components/BaseButton.vue";
 
 const isReady = ref(false);

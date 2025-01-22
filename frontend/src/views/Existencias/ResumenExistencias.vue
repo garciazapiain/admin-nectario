@@ -47,7 +47,7 @@ import { ref, computed, onMounted } from "vue";
 import useSubmissions from "../../composables/shared/useSubmissions";
 import useIngredients from "../../composables/shared/useIngredients";
 import useInventory from "../../composables/ExistenciasYListaPeligro/useInventory";
-import PopupInsumo from "./PopupInsumo.vue";
+import PopupInsumo from "../../components/PopupInsumo.vue";
 import useAdminState from "../../composables/shared/useAdminState";
 
 /* ====== Section A: Core Declarations and State ====== */
