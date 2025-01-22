@@ -38,31 +38,31 @@
                   class="editable-input" />
               </td>
               <td data-label="">
-                <button class="button-remove" @click="removeFromPlaneacion(index)">Eliminar</button>
+                <ButtonBase bgColor="bg-red-600" textColor="text-white" fontSize="text-md" @click="removeFromPlaneacion(index)">Eliminar</ButtonBase>
               </td>
               <td v-if="isAdmin" data-label="Pronóstico Demanda">
-                <button v-if="item.moral_demanda_semanal || item.bosques_demanda_semanal" class="bg-blue-600"
+                <ButtonBase bgColor="bg-blue-600" textColor="text-white" fontSize="text-md"  v-if="item.moral_demanda_semanal || item.bosques_demanda_semanal"
                   @click="openPopup(item)">
                   Pronóstico
-                </button>
+                </ButtonBase>
               </td>
             </tr>
           </tbody>
         </table>
         <div class="button-container">
           <!-- Guardar Planeación -->
-          <button class="button-submit" @click="submitPlaneacionCompra">
+          <ButtonBase bgColor="bg-green-800" textColor="text-white" fontSize="text-md" @click="submitPlaneacionCompra">
             <i class="fa fa-save"></i> Guardar
-          </button>
+          </ButtonBase>
 
           <!-- Exportar a WhatsApp -->
-          <button class="button-whatsapp" @click="exportToWhatsApp">
+          <ButtonBase bgColor="bg-green-500" textColor="text-white" fontSize="text-md"  @click="exportToWhatsApp">
             <i class="fa fa-whatsapp"></i> WhatsApp
-          </button>
+          </ButtonBase>
         </div>
-        <button v-if="isAdmin" class="button-clear" @click="clearPlaneacionCompra">
+        <ButtonBase bgColor="bg-red-600" textColor="text-white" fontSize="text-lg" v-if="isAdmin" @click="clearPlaneacionCompra">
           Limpiar Planeación de Compra
-        </button>
+        </ButtonBase>
       </div>
     </div>
     <!-- Search Bar -->
@@ -106,6 +106,7 @@
 import { ref, computed, watch } from "vue";
 import API_URL from "../../config";
 import PopupInsumo from "../Existencias/PopupInsumo.vue";
+import ButtonBase from "../../components/BaseButton.vue";
 
 const isReady = ref(false);
 const ingredientes = ref([]);
@@ -489,87 +490,10 @@ td div {
   margin-bottom: 5px;
 }
 
-.button-remove {
-  padding: 5px 10px;
-  font-size: 14px;
-  cursor: pointer;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
-}
-
-.button-remove:hover {
-  opacity: 0.9;
-}
-
-.button-submit {
-  padding: 15px 25px;
-  font-size: 16px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
-
-.button-submit:hover {
-  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.5);
-}
-
-.button-whatsapp {
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #25d366;
-  color: white;
-  border: 2px solid #25d366;
-  border-radius: 5px;
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
-
-.button-whatsapp:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 10px rgba(37, 211, 102, 0.5);
-}
-
 .button-container {
   display: flex;
   justify-content: space-evenly;
   margin-top: 20px;
-}
-
-.button-clear {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  background-color: #dc3545;
-  /* Red for warning */
-  color: white;
-  border: none;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
-}
-
-.button-clear:hover {
-  background-color: #b22222;
-  /* Darker red */
-}
-
-.button-whatsapp {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  background-color: #25d366;
-  /* WhatsApp green */
-  color: white;
-  border: none;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
-}
-
-.button-whatsapp:hover {
-  background-color: #1da851;
-  /* Darker WhatsApp green */
 }
 
 .planeacion-container {
@@ -617,11 +541,6 @@ td div {
 
   .editable-input {
     font-size: 1.5rem;
-  }
-
-  .button-remove {
-    font-size: 1rem;
-    padding: 0.5rem;
   }
 }
 
