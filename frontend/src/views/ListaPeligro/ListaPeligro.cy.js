@@ -2,7 +2,7 @@ import ListaPeligro from './ListaPeligro.vue'
 
 describe('<ListaPeligro />', () => {
   beforeEach(() => {
-    cy.intercept('GET', '/api/ingredientes', { fixture: 'ingredientes.json' }).as('getIngredientes');
+    cy.intercept('GET', '/api/ingredientes/producto-clave', { fixture: 'ingredientes.json' }).as('getIngredientes');
     cy.intercept('GET', '/api/submissions/all-submissions', { fixture: 'submissions.json' }).as('getSubmissions');
     cy.intercept('GET', '/api/proveedores', { fixture: 'proveedores.json' }).as('getProveedores');
 
