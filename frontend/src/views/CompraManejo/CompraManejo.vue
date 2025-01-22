@@ -45,12 +45,9 @@
             <div v-if="isDropdownVisible" class="popup-overlay">
               <div class="popup">
                 <h2 class="text-black">Cambiar Proveedor</h2>
-                <select v-model="selectedValue" class="mb-5">
-                  <option disabled value="">Selecciona un proveedor</option>
-                  <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">
-                    {{ proveedor.nombre }}
-                  </option>
-                </select>
+                <Dropdown v-model="selectedValue"
+                  :options="proveedores.map(proveedor => ({ value: proveedor.nombre, label: proveedor.nombre }))"
+                  :defaultOption="{ value: '', label: 'Selecciona un proveedor' }" :required="true" />˝
                 <div class="flex justify-around">
                   <button @click="confirmProveedorChange(currentEditingIngrediente, selectedValue, closeDropdown)"
                     class="bg-green-500 text-white py-2 px-4 rounded">Confirmar</button>
@@ -163,6 +160,7 @@
 import { ref, onMounted } from "vue";
 import API_URL from "../../config";
 import BaseButton from "../../components/BaseButton.vue";
+import Dropdown from "../../components/Dropdown.vue";
 import useProveedores from '../../composables/shared/useProveedores';
 import usePopup from '../../composables/shared/usePopup';
 import useDragAndDrop from '../../composables/CompraManejo/useDragAndDrop';

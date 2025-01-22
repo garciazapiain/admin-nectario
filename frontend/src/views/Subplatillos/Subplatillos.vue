@@ -12,7 +12,7 @@ const handleClickSubPlatillo = (idSubplatillo) => {
 
 <template>
   <div>
-    <ArrowToPageNavigateDown/>
+    <ArrowToPageNavigateDown />
     <h1>Subplatillos</h1>
     <SearchBar v-model="searchTerm" placeholder="Buscar sub-platillo..."></SearchBar>
     <table>
@@ -34,20 +34,19 @@ const handleClickSubPlatillo = (idSubplatillo) => {
     </table>
     <form id="agregarSubPlatilloForm" @submit.prevent="agregarSubPlatillo">
       <input v-model="nuevoSubPlatillo.nombre" placeholder="Nombre" required />
-      <select class="select-field " v-model="nuevoSubPlatillo.unidad" required>
-        <option disabled value="">Unidad</option>
-        <option v-for="unidad in unidades" :key="unidad" :value="unidad">
-          {{ unidad }}
-        </option>
-      </select>
-      <input v-model="nuevoSubPlatillo.rendimiento" placeholder="Rendimiento" type="number" min="0.01" step="0.01" required />
-      <BaseButton bgColor="bg-green-700" textColor="text-white" fontSize="text-base" type="submit">Agregar Subplatillo</BaseButton>
+      <Dropdown v-model="nuevoSubPlatillo.unidad" :options="unidadOptions"
+        :defaultOption="{ value: '', label: 'Unidad' }" required />
+      <input v-model="nuevoSubPlatillo.rendimiento" placeholder="Rendimiento" type="number" min="0.01" step="0.01"
+        required />
+      <BaseButton bgColor="bg-green-700" textColor="text-white" fontSize="text-base" type="submit">Agregar Subplatillo
+      </BaseButton>
     </form>
   </div>
 </template>
 
 <script>
 import API_URL from "../../config";
+import Dropdown from "../../components/Dropdown.vue";
 
 export default {
   name: "Subplatillos",
@@ -84,6 +83,12 @@ export default {
     },
   },
   computed: {
+    unidadOptions() {
+      return this.unidades.map((unidad) => ({
+        value: unidad,
+        label: unidad,
+      }));
+    },
     filteredSubPlatillos() {
       // Add this computed property
       if (!this.searchTerm) {

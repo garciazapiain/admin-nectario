@@ -4,19 +4,16 @@
     <input type="file" @change="handleFileChange" />
     <div v-if="items.length">
       <label for="store">Store:</label>
-      <select id="store" v-model="store">
-        <option value="moral">Moral</option>
-        <option value="bosques">Bosques</option>
-      </select>
+      <Dropdown v-model="store" :options="storeOptions" defaultOption="{ value: '', label: 'Select Store' }" />
       <label for="startDate">Start Date:</label>
       <input type="date" id="startDate" v-model="startDate" :max="today" />
       <label for="endDate">End Date:</label>
       <input type="date" id="endDate" v-model="endDate" :min="startDate" :max="today" />
       <h2>Seleccionar por semana</h2>
-      <select v-model="selectedWeek" @change="updateDateRange">
-        <option v-for="week in weeks" :key="week.value" :value="week.value">{{ week.label }}</option>
-      </select>
-      <BaseButton bgColor="bg-green-600" textColor="text-white" fontSize="text-base" @click="saveSalesData">Guardar Data</BaseButton>
+      <Dropdown v-model="selectedWeek" :options="weekOptions" defaultOption="{ value: '', label: 'Select Week' }"
+        @change="updateDateRange" />
+      <BaseButton bgColor="bg-green-600" textColor="text-white" fontSize="text-base" @click="saveSalesData">Guardar Data
+      </BaseButton>
     </div>
     <table v-if="items.length">
       <thead>
@@ -39,11 +36,12 @@
 
 <script setup>
 import BaseButton from "../../components/BaseButton.vue"
+import Dropdown from "../../components/Dropdown.vue"
 import useDateRange from "../../composables/ConsumoInsumos/useDateRange";
 import useFileUpload from "../../composables/ConsumoInsumos/useFileUpload";
 import useApi from "../../composables/shared/useApi";
 import API_URL from "../../config";
-import { ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 /* ====== Section A: Core Declarations and State ====== */
 
@@ -52,8 +50,13 @@ const { weeks, startDate, endDate, selectedWeek, generateWeeks, updateDateRange 
 const { items, parseExcelFile } = useFileUpload();
 const { postData } = useApi(API_URL);
 
-// Helper Functions
-const today = new Date().toISOString().split("T")[0];
+// Computed Properties
+const weekOptions = computed(() =>
+  weeks.value.map((week) => ({
+    value: week.value,
+    label: week.label,
+  }))
+)
 
 /* ====== Section B: Functions for Component Logic ====== */
 
@@ -62,6 +65,16 @@ generateWeeks();
 
 // State and Reactive Variables
 const store = ref("");
+const storeOptions = [
+  { value: "moral", label: "Moral" },
+  { value: "bosques", label: "Bosques" },
+];
+const today = new Date().toISOString().split("T")[0];
+
+// Initialization and Lifecycle
+onMounted(() => {
+  generateWeeks();
+});
 
 // Utility/Helper Functions
 const handleFileChange = (event) => {
@@ -110,9 +123,5 @@ th {
 
 h2 {
   margin-top: 20px;
-}
-
-select {
-  margin-bottom: 20px;
 }
 </style>

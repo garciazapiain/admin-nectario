@@ -1,6 +1,6 @@
 <template>
     <div class="flex justify-center my-5">
-      <div class="relative w-full max-w-lg">
+      <div data-test-id="search-bar" class="relative w-full max-w-lg">
         <span class="ml-2 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
           🔍
         </span>

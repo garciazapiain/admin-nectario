@@ -193,19 +193,71 @@ router.put('/resetestatus/:store', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
-    const { nombre, unidad, precio, proveedor, proveedor_id } = req.body;
+    const {
+        nombre,
+        unidad,
+        precio,
+        proveedor,
+        proveedor_id,
+        proveedor_opcion_b,
+        merma,
+        store_route_order,
+        orden_inventario,
+        moral_demanda_semanal,
+        bosques_demanda_semanal,
+        image_url,
+        image_url_2,
+        producto_clave
+    } = req.body;
+
     const { id } = req.params;
     const client = await connectDb();
     try {
         const result = await client.query(`
             UPDATE ingredientes 
-            SET nombre = $1, unidad = $2, precio = $3, proveedor = $4, proveedor_id = $5 
-            WHERE id_ingrediente = $6 RETURNING *
-        `, [nombre, unidad, precio, proveedor, proveedor_id, id]);
+            SET 
+                nombre = $1, 
+                unidad = $2, 
+                precio = $3, 
+                proveedor = $4, 
+                proveedor_id = $5, 
+                proveedor_opcion_b = $6,
+                merma = $7,
+                store_route_order = $8,
+                orden_inventario = $9,
+                moral_demanda_semanal = $10,
+                bosques_demanda_semanal = $11,
+                image_url = $12,
+                image_url_2 = $13,
+                producto_clave = $14
+            WHERE id_ingrediente = $15 
+            RETURNING *
+        `, [
+            nombre,
+            unidad,
+            precio,
+            proveedor,
+            proveedor_id,
+            proveedor_opcion_b,
+            merma,
+            store_route_order,
+            orden_inventario,
+            moral_demanda_semanal,
+            bosques_demanda_semanal,
+            image_url,
+            image_url_2,
+            producto_clave,
+            id
+        ]);
         res.json(result.rows[0]);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'An error occurred while updating data in the database' });
+        if (err.code === '23505') {
+            // Handle unique constraint violation for `nombre`
+            res.status(400).json({ error: `Ingredient name '${nombre}' already exists.` });
+        } else {
+            console.error(err);
+            res.status(500).json({ error: 'An error occurred while updating data in the database' });
+        }
     } finally {
         client.release();
     }

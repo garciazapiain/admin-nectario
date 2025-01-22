@@ -1,23 +1,10 @@
-<script setup>
-import { useRouter } from "vue-router";
-import BaseButton from "../../components/BaseButton.vue";
-const router = useRouter();
-const handleClick = (platillo) => {
-  if (platillo.type === "Platillo") {
-    window.open(`/platillos/${platillo.id_platillo}`, '_blank');
-  } else {
-    window.open(`/subplatillos/${platillo.id_platillo}`, '_blank');
-  }
-};
-import { ref } from "vue";
-const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
-</script>
 <template>
   <div>
     <h1>{{ ingrediente.nombre }}</h1>
     <h2>
       Info del insumo:
-      <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" v-if="isAdmin" @click="showModal = true">Editar</BaseButton>
+      <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" v-if="isAdmin"
+        @click="showModal = true">Editar</BaseButton>
     </h2>
     <div v-if="showModal" class="modal">
       <form @submit.prevent="editIngrediente" class="grid grid-cols-2 gap-4 edit-form">
@@ -27,24 +14,16 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
         </div>
         <div class="form-group">
           <label for="proveedor">Proveedor:</label>
-          <select id="proveedor" v-model="ingredienteEditado.proveedor" @change="updateProveedor">
-            <option disabled value="">Selecciona un proveedor</option>
-            <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">
-              {{ proveedor.nombre }}
-            </option>
-          </select>
+          <Dropdown v-model="ingredienteEditado.proveedor" :options="proveedorOptions"
+            defaultOption="{ value: '', label: 'Selecciona un proveedor' }" />
         </div>
         <div class="form-group">
           <input v-model="ingredienteEditado.proveedor_opcion_b" placeholder="Proveedor Opción B" class="input-field" />
         </div>
         <div class="form-group">
           <label for="unidad">Unidad:</label>
-          <select id="unidad" v-model="ingredienteEditado.unidad">
-            <option disabled value="">Selecciona una unidad</option>
-            <option v-for="(unidad, index) in unidades" :key="index" :value="unidad">
-              {{ unidad }}
-            </option>
-          </select>
+          <Dropdown v-model="ingredienteEditado.unidad" :options="unidadOptions"
+            defaultOption="{ value: '', label: 'Selecciona una unidad' }" />
         </div>
         <div class="form-group">
           <label for="precio">Costo limpio (contando % MERMA):</label>
@@ -60,10 +39,8 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
         </div>
         <div class="form-group">
           <label for="lista_peligro">Lista peligro</label>
-          <select id="lista_peligro" v-model="ingredienteEditado.producto_clave">
-            <option value="true">Si</option>
-            <option value="false">No</option>
-          </select>
+          <Dropdown v-model="ingredienteEditado.producto_clave" :options="listaPeligroOptions"
+            defaultOption="{ value: '', label: 'Selecciona una opción' }" />
         </div>
         <div class="form-group">
           <label for="orden_inventario">Orden toma de Inventario:</label>
@@ -114,8 +91,8 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
           <span>No hay imagen disponible para Opción B</span>
         </div>
         <div class="grid grid-cols-2 gap-4 form-actions">
-          <button type="submit">Guardar</button>
-          <button @click="showModal = false">Cancelar</button>
+          <BaseButton bgColor="bg-green-800" textColor="text-white" fontSize="text-base" type="submit">Guardar</BaseButton>
+          <BaseButton bgColor="bg-red-600" textColor="text-white" fontSize="text-base" @click="showModal = false">Cancelar</BaseButton>
         </div>
       </form>
     </div>
@@ -208,195 +185,240 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import BaseButton from "../../components/BaseButton.vue";
+import Dropdown from "../../components/Dropdown.vue";
 import API_URL from "../../config";
 
-export default {
-  data() {
-    return {
-      ingrediente: {},
-      ingredienteEditado: {},
-      showModal: false,
-      proveedores: [],
-      unidades: [],
-      inputDaysBosques: 1,
-      inputDaysMoral: 1,
-      selectedImage: null, // Add this line to define selectedImage
-      selectedImage2: null
-    };
-  },
-  computed: {
-    proveedorNombre() {
-      const proveedor = this.proveedores.find(
-        (p) => p.id === this.ingredienteEditado.proveedor
-      );
-      return proveedor ? proveedor.nombre : "";
-    },
-  },
-  methods: {
-    calculateDemandDays(weeklyDemand, store) {
-      return (
-        (weeklyDemand / 7) *
-        (store === "moral" ? this.inputDaysMoral : this.inputDaysBosques)
-      );
-    },
-    displayFrecuencia(frecuencia) {
-      switch (frecuencia) {
-        case "inicio_primer_turno":
-          return "Inicio primer turno";
-        case "inicio_segundo_turno":
-          return "Inicio segundo turno";
-        case "fin_segundo_turno":
-          return "Fin segundo turno";
-        case "no_inventarear":
-          return "No inventarear";
-        default:
-          return frecuencia;
-      }
-    },
-    updateProveedor(event) {
-      const selectedProveedor = this.proveedores.find(
-        (proveedor) => proveedor.nombre === event.target.value
-      );
-      if (selectedProveedor) {
-        this.ingredienteEditado.proveedor = selectedProveedor.nombre;
-        this.ingredienteEditado.proveedor_id = selectedProveedor.id;
-      }
-    },
-    updateOrdenInventario(value) {
-      if (value === "" || value === null) {
-        this.ingredienteEditado.orden_inventario = null; // Allow null values
-      } else {
-        this.ingredienteEditado.orden_inventario = parseFloat(value); // Convert to a number
-      }
-    },
-    handleFileUpload(type, event) {
-      const file = event.target.files[0];
-      if (file) {
-        const formData = new FormData();
-        formData.append("image", file);
-        formData.append("id_ingrediente", this.ingredienteEditado.id_ingrediente);
-        formData.append("image_type", type); // Specify which image is being uploaded
+/* ====== Section A: Core Declarations and State ====== */
 
-        fetch(`${API_URL}/ingredient_image/upload`, {
-          method: "POST",
-          body: formData,
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(`Image upload failed: ${response.status}`);
-            }
-            return response.json();
-          })
-          .then((data) => {
-            if (type === "image_url") {
-              this.ingredienteEditado.image_url = data.image_url;
-            } else if (type === "image_url_2") {
-              this.ingredienteEditado.image_url_2 = data.image_url;
-            }
-          })
-          .catch((error) => {
-            console.error("Error during image upload:", error);
-          });
-      } else {
-        console.warn("No file selected.");
-      }
-    },
-    async editIngrediente() {
-      const id = this.$route.params.id;
+// Core Data Management
+const router = useRouter();
+const ingrediente = ref({});
+const ingredienteEditado = ref({});
+const proveedores = ref([]);
+const unidades = ref([]);
+const selectedImage = ref(null);
+const selectedImage2 = ref(null);
 
-      let imageUrl = this.ingredienteEditado.image_url; // Default to existing image_url
-      let imageUrl2 = this.ingredienteEditado.image_url_2; // Default to existing image_url_2
+// Computed Properties
+const proveedorOptions = computed(() =>
+  proveedores.value.map((proveedor) => ({
+    value: proveedor.nombre,
+    label: proveedor.nombre,
+  }))
+);
 
-      // Upload first image if selected
-      if (this.selectedImage) {
-        const formData = new FormData();
-        formData.append("image", this.selectedImage);
-        formData.append("id_ingrediente", id);
+const unidadOptions = computed(() =>
+  unidades.value.map((unidad) => ({
+    value: unidad,
+    label: unidad,
+  }))
+);
 
-        const imageResponse = await fetch(`${API_URL}/ingredient_image/upload`, {
-          method: "POST",
-          body: formData,
-        });
+const listaPeligroOptions = [
+  { value: "true", label: "Sí" },
+  { value: "false", label: "No" },
+];
 
-        if (!imageResponse.ok) {
-          throw new Error(`Image upload failed: ${imageResponse.status}`);
-        }
+// View Toggles
+const showModal = ref(false);
+const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 
-        const imageResult = await imageResponse.json();
-        imageUrl = imageResult.image_url; // Get new uploaded image URL
-      }
+/* ====== Section B: Functions for Component Logic ====== */
 
-      // Upload second image if selected
-      if (this.selectedImage2) {
-        const formData = new FormData();
-        formData.append("image", this.selectedImage2);
-        formData.append("id_ingrediente", id);
+// Initialization and Lifecycle
+const fetchData = async () => {
+  const id = router.currentRoute.value.params.id;
+  try {
+    const responseIngrediente = await fetch(`${API_URL}/ingredientes/${id}`);
+    if (!responseIngrediente.ok) throw new Error("Error fetching ingrediente");
+    const data = await responseIngrediente.json();
+    ingrediente.value = data;
+    ingredienteEditado.value = { ...data };
 
-        const imageResponse2 = await fetch(`${API_URL}/ingredient_image/upload`, {
-          method: "POST",
-          body: formData,
-        });
+    const responseProveedores = await fetch(`${API_URL}/proveedores`);
+    if (!responseProveedores.ok) throw new Error("Error fetching proveedores");
+    proveedores.value = await responseProveedores.json();
 
-        if (!imageResponse2.ok) {
-          throw new Error(`Second image upload failed: ${imageResponse2.status}`);
-        }
+    const responseUnidades = await fetch(`${API_URL}/unidades`);
+    if (!responseUnidades.ok) throw new Error("Error fetching unidades");
+    unidades.value = await responseUnidades.json();
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
 
-        const imageResult2 = await imageResponse2.json();
-        imageUrl2 = imageResult2.image_url; // Get new uploaded second image URL
-      }
+// State and Reactive Variables
+const calculateDemandDays = (weeklyDemand, store) =>
+  (weeklyDemand / 7) *
+  (store === "moral" ? inputDaysMoral.value : inputDaysBosques.value);
 
-      // Update ingrediente data
-      const updatedData = {
-        ...this.ingredienteEditado,
-        image_url: imageUrl,
-        image_url_2: imageUrl2,
-      };
+// Utility/Helper Functions
+const handleClick = (platillo) => {
+  if (platillo.type === "Platillo") {
+    window.open(`/platillos/${platillo.id_platillo}`, "_blank");
+  } else {
+    window.open(`/subplatillos/${platillo.id_platillo}`, "_blank");
+  }
+};
 
-      const response = await fetch(`${API_URL}/ingredientes/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedData),
+const updateProveedor = (event) => {
+  const selectedProveedor = proveedores.value.find(
+    (proveedor) => proveedor.nombre === event.target.value
+  );
+  if (selectedProveedor) {
+    ingredienteEditado.value.proveedor = selectedProveedor.nombre;
+    ingredienteEditado.value.proveedor_id = selectedProveedor.id;
+  }
+};
+
+const updateOrdenInventario = (value) => {
+  if (value === "" || value === null) {
+    ingredienteEditado.value.orden_inventario = null; // Allow null values
+  } else {
+    ingredienteEditado.value.orden_inventario = parseFloat(value); // Convert to a number
+  }
+};
+
+// API Interaction and State Modifiers
+const handleFileUpload = async (type, event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("id_ingrediente", ingredienteEditado.value.id_ingrediente);
+    formData.append("image_type", type); // Specify which image is being uploaded
+
+    try {
+      const response = await fetch(`${API_URL}/ingredient_image/upload`, {
+        method: "POST",
+        body: formData,
       });
 
       if (!response.ok) {
-        throw new Error(`Error updating ingrediente: ${response.status}`);
+        throw new Error(`Image upload failed: ${response.status}`);
       }
 
-      this.showModal = false;
-      location.reload(); // Reload to reflect updated data
-    },
-  },
-  async mounted() {
-    // Get the ID from the router
-    const id = this.$route.params.id;
-    try {
-      // Make API call to fetch the platillo data
-      const response = await fetch(`${API_URL}/ingredientes/${id}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
       const data = await response.json();
-      // Store the fetched data in the component's data
-      this.ingrediente = data;
-      this.ingredienteEditado = { ...data };
+      if (type === "image_url") {
+        ingredienteEditado.value.image_url = data.image_url;
+      } else if (type === "image_url_2") {
+        ingredienteEditado.value.image_url_2 = data.image_url;
+      }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error during image upload:", error);
     }
-    const responseProveedores = await fetch(`${API_URL}/proveedores`);
-    if (!responseProveedores.ok) {
-      throw new Error(`HTTP error! status: ${responseProveedores.status}`);
-    }
-    this.proveedores = await responseProveedores.json();
-    const responseUnidades = await fetch(`${API_URL}/unidades`);
-    if (!responseUnidades.ok) {
-      throw new Error(`HTTP error! status: ${responseUnidades.status}`);
-    }
-    this.unidades = await responseUnidades.json();
-  },
+  } else {
+    console.warn("No file selected.");
+  }
 };
+
+const editIngrediente = async () => {
+  const id = router.currentRoute.value.params.id;
+
+  // Destructure the edited data
+  const {
+    nombre,
+    unidad,
+    precio,
+    proveedor,
+    proveedor_opcion_b,
+    proveedor_id,
+    merma,
+    store_route_order,
+    orden_inventario,
+    moral_demanda_semanal,
+    bosques_demanda_semanal
+  } = ingredienteEditado.value;
+
+  let imageUrl = ingredienteEditado.value.image_url; // Default to existing image_url
+  let imageUrl2 = ingredienteEditado.value.image_url_2; // Default to existing image_url_2
+
+  // Upload first image if selected
+  if (selectedImage.value) {
+    const formData = new FormData();
+    formData.append("image", selectedImage.value);
+    formData.append("id_ingrediente", id);
+
+    const imageResponse = await fetch(`${API_URL}/ingredient_image/upload`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!imageResponse.ok) {
+      throw new Error(`Image upload failed: ${imageResponse.status}`);
+    }
+
+    const imageResult = await imageResponse.json();
+    imageUrl = imageResult.image_url; // Get new uploaded image URL
+  }
+
+  // Upload second image if selected
+  if (selectedImage2.value) {
+    const formData = new FormData();
+    formData.append("image", selectedImage2.value);
+    formData.append("id_ingrediente", id);
+
+    const imageResponse2 = await fetch(`${API_URL}/ingredient_image/upload`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!imageResponse2.ok) {
+      throw new Error(`Second image upload failed: ${imageResponse2.status}`);
+    }
+
+    const imageResult2 = await imageResponse2.json();
+    imageUrl2 = imageResult2.image_url; // Get new uploaded second image URL
+  }
+
+  // Prepare updated data object
+  const updatedData = {
+    nombre,
+    unidad,
+    precio,
+    proveedor,
+    proveedor_opcion_b,
+    proveedor_id,
+    merma,
+    store_route_order,
+    orden_inventario,
+    image_url: imageUrl,
+    image_url_2: imageUrl2,
+    moral_demanda_semanal,
+    bosques_demanda_semanal
+  };
+
+  try {
+    // Send PUT request to update data
+    const response = await fetch(`${API_URL}/ingredientes/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error updating ingrediente: ${response.status}`);
+    }
+
+    const updatedIngrediente = await response.json();
+    console.log("Updated ingrediente:", updatedIngrediente);
+
+    // Close modal and refresh state
+    showModal.value = false;
+    ingrediente.value = updatedIngrediente;
+  } catch (error) {
+    console.error("Error updating ingrediente:", error);
+  }
+};
+
+// Popup/Dropdown and Interaction Logic
+fetchData();
 </script>
 
 <style scoped>

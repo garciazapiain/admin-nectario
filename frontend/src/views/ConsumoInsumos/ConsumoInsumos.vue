@@ -6,10 +6,8 @@
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     <div>
       <h2>Seleccionar por semana</h2>
-      <select v-model="selectedWeek" @change="updateDateRange">
-        <option v-for="week in weeks" :key="week.value" :value="week.value" :disabled="week.disabled">{{ week.label }}
-        </option>
-      </select>
+      <Dropdown v-model="selectedWeek" :options="weekOptions" defaultOption="{ value: '', label: 'Select Week' }"
+        @change="updateDateRange" />
     </div>
     <table>
       <thead>
@@ -40,11 +38,13 @@
       </tbody>
     </table>
     <div class="button-container">
-      <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" @click="fetchConsumptionData">Obtener data</BaseButton>
-      <BaseButton  bgColor="bg-green-600" textColor="text-white" fontSize="text-base" v-if="filteredConsumptionData.length > 0">Exportar a
+      <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" @click="fetchConsumptionData">
+        Obtener data</BaseButton>
+      <BaseButton bgColor="bg-green-600" textColor="text-white" fontSize="text-base"
+        v-if="filteredConsumptionData.length > 0">Exportar a
         Excel</BaseButton>
       <router-link :to="cargarVentasRoute">
-        <BaseButton  bgColor="bg-green-600" textColor="text-white" fontSize="text-base">Cargar ventas</BaseButton>
+        <BaseButton bgColor="bg-green-600" textColor="text-white" fontSize="text-base">Cargar ventas</BaseButton>
       </router-link>
     </div>
   </div>
@@ -53,6 +53,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import BaseButton from "../../components/BaseButton.vue"
+import Dropdown from "../../components/Dropdown.vue"
 import useDateRange from "../../composables/ConsumoInsumos/useDateRange";
 import useApi from "../../composables/shared/useApi";
 import useExportToExcel from "../../composables/shared/useExportToExcel";
@@ -72,6 +73,12 @@ const today = new Date().toISOString().split("T")[0];
 const cargarVentasRoute = computed(() => `${router.currentRoute.value.path}/cargarventa`);
 const filteredConsumptionData = computed(() =>
   consumptionData.value.sort((a, b) => b.total_consumido_dinero - a.total_consumido_dinero)
+);
+const weekOptions = computed(() =>
+  weeks.value.map((week) => ({
+    value: week.value,
+    label: week.label,
+  }))
 );
 
 // Reactive data
@@ -170,5 +177,4 @@ const exportToExcel = () => {
   gap: 10px;
   /* Adjust the gap as needed */
 }
-
 </style>
