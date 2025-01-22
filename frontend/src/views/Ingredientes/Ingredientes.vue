@@ -1,22 +1,6 @@
 <template>
   <div>
-    <div class="fixed top-2.5 right-2.5 z-50 cursor-pointer" @click="goDownPage">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="60"
-        height="60"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="feather feather-arrow-down"
-      >
-        <line x1="12" y1="5" x2="12" y2="19"></line>
-        <polyline points="19 12 12 19 5 12"></polyline>
-      </svg>
-    </div>
+    <ArrowToPageNavigateDown/>
     <h1>Insumos</h1>
     <input v-model="searchTerm" placeholder="Search" />
     <select v-model="proveedor">
@@ -121,6 +105,8 @@
 <script setup>
 import { useRouter } from "vue-router";
 import BaseButton from "../../components/BaseButton.vue";
+import ArrowToPageNavigateDown from "../../components/ArrowToPageNavigateDown.vue";
+
 const router = useRouter();
 const handleClickIngrediente = (idIngrediente) => {
   router.push(`/ingredientes/${idIngrediente}`);

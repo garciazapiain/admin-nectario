@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter } from "vue-router";
 import BaseButton from "../../components/BaseButton.vue";
+import ArrowToPageNavigateDown from "../../components/ArrowToPageNavigateDown.vue";
 
 const router = useRouter();
 const handleClickSubPlatillo = (idSubplatillo) => {
@@ -10,10 +11,10 @@ const handleClickSubPlatillo = (idSubplatillo) => {
 
 <template>
   <div>
+    <ArrowToPageNavigateDown/>
     <h1>Subplatillos</h1>
     <div class="flex m-4">
       <input class="h-8 w-4/6" v-model="searchTerm" placeholder="Buscar" />
-      <BaseButton bgColor="bg-green-700" textColor="text-white" fontSize="text-base" @click="scrollToBottomAgregarSubPlatillo">Agregar Subplatillo</BaseButton>
     </div>
     <table>
       <thead>
@@ -82,21 +83,6 @@ export default {
       this.nuevoSubPlatillo = { nombre: "", unidad: "", rendimiento: "" };
       window.location.reload()
     },
-    scrollToBottomAgregarSubPlatillo() {
-      window.scrollTo({
-        top: document.body.scrollHeight,
-        behavior: "smooth"
-      });
-
-      // Highlight the form after scrolling
-      const formElement = document.querySelector("#agregarSubPlatilloForm");
-      if (formElement) {
-        formElement.classList.add("highlight"); // Add the highlight class
-        setTimeout(() => {
-          formElement.classList.remove("highlight"); // Remove the highlight class after 3 seconds
-        }, 3000); // 3000 milliseconds = 3 seconds
-      }
-    }
   },
   computed: {
     filteredSubPlatillos() {

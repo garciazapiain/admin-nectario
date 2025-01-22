@@ -6,6 +6,8 @@ const API_URL =
 import { useRouter } from "vue-router";
 import * as XLSX from 'xlsx'; // Import XLSX
 import { ref } from "vue";
+import ArrowToPageNavigateDown from "../../components/ArrowToPageNavigateDown.vue";
+
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 
 const router = useRouter();
@@ -16,12 +18,12 @@ const handleClickPlatillo = (idPlatillo) => {
 
 <template>
   <div>
+    <ArrowToPageNavigateDown/>
     <h1>Platillos</h1>
     <BaseButton bgColor="bg-blue-600" textColor="text-white" fontSize="text-base" @click="exportToExcel">Exportar a Excel</BaseButton>
     <input v-if="isAdmin" type="file" @change="importFromExcel" />
     <!-- New Button to Show Cost Calculation -->
     <BaseButton bgColor="bg-blue-600" textColor="text-white" fontSize="text-base" @click="calculateCosts">Sacar costo de venta</BaseButton>
-    <BaseButton bgColor="bg-green-700" textColor="text-white" fontSize="text-base" @click="scrollToBottomAgregarPlatillo">Agregar platillo</BaseButton>
     <!-- Spinner -->
     <div v-if="showCostsLoading" class="spinner">
       <p>Cargando costos de venta...</p>
@@ -83,7 +85,7 @@ const handleClickPlatillo = (idPlatillo) => {
 
     <!-- Add Platillo Form -->
     <form id="agregarPlatilloForm" @submit.prevent="agregarPlatillo">
-      <input class="h-8" v-model="nuevoPlatillo.nombre" placeholder="Nombre de platillo" required />
+      <input class="h-12" v-model="nuevoPlatillo.nombre" placeholder="Nombre de platillo" required />
       <BaseButton bgColor="bg-green-800" textColor="text-white" fontSize="text-lg" type="submit">Agregar Platillo</BaseButton>
     </form>
   </div>
@@ -368,21 +370,6 @@ export default {
       }
       this.showCostsLoading = false;
     },
-    scrollToBottomAgregarPlatillo() {
-      window.scrollTo({
-        top: document.body.scrollHeight,
-        behavior: "smooth"
-      });
-
-      // Highlight the form after scrolling
-      const formElement = document.querySelector("#agregarPlatilloForm");
-      if (formElement) {
-        formElement.classList.add("highlight"); // Add the highlight class
-        setTimeout(() => {
-          formElement.classList.remove("highlight"); // Remove the highlight class after 3 seconds
-        }, 3000); // 3000 milliseconds = 3 seconds
-      }
-    }
   },
   computed: {
     filteredPlatillos() {
