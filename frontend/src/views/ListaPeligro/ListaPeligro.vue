@@ -447,7 +447,7 @@ export default {
   },
   async mounted() {
     try {
-      const response = await fetch(`${API_URL}/ingredientes`);
+      const response = await fetch(`${API_URL}/ingredientes/producto-clave`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

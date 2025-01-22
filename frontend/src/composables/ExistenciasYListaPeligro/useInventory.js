@@ -1,6 +1,5 @@
 export default function useInventory() {
   const getInventory = (storeName, ingredientId, submissions) => {
-    console.log(storeName, ingredientId, submissions)
     const submission = submissions.find(
       (submission) => submission.store === storeName
     );
