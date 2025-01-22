@@ -1,5 +1,6 @@
 <script setup>
 import { useRouter } from "vue-router";
+import ButtonBase from "../components/BaseButton.vue"
 
 const router = useRouter();
 
@@ -33,22 +34,16 @@ const shouldShowButtons = () => {
     <div v-if="shouldShowButtons()" class="buttonsTop w-full justify-evenly">
       <div class="buttonWrapper">
         <!-- Show "Página Principal" button on all routes except '/' -->
-        <button
-          class="main-page-button"
-          @click="goToMainPage"
-          v-if="!isCurrentPath('/')"
-        >
+        <ButtonBase bgColor="bg-white" textColor="text-black" fontSize="text-md" @click="goToMainPage"
+          v-if="!isCurrentPath('/')">
           Página Principal
-        </button>
+        </ButtonBase>
 
         <!-- Show "Salir" button only on the '/' route -->
-        <button
-          class="logout-button"
-          v-if="isCurrentPath('/')"
-          @click="handleLogout"
-        >
+        <ButtonBase bgColor="bg-white" textColor="text-black" fontSize="text-md" v-if="isCurrentPath('/')"
+          @click="handleLogout">
           Salir
-        </button>
+        </ButtonBase>
       </div>
     </div>
 
@@ -62,6 +57,7 @@ const shouldShowButtons = () => {
   display: flex;
   justify-content: space-between;
 }
+
 .buttonWrapper {
   display: flex;
   justify-content: space-between;
@@ -70,11 +66,13 @@ const shouldShowButtons = () => {
 .buttonWrapper.justify-end {
   justify-content: flex-end;
 }
+
 .main-page-button {
   position: static;
   top: 10px;
   left: 15px;
 }
+
 .logout-button {
   position: static;
   top: 10px;
