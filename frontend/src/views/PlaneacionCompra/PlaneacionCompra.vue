@@ -24,11 +24,13 @@
             <tr v-for="(item, index) in filteredPlaneacionCompra" :key="index">
               <td className="text-lg">{{ item.nombre }}</td>
               <td v-if="isAdmin" data-label="Proveedor">
-                <select v-model="item.proveedor" class="editable-dropdown">
+                <!-- <select v-model="item.proveedor" class="editable-dropdown">
                   <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">
                     {{ proveedor.nombre }}
                   </option>
-                </select>
+                </select> -->
+                <Dropdown v-model="item.proveedor" :options="proveedorOptions"
+                  :defaultOption="{ value: defaultProveedor, label: 'Selecciona un proveedor' }" />
               </td>
               <td class="cantidad-text" v-if="userName === 'moral' || isAdmin" data-label="Cantidad Moral">
                 <input type="text" v-model="item.surtirMoral" @input="markAsModified(item)" class="editable-input" />
@@ -38,11 +40,12 @@
                   class="editable-input" />
               </td>
               <td data-label="">
-                <ButtonBase bgColor="bg-red-600" textColor="text-white" fontSize="text-base" @click="removeFromPlaneacion(index)">Eliminar</ButtonBase>
+                <ButtonBase bgColor="bg-red-600" textColor="text-white" fontSize="text-base"
+                  @click="removeFromPlaneacion(index)">Eliminar</ButtonBase>
               </td>
               <td v-if="isAdmin" data-label="Pronóstico Demanda">
-                <ButtonBase bgColor="bg-blue-600" textColor="text-white" fontSize="text-base"  v-if="item.moral_demanda_semanal || item.bosques_demanda_semanal"
-                  @click="openPopup(item)">
+                <ButtonBase bgColor="bg-blue-600" textColor="text-white" fontSize="text-base"
+                  v-if="item.moral_demanda_semanal || item.bosques_demanda_semanal" @click="openPopup(item)">
                   Pronóstico
                 </ButtonBase>
               </td>
@@ -51,22 +54,24 @@
         </table>
         <div class="button-container">
           <!-- Guardar Planeación -->
-          <ButtonBase bgColor="bg-green-800" textColor="text-white" fontSize="text-base" @click="submitPlaneacionCompra">
+          <ButtonBase bgColor="bg-green-800" textColor="text-white" fontSize="text-base"
+            @click="submitPlaneacionCompra">
             <i class="fa fa-save"></i> Guardar
           </ButtonBase>
 
           <!-- Exportar a WhatsApp -->
-          <ButtonBase bgColor="bg-green-500" textColor="text-white" fontSize="text-base"  @click="exportToWhatsApp">
+          <ButtonBase bgColor="bg-green-500" textColor="text-white" fontSize="text-base" @click="exportToWhatsApp">
             <i class="fa fa-whatsapp"></i> WhatsApp
           </ButtonBase>
         </div>
-        <ButtonBase bgColor="bg-red-600" textColor="text-white" fontSize="text-lg" v-if="isAdmin" @click="clearPlaneacionCompra">
+        <ButtonBase bgColor="bg-red-600" textColor="text-white" fontSize="text-lg" v-if="isAdmin"
+          @click="clearPlaneacionCompra">
           Limpiar Planeación de Compra
         </ButtonBase>
       </div>
     </div>
     <!-- Search Bar -->
-    <SearchBar  v-model="searchTerm" placeholder="Buscar ingrediente...">Buscar ingredientes...</SearchBar>
+    <SearchBar v-model="searchTerm" placeholder="Buscar ingrediente...">Buscar ingredientes...</SearchBar>
     <!-- List of All Ingredients -->
     <div class="ingredients-container">
       <table>
@@ -89,7 +94,8 @@
                   v-model="ingrediente.tempSurtirMoral" class="editable-input" />
                 <input v-if="userName === 'campestre' || isAdmin" type="text" placeholder="Cantidad Campestre"
                   v-model="ingrediente.tempSurtirCampestre" class="editable-input" />
-                <ButtonBase bgColor="bg-blue-600" textColor="text-white" fontSize="text-base" @click="addToPlaneacion(ingrediente)">Agregar</ButtonBase>
+                <ButtonBase bgColor="bg-blue-600" textColor="text-white" fontSize="text-base"
+                  @click="addToPlaneacion(ingrediente)">Agregar</ButtonBase>
               </div>
             </td>
           </tr>
@@ -106,6 +112,7 @@ import API_URL from "../../config";
 import PopupInsumo from "../../components/PopupInsumo.vue";
 import ButtonBase from "../../components/BaseButton.vue";
 import SearchBar from "../../components/SearchBar.vue";
+import Dropdown from "../../components/Dropdown.vue";
 
 const isReady = ref(false);
 const ingredientes = ref([]);
@@ -173,6 +180,13 @@ const fetchProveedores = async () => {
   }
 };
 
+const proveedorOptions = computed(() =>
+  proveedores.value.map((proveedor) => ({
+    value: proveedor.nombre,
+    label: proveedor.nombre,
+  }))
+);
+
 /**
  * Add an ingredient to the planeacionCompra array
  */
@@ -180,6 +194,9 @@ const addToPlaneacion = (ingrediente) => {
   const existingItem = planeacionCompra.value.find(
     (item) => item.id_ingrediente === ingrediente.id_ingrediente
   );
+
+  const defaultProveedor =
+    proveedores.value.length > 0 ? proveedores.value[0].nombre : "Proveedor no asignado";
 
   const surtirMoralValue = ingrediente.tempSurtirMoral || ""; // Default to empty string if not provided
   const surtirCampestreValue = ingrediente.tempSurtirCampestre || ""; // Default to empty string if not provided
