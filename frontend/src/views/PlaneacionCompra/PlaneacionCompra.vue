@@ -91,7 +91,7 @@
                   v-model="ingrediente.tempSurtirMoral" class="editable-input" />
                 <input v-if="userName === 'campestre' || isAdmin" type="text" placeholder="Cantidad Campestre"
                   v-model="ingrediente.tempSurtirCampestre" class="editable-input" />
-                <button class="button-add" @click="addToPlaneacion(ingrediente)">Agregar</button>
+                <ButtonBase bgColor="bg-blue-600" textColor="text-white" fontSize="text-md" @click="addToPlaneacion(ingrediente)">Agregar</ButtonBase>
               </div>
             </td>
           </tr>
