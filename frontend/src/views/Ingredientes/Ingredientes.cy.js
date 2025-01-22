@@ -3,9 +3,12 @@ import Ingredientes from './Ingredientes.vue'
 describe('Ingredientes Component', () => {
     beforeEach(() => {
         cy.intercept('GET', '/api/ingredientes/demanda', { fixture: 'ingredientes.json' }).as('getIngredientes');
+        cy.intercept('GET', '/api/proveedores', { fixture: 'proveedores.json' }).as('getProveedores');
+
         cy.mount(Ingredientes);
         // Wait for the intercepted API call to complete
         cy.wait('@getIngredientes');
+        cy.wait('@getProveedores');
     });
 
     it('renders the Ingredientes component', () => {
