@@ -22,7 +22,7 @@
           <span class="timestamp">{{ lastUpdate() }}</span>
         </p>
       </div>
-      <div class="filtros-container">
+      <!-- <div class="filtros-container">
         <h2>Filtros:</h2>
         <label for="insumos">Tipo Insumos:</label>
         <select class="filterBar" id="insumos" v-model="selectedInsumosTipo">
@@ -36,14 +36,14 @@
             {{ proveedor.nombre }}
           </option>
         </select>
-      </div>
+      </div> -->
       <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="search-bar" />
-      <div class="checkbox-container" v-if="isAdmin">
+      <!-- <div class="checkbox-container" v-if="isAdmin">
         <input type="checkbox" id="inventarioCheckbox" v-model="selectedInventarioOption" class="checkbox-input" />
         <label for="inventarioCheckbox" class="checkbox-label">
           <span class="checkbox-custom"></span> Inventario semanal
         </label>
-      </div>
+      </div> -->
       <div class="table-container">
         <table>
           <thead>
