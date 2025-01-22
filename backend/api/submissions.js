@@ -117,7 +117,7 @@ router.post('/new-submission', async (req, res, next) => {
               );
             }
             if (!shouldUpdate) {
-              window.alert(`Inventario already submitted for ${store}. Skipping update.`);
+              console.error(`Inventario already submitted for ${store}. Skipping update.`);
             }
           }
         }
