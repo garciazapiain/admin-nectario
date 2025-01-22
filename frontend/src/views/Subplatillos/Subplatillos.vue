@@ -2,6 +2,7 @@
 import { useRouter } from "vue-router";
 import BaseButton from "../../components/BaseButton.vue";
 import ArrowToPageNavigateDown from "../../components/ArrowToPageNavigateDown.vue";
+import SearchBar from "../../components/SearchBar.vue";
 
 const router = useRouter();
 const handleClickSubPlatillo = (idSubplatillo) => {
@@ -13,9 +14,7 @@ const handleClickSubPlatillo = (idSubplatillo) => {
   <div>
     <ArrowToPageNavigateDown/>
     <h1>Subplatillos</h1>
-    <div class="flex m-4">
-      <input class="h-8 w-4/6" v-model="searchTerm" placeholder="Buscar" />
-    </div>
+    <SearchBar v-model="searchTerm" placeholder="Buscar sub-platillo..."></SearchBar>
     <table>
       <thead>
         <tr>

@@ -7,6 +7,7 @@ import { useRouter } from "vue-router";
 import * as XLSX from 'xlsx'; // Import XLSX
 import { ref } from "vue";
 import ArrowToPageNavigateDown from "../../components/ArrowToPageNavigateDown.vue";
+import SearchBar from "../../components/SearchBar.vue";
 
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 
@@ -28,7 +29,7 @@ const handleClickPlatillo = (idPlatillo) => {
     <div v-if="showCostsLoading" class="spinner">
       <p>Cargando costos de venta...</p>
     </div>
-    <input class="h-8 w-full" v-model="searchTerm" placeholder="Buscar" />
+    <SearchBar v-model="searchTerm" placeholder="Buscar platillo..."></SearchBar>
 
     <table>
       <thead>

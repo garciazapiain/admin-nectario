@@ -66,9 +66,7 @@
       </div>
     </div>
     <!-- Search Bar -->
-    <div class="search-container">
-      <input v-model="searchTerm" placeholder="🔍 Buscar ingrediente..." class="search-bar" />
-    </div>
+    <SearchBar  v-model="searchTerm" placeholder="Buscar ingrediente...">Buscar ingredientes...</SearchBar>
     <!-- List of All Ingredients -->
     <div class="ingredients-container">
       <table>
@@ -107,6 +105,7 @@ import { ref, computed, watch } from "vue";
 import API_URL from "../../config";
 import PopupInsumo from "../../components/PopupInsumo.vue";
 import ButtonBase from "../../components/BaseButton.vue";
+import SearchBar from "../../components/SearchBar.vue";
 
 const isReady = ref(false);
 const ingredientes = ref([]);

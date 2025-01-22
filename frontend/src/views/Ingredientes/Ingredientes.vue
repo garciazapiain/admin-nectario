@@ -2,11 +2,7 @@
   <div>
     <ArrowToPageNavigateDown/>
     <h1>Insumos</h1>
-    <input v-model="searchTerm" placeholder="Search" />
-    <select v-model="proveedor">
-      <option value="">All</option>
-      <option value="FRUTEX">FRUTEX</option>
-    </select>
+    <SearchBar v-model="searchTerm" placeholder="Buscar insumo..."></SearchBar>
     <table>
       <thead>
         <tr>
@@ -106,6 +102,7 @@
 import { useRouter } from "vue-router";
 import BaseButton from "../../components/BaseButton.vue";
 import ArrowToPageNavigateDown from "../../components/ArrowToPageNavigateDown.vue";
+import SearchBar from "../../components/SearchBar.vue";
 
 const router = useRouter();
 const handleClickIngrediente = (idIngrediente) => {
@@ -131,7 +128,6 @@ export default {
         proveedor_id: "",
       },
       searchTerm: "",
-      proveedor: "",
       proveedores: [],
     };
   },
@@ -142,11 +138,6 @@ export default {
         const term = this.searchTerm.toLowerCase();
         ingredients = ingredients.filter((ingrediente) =>
           ingrediente.nombre.toLowerCase().includes(term)
-        );
-      }
-      if (this.proveedor) {
-        ingredients = ingredients.filter(
-          (ingrediente) => ingrediente.proveedor === this.proveedor
         );
       }
       return ingredients;

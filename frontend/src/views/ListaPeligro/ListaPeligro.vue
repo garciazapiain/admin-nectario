@@ -37,7 +37,7 @@
           </option>
         </select>
       </div> -->
-      <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="search-bar" />
+      <SearchBar v-model="searchTerm" placeholder="Buscar ingrediente..."></SearchBar>
       <!-- <div class="checkbox-container" v-if="isAdmin">
         <input type="checkbox" id="inventarioCheckbox" v-model="selectedInventarioOption" class="checkbox-input" />
         <label for="inventarioCheckbox" class="checkbox-label">
@@ -109,6 +109,7 @@ import "moment/locale/es";
 import { ref } from "vue";
 import API_URL from "../../config";
 import BaseButton from "../../components/BaseButton.vue";
+import SearchBar from "../../components/SearchBar.vue";
 
 const router = useRouter();
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
@@ -514,12 +515,6 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-
-.search-bar {
-  width: 50%;
-  padding: 10px;
-  font-size: 16px;
 }
 
 .filterBar {

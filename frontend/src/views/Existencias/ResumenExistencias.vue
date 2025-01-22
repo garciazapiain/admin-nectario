@@ -3,7 +3,7 @@
     <h1 class="font-bold mb-4">Resumen Existencias Lista Peligro</h1>
     <p class="mb-2">Ultima actualización Moral: {{ lastUpdatedMoral }}</p>
     <p class="mb-4">Ultima actualización Campestre: {{ lastUpdatedCampestre }}</p>
-    <input v-model="searchTerm" placeholder="Buscar ingrediente..." class="search-bar w-3/4 p-4 mb-4 border rounded" />
+    <SearchBar v-model="searchTerm" placeholder="Buscar ingrediente..."></SearchBar>
     <div class="w-full flex justify-center">
       <div class="overflow-x-auto">
         <p v-if="isLoading">Loading....</p>
@@ -44,6 +44,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
+import SearchBar from "../../components/SearchBar.vue";
 import useSubmissions from "../../composables/shared/useSubmissions";
 import useIngredients from "../../composables/shared/useIngredients";
 import useInventory from "../../composables/ExistenciasYListaPeligro/useInventory";
