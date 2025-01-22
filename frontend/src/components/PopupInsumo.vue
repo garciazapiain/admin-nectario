@@ -1,9 +1,9 @@
 <template>
   <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
     <div class="bg-white text-black p-6 rounded-lg shadow-lg w-full max-w-lg mx-4">
-      <h2 class="text-2xl text-black font-bold mb-6">Pronóstico demanda - {{ ingrediente.nombre }}</h2>
+      <h2 class="text-black">Pronóstico demanda - {{ ingrediente.nombre }}</h2>
       <div class="mb-6">
-        <h3 class="text-black text-lg font-semibold mb-2">Numero de dias:</h3>
+        <h3 class="text-black text-lg mb-2">Numero de dias:</h3>
         <div class="flex items-center justify-center gap-4">
           <button @click="decrementDays" class="w-12 h-12 text-2xl border border-gray-300 rounded bg-white text-black">
             -

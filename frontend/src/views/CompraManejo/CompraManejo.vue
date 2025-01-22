@@ -10,7 +10,7 @@
     <div v-else-if="!showSummary">
       <div v-for="(ingredientes, proveedor) in groupedByProveedor" :key="proveedor" class="dropzone" @dragover.prevent
         @drop="(event) => handleDrop(proveedor, event)" @touchend="(event) => handleDrop(proveedor, event)">
-        <h1 class="flex justify-start pl-3 bg-white text-black"> {{ proveedor }}</h1>
+        <h2 class="flex justify-start pl-3 bg-white text-black"> {{ proveedor }}</h2>
         <table class="table">
           <thead>
             <tr>
