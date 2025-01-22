@@ -92,11 +92,11 @@
         </table>
       </div>
       <div class="sticky-submit-wrapper">
-        <button v-if="isAdmin" class="button-resetear" @click="confirmReset">
+        <BaseButton bgColor="bg-red-600" textColor="text-white" fontSize="text-lg" v-if="isAdmin" @click="confirmReset">
           Resetear
-        </button>
-        <button class="button-actualizar" @click="submitForm">Actualizar</button>
-        <button v-if="isAdmin" class="button-whatsapp" @click="sendWhatsAppMessage">Whatsapp</button>
+        </BaseButton>
+        <BaseButton bgColor="bg-green-800" textColor="text-white" fontSize="text-lg" @click="submitForm">Actualizar</BaseButton>
+        <BaseButton bgColor="bg-green-500" textColor="text-white" fontSize="text-lg" v-if="isAdmin" @click="sendWhatsAppMessage">Whatsapp</BaseButton>
       </div>
     </div>
   </div>
@@ -108,6 +108,7 @@ import moment from "moment-timezone";
 import "moment/locale/es";
 import { ref } from "vue";
 import API_URL from "../../config";
+import BaseButton from "../../components/BaseButton.vue";
 
 const router = useRouter();
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
@@ -547,26 +548,6 @@ input {
   overflow: auto;
 }
 
-.button-suficiente {
-  width: 100%;
-  height: 50px;
-  font-size: 20px;
-  margin: 5px;
-  border: #2cb92c solid 3px;
-  background-color: #242424;
-  color: white;
-}
-
-.button-casiNoHay {
-  width: 100%;
-  height: 50px;
-  font-size: 20px;
-  margin: 5px;
-  border: #d5cb09 solid 3px;
-  background-color: #242424;
-  color: white;
-}
-
 .button-agotado {
   width: 100%;
   height: 50px;
@@ -575,45 +556,6 @@ input {
   border: #d20f0f solid 3px;
   background-color: #242424;
   color: white;
-}
-
-.button-resetear {
-  width: fit-content;
-  /* Increase width */
-  height: fit-content;
-  /* Increase height */
-  font-size: 20px;
-  /* Increase font size */
-  margin: 5px;
-  background-color: red;
-  border: white solid 1px;
-  color: white;
-}
-
-.button-actualizar {
-  width: fit-content;
-  /* Increase width */
-  height: fit-content;
-  /* Increase height */
-  font-size: 20px;
-  /* Increase font size */
-  margin: 5px;
-  background-color: rgb(8, 73, 8);
-  color: white;
-  border: white solid 1px;
-}
-
-.button-whatsapp {
-  width: fit-content;
-  /* Increase width */
-  height: fit-content;
-  /* Increase height */
-  font-size: 20px;
-  /* Increase font size */
-  margin: 5px;
-  background-color: #2cb92c;
-  color: white;
-  border: white solid 1px;
 }
 
 .button-increase-decrease {
