@@ -17,20 +17,33 @@ export default function useSubmissions() {
     }
   };
 
-  const lastSubmission = (store) => {
-    const storeSubmissions = submissions.value.filter(
-      (submission) => submission.store === store
+  const lastSubmission = (store, submission) => {
+    // Check if the expected structure exists and is an array
+    if (!submission?._object?.data || !Array.isArray(submission._object.data)) {
+      return null;
+    }
+
+    // Access the data array from the nested object
+    const submissionsArray = submission._object.data;
+
+    // Filter submissions by the specified store
+    const storeSubmissions = submissionsArray.filter(sub => sub.store === store);
+
+    // Check if any submissions match the store
+    if (storeSubmissions.length === 0) {
+      console.warn(`No submissions found for store: ${store}`);
+      return null;
+    }
+
+    // Find the latest submission by timestamp
+    const latestSubmission = storeSubmissions.reduce((latest, current) =>
+      new Date(latest.timestamp) > new Date(current.timestamp) ? latest : current
     );
 
-    if (storeSubmissions.length > 0) {
-      return storeSubmissions.reduce((latest, current) =>
-        new Date(latest.timestamp) > new Date(current.timestamp)
-          ? latest
-          : current
-      );
-    }
-    return null;
+    console.log(`Latest submission for store '${store}':`, latestSubmission);
+    return latestSubmission;
   };
 
   return { submissions, fetchSubmissions, lastSubmission };
 }
+

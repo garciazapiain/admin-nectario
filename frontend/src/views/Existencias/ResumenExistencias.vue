@@ -43,62 +43,72 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, watch } from "vue";
 import SearchBar from "../../components/SearchBar.vue";
 import useSubmissions from "../../composables/shared/useSubmissions";
-import useIngredients from "../../composables/shared/useIngredients";
 import useInventory from "../../composables/ExistenciasYListaPeligro/useInventory";
 import PopupInsumo from "../../components/PopupInsumo.vue";
-import useAdminState from "../../composables/shared/useAdminState";
+import useSWRV from 'swrv';
+import API_URL from "../../config";
 
 /* ====== Section A: Core Declarations and State ====== */
 
+// Initialization and Lifecycle
+
+const fetcher = (url) => fetch(url).then((res) => res.json());
+const { data: submissions, error: submissionsError } = useSWRV(`${API_URL}/submissions/latest-submissions`, fetcher);
+const { data: ingredientes, error: ingredientesError } = useSWRV(`${API_URL}/ingredientes/producto-clave`, fetcher);
+
+if (!submissionsError && !ingredientesError) {
+  isLoading.value = false;
+}
+
+watch(
+  [submissions, ingredientes],
+  ([newSubmissions, newIngredientes]) => {
+    const isLoading = ref(true);
+    if (newSubmissions && newIngredientes) {
+      isLoading.value = false;
+    }
+  },
+  { immediate: true }
+);
+
 // Core Data Management
-const { isAdmin } = useAdminState();
-const { submissions, fetchSubmissions, lastSubmission } = useSubmissions();
-const {
-  ingredientes,
-  proveedores,
-  searchTerm,
-  selectedProveedor,
-  selectedFrecuencia,
-  selectedInsumosTipo,
-  fetchIngredientes,
-  fetchProveedores,
-  filteredIngredients,
-} = useIngredients();
-const { getInventory } = useInventory();
+const searchTerm = ref("")
+const { lastSubmission } = useSubmissions()
+const { getInventory } = useInventory()
 
 // Computed Properties
+const filteredIngredients = computed(() => {
+  if (!ingredientes?.value) return [];
+  const term = searchTerm.value.toLowerCase();
+  return ingredientes.value.filter((ingrediente) =>
+    ingrediente.nombre.toLowerCase().includes(term)
+  );
+});
+
 const lastUpdatedMoral = computed(() =>
-  lastSubmission("moral")
-    ? new Date(lastSubmission("moral").timestamp).toLocaleString("en-US", {
-        timeZone: "UTC",
-      })
+  lastSubmission("moral", submissions)
+    ? new Date(lastSubmission("moral", submissions).timestamp).toLocaleString("en-US", {
+      timeZone: "UTC",
+    })
     : "N/A"
 );
 
 const lastUpdatedCampestre = computed(() =>
-  lastSubmission("bosques")
-    ? new Date(lastSubmission("bosques").timestamp).toLocaleString("en-US", {
-        timeZone: "UTC",
-      })
+  lastSubmission("bosques", submissions)
+    ? new Date(lastSubmission("bosques", submissions).timestamp).toLocaleString("en-US", {
+      timeZone: "UTC",
+    })
     : "N/A"
 );
 
 // State and Reactive Variables
 const isPopupVisible = ref(false);
 const selectedIngredient = ref(null);
-const isLoading = ref(true);
 
 /* ====== Section B: Functions for Component Logic ====== */
-
-// Initialization and Lifecycle
-onMounted(async () => {
-  await Promise.all([fetchSubmissions(), fetchIngredientes(), fetchProveedores()]);
-  isLoading.value = false; // Set loading to false after all fetches complete
-});
-
 
 // Popup/Dropdown and Interaction Logic
 const ingredienteClicked = (ingrediente) => {
