@@ -41,6 +41,6 @@ onMounted(() => {
 
 <style scoped>
 .button {
-  @apply flex-1 basis-1/5 p-4 m-2 h-40 text-2xl border border-gray-300 text-center;
+  @apply flex-1 basis-1/5 p-4 m-2 h-40 text-2xl border border-gray-300 text-center hover:bg-white hover:text-black;
 }
 </style>
