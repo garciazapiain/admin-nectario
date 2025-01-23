@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center mt-10">
     <!-- Logo Section -->
     <div class="flex justify-center h-80 w-80 items-center">
-      <img src="../../../public/logo.png" alt="Logo" />
+      <img src="../../../public/logo.webp" alt="Logo" />
     </div>
     <!-- Title -->
     <h2 class="text-2xl font-semibold mb-4">Registrarse</h2>
