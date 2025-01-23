@@ -87,7 +87,7 @@ const handleClickPlatillo = (idPlatillo) => {
     <!-- Add Platillo Form -->
     <form id="agregarPlatilloForm" @submit.prevent="agregarPlatillo">
       <input class="h-12" v-model="nuevoPlatillo.nombre" placeholder="Nombre de platillo" required />
-      <BaseButton bgColor="bg-green-800" textColor="text-white" fontSize="text-lg" type="submit">Agregar Platillo</BaseButton>
+      <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-lg" type="submit">Agregar Platillo</BaseButton>
     </form>
   </div>
 </template>

@@ -40,14 +40,14 @@
                   class="editable-input" />
               </td>
               <td data-label="">
-                <ButtonBase bgColor="bg-red-600" textColor="text-white" fontSize="text-base"
-                  @click="removeFromPlaneacion(index)">Eliminar</ButtonBase>
+                <SmallBaseButton bgColor="bg-red-600" textColor="text-white" fontSize="text-base"
+                  @click="removeFromPlaneacion(index)">Eliminar</SmallBaseButton>
               </td>
               <td v-if="isAdmin" data-label="Pronóstico Demanda">
-                <ButtonBase bgColor="bg-violet-600" textColor="text-white" fontSize="text-base"
+                <SmallBaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base"
                   v-if="item.moral_demanda_semanal || item.bosques_demanda_semanal" @click="openPopup(item)">
                   Pronóstico
-                </ButtonBase>
+                </SmallBaseButton>
               </td>
             </tr>
           </tbody>
@@ -94,8 +94,8 @@
                   v-model="ingrediente.tempSurtirMoral" class="editable-input" />
                 <input v-if="userName === 'campestre' || isAdmin" type="text" placeholder="Cantidad Campestre"
                   v-model="ingrediente.tempSurtirCampestre" class="editable-input" />
-                <ButtonBase bgColor="bg-violet-800" textColor="text-white" fontSize="text-base"
-                  @click="addToPlaneacion(ingrediente)">Agregar</ButtonBase>
+                <SmallBaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base"
+                  @click="addToPlaneacion(ingrediente)">Agregar</SmallBaseButton>
               </div>
             </td>
           </tr>
@@ -111,6 +111,7 @@ import { ref, computed, watch } from "vue";
 import API_URL from "../../config";
 import PopupInsumo from "../../components/PopupInsumo.vue";
 import ButtonBase from "../../components/BaseButton.vue";
+import SmallBaseButton from "../../components/SmallBaseButton.vue";
 import SearchBar from "../../components/SearchBar.vue";
 import Dropdown from "../../components/Dropdown.vue";
 
