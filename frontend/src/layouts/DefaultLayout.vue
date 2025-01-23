@@ -31,7 +31,7 @@ const shouldShowButtons = () => {
 <template>
   <div class="flex flex-col items-center justify-center w-full">
     <!-- Header Section -->
-    <div v-if="shouldShowButtons()" class="buttonsTop w-full justify-evenly">
+    <div v-if="shouldShowButtons()" class="fixed top-2.5 left-2.5 z-50 flex flex-col space-y-2">
       <div class="buttonWrapper">
         <!-- Show "Página Principal" button on all routes except '/' -->
         <ButtonBase bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="goToMainPage"
@@ -48,7 +48,7 @@ const shouldShowButtons = () => {
     </div>
 
     <!-- Router View for Pages -->
-    <router-view />
+    <router-view class="mt-20" />
   </div>
 </template>
 

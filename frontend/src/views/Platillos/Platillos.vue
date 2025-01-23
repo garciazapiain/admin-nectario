@@ -21,16 +21,23 @@ const handleClickPlatillo = (idPlatillo) => {
   <div>
     <ArrowToPageNavigateDown />
     <h1>Platillos</h1>
-    <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" @click="exportToExcel">Exportar a
-      Excel</BaseButton>
-    <input v-if="isAdmin" type="file" @change="importFromExcel" />
-    <!-- New Button to Show Cost Calculation -->
-    <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" @click="calculateCosts">Sacar costo
-      de venta</BaseButton>
-    <!-- Spinner -->
-    <div v-if="showCostsLoading" class="spinner">
-      <p>Cargando costos de venta...</p>
+    <div class="flex justify-evenly">
+      <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" @click="exportToExcel">Exportar a
+        Excel</BaseButton>
+      <!-- New Button to Show Cost Calculation -->
+      <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" @click="calculateCosts">Sacar
+        costo
+        de venta</BaseButton>
+      <!-- Spinner -->
+      <div v-if="showCostsLoading" class="spinner">
+        <p>Cargando costos de venta...</p>
+      </div>
     </div>
+    <div>
+      <p>Importar desde excel platillos</p>
+      <input v-if="isAdmin" type="file" @change="importFromExcel" />
+    </div>
+
     <SearchBar v-model="searchTerm" placeholder="Buscar platillo..."></SearchBar>
 
     <table>
@@ -52,16 +59,16 @@ const handleClickPlatillo = (idPlatillo) => {
           <td>
             <div class="editRow" v-if="editIndexClavePos !== index">
               {{ platillo.clavepos }}
-              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" v-if="isAdmin"
+              <SmallBaseButton bgColor="bg-violet-800 text-white" textColor="text-black" fontSize="text-base" v-if="isAdmin"
                 @click="editIndexClavePos = index">
                 Editar
               </SmallBaseButton>
             </div>
             <div v-else>
               <input type="number" min="0" v-model="editValueClavePos" />
-              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base"
+              <SmallBaseButton bgColor="bg-violet-800 text-white" textColor="text-black" fontSize="text-base"
                 @click="saveEditClavePos(platillo)">Guardar</SmallBaseButton>
-              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base"
+              <SmallBaseButton bgColor="bg-red-600 text-white" textColor="text-black" fontSize="text-base"
                 @click="editIndexClavePos = -1">Cancelar</SmallBaseButton>
             </div>
           </td>
@@ -70,16 +77,16 @@ const handleClickPlatillo = (idPlatillo) => {
           <td>
             <div class="editRow" v-if="editIndexPrecio !== index">
               {{ platillo.precio_piso !== null ? `$${platillo.precio_piso.toFixed(2)}` : '' }}
-              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" v-if="isAdmin"
+              <SmallBaseButton bgColor="bg-violet-800 text-white" textColor="text-black" fontSize="text-base" v-if="isAdmin"
                 @click="editIndexPrecio = index">
                 Editar
               </SmallBaseButton>
             </div>
             <div v-else>
               <input type="number" min="0" v-model="editValuePrecio" />
-              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base"
+              <SmallBaseButton bgColor="bg-violet-800 text-white" textColor="text-black" fontSize="text-base"
                 @click="saveEditPrecio(platillo)">Guardar</SmallBaseButton>
-              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base"
+              <SmallBaseButton bgColor="bg-red-600 text-white" textColor="text-black" fontSize="text-base"
                 @click="editIndexPrecio = -1">Cancelar</SmallBaseButton>
             </div>
           </td>
@@ -439,23 +446,5 @@ export default {
   text-align: center;
   font-size: 1.5rem;
   margin-top: 20px;
-}
-
-.highlight {
-  animation: highlight-effect 3s ease-in-out;
-}
-
-@keyframes highlight-effect {
-  0% {
-    background-color: yellow;
-  }
-
-  50% {
-    background-color: lightgreen;
-  }
-
-  100% {
-    background-color: transparent;
-  }
 }
 </style>
