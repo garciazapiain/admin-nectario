@@ -82,10 +82,15 @@ const { getInventory } = useInventory()
 // Computed Properties
 const filteredIngredients = computed(() => {
   if (!ingredientes?.value) return [];
+
   const term = searchTerm.value.toLowerCase();
-  return ingredientes.value.filter((ingrediente) =>
-    ingrediente.nombre.toLowerCase().includes(term)
-  );
+
+  // Filter ingredients based on the search term
+  return ingredientes.value
+    .filter((ingrediente) =>
+      ingrediente.nombre.toLowerCase().includes(term)
+    )
+    .sort((a, b) => a.nombre.localeCompare(b.nombre)); // Sort alphabetically by `nombre`
 });
 
 const lastUpdatedMoral = computed(() =>
