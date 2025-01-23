@@ -25,13 +25,13 @@ onMounted(() => {
       <button class="button" @click="() => navigateTo('/existenciasresumen')">Resumen Existencias</button>
     </div>
     <div>
-      <button v-if="userName === 'moral' || userName==='campestre' || isAdmin" class="button"  @click="() => navigateTo('/planeacioncompra')">Pedido</button>
-      <button class="button" v-if="isAdmin" @click="() => navigateTo('/compradeldia')">Compra</button>
       <button class="button" @click="() => navigateTo('/platillos')">Platillos</button>
       <button class="button" @click="() => navigateTo('/subplatillos')">Subplatillos</button>
       <button class="button" @click="() => navigateTo('/ingredientes')">Insumos</button>
     </div>
     <div>
+      <button v-if="userName === 'moral' || userName==='campestre' || isAdmin" class="button"  @click="() => navigateTo('/planeacioncompra')">Pedido</button>
+      <button class="button" v-if="isAdmin" @click="() => navigateTo('/compradeldia')">Compra</button>
       <button class="button" @click="() => navigateTo('/consumoinsumos')">
         Consumo Teórico Insumos
       </button>
