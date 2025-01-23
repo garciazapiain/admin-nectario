@@ -32,13 +32,48 @@ const handleClickSubPlatillo = (idSubplatillo) => {
         </tr>
       </tbody>
     </table>
-    <form id="agregarSubPlatilloForm" @submit.prevent="agregarSubPlatillo">
-      <input v-model="nuevoSubPlatillo.nombre" placeholder="Nombre" required />
-      <Dropdown v-model="nuevoSubPlatillo.unidad" :options="unidadOptions"
-        :defaultOption="{ value: '', label: 'Unidad' }" required />
-      <input v-model="nuevoSubPlatillo.rendimiento" placeholder="Rendimiento" type="number" min="0.01" step="0.01"
-        required />
-      <BaseButton bgColor="bg-green-700" textColor="text-white" fontSize="text-base" type="submit">Agregar Subplatillo
+    <h2>Agregar nuevo sub-platillo</h2>
+    <form
+      id="agregarSubPlatilloForm"
+      @submit.prevent="agregarSubPlatillo"
+      class="flex flex-col space-y-4 p-6 bg-white shadow-lg rounded-lg"
+    >
+      <!-- Input for Nombre -->
+      <input
+      v-model="nuevoSubPlatillo.nombre"
+      placeholder="Nombre"
+      required
+      class="w-full h-10 px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+      />
+
+      <!-- Dropdown for Unidad -->
+      <Dropdown
+        v-model="nuevoSubPlatillo.unidad"
+        :options="unidadOptions"
+        :defaultOption="{ value: '', label: 'Unidad' }"
+        required
+      />
+
+      <!-- Input for Rendimiento -->
+      <input
+        v-model="nuevoSubPlatillo.rendimiento"
+        placeholder="Rendimiento"
+        type="number"
+        min="0.01"
+        step="0.01"
+        required
+        class="w-full h-10 px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+      />
+
+      <!-- Submit Button -->
+      <BaseButton
+        bgColor="bg-violet-800"
+        textColor="text-white"
+        fontSize="text-base"
+        type="submit"
+        class="w-full h-12 flex items-center justify-center bg-green-700 text-white rounded-lg hover:bg-green-800 transition-all"
+      >
+      Agregar Subplatillo
       </BaseButton>
     </form>
   </div>
@@ -122,21 +157,4 @@ export default {
 </script>
 
 <style scoped>
-.highlight {
-  animation: highlight-effect 3s ease-in-out;
-}
-
-@keyframes highlight-effect {
-  0% {
-    background-color: yellow;
-  }
-
-  50% {
-    background-color: lightgreen;
-  }
-
-  100% {
-    background-color: transparent;
-  }
-}
 </style>

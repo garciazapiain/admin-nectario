@@ -1,9 +1,9 @@
 <template>
-    <div class="relative w-full max-w-lg">
+    <div class="relative w-full">
       <select
         :value="modelValue"
         @change="$emit('update:modelValue', $event.target.value)"
-        class="w-full h-10 px-4 py-2 text-lg border-2 border-gray-300 rounded-md outline-none transition-all duration-300 focus:border-green-500 focus:ring-2 focus:ring-green-300"
+        class="w-full h-10 px-4 py-2 text-md border-2 border-gray-300 rounded-md outline-none transition-all duration-300 focus:border-green-500 focus:ring-2 focus:ring-green-300"
       >
         <option
           v-if="defaultOption"

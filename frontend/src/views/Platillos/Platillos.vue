@@ -19,12 +19,14 @@ const handleClickPlatillo = (idPlatillo) => {
 
 <template>
   <div>
-    <ArrowToPageNavigateDown/>
+    <ArrowToPageNavigateDown />
     <h1>Platillos</h1>
-    <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" @click="exportToExcel">Exportar a Excel</BaseButton>
+    <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" @click="exportToExcel">Exportar a
+      Excel</BaseButton>
     <input v-if="isAdmin" type="file" @change="importFromExcel" />
     <!-- New Button to Show Cost Calculation -->
-    <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" @click="calculateCosts">Sacar costo de venta</BaseButton>
+    <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" @click="calculateCosts">Sacar costo
+      de venta</BaseButton>
     <!-- Spinner -->
     <div v-if="showCostsLoading" class="spinner">
       <p>Cargando costos de venta...</p>
@@ -50,14 +52,17 @@ const handleClickPlatillo = (idPlatillo) => {
           <td>
             <div class="editRow" v-if="editIndexClavePos !== index">
               {{ platillo.clavepos }}
-              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" v-if="isAdmin" @click="editIndexClavePos = index">
+              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" v-if="isAdmin"
+                @click="editIndexClavePos = index">
                 Editar
               </SmallBaseButton>
             </div>
             <div v-else>
               <input type="number" min="0" v-model="editValueClavePos" />
-              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="saveEditClavePos(platillo)">Guardar</SmallBaseButton>
-              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="editIndexClavePos = -1">Cancelar</SmallBaseButton>
+              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base"
+                @click="saveEditClavePos(platillo)">Guardar</SmallBaseButton>
+              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base"
+                @click="editIndexClavePos = -1">Cancelar</SmallBaseButton>
             </div>
           </td>
           <!-- Conditionally render "Costo total" based on showCosts state -->
@@ -65,14 +70,17 @@ const handleClickPlatillo = (idPlatillo) => {
           <td>
             <div class="editRow" v-if="editIndexPrecio !== index">
               {{ platillo.precio_piso !== null ? `$${platillo.precio_piso.toFixed(2)}` : '' }}
-              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" v-if="isAdmin" @click="editIndexPrecio = index">
+              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" v-if="isAdmin"
+                @click="editIndexPrecio = index">
                 Editar
               </SmallBaseButton>
             </div>
             <div v-else>
               <input type="number" min="0" v-model="editValuePrecio" />
-              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="saveEditPrecio(platillo)">Guardar</SmallBaseButton>
-              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="editIndexPrecio = -1">Cancelar</SmallBaseButton>
+              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base"
+                @click="saveEditPrecio(platillo)">Guardar</SmallBaseButton>
+              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base"
+                @click="editIndexPrecio = -1">Cancelar</SmallBaseButton>
             </div>
           </td>
           <!-- Conditionally render "% Costo" based on showCosts state -->
@@ -85,9 +93,18 @@ const handleClickPlatillo = (idPlatillo) => {
     </table>
 
     <!-- Add Platillo Form -->
-    <form id="agregarPlatilloForm" @submit.prevent="agregarPlatillo">
-      <input class="h-12" v-model="nuevoPlatillo.nombre" placeholder="Nombre de platillo" required />
-      <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-lg" type="submit">Agregar Platillo</BaseButton>
+    <h2>Agregar nuevo platillo</h2>
+    <form id="agregarPlatilloForm" @submit.prevent="agregarPlatillo"
+      class="flex flex-col space-y-4 p-6 bg-white shadow-lg rounded-lg">
+      <!-- Input for Nombre -->
+      <input v-model="nuevoPlatillo.nombre" placeholder="Nombre de platillo" required
+        class="w-full h-12 px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" />
+
+      <!-- Submit Button -->
+      <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" type="submit"
+        class="w-full h-12 flex items-center justify-center bg-violet-800 text-white rounded-lg hover:bg-violet-900 transition-all">
+        Agregar Platillo
+      </BaseButton>
     </form>
   </div>
 </template>
@@ -410,7 +427,6 @@ export default {
 </script>
 
 <style scoped>
-
 .editRow {
   display: flex;
   flex-direction: column;

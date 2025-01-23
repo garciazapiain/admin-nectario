@@ -53,17 +53,31 @@
       </tbody>
     </table>
     <div v-if="isAdmin" class="add-new-ingredient-form w-full max-w-2xl mx-auto p-5 shadow-lg rounded-lg">
-      <h2>Agregar Insumo</h2>
-      <form @submit.prevent="agregarIngrediente" class="flex flex-col">
-        <input v-model="nuevoIngrediente.nombre" placeholder="Nombre" required class="input-field " />
+      <h2>Agregar nuevo insumo</h2>
+      <form @submit.prevent="agregarIngrediente" class="flex flex-col space-y-4 p-6 bg-white shadow-lg rounded-lg">
+        <!-- Input for Nombre -->
+        <input v-model="nuevoIngrediente.nombre" placeholder="Nombre" required
+          class="w-full h-10 px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" />
+
+        <!-- Dropdown for Unidad -->
         <Dropdown v-model="nuevoIngrediente.unidad" :options="unidadOptions"
           :defaultOption="{ value: '', label: 'Selecciona una unidad' }" />
-        <input v-model="nuevoIngrediente.precio" placeholder="Precio" required class="input-field " />
+
+        <!-- Input for Precio -->
+        <input type="number" v-model="nuevoIngrediente.precio" placeholder="Precio" required
+          class="w-full h-10 px-4 py-2 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" />
+
+        <!-- Dropdown for Proveedor -->
         <Dropdown v-model="nuevoIngrediente.proveedor_id" :options="proveedorOptions"
           :defaultOption="{ value: '', label: 'Selecciona un proveedor' }" />
-        <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" type="submit">Agregar Insumo
+
+        <!-- Submit Button -->
+        <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" type="submit"
+          class="w-full h-12 flex items-center justify-center bg-violet-800 text-white rounded-lg hover:bg-violet-900 transition-all">
+          Agregar Insumo
         </BaseButton>
       </form>
+
     </div>
   </div>
 </template>
@@ -176,11 +190,4 @@ onMounted(fetchData);
 </script>
 
 <style scoped>
-.input-field {
-  @apply box-border w-full h-12 ml-0 text-base mb-4 p-2.5 rounded border border-gray-300;
-}
-
-.select-field {
-  @apply box-border w-full h-12 text-base mb-4 p-2.5 rounded border border-gray-300;
-}
 </style>
