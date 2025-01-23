@@ -457,7 +457,7 @@ export default {
       const data = await response.json();
       this.ingredientes = data;
 
-      const responseSubmissions = await fetch(`${API_URL}/submissions/all-submissions`);
+      const responseSubmissions = await fetch(`${API_URL}/submissions/latest-submissions`);
       if (!responseSubmissions.ok) {
         throw new Error(`HTTP error! status: ${responseSubmissions.status}`);
       }
