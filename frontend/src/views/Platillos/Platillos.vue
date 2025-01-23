@@ -50,14 +50,14 @@ const handleClickPlatillo = (idPlatillo) => {
           <td>
             <div class="editRow" v-if="editIndexClavePos !== index">
               {{ platillo.clavepos }}
-              <BaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" v-if="isAdmin" @click="editIndexClavePos = index">
+              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" v-if="isAdmin" @click="editIndexClavePos = index">
                 Editar
-              </BaseButton>
+              </SmallBaseButton>
             </div>
             <div v-else>
               <input type="number" min="0" v-model="editValueClavePos" />
-              <BaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="saveEditClavePos(platillo)">Guardar</BaseButton>
-              <BaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="editIndexClavePos = -1">Cancelar</BaseButton>
+              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="saveEditClavePos(platillo)">Guardar</SmallBaseButton>
+              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="editIndexClavePos = -1">Cancelar</SmallBaseButton>
             </div>
           </td>
           <!-- Conditionally render "Costo total" based on showCosts state -->
@@ -65,14 +65,14 @@ const handleClickPlatillo = (idPlatillo) => {
           <td>
             <div class="editRow" v-if="editIndexPrecio !== index">
               {{ platillo.precio_piso !== null ? `$${platillo.precio_piso.toFixed(2)}` : '' }}
-              <BaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" v-if="isAdmin" @click="editIndexPrecio = index">
+              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" v-if="isAdmin" @click="editIndexPrecio = index">
                 Editar
-              </BaseButton>
+              </SmallBaseButton>
             </div>
             <div v-else>
               <input type="number" min="0" v-model="editValuePrecio" />
-              <BaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="saveEditPrecio(platillo)">Guardar</BaseButton>
-              <BaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="editIndexPrecio = -1">Cancelar</BaseButton>
+              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="saveEditPrecio(platillo)">Guardar</SmallBaseButton>
+              <SmallBaseButton bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="editIndexPrecio = -1">Cancelar</SmallBaseButton>
             </div>
           </td>
           <!-- Conditionally render "% Costo" based on showCosts state -->
@@ -95,6 +95,7 @@ const handleClickPlatillo = (idPlatillo) => {
 <script>
 import * as XLSX from 'xlsx'; // Import XLSX
 import BaseButton from "../../components/BaseButton.vue";
+import SmallBaseButton from "../../components/SmallBaseButton.vue";
 
 export default {
   name: "Platillos",
