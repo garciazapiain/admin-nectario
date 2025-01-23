@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col items-center mt-10">
-    <div class="flex justify-center h-80 w-80 items-center">
+    <!-- <div class="flex justify-center h-80 w-80 items-center">
       <img src="../../../public/logo.png" alt="Logo" />
-    </div>
+    </div> -->
     <h2 class="text-2xl font-semibold mb-4">Admin Nectario</h2>
     <form @submit.prevent="submitForm" class="w-full p-3 flex flex-col space-y-4">
       <input type="text" v-model="username" placeholder="Username" required

@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col items-center mt-10">
     <!-- Logo Section -->
-    <div class="flex justify-center h-80 w-80 items-center">
+    <!-- <div class="flex justify-center h-80 w-80 items-center">
       <img src="../../../public/logo.png" alt="Logo" />
-    </div>
+    </div> -->
     <!-- Title -->
     <h2 class="text-2xl font-semibold mb-4">Registrarse</h2>
     <!-- Form -->
