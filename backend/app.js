@@ -19,7 +19,14 @@ const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
+const staticPath = path.join(__dirname, 'path_to_your_frontend_build');
+app.use(express.static(staticPath, {
+  setHeaders: (res, filePath) => {
+    if (path.extname(filePath).match(/\.(js|css|html|webp)$/)) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+  }
+}));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/submissions', submissionRoutes);
