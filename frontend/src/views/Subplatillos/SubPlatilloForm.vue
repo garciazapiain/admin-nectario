@@ -3,7 +3,7 @@
     <h2>AGREGAR SUB-PLATILLO</h2>
     <input v-model="searchTerm" type="text" placeholder="BUSCAR SUB-PLATILLO" class="search-input" />
     <form @submit.prevent="addSubPlatillo">
-      <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" type="submit">AGREGAR</BaseButton>
+      <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" type="submit">AGREGAR</BaseButton>
       <table>
         <thead>
           <tr>

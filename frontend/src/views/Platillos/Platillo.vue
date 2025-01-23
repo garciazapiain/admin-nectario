@@ -44,9 +44,9 @@ const isAdmin = ref(localStorage.getItem("isAdmin") === "true"); // Define isAdm
 
     <!-- Edit, Duplicate, and Delete Buttons -->
     <div class="platilloButtonContainer flex flex-col sm:flex-row items-center mt-2">
-      <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" v-if="isAdmin || !recetaBloqueada" @click="isEditingName = true">Editar
+      <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" v-if="isAdmin || !recetaBloqueada" @click="isEditingName = true">Editar
         nombre</BaseButton>
-      <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" v-if="isAdmin" @click="handleDuplicatePlatillo">Duplicar Platillo</BaseButton>
+      <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" v-if="isAdmin" @click="handleDuplicatePlatillo">Duplicar Platillo</BaseButton>
       <BaseButton bgColor="bg-red-600" textColor="text-white" fontSize="text-base" v-if="isAdmin" @click="handleDeletePlatillo">Borrar</BaseButton>
     </div>
 

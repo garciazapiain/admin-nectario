@@ -8,7 +8,7 @@
       class="search-input"
     />
     <form @submit.prevent="addIngredient">
-      <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" type="submit">AGREGAR</BaseButton>
+      <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" type="submit">AGREGAR</BaseButton>
       <table>
         <thead>
           <tr>

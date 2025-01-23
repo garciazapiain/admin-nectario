@@ -2,7 +2,7 @@
   <div>
     <h1 class="mb-10">Gestión de Planeación de Compra</h1>
     <!-- Button to toggle views -->
-    <BaseButton @click="toggleView" bgColor="bg-blue-800" textColor="text-white" fontSize="text-lg">
+    <BaseButton @click="toggleView" bgColor="bg-violet-800" textColor="text-white" fontSize="text-lg">
       {{ showSummary ? "Regresar a Proveedores" : "Ver Órdenes de Moral y Bosques" }}
     </BaseButton>
     <div v-if="!isLoaded" class="loading-message">Cargando datos...</div>
@@ -38,7 +38,7 @@
               </td>
               <td class="clickable-row"
                 v-if="ingrediente.image_url || ingrediente.image_url_2 || ingrediente.proveedor_opcion_b">
-                <span class="bg-blue-800 p-2 text-white cursor-pointer" @click="showPopup(ingrediente)">Foto</span>
+                <span class="bg-violet-800 p-2 text-white cursor-pointer" @click="showPopup(ingrediente)">Foto</span>
               </td>
               <td v-else></td>
             </tr>

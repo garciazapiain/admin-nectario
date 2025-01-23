@@ -61,7 +61,7 @@
         <input v-model="nuevoIngrediente.precio" placeholder="Precio" required class="input-field " />
         <Dropdown v-model="nuevoIngrediente.proveedor_id" :options="proveedorOptions"
           :defaultOption="{ value: '', label: 'Selecciona un proveedor' }" />
-        <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" type="submit">Agregar Insumo
+        <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" type="submit">Agregar Insumo
         </BaseButton>
       </form>
     </div>

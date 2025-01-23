@@ -44,7 +44,7 @@
                   @click="removeFromPlaneacion(index)">Eliminar</ButtonBase>
               </td>
               <td v-if="isAdmin" data-label="Pronóstico Demanda">
-                <ButtonBase bgColor="bg-blue-600" textColor="text-white" fontSize="text-base"
+                <ButtonBase bgColor="bg-violet-600" textColor="text-white" fontSize="text-base"
                   v-if="item.moral_demanda_semanal || item.bosques_demanda_semanal" @click="openPopup(item)">
                   Pronóstico
                 </ButtonBase>
@@ -94,7 +94,7 @@
                   v-model="ingrediente.tempSurtirMoral" class="editable-input" />
                 <input v-if="userName === 'campestre' || isAdmin" type="text" placeholder="Cantidad Campestre"
                   v-model="ingrediente.tempSurtirCampestre" class="editable-input" />
-                <ButtonBase bgColor="bg-blue-600" textColor="text-white" fontSize="text-base"
+                <ButtonBase bgColor="bg-violet-800" textColor="text-white" fontSize="text-base"
                   @click="addToPlaneacion(ingrediente)">Agregar</ButtonBase>
               </div>
             </td>

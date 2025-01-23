@@ -253,7 +253,7 @@ fetchIngredientes();
 
     <!-- Edit Name Button -->
     <div class="flex justify-center mt-2">
-      <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" v-if="isAdmin || !recetaBloqueada" @click="isEditingName = true">Editar
+      <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" v-if="isAdmin || !recetaBloqueada" @click="isEditingName = true">Editar
         nombre</BaseButton>
     </div>
 
@@ -285,7 +285,7 @@ fetchIngredientes();
               </div>
               <div v-else>
                 {{ ingrediente.cantidad }}
-                <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base"  v-if="isAdmin || !recetaBloqueada" @click="handleOpenEditIngredient(index)">Editar</BaseButton>
+                <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base"  v-if="isAdmin || !recetaBloqueada" @click="handleOpenEditIngredient(index)">Editar</BaseButton>
               </div>
             </td>
             <td>
@@ -311,7 +311,7 @@ fetchIngredientes();
       </div>
       <div class="text-left text-lg" v-else>
         <p class="text-left text-lg">RENDIMIENTO: {{ subplatillo.rendimiento }} {{ subplatillo.unidad }}</p>
-        <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" v-if="isAdmin || !recetaBloqueada" @click="isEditingRendimiento = true">Editar
+        <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" v-if="isAdmin || !recetaBloqueada" @click="isEditingRendimiento = true">Editar
           rendimiento</BaseButton>
       </div>
     </div>

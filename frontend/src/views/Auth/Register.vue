@@ -7,7 +7,7 @@
     <!-- Title -->
     <h2 class="text-2xl font-semibold mb-4">Registrarse</h2>
     <!-- Form -->
-    <form @submit.prevent="submitForm" class="w-full max-w-sm p-3 flex flex-col space-y-4">
+    <form @submit.prevent="submitForm" class="w-full max-w-sm p-3 flex flex-col space-y-4 items-center">
       <!-- Username Input -->
       <input
         type="text"
@@ -27,7 +27,7 @@
       <!-- Submit Button -->
       <button
         type="submit"
-        class="bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-all duration-300 focus:outline-none"
+        class="bg-violet-800 text-white w-full rounded-md hover:bg-violet-200 hover:text-violet-800 m-2 px-8 py-3  transition-all duration-300 focus:outline-none"
       >
         Registrarse
       </button>

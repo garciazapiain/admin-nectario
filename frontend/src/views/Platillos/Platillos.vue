@@ -21,10 +21,10 @@ const handleClickPlatillo = (idPlatillo) => {
   <div>
     <ArrowToPageNavigateDown/>
     <h1>Platillos</h1>
-    <BaseButton bgColor="bg-blue-600" textColor="text-white" fontSize="text-base" @click="exportToExcel">Exportar a Excel</BaseButton>
+    <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" @click="exportToExcel">Exportar a Excel</BaseButton>
     <input v-if="isAdmin" type="file" @change="importFromExcel" />
     <!-- New Button to Show Cost Calculation -->
-    <BaseButton bgColor="bg-blue-600" textColor="text-white" fontSize="text-base" @click="calculateCosts">Sacar costo de venta</BaseButton>
+    <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" @click="calculateCosts">Sacar costo de venta</BaseButton>
     <!-- Spinner -->
     <div v-if="showCostsLoading" class="spinner">
       <p>Cargando costos de venta...</p>

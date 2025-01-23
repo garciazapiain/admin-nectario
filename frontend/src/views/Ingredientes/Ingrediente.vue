@@ -3,7 +3,7 @@
     <h1>{{ ingrediente.nombre }}</h1>
     <h2>
       Info del insumo:
-      <BaseButton bgColor="bg-blue-800" textColor="text-white" fontSize="text-base" v-if="isAdmin"
+      <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" v-if="isAdmin"
         @click="showModal = true">Editar</BaseButton>
     </h2>
     <div v-if="showModal" class="modal">
