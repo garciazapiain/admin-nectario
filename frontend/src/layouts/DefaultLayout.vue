@@ -34,10 +34,10 @@ const shouldShowButtons = () => {
     <div v-if="shouldShowButtons()" class="fixed top-2.5 left-2.5 z-50 flex flex-col space-y-2">
       <div class="buttonWrapper">
         <!-- Show "Página Principal" button on all routes except '/' -->
-        <!-- <ButtonBase bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="goToMainPage"
+        <ButtonBase bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="goToMainPage"
           v-if="!isCurrentPath('/')">
           Página Principal
-        </ButtonBase> -->
+        </ButtonBase>
 
         <!-- Show "Salir" button only on the '/' route -->
         <ButtonBase bgColor="bg-white" textColor="text-black" fontSize="text-base" v-if="isCurrentPath('/')"
