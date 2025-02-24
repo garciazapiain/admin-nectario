@@ -9,22 +9,18 @@ router.post('/new-submission', async (req, res, next) => {
   try {
     const compra = JSON.stringify(ingredients);
 
-    // Insert the submission into the submissions table
+    // Insert the new submission and capture the result
     const result = await client.query(
       'INSERT INTO submissions (store, timestamp, compra) VALUES ($1, $2, $3) RETURNING *',
       [store, timestamp, compra]
     );
 
-    // Clean up old submissions to keep only the latest for the same store and day
-    await client.query(`
-      WITH ranked_submissions AS (
-        SELECT id, ROW_NUMBER() OVER(PARTITION BY DATE(timestamp) ORDER BY timestamp DESC) as rn
-        FROM submissions
-        WHERE store = $1 AND DATE(timestamp) = DATE($2)
-      )
-      DELETE FROM submissions
-      WHERE id IN (SELECT id FROM ranked_submissions WHERE rn > 1)
-    `, [store, timestamp]);
+    // Delete all previous submissions for that store (across all time)
+    // but keep the newly inserted submission.
+    await client.query(
+      'DELETE FROM submissions WHERE store = $1 AND id <> $2',
+      [store, result.rows[0].id]
+    );
 
     // Only proceed if selectedInventarioOption is true
     if (selectedInventarioOption) {
