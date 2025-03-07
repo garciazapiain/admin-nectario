@@ -44,7 +44,7 @@
             </tr>
             <div v-if="isDropdownVisible" class="popup-overlay" @click="closeDropdown">
               <div class="popup" @click.stop>
-                <h2 class="text-black">Cambiar Proveedors</h2>
+                <h2 class="text-black">Cambiar Proveedor</h2>
                 <Dropdown v-model="selectedValue"
                   :options="proveedores.map(proveedor => ({ value: proveedor.nombre, label: proveedor.nombre }))"
                   :defaultOption="{ value: '', label: 'Selecciona un proveedor' }" :required="true" />
