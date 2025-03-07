@@ -2,7 +2,7 @@
   <div>
     <h1 class="mb-10">Gestión de Planeación de Compra</h1>
     <!-- Button to toggle views -->
-    <BaseButton @click="toggleView" bgColor="bg-violet-800" textColor="text-white" fontSize="text-lg">
+    <BaseButton v-if="isAdmin" @click="toggleView" bgColor="bg-violet-800" textColor="text-white" fontSize="text-lg">
       {{ showSummary ? "Regresar a Proveedores" : "Ver Órdenes de Moral y Bosques" }}
     </BaseButton>
     <div v-if="!isLoaded" class="loading-message">Cargando datos...</div>
@@ -177,6 +177,7 @@ import usePlaneacionActions from "../../composables/CompraManejo/usePlaneacionAc
 // Core Data Management
 const { planeacionCompra, fetchPlaneacionCompra, isLoaded } = usePlaneacionCompra()
 const { proveedores, fetchProveedores } = useProveedores();
+const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
 
 // Computed Properties
 const { groupedByProveedor, moralOrders, bosquesOrders } = usePlaneacionComputed(planeacionCompra)
@@ -204,6 +205,7 @@ const { isLoading, toggleApiState } = useToggleApi(API_URL);
 
 // Helper Functions
 const toggleView = () => {
+  if (!isAdmin.value) return;
   showSummary.value = !showSummary.value;
 };
 
@@ -213,6 +215,9 @@ const toggleView = () => {
 onMounted(() => {
   fetchPlaneacionCompra();
   fetchProveedores();
+  if (!isAdmin.value) {
+    showSummary.value = true;
+  }
 });
 
 // State and Reactive Variables
