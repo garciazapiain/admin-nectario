@@ -505,6 +505,7 @@ td div {
   padding: 5px;
   height: 2rem;
   margin-bottom: 5px;
+  font-size: 1.5rem;
 }
 
 .button-container {
