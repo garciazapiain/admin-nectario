@@ -27,7 +27,7 @@
               draggable="true" @dragstart="(event) => startDrag(ingrediente, event)"
               @touchstart="(event) => startDrag(ingrediente, event)">
               <td>
-                <span class="cursor-pointer" @click="openProveedorPopup(ingrediente)">☰</span>
+                <span class="cursor-pointer" @click.stop="openProveedorPopup(ingrediente)">☰</span>
               </td>
               <td>
                 <input type="checkbox" :checked="ingrediente.ya_comprado" @change="toggleYaComprado(ingrediente)" />
@@ -42,12 +42,12 @@
               </td>
               <td v-else></td>
             </tr>
-            <div v-if="isDropdownVisible" class="popup-overlay">
-              <div class="popup">
-                <h2 class="text-black">Cambiar Proveedor</h2>
+            <div v-if="isDropdownVisible" class="popup-overlay" @click="closeDropdown">
+              <div class="popup" @click.stop>
+                <h2 class="text-black">Cambiar Proveedors</h2>
                 <Dropdown v-model="selectedValue"
                   :options="proveedores.map(proveedor => ({ value: proveedor.nombre, label: proveedor.nombre }))"
-                  :defaultOption="{ value: '', label: 'Selecciona un proveedor' }" :required="true" />˝
+                  :defaultOption="{ value: '', label: 'Selecciona un proveedor' }" :required="true" />
                 <div class="flex justify-around">
                   <button @click="confirmProveedorChange(currentEditingIngrediente, selectedValue, closeDropdown)"
                     class="bg-green-500 text-white py-2 px-4 rounded">Confirmar</button>
