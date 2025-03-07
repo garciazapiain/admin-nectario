@@ -24,8 +24,9 @@
           </thead>
           <tbody>
             <tr v-for="ingrediente in getSortedIngredientes(ingredientes)" :key="ingrediente.id_ingrediente"
-              draggable="true" @dragstart="(event) => startDrag(ingrediente, event)"
-              @touchstart="(event) => startDrag(ingrediente, event)">
+              :draggable="!isDropdownVisible"
+              @dragstart="(event) => !isDropdownVisible && startDrag(ingrediente, event)"
+              @touchstart="(event) => !isDropdownVisible && startDrag(ingrediente, event)">
               <td>
                 <span class="cursor-pointer" @click.stop="openProveedorPopup(ingrediente)">☰</span>
               </td>
