@@ -46,7 +46,7 @@
             <div v-if="isDropdownVisible" class="popup-overlay" @click="closeDropdown">
               <div class="popup" @click.stop @touchend.stop>
                 <h2 class="text-black">Cambiar Proveedor</h2>
-                <Dropdown v-model="selectedValue"
+                <Dropdown @touchend.stop v-model="selectedValue"
                   :options="proveedores.map(proveedor => ({ value: proveedor.nombre, label: proveedor.nombre }))"
                   :defaultOption="{ value: '', label: 'Selecciona un proveedor' }" :required="true" />
                 <div class="flex justify-around">
