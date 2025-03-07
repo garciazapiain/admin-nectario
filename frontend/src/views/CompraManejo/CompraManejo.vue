@@ -44,7 +44,7 @@
               <td v-else></td>
             </tr>
             <div v-if="isDropdownVisible" class="popup-overlay" @click="closeDropdown">
-              <div class="popup" @click.stop>
+              <div class="popup" @click.stop @touchend.stop>
                 <h2 class="text-black">Cambiar Proveedor</h2>
                 <Dropdown v-model="selectedValue"
                   :options="proveedores.map(proveedor => ({ value: proveedor.nombre, label: proveedor.nombre }))"
