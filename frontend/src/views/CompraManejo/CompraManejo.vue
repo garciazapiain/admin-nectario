@@ -17,8 +17,8 @@
               <th></th>
               <th></th>
               <th>Nombre</th>
-              <th>Surtir Moral</th>
-              <th>Surtir Bosques</th>
+              <th>Existencias Moral</th>
+              <th>Existencias Campestre</th>
               <th>Ver Foto</th>
             </tr>
           </thead>

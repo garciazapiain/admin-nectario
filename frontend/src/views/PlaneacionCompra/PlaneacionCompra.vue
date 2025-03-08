@@ -14,8 +14,8 @@
             <tr>
               <th>Ingrediente</th>
               <th v-if="isAdmin">Proveedor</th>
-              <th v-if="userName === 'moral' || isAdmin">Surtir Moral</th>
-              <th v-if="userName === 'campestre' || isAdmin">Surtir Campestre</th>
+              <th v-if="userName === 'moral' || isAdmin">Existencias Moral</th>
+              <th v-if="userName === 'campestre' || isAdmin">Existencias Campestre</th>
               <th>Eliminar</th>
               <th v-if="isAdmin">Pronóstico Demanda</th>
             </tr>
