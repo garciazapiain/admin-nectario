@@ -16,6 +16,7 @@
             <tr>
               <th></th>
               <th></th>
+              <th></th>
               <th>Nombre</th>
               <th>Existencias Moral</th>
               <th>Existencias Campestre</th>
@@ -24,9 +25,12 @@
           </thead>
           <tbody>
             <tr v-for="ingrediente in getSortedIngredientes(ingredientes)" :key="ingrediente.id_ingrediente"
-              :draggable="!isDropdownVisible"
-              @dragstart="(event) => !isDropdownVisible && startDrag(ingrediente, event)"
-              @touchstart="(event) => !isDropdownVisible && startDrag(ingrediente, event)">
+              :draggable="!isDropdownVisible && !isMobile"
+              @dragstart="!isDropdownVisible && !isMobile ? startDrag(ingrediente, $event) : null"
+              @touchstart="!isDropdownVisible && !isMobile ? startDrag(ingrediente, $event) : null">
+              <td>
+                <span v-if="!isMobile" class="cursor-move">⬆⬇</span>
+              </td>
               <td>
                 <span class="cursor-pointer" @click.stop="openProveedorPopup(ingrediente)">☰</span>
               </td>
@@ -179,6 +183,7 @@ import usePlaneacionActions from "../../composables/CompraManejo/usePlaneacionAc
 const { planeacionCompra, fetchPlaneacionCompra, isLoaded } = usePlaneacionCompra()
 const { proveedores, fetchProveedores } = useProveedores();
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
+const isMobile = ref(false);
 
 // Computed Properties
 const { groupedByProveedor, moralOrders, bosquesOrders } = usePlaneacionComputed(planeacionCompra)
@@ -214,6 +219,7 @@ const toggleView = () => {
 
 // Initialization and Lifecycle
 onMounted(() => {
+  isMobile.value = window.innerWidth <= 768; // Adjust breakpoint if needed
   fetchPlaneacionCompra();
   fetchProveedores();
   if (!isAdmin.value) {
@@ -364,5 +370,12 @@ export default {
   background-color: #cccccc;
   /* Light gray for disabled state */
   cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .cursor-move {
+    display: none;
+    /* Hide drag-and-drop icon */
+  }
 }
 </style>
