@@ -54,10 +54,12 @@
         </table>
         <div class="button-container">
           <!-- Guardar Planeación -->
-          <ButtonBase bgColor="bg-green-800" textColor="text-white" fontSize="text-base"
-            @click="submitPlaneacionCompra">
-            <i class="fa fa-save"></i> Guardar
-          </ButtonBase>
+          <div class="sticky-save-button">
+            <ButtonBase bgColor="bg-green-800" textColor="text-white" fontSize="text-base"
+              @click="submitPlaneacionCompra(true)">
+              <i class="fa fa-save"></i> Guardar
+            </ButtonBase>
+          </div>
 
           <!-- Exportar a WhatsApp -->
           <ButtonBase bgColor="bg-green-500" textColor="text-white" fontSize="text-base" @click="exportToWhatsApp">
@@ -230,6 +232,8 @@ const addToPlaneacion = (ingrediente) => {
   // Clear temporary fields after adding
   ingrediente.tempSurtirMoral = "";
   ingrediente.tempSurtirCampestre = "";
+
+  submitPlaneacionCompra(false)
 };
 
 
@@ -319,7 +323,7 @@ const markAsModified = (item) => {
 /**
  * Submit Planeacion Compra to the API
  */
-const submitPlaneacionCompra = async () => {
+const submitPlaneacionCompra = async (sendAlert) => {
   try {
     const itemsToSubmit = planeacionCompra.value.filter((item) => item.isModified);
 
@@ -357,7 +361,9 @@ const submitPlaneacionCompra = async () => {
       }
     }
 
-    alert("Planeación de compra guardada con éxito!");
+    if (sendAlert) {
+      alert("Planeación de compra guardada con éxito!");
+    }
 
     // Reset isModified flags
     planeacionCompra.value = planeacionCompra.value.map((item) => ({
@@ -597,4 +603,14 @@ td div {
   box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
   /* Subtle green glow */
 }
+.sticky-save-button {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1000; /* Ensures it stays on top */
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
 </style>
