@@ -2,7 +2,7 @@
   <div>
     <h1 class="mb-10">Gestión de Planeación de Compra</h1>
     <!-- Button to toggle views -->
-    <BaseButton v-if="isAdmin" @click="toggleView" bgColor="bg-violet-800" textColor="text-white" fontSize="text-lg">
+    <BaseButton @click="toggleView" bgColor="bg-violet-800" textColor="text-white" fontSize="text-lg">
       {{ showSummary ? "Regresar a Proveedores" : "Ver Órdenes de Moral y Bosques" }}
     </BaseButton>
     <div v-if="!isLoaded" class="loading-message">Cargando datos...</div>
@@ -189,7 +189,7 @@ const isMobile = ref(false);
 const { groupedByProveedor, moralOrders, bosquesOrders } = usePlaneacionComputed(planeacionCompra)
 
 // View Toggles
-const showSummary = ref(false); // State to toggle views
+const showSummary = ref(!isAdmin.value); // State to toggle views
 const { popupVisible, selectedItem: selectedPopupIngrediente, showPopup, closePopup } = usePopup();
 const { isDropdownVisible, selectedValue, toggleDropdown, selectOption, closeDropdown } = useDropdown();
 
@@ -211,7 +211,6 @@ const { isLoading, toggleApiState } = useToggleApi(API_URL);
 
 // Helper Functions
 const toggleView = () => {
-  if (!isAdmin.value) return;
   showSummary.value = !showSummary.value;
 };
 
