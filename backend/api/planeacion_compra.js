@@ -261,22 +261,49 @@ router.put('/:id_ingrediente', async (req, res) => {
 router.delete('/store', async (req, res) => {
   const client = await connectDb();
   const { userName } = req.body; // Get user type from request
+
   if (!userName) {
     return res.status(400).json({ error: 'User type (moral/campestre) is required' });
   }
 
   try {
-    let query = '';
+    // 1️⃣ Fetch all records added by the current store (moral/campestre)
+    const fetchQuery = `
+      SELECT id_ingrediente, added_moral, added_campestre 
+      FROM planeacion_compra
+      WHERE ${userName === 'moral' ? 'added_moral' : 'added_campestre'} = TRUE
+    `;
+    const fetchResult = await client.query(fetchQuery);
 
-    if (userName === 'moral') {
-      query = 'UPDATE planeacion_compra SET added_moral = FALSE WHERE added_moral = TRUE';
-    } else if (userName === 'campestre') {
-      query = 'UPDATE planeacion_compra SET added_campestre = FALSE WHERE added_campestre = TRUE';
-    } else {
-      return res.status(400).json({ error: 'Invalid user type' });
+    if (fetchResult.rowCount === 0) {
+      return res.status(404).json({ error: `No records found for ${userName}` });
     }
 
-    await client.query(query);
+    // 2️⃣ Loop through each record and decide the action
+    for (const item of fetchResult.rows) {
+      const { id_ingrediente, added_moral, added_campestre } = item;
+
+      if (userName === 'moral' && added_campestre) {
+        // Only set added_moral to FALSE if campestre still has it
+        await client.query(
+          `UPDATE planeacion_compra SET added_moral = FALSE WHERE id_ingrediente = $1`,
+          [id_ingrediente]
+        );
+      } else if (userName === 'campestre' && added_moral) {
+        // Only set added_campestre to FALSE if moral still has it
+        await client.query(
+          `UPDATE planeacion_compra SET added_campestre = FALSE WHERE id_ingrediente = $1`,
+          [id_ingrediente]
+        );
+      } else {
+        // If the other store hasn't marked it, delete the entire record
+        await client.query(
+          `DELETE FROM planeacion_compra WHERE id_ingrediente = $1`,
+          [id_ingrediente]
+        );
+      }
+    }
+
     res.status(200).json({ message: `Records for ${userName} cleared successfully` });
   } catch (error) {
     console.error('Error updating planeacion_compra records:', error);
