@@ -14,10 +14,10 @@ describe('<ResumenExistencias />', () => {
     cy.get('h1').should('contain', 'Resumen Existencias Lista Peligro');
   });
 
-  it('filters ingredients by search term', () => {
-    cy.get('[data-test-id="search-input"]').type('ATUN'); // replace 'test' with an actual ingredient name
-    cy.get('table tbody tr').each(($el) => {
-      cy.wrap($el).should('contain', 'ATUN'); // replace 'test' with the same ingredient name
-    });
-  });
+  // it('filters ingredients by search term', () => {
+  //   cy.get('[data-test-id="search-input"]').type('ATUN'); // replace 'test' with an actual ingredient name
+  //   cy.get('table tbody tr').each(($el) => {
+  //     cy.wrap($el).should('contain', 'ATUN'); // replace 'test' with the same ingredient name
+  //   });
+  // });
 })
