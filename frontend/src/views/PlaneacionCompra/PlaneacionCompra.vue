@@ -211,6 +211,8 @@ const addToPlaneacion = (ingrediente) => {
     (item) => item.id_ingrediente === ingrediente.id_ingrediente
   );
 
+  console.log(ingrediente.store_route_order)
+
   const defaultProveedor =
     proveedores.value.length > 0 ? proveedores.value[0].nombre : "Proveedor no asignado";
 
@@ -239,6 +241,7 @@ const addToPlaneacion = (ingrediente) => {
       added_moral: userName.value === 'moral' || isAdmin.value,
       added_campestre: userName.value === 'campestre' || isAdmin.value,
       isModified: true,
+      store_route_order: ingrediente.store_route_order,
     });
   }
 
@@ -355,6 +358,7 @@ const submitPlaneacionCompra = async (sendAlert) => {
         added_moral: item.added_moral,
         added_campestre: item.added_campestre,
         userName: userName.value,
+        store_route_order: item.store_route_order
       };
 
       const checkResponse = await fetch(`${API_URL}/planeacion_compra/${item.id_ingrediente}`);

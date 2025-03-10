@@ -31,7 +31,8 @@ router.post('/', async (req, res) => {
     moral_demanda_semanal,
     bosques_demanda_semanal,
     proveedor_opcion_b,
-    userName
+    userName,
+    store_route_order
   } = req.body;
 
   const client = await connectDb();
@@ -83,8 +84,9 @@ router.post('/', async (req, res) => {
         bosques_demanda_semanal, 
         proveedor_opcion_b, 
         created_at, 
-        updated_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW(), NOW())
+        updated_at,
+        store_route_order
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW(), NOW(), $13)
       RETURNING *;
     `;
 
@@ -100,7 +102,8 @@ router.post('/', async (req, res) => {
       image_url_2 || null,
       moral_demanda_semanal || 0,
       bosques_demanda_semanal || 0,
-      proveedor_opcion_b || ""
+      proveedor_opcion_b || "",
+      store_route_order || 100,
     ];
 
     const insertResult = await client.query(insertQuery, values);
