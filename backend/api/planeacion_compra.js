@@ -255,6 +255,40 @@ router.put('/:id_ingrediente', async (req, res) => {
   }
 });
 
+router.delete('/store', async (req, res) => {
+  console.log("📥 Received DELETE request at /store");
+  console.log("📝 Request Body:", req.body);
+
+  const client = await connectDb();
+  const { userName } = req.body; // Get user type from request
+
+  console.log('Deleting records for:', userName);
+
+  if (!userName) {
+    return res.status(400).json({ error: 'User type (moral/campestre) is required' });
+  }
+
+  try {
+    let query = '';
+
+    if (userName === 'moral') {
+      query = 'UPDATE planeacion_compra SET added_moral = FALSE WHERE added_moral = TRUE';
+    } else if (userName === 'campestre') {
+      query = 'UPDATE planeacion_compra SET added_campestre = FALSE WHERE added_campestre = TRUE';
+    } else {
+      return res.status(400).json({ error: 'Invalid user type' });
+    }
+
+    await client.query(query);
+    res.status(200).json({ message: `Records for ${userName} cleared successfully` });
+  } catch (error) {
+    console.error('Error updating planeacion_compra records:', error);
+    res.status(500).json({ error: 'Error updating records' });
+  } finally {
+    client.release();
+  }
+});
+
 router.delete('/:id', async (req, res) => {
   const { id } = req.params; // Ingredient ID
   const { userName } = req.body; // Username (moral or campestre) passed from the frontend
@@ -326,6 +360,5 @@ router.delete('/', async (req, res) => {
     client.release();
   }
 });
-
 
 module.exports = router;

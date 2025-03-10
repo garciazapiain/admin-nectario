@@ -66,9 +66,22 @@
             <i class="fa fa-whatsapp"></i> WhatsApp
           </ButtonBase>
         </div>
-        <ButtonBase bgColor="bg-red-600" textColor="text-white" fontSize="text-lg" v-if="isAdmin"
+        <!-- Button for Moral Users -->
+        <ButtonBase bgColor="bg-red-600" textColor="text-white" fontSize="text-lg" v-if="userName === 'moral'"
           @click="clearPlaneacionCompra">
-          Limpiar Planeación de Compra
+          Borrar compra (Moral)
+        </ButtonBase>
+
+        <!-- Button for Campestre Users -->
+        <ButtonBase bgColor="bg-red-600" textColor="text-white" fontSize="text-lg" v-if="userName === 'campestre'"
+          @click="clearPlaneacionCompra">
+          Borrar compra (Campestre)
+        </ButtonBase>
+
+        <!-- Button for Admin to Delete Everything -->
+        <ButtonBase bgColor="bg-red-800" textColor="text-white" fontSize="text-lg" v-if="isAdmin"
+          @click="clearPlaneacionCompra">
+          Borrar toda la compra (Admin)
         </ButtonBase>
       </div>
     </div>
@@ -425,22 +438,49 @@ const exportToWhatsApp = () => {
  * Clear all data from the planeacion_compra table
  */
 const clearPlaneacionCompra = async () => {
-  const confirmClear = confirm("¿Estás seguro de que deseas eliminar toda la planeación de compra?");
+  const confirmClear = confirm(
+    isAdmin.value
+      ? "¿Estás seguro de que deseas eliminar toda la planeación de compra?"
+      : "¿Estás seguro de que deseas eliminar la compra?"
+  );
 
   if (!confirmClear) {
     return;
   }
 
+  let apiUrl = isAdmin.value
+    ? `${API_URL}/planeacion_compra/`  // Admin deletes everything
+    : `${API_URL}/planeacion_compra/store`;  // Moral/Campestre only removes their data
+
+  let bodyData = isAdmin.value ? {} : { userName: userName.value };
+
+  console.log("📡 API URL:", apiUrl);
+  console.log("📦 Request Body:", bodyData);
+
   try {
-    const response = await fetch(`${API_URL}/planeacion_compra`, {
+    const response = await fetch(apiUrl, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bodyData),
     });
 
     if (!response.ok) {
       throw new Error(`Error clearing planeacion_compra: ${response.status}`);
     }
 
-    planeacionCompra.value = []; // Clear local state
+    // Clear local state based on role
+    if (isAdmin.value) {
+      planeacionCompra.value = [];
+    } else {
+      if (userName.value === "moral") {
+        planeacionCompra.value = planeacionCompra.value.filter(item => !item.added_moral);
+      } else if (userName.value === "campestre") {
+        planeacionCompra.value = planeacionCompra.value.filter(item => !item.added_campestre);
+      }
+    }
+
     alert("Planeación de compra eliminada con éxito.");
   } catch (error) {
     console.error("Error clearing planeacion_compra:", error);
@@ -603,14 +643,16 @@ td div {
   box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
   /* Subtle green glow */
 }
+
 .sticky-save-button {
   position: fixed;
   top: 10px;
   right: 10px;
-  z-index: 1000; /* Ensures it stays on top */
+  z-index: 1000;
+  /* Ensures it stays on top */
   padding: 8px 12px;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  /* Subtle shadow */
 }
-
 </style>
