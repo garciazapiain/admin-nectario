@@ -256,14 +256,8 @@ router.put('/:id_ingrediente', async (req, res) => {
 });
 
 router.delete('/store', async (req, res) => {
-  console.log("📥 Received DELETE request at /store");
-  console.log("📝 Request Body:", req.body);
-
   const client = await connectDb();
   const { userName } = req.body; // Get user type from request
-
-  console.log('Deleting records for:', userName);
-
   if (!userName) {
     return res.status(400).json({ error: 'User type (moral/campestre) is required' });
   }
