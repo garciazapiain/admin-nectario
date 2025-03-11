@@ -1,12 +1,42 @@
 import { computed } from "vue";
 
 export default function usePlaneacionComputed(planeacionCompra) {
+  const prioritizedOrder = [
+    "CEDIS",
+    "Transferencia Campestre a Moral",
+    "HEB",
+    "COSTCO",
+    "WALMART",
+    "SAMS",
+    "Transferencia Moral a Campestre"
+  ];
+
   const groupedByProveedor = computed(() => {
-    return planeacionCompra.value.reduce((grouped, ingrediente) => {
-      if (!grouped[ingrediente.proveedor]) grouped[ingrediente.proveedor] = [];
-      grouped[ingrediente.proveedor].push(ingrediente);
-      return grouped;
+    const grouped = planeacionCompra.value.reduce((acc, ingrediente) => {
+      if (!acc[ingrediente.proveedor]) acc[ingrediente.proveedor] = [];
+      acc[ingrediente.proveedor].push(ingrediente);
+      return acc;
     }, {});
+
+    return Object.keys(grouped)
+      .sort((a, b) => {
+        const indexA = prioritizedOrder.indexOf(a);
+        const indexB = prioritizedOrder.indexOf(b);
+
+        if (indexA !== -1 && indexB !== -1) {
+          return indexA - indexB; // Keep predefined providers in order
+        } else if (indexA !== -1) {
+          return -1; // Prioritize predefined providers
+        } else if (indexB !== -1) {
+          return 1;
+        } else {
+          return a.localeCompare(b); // Sort remaining providers alphabetically
+        }
+      })
+      .reduce((sortedObj, key) => {
+        sortedObj[key] = grouped[key];
+        return sortedObj;
+      }, {});
   });
 
   const moralOrders = computed(() =>
