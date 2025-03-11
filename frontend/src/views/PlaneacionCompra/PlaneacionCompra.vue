@@ -410,7 +410,18 @@ const filteredPlaneacionCompra = computed(() => {
 });
 
 const exportToWhatsApp = () => {
-  submitPlaneacionCompra()
+  submitPlaneacionCompra();
+
+  // Determine the correct phone number based on store
+  let phoneNumber = "";
+  if (userName.value === "moral") {
+    phoneNumber = "+524778508037";
+  } else if (userName.value === "campestre") {
+    phoneNumber = "+524792222908";
+  } else {
+    phoneNumber="+420774187964";
+  }
+
   // Construct the WhatsApp message
   let message = `Planeación de Compras (${userName.value.toUpperCase()}):\n\n`;
 
@@ -421,7 +432,7 @@ const exportToWhatsApp = () => {
     }
   });
 
-  if (message.trim() === "") {
+  if (message.trim() === "Planeación de Compras ():") {
     alert("No hay datos para exportar.");
     return;
   }
@@ -431,7 +442,6 @@ const exportToWhatsApp = () => {
 
   // Encode the message for WhatsApp
   const encodedMessage = encodeURIComponent(message);
-  const phoneNumber = "+420774187964";
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 
   // Open WhatsApp Web with the message
