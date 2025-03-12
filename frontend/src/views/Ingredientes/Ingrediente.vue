@@ -331,7 +331,8 @@ const editIngrediente = async () => {
     store_route_order,
     orden_inventario,
     moral_demanda_semanal,
-    bosques_demanda_semanal
+    bosques_demanda_semanal,
+    producto_clave
   } = ingredienteEditado.value;
 
   let imageUrl = ingredienteEditado.value.image_url; // Default to existing image_url
@@ -389,7 +390,8 @@ const editIngrediente = async () => {
     image_url: imageUrl,
     image_url_2: imageUrl2,
     moral_demanda_semanal,
-    bosques_demanda_semanal
+    bosques_demanda_semanal,
+    producto_clave
   };
 
   try {
