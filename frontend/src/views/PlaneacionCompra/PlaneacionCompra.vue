@@ -661,10 +661,6 @@ td div {
   top: 10px;
   right: 10px;
   z-index: 1000;
-  /* Ensures it stays on top */
   padding: 8px 12px;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  /* Subtle shadow */
 }
 </style>
