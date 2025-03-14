@@ -5,8 +5,22 @@
   <div v-else>
     <h1>Planeación de Compras{{ userName === 'moral' ? ' - Moral' : userName === 'campestre' ? ' - Campestre' : '' }}
     </h1>
+    <div v-if="filteredPlaneacionCompra.length === 0" class="no-ingredients-message">
+      Agrega el primer ingrediente para comenzar.
+    </div>
     <!-- Selected Ingredients (Planeación de Compra) -->
-    <div class="planeacion-container">
+    <div v-if="filteredPlaneacionCompra.length > 0" class="planeacion-container">
+      <!-- Button for Moral Users -->
+      <ButtonBase bgColor="bg-red-600" textColor="text-white" fontSize="text-lg" v-if="userName === 'moral'"
+        @click="clearPlaneacionCompra">
+        Borrar compra (Moral)
+      </ButtonBase>
+
+      <!-- Button for Campestre Users -->
+      <ButtonBase bgColor="bg-red-600" textColor="text-white" fontSize="text-lg" v-if="userName === 'campestre'"
+        @click="clearPlaneacionCompra">
+        Borrar compra (Campestre)
+      </ButtonBase>
       <h2 class="text-xl">Ingredientes Seleccionados</h2>
       <div class="table-container">
         <table>
@@ -24,11 +38,6 @@
             <tr v-for="(item, index) in filteredPlaneacionCompra" :key="index">
               <td className="text-lg">{{ item.nombre }}</td>
               <td v-if="isAdmin" data-label="Proveedor">
-                <!-- <select v-model="item.proveedor" class="editable-dropdown">
-                  <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">
-                    {{ proveedor.nombre }}
-                  </option>
-                </select> -->
                 <Dropdown v-model="item.proveedor" :options="proveedorOptions"
                   :defaultOption="{ value: defaultProveedor, label: 'Selecciona un proveedor' }" />
               </td>
@@ -66,17 +75,6 @@
             <i class="fa fa-whatsapp"></i> WhatsApp
           </ButtonBase>
         </div>
-        <!-- Button for Moral Users -->
-        <ButtonBase bgColor="bg-red-600" textColor="text-white" fontSize="text-lg" v-if="userName === 'moral'"
-          @click="clearPlaneacionCompra">
-          Borrar compra (Moral)
-        </ButtonBase>
-
-        <!-- Button for Campestre Users -->
-        <ButtonBase bgColor="bg-red-600" textColor="text-white" fontSize="text-lg" v-if="userName === 'campestre'"
-          @click="clearPlaneacionCompra">
-          Borrar compra (Campestre)
-        </ButtonBase>
 
         <!-- Button for Admin to Delete Everything -->
         <ButtonBase bgColor="bg-red-800" textColor="text-white" fontSize="text-lg" v-if="isAdmin"
@@ -419,7 +417,7 @@ const exportToWhatsApp = () => {
   } else if (userName.value === "campestre") {
     phoneNumber = "+524792222908";
   } else {
-    phoneNumber="+420774187964";
+    phoneNumber = "+420774187964";
   }
 
   // Construct the WhatsApp message
