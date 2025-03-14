@@ -37,10 +37,15 @@
               <td>
                 <input type="checkbox" :checked="ingrediente.ya_comprado" @change="toggleYaComprado(ingrediente)" />
               </td>
-              <td :class="{ 'line-through text-gray-500': ingrediente.ya_comprado }">{{ ingrediente.nombre }}</td>
-              <td :class="{ 'line-through text-gray-500': ingrediente.ya_comprado }">{{ ingrediente.surtir_moral }}</td>
-              <td :class="{ 'line-through text-gray-500': ingrediente.ya_comprado }">{{ ingrediente.surtir_campestre }}
-              </td>
+                <td :class="{ 'line-through text-gray-500': ingrediente.ya_comprado }">{{ ingrediente.nombre }}</td>
+                <td :class="{ 'line-through text-gray-500': ingrediente.ya_comprado }" 
+                  :style="{ backgroundColor: ingrediente.surtir_moral ? '' : 'white' }">
+                {{ ingrediente.surtir_moral }}
+                </td>
+                <td :class="{ 'line-through text-gray-500': ingrediente.ya_comprado }" 
+                  :style="{ backgroundColor: ingrediente.surtir_campestre ? '' : 'white' }">
+                {{ ingrediente.surtir_campestre }}
+                </td>
               <td class="clickable-row"
                 v-if="ingrediente.image_url || ingrediente.image_url_2 || ingrediente.proveedor_opcion_b">
                 <span class="bg-violet-800 p-2 text-white cursor-pointer" @click="showPopup(ingrediente)">Foto</span>
