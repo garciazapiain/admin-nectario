@@ -3,6 +3,7 @@ import { computed } from "vue";
 export default function usePlaneacionComputed(planeacionCompra) {
   const prioritizedOrder = [
     "CEDIS",
+    "CUATRO MILPAS",
     "Transferencia Campestre a Moral",
     "HEB",
     "COSTCO",
