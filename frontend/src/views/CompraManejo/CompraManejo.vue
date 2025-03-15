@@ -194,7 +194,7 @@ const isMobile = ref(false);
 const { groupedByProveedor, moralOrders, bosquesOrders } = usePlaneacionComputed(planeacionCompra)
 
 // View Toggles
-const showSummary = ref(!isAdmin.value); // State to toggle views
+const showSummary = ref(false); // State to toggle views
 const { popupVisible, selectedItem: selectedPopupIngrediente, showPopup, closePopup } = usePopup();
 const { isDropdownVisible, selectedValue, toggleDropdown, selectOption, closeDropdown } = useDropdown();
 
@@ -226,9 +226,6 @@ onMounted(() => {
   isMobile.value = window.innerWidth <= 768; // Adjust breakpoint if needed
   fetchPlaneacionCompra();
   fetchProveedores();
-  if (!isAdmin.value) {
-    showSummary.value = true;
-  }
 });
 
 // State and Reactive Variables
