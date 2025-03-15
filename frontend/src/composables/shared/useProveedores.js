@@ -12,8 +12,20 @@ export default function useProveedores() {
       const response = await fetch(`${API_URL}/proveedores`);
       if (!response.ok) throw new Error(`Error ${response.status}: Failed to fetch proveedores`);
 
-      const proveedores = await response.json();
-      proveedoresCache.value = proveedores.filter((proveedor) => proveedor.id !== 1); // Filter as needed
+      let proveedores = await response.json();
+      proveedores = proveedores.filter((proveedor) => proveedor.id !== 1); // Filter as needed
+
+      // Prioritize "Transferir Moral a Campestre" and "Transferir Campestre a Moral"
+      const priorityProveedores = proveedores.filter(proveedor => 
+        proveedor.nombre === "Transferir Moral a Campestre" || 
+        proveedor.nombre === "Transferir Campestre a Moral"
+      );
+      const otherProveedores = proveedores.filter(proveedor => 
+        proveedor.nombre !== "Transferir Moral a Campestre" && 
+        proveedor.nombre !== "Transferir Campestre a Moral"
+      );
+
+      proveedoresCache.value = [...priorityProveedores, ...otherProveedores];
       isLoaded.value = true;
     } catch (error) {
       console.error("Error fetching proveedores:", error);
