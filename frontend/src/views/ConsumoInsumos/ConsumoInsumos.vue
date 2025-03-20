@@ -40,7 +40,7 @@
     <div class="button-container">
       <BaseButton bgColor="bg-violet-800" textColor="text-white" fontSize="text-base" @click="fetchConsumptionData">
         Obtener data</BaseButton>
-      <BaseButton bgColor="bg-green-600" textColor="text-white" fontSize="text-base"
+      <BaseButton @click="exportToExcel" bgColor="bg-green-600" textColor="text-white" fontSize="text-base"
         v-if="filteredConsumptionData.length > 0">Exportar a
         Excel</BaseButton>
       <router-link :to="cargarVentasRoute">
