@@ -24,18 +24,18 @@ onMounted(() => {
       <button class="button" @click="() => navigateTo('/listapeligro')">Lista Peligro</button>
       <button class="button" @click="() => navigateTo('/existenciasresumen')">Resumen Existencias</button>
     </div>
-    <div>
+    <!-- <div>
       <button class="button" @click="() => navigateTo('/platillos')">Platillos</button>
       <button class="button" @click="() => navigateTo('/subplatillos')">Subplatillos</button>
       <button class="button" @click="() => navigateTo('/ingredientes')">Insumos</button>
-    </div>
-    <div>
-      <button v-if="userName === 'moral' || userName==='campestre' || isAdmin" class="button"  @click="() => navigateTo('/planeacioncompra')">Pedido</button>
-      <button class="button" @click="() => navigateTo('/compradeldia')">Compra</button>
-      <button v-if="isAdmin" class="button" @click="() => navigateTo('/consumoinsumos')">
+    </div> -->
+    <!-- <div> -->
+      <!-- <button v-if="userName === 'moral' || userName==='campestre' || isAdmin" class="button"  @click="() => navigateTo('/planeacioncompra')">Pedido</button> -->
+      <!-- <button class="button" @click="() => navigateTo('/compradeldia')">Compra</button> -->
+      <!-- <button v-if="isAdmin" class="button" @click="() => navigateTo('/consumoinsumos')">
         Consumo Teórico Insumos
-      </button>
-    </div>
+      </button> -->
+    <!-- </div> -->
   </div>
 </template>
 
