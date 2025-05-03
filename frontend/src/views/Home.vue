@@ -1,19 +1,33 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import 'tailwindcss/tailwind.css'
+import 'tailwindcss/tailwind.css';
 
 const router = useRouter();
+
 const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
-const userName = ref(localStorage.getItem("userName"))
+const userName = ref(localStorage.getItem("userName"));
 
 const navigateTo = (route) => {
   router.push(route);
 };
 
 onMounted(() => {
+  // Check JWT
   if (!localStorage.getItem("jwt")) {
     router.push("/login");
+    return;
+  }
+
+  // Redirect if we're at the root path
+  if (router.currentRoute.value.path === "/") {
+    if (isAdmin.value) {
+      router.push("/existenciasresumen");
+    } else if (userName.value === "moral") {
+      router.push("/listapeligro/moral");
+    } else if (userName.value === "campestre") {
+      router.push("/listapeligro/bosques");
+    }
   }
 });
 </script>

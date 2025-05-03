@@ -1,14 +1,12 @@
 <script setup>
 import { useRouter } from "vue-router";
-import ButtonBase from "../components/BaseButton.vue"
-import { ref } from "vue";
+import ButtonBase from "../components/BaseButton.vue";
+import { ref, computed } from "vue";
 
 const router = useRouter();
 
-// Navigate to the home page
-const goToMainPage = () => {
-  router.push("/");
-};
+const isAdmin = ref(localStorage.getItem("isAdmin") === "true");
+const userName = ref(localStorage.getItem("userName"));
 
 // Handle logout and navigate to login
 const handleLogout = () => {
@@ -21,29 +19,61 @@ const isCurrentPath = (path) => {
   return router.currentRoute.value.path === path;
 };
 
-// Check if the current route matches the given path or if it's excluded
+// Check if buttons should be shown
 const shouldShowButtons = () => {
   const excludedPaths = ["/login", "/register"];
   return !excludedPaths.includes(router.currentRoute.value.path);
 };
 
-const userName = ref(localStorage.getItem("userName"))
+// Toggle button logic for non-admin users
+const toggleRoute = () => {
+  const currentPath = router.currentRoute.value.path;
 
+  if (userName.value === "campestre") {
+    if (currentPath.startsWith("/listapeligro")) {
+      router.push("/existenciasresumen");
+    } else if (currentPath === "/existenciasresumen") {
+      router.push("/listapeligro/bosques");
+    }
+  }
+
+  if (userName.value === "moral") {
+    if (currentPath.startsWith("/listapeligro")) {
+      router.push("/existenciasresumen");
+    } else if (currentPath === "/existenciasresumen") {
+      router.push("/listapeligro/moral");
+    }
+  }
+};
+
+// Button label changes based on current route
+const toggleButtonLabel = computed(() => {
+  const currentPath = router.currentRoute.value.path;
+  return currentPath.startsWith("/listapeligro") ? "Resumen Existencias" : "Lista Peligro";
+});
 </script>
 
 <template>
   <div class="flex flex-col items-center justify-center w-full">
     <!-- Header Section -->
     <div v-if="shouldShowButtons()" class="fixed top-2.5 left-2.5 z-50 flex flex-col space-y-2">
-      <p>Usuario: {{ userName }}</p>
       <div class="buttonWrapper">
-        <!-- Show "Página Principal" button on all routes except '/' -->
+        <!-- Página Principal button (commented out) -->
+        <!--
         <ButtonBase bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="goToMainPage"
           v-if="!isCurrentPath('/')">
           Página Principal
         </ButtonBase>
+        -->
 
-        <!-- Show "Salir" button only on the '/' route -->
+        <!-- Toggle Button for moral/campestre (not admin) -->
+        <ButtonBase :hidden="isAdmin" bgColor="bg-white" textColor="text-black" fontSize="text-base"
+          @click="toggleRoute">
+          {{ toggleButtonLabel }}
+        </ButtonBase>
+
+
+        <!-- Logout button only on the '/' route -->
         <ButtonBase bgColor="bg-white" textColor="text-black" fontSize="text-base" v-if="isCurrentPath('/')"
           @click="handleLogout">
           Salir
