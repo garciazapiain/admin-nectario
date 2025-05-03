@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter } from "vue-router";
 import ButtonBase from "../components/BaseButton.vue"
+import { ref } from "vue";
 
 const router = useRouter();
 
@@ -26,12 +27,15 @@ const shouldShowButtons = () => {
   return !excludedPaths.includes(router.currentRoute.value.path);
 };
 
+const userName = ref(localStorage.getItem("userName"))
+
 </script>
 
 <template>
   <div class="flex flex-col items-center justify-center w-full">
     <!-- Header Section -->
     <div v-if="shouldShowButtons()" class="fixed top-2.5 left-2.5 z-50 flex flex-col space-y-2">
+      <p>Usuario: {{ userName }}</p>
       <div class="buttonWrapper">
         <!-- Show "Página Principal" button on all routes except '/' -->
         <ButtonBase bgColor="bg-white" textColor="text-black" fontSize="text-base" @click="goToMainPage"
